@@ -1,0 +1,218 @@
+flags:
+  -n: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request"}
+  --namespace: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request"}
+  -A: {description: "List the requested objects across all namespaces"}
+  --all-namespaces: {description: "List the requested objects across all namespaces"}
+  --context: {value: {exec: "kubectl config get-contexts -o name"}, description: "The name of the kubeconfig context to use"}
+  --cluster: {value: {exec: "kubectl config get-clusters | tail -n +2"}, description: "The name of the kubeconfig cluster to use"}
+  --user: {value: {exec: "kubectl config get-users | tail -n +2"}, description: "The name of the kubeconfig user to use"}
+  --kubeconfig: {value: file, description: "Path to the kubeconfig file to use for CLI requests"}
+  -s: {value: any, description: "The address and port of the Kubernetes API server"}
+  --server: {value: any, description: "The address and port of the Kubernetes API server"}
+  -v: {value: any, description: "Number for the log level verbosity"}
+  --request-timeout: {value: any, description: "The length of time to wait before giving up on a single server request"}
+  --insecure-skip-tls-verify: {description: "Skip TLS certificate verification"}
+  -h: {description: "Help for kubectl"}
+  --help: {description: "Help for kubectl"}
+commands:
+  get:
+    description: Display one or many resources
+    flags:
+      -o: {value: {exec: "printf '%s\\n' json yaml wide name custom-columns= jsonpath= go-template="}, description: "Output format"}
+      --output: {value: {exec: "printf '%s\\n' json yaml wide name custom-columns= jsonpath= go-template="}, description: "Output format"}
+      -l: {value: any, description: "Selector (label query) to filter on"}
+      --selector: {value: any, description: "Selector (label query) to filter on"}
+      --field-selector: {value: any, description: "Selector (field query) to filter on"}
+      -w: {description: "Watch for changes after listing"}
+      --watch: {description: "Watch for changes after listing"}
+      --show-labels: {description: "Show all labels as the last column"}
+      -f: {value: file, description: "File identifying the resource to get"}
+      --filename: {value: file, description: "File identifying the resource to get"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  describe:
+    description: Show details of a specific resource or group of resources
+    flags:
+      -l: {value: any, description: "Selector (label query) to filter on"}
+      --selector: {value: any, description: "Selector (label query) to filter on"}
+      -f: {value: file, description: "File identifying the resource to describe"}
+      --filename: {value: file, description: "File identifying the resource to describe"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  delete:
+    description: Delete resources by file names, stdin, resources and names, or by resources and label selector
+    flags:
+      -f: {value: file, description: "File containing the resource to delete"}
+      --filename: {value: file, description: "File containing the resource to delete"}
+      -l: {value: any, description: "Selector (label query) to filter on"}
+      --selector: {value: any, description: "Selector (label query) to filter on"}
+      --all: {description: "Delete all resources in the namespace of the specified resource types"}
+      --force: {description: "Immediately remove resources from API and bypass graceful deletion"}
+      --grace-period: {value: any, description: "Seconds given to the resource to terminate gracefully"}
+      --wait: {description: "Wait for resources to be gone before returning"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  apply:
+    description: Apply a configuration to a resource by file name or stdin
+    flags:
+      -f: {value: file, description: "The files that contain the configurations to apply"}
+      --filename: {value: file, description: "The files that contain the configurations to apply"}
+      -k: {value: dir, description: "Process a kustomization directory"}
+      --kustomize: {value: dir, description: "Process a kustomization directory"}
+      -R: {description: "Process the directory used in -f recursively"}
+      --recursive: {description: "Process the directory used in -f recursively"}
+      --dry-run: {value: {exec: "printf '%s\\n' none client server"}, description: "Only print the object that would be sent"}
+      --server-side: {description: "Run apply on the server instead of the client"}
+      --prune: {description: "Automatically delete resource objects that do not appear in the configs"}
+  create:
+    description: Create a resource from a file or from stdin
+    flags:
+      -f: {value: file, description: "File that contains the configuration to create"}
+      --filename: {value: file, description: "File that contains the configuration to create"}
+      --dry-run: {value: {exec: "printf '%s\\n' none client server"}, description: "Only print the object that would be sent"}
+    args:
+      exec: printf '%s\n' deployment namespace secret configmap service serviceaccount job cronjob role rolebinding clusterrole clusterrolebinding ingress quota priorityclass poddisruptionbudget
+  edit:
+    description: Edit a resource on the server
+    flags:
+      -f: {value: file, description: "File identifying the resource to edit"}
+      --filename: {value: file, description: "File identifying the resource to edit"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  logs:
+    description: Print the logs for a container in a pod
+    flags:
+      -f: {description: "Stream the logs"}
+      --follow: {description: "Stream the logs"}
+      -c: {value: any, description: "Print the logs of this container"}
+      --container: {value: any, description: "Print the logs of this container"}
+      --all-containers: {description: "Get all containers' logs in the pod(s)"}
+      -p: {description: "Print the logs for the previous instance of the container"}
+      --previous: {description: "Print the logs for the previous instance of the container"}
+      --tail: {value: any, description: "Lines of recent log file to display"}
+      --since: {value: any, description: "Only return logs newer than a relative duration like 5s, 2m, or 3h"}
+      --timestamps: {description: "Include timestamps on each line"}
+      -l: {value: any, description: "Selector (label query) to filter on"}
+      --selector: {value: any, description: "Selector (label query) to filter on"}
+    args:
+      exec: kubectl get pods -o name | sed 's|^pod/||'
+  exec:
+    description: Execute a command in a container
+    flags:
+      -i: {description: "Pass stdin to the container"}
+      --stdin: {description: "Pass stdin to the container"}
+      -t: {description: "Stdin is a TTY"}
+      --tty: {description: "Stdin is a TTY"}
+      -c: {value: any, description: "Container name"}
+      --container: {value: any, description: "Container name"}
+    args:
+      exec: kubectl get pods -o name | sed 's|^pod/||'
+  port-forward:
+    description: Forward one or more local ports to a pod
+    flags:
+      --address: {value: any, description: "Addresses to listen on"}
+    args:
+      exec: kubectl get pods,services -o name
+  scale:
+    description: Set a new size for a deployment, replica set, or stateful set
+    flags:
+      --replicas: {value: any, description: "The new desired number of replicas"}
+    args:
+      exec: kubectl get deployments,statefulsets,replicasets -o name
+  rollout:
+    description: Manage the rollout of a resource
+    commands:
+      status: {description: "Show the status of the rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
+      restart: {description: "Restart a resource", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
+      undo: {description: "Undo a previous rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
+      history: {description: "View rollout history", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
+      pause: {description: "Mark the provided resource as paused", args: {exec: "kubectl get deployments -o name"}}
+      resume: {description: "Resume a paused resource", args: {exec: "kubectl get deployments -o name"}}
+  top:
+    description: Display resource (CPU/memory) usage
+    commands:
+      pod: {description: "Display resource usage of pods", args: {exec: "kubectl get pods -o name | sed 's|^pod/||'"}}
+      node: {description: "Display resource usage of nodes", args: {exec: "kubectl get nodes -o name | sed 's|^node/||'"}}
+  label:
+    description: Update the labels on a resource
+    flags:
+      --overwrite: {description: "Allow labels to be overwritten"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  annotate:
+    description: Update the annotations on a resource
+    flags:
+      --overwrite: {description: "Allow annotations to be overwritten"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  cp:
+    description: Copy files and directories to and from containers
+    flags:
+      -c: {value: any, description: "Container name"}
+      --container: {value: any, description: "Container name"}
+    args: file
+  run:
+    description: Run a particular image on the cluster
+    flags:
+      --image: {value: any, description: "The image for the container to run"}
+      --rm: {description: "Delete the pod after it exits"}
+      -i: {description: "Keep stdin open on the container"}
+      --stdin: {description: "Keep stdin open on the container"}
+      -t: {description: "Allocate a TTY"}
+      --tty: {description: "Allocate a TTY"}
+      --restart: {value: {exec: "printf '%s\\n' Always OnFailure Never"}, description: "The restart policy for this Pod"}
+      --env: {value: any, description: "Environment variables to set in the container"}
+      --port: {value: any, description: "The port that this container exposes"}
+  expose:
+    description: Take a replication controller, service, deployment or pod and expose it as a new service
+    flags:
+      --port: {value: any, description: "The port that the service should serve on"}
+      --target-port: {value: any, description: "Port on the container that the service should direct traffic to"}
+      --type: {value: {exec: "printf '%s\\n' ClusterIP NodePort LoadBalancer ExternalName"}, description: "Type for this service"}
+      --name: {value: any, description: "The name for the newly created object"}
+    args:
+      exec: kubectl get deployments,pods,services,replicasets -o name
+  cordon:
+    description: Mark node as unschedulable
+    args: {exec: "kubectl get nodes -o name | sed 's|^node/||'"}
+  uncordon:
+    description: Mark node as schedulable
+    args: {exec: "kubectl get nodes -o name | sed 's|^node/||'"}
+  drain:
+    description: Drain node in preparation for maintenance
+    flags:
+      --ignore-daemonsets: {description: "Ignore DaemonSet-managed pods"}
+      --delete-emptydir-data: {description: "Continue even if there are pods using emptyDir"}
+      --force: {description: "Continue even if there are pods not managed by a controller"}
+    args: {exec: "kubectl get nodes -o name | sed 's|^node/||'"}
+  config:
+    description: Modify kubeconfig files
+    commands:
+      current-context: {description: "Display the current-context"}
+      get-contexts: {description: "Describe one or many contexts"}
+      use-context: {description: "Set the current-context in a kubeconfig file", args: {exec: "kubectl config get-contexts -o name"}}
+      set-context: {description: "Set a context entry in kubeconfig", args: {exec: "kubectl config get-contexts -o name"}, flags: {--current: {description: "Modify the current context"}, --namespace: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace for the context"}}}
+      delete-context: {description: "Delete the specified context from the kubeconfig", args: {exec: "kubectl config get-contexts -o name"}}
+      rename-context: {description: "Rename a context from the kubeconfig file", args: {exec: "kubectl config get-contexts -o name"}}
+      get-clusters: {description: "Display clusters defined in the kubeconfig"}
+      get-users: {description: "Display users defined in the kubeconfig"}
+      view: {description: "Display merged kubeconfig settings", flags: {--minify: {description: "Remove all information not used by current-context"}, --raw: {description: "Display raw byte data and sensitive data"}}}
+  explain:
+    description: Get documentation for a resource
+    flags:
+      --recursive: {description: "Print the fields of fields"}
+    args:
+      exec: kubectl api-resources --cached -o name
+  api-resources:
+    description: Print the supported API resources on the server
+  api-versions:
+    description: Print the supported API versions on the server
+  cluster-info:
+    description: Display cluster information
+  version:
+    description: Print the client and server version information
+    flags:
+      --client: {description: "If true, shows client version only"}
+  help:
+    description: Help about any command
+    args: "@subcommands"

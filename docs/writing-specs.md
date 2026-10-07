@@ -127,4 +127,4 @@ The first match wins, so your own files override the bundled ones:
 
 Files must be named `<command>.yaml` or `<command>.yml`.
 
-The bundled [`specs/`](../specs) (docker, git, make) are good real-world examples.
+The bundled [`specs/`](../specs) (docker, git, kubectl, make) are good real-world examples.
