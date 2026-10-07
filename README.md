@@ -32,10 +32,10 @@ function, and nothing is loaded until you press TAB.
 ## Features
 
 - Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
-- Bundled completions for **docker**, **git**, **kubectl**, **make** and `autocomplete` itself.
+- Bundled completions for **docker**, **git**, **killall**, **kubectl**, **make** and `autocomplete` itself.
 - Live values: running containers, images, networks and volumes for docker; branches,
   tags, remotes, stashes and changed files for git; namespaces, contexts, pods, nodes and
-  resource types for kubectl; Makefile targets for make, with
+  resource types for kubectl; your running process names for killall; Makefile targets for make, with
   descriptions taken from `## text` or the comment above each target
   (honours `make -C dir` and `make -f file`).
 - Shows a short description next to each subcommand and flag when several match

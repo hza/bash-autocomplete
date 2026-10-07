@@ -1,0 +1,32 @@
+description: Kill processes by name
+flags:
+  -d: {description: "Show what would be done, send no signal"}
+  -e: {description: "Use effective UID for -u matching"}
+  -help: {description: "Show usage and exit"}
+  -I: {description: "Confirm before signalling each process"}
+  -l: {description: "List signal names and exit"}
+  -m: {description: "Match procname as a regular expression"}
+  -v: {description: "Be verbose"}
+  -s: {description: "Like -v, but send no signal"}
+  -q: {description: "Suppress error if no processes match"}
+  -z: {description: "Do not skip zombies"}
+  -u:
+    value: {exec: "dscl . -list /Users | grep -v '^_'"}
+    description: "Only processes of USER"
+  -t:
+    value: {exec: "cd /dev && ls -d tty?*"}
+    description: "Only processes on TTY"
+  -c:
+    value: {exec: "ps -co comm= -U \"$(id -u)\" | grep -v '^[-<]' | sort -u"}
+    description: "Only processes matching PROCNAME"
+  -HUP: {description: "Send SIGHUP"}
+  -INT: {description: "Send SIGINT"}
+  -QUIT: {description: "Send SIGQUIT"}
+  -KILL: {description: "Send SIGKILL"}
+  -TERM: {description: "Send SIGTERM (default)"}
+  -STOP: {description: "Send SIGSTOP"}
+  -CONT: {description: "Send SIGCONT"}
+  -USR1: {description: "Send SIGUSR1"}
+  -USR2: {description: "Send SIGUSR2"}
+  '-9': {description: "Send SIGKILL"}
+args: {exec: "ps -co comm= -U \"$(id -u)\" | grep -v '^[-<]' | sort -u"}
