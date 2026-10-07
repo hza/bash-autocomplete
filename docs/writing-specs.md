@@ -43,6 +43,7 @@ A spec has three optional keys, and `commands` nests the same structure for subc
 | `flags` | Map of flag name → what its value completes to |
 | `args` | What positional arguments complete to |
 | `commands` | Map of subcommand name → spec |
+| `description` | One-line summary shown next to this command when several commands match |
 
 A value can be:
 
@@ -65,6 +66,17 @@ Notes:
   subcommands (`commands: {pods: {}, deployments: {}}`) or use `exec: printf '%s\n' pods deployments`.
 - Run `autocomplete check <file>` to validate a spec; errors include line numbers.
 - Flags defined at the top level are recognised after any subcommand.
+- Descriptions appear when more than one command matches:
+  ```
+  $ git stash <TAB>
+  apply   -- Apply a stash, keeping it
+  drop    -- Remove a stash
+  pop     -- Apply a stash and remove it
+  ...
+  ```
+  They are plain text: bash 3.2 can't display colors in the completion list. Long
+  descriptions are cut to fit the terminal width. Only commands can have descriptions,
+  not flags.
 - `exec` commands run in the current directory, and their errors are discarded.
 - Values starting with `@` must be quoted.
 

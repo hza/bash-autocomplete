@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #ifdef __APPLE__
@@ -146,19 +148,20 @@ static const char *seen(const char *a, const char *b, const char *c) {
     return NULL;
 }
 
-/* True if cand was already printed (union values can overlap). */
-static int seen_before(const char *cand) {
-    static char *printed[4096];
-    static int np;
-    int i;
-    for (i = 0; i < np; i++)
-        if (!strcmp(printed[i], cand)) return 1;
-    if (np < 4096) printed[np++] = strdup(cand);
-    return 0;
-}
+/* Candidates are collected and printed by flush() once completion is done,
+ * so the output can depend on how many matched. */
+#define MAXCANDS 4096
+typedef struct {
+    char *text;       /* escaped, trimmed to bash's current word */
+    int space;        /* finished word: append a space */
+    const char *desc; /* optional description (spec "description") */
+} cand;
+static cand g_cands[MAXCANDS];
+static int g_ncands;
 
-/* Escape for bash and print, trimmed to bash's current word. */
-static void emit(const char *cand, int space) {
+/* Escape for bash and queue, trimmed to bash's current word. Duplicates
+ * (union values can overlap) are dropped, keeping the first description. */
+static void emit_desc(const char *cand, int space, const char *desc) {
     char esc[4096];
     size_t n = 0;
     const char *p;
@@ -181,8 +184,68 @@ static void emit(const char *cand, int space) {
             if (strncmp(esc, g_raw, k) == 0) p = esc + k;
         }
     }
-    if (seen_before(p)) return;
-    printf("%s%s\n", p, space ? " " : "");
+    {
+        int i;
+        for (i = 0; i < g_ncands; i++)
+            if (!strcmp(g_cands[i].text, p)) {
+                if (!g_cands[i].desc) g_cands[i].desc = desc;
+                return;
+            }
+    }
+    if (g_ncands < MAXCANDS) {
+        g_cands[g_ncands].text = strdup(p);
+        g_cands[g_ncands].space = space;
+        g_cands[g_ncands++].desc = desc;
+    }
+}
+
+static void emit(const char *cand, int space) { emit_desc(cand, space, NULL); }
+
+static int term_width(void) {
+    struct winsize ws;
+    int fd = open("/dev/tty", O_RDONLY), w = 0;
+    if (fd >= 0) {
+        if (ioctl(fd, TIOCGWINSZ, &ws) == 0) w = ws.ws_col;
+        close(fd);
+    }
+    if (w <= 0 && getenv("COLUMNS")) w = atoi(getenv("COLUMNS"));
+    return w > 20 ? w : 80;
+}
+
+/* Print queued candidates. With several matches and any description, each
+ * candidate becomes "name  -- description", padded so bash lists one per
+ * line. bash only inserts the common prefix of ambiguous matches, and names
+ * differ before the padding starts, so descriptions never reach the command
+ * line. A single match is always printed bare so it can be inserted. */
+static void flush(void) {
+    int i, any = 0, width = 0, cols, line;
+    for (i = 0; i < g_ncands; i++) {
+        int len = (int)strlen(g_cands[i].text);
+        if (g_cands[i].desc) any = 1;
+        if (len > width) width = len;
+    }
+    if (g_ncands < 2 || !any) {
+        for (i = 0; i < g_ncands; i++)
+            printf("%s%s\n", g_cands[i].text, g_cands[i].space ? " " : "");
+        return;
+    }
+    cols = term_width();
+    line = cols / 2 + 1; /* wider than half the screen: one per line */
+    for (i = 0; i < g_ncands; i++) {
+        char buf[4096];
+        int n;
+        if (g_cands[i].desc)
+            n = snprintf(buf, sizeof buf, "%-*s  -- %s", width, g_cands[i].text, g_cands[i].desc);
+        else
+            n = snprintf(buf, sizeof buf, "%s", g_cands[i].text);
+        if (n >= (int)sizeof buf) n = (int)sizeof buf - 1;
+        if (n > cols - 2) { /* avoid wrapping; don't split a UTF-8 sequence */
+            n = cols - 2;
+            while (n > 0 && (buf[n] & 0xC0) == 0x80) n--;
+            buf[n] = 0;
+        }
+        printf("%-*s\n", line, buf);
+    }
 }
 
 static void emit_cmd_output(const char *shell, const char *suffix, int space) {
@@ -268,6 +331,12 @@ static void complete_make_targets(void) {
     fclose(f);
 }
 
+/* "description" of a command spec, if any. */
+static const char *spec_desc(const ynode *spec) {
+    const ynode *d = yaml_get(spec, "description");
+    return d && d->type == Y_STR ? d->str : NULL;
+}
+
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
@@ -285,7 +354,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         else if (!strcmp(v->str, "@subcommands")) {
             const ynode *c;
             for (c = yaml_get(parent, "commands") ? yaml_get(parent, "commands")->child : NULL; c; c = c->next)
-                emit(c->key, 1);
+                emit_desc(c->key, 1, spec_desc(c));
         }
         break;
     case Y_OBJ: {
@@ -407,7 +476,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     subs = yaml_get(c, "commands");
-    for (v = subs ? subs->child : NULL; v; v = v->next) emit(v->key, 1);
+    for (v = subs ? subs->child : NULL; v; v = v->next) emit_desc(v->key, 1, spec_desc(v));
     v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, v && v->type == Y_STR && !strcmp(v->str, "@subcommands") && parent ? parent : c);
@@ -529,8 +598,11 @@ int main(int argc, char **argv) {
         print_bash(strchr(argv[0], '/') && realpath(argv[0], abs) ? abs : argv[0]);
         return 0;
     }
-    if (argc >= 3 && !strcmp(argv[1], "_complete"))
-        return do_complete(argv[2], argc >= 4 ? argv[3] : "\"'@><=;|&(:");
+    if (argc >= 3 && !strcmp(argv[1], "_complete")) {
+        int rc = do_complete(argv[2], argc >= 4 ? argv[3] : "\"'@><=;|&(:");
+        flush();
+        return rc;
+    }
     if (argc >= 3 && !strcmp(argv[1], "check")) {
         char err[256];
         ynode *n = yaml_load(argv[2], err, sizeof err);

@@ -17,7 +17,9 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 ## Hard constraints
 - bash 3.2: no `compopt`, `mapfile`, `${arr[-1]}`, assoc arrays; `source <(...)` silently does nothing (use `eval "$(...)"`). Init script must stay 3.2-compatible.
 - Function registered with `complete -o nospace`; the engine appends a trailing space to "finished" candidates. Dirs and `nospace: true` exec values get no space. Keep this convention in any new completer (`emit(cand, space)`).
-- `emit` shell-escapes, filters by prefix of `g_cur`, de-duplicates, and trims to bash's current word using `COMP_WORDBREAKS` (needed for `image:tag`, `--flag=value`). Always output via `emit`, never `printf` directly.
+- `emit`/`emit_desc` shell-escape, filter by prefix of `g_cur`, de-duplicate, trim to bash's current word using `COMP_WORDBREAKS` (needed for `image:tag`, `--flag=value`), and queue into `g_cands`; `flush()` (called once in `main` after `do_complete`) prints. Never `printf` candidates directly.
+- Descriptions (`description:` on a command spec): `flush` prints `name  -- desc` lines padded to > half terminal width (one per line) only when ≥2 candidates and any has a desc; a single candidate is always bare. Correctness relies on bash inserting only the common prefix of ambiguous matches; never let two candidates share text past the name.
+- No colors: bash 3.2 readline prints ESC as literal `^[` in the match list (verified).
 - C only, no external deps, `-Wall -Wextra` must stay warning-free.
 - Spec format is YAML only (JSON support was removed deliberately; don't re-add).
 
@@ -32,6 +34,8 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 - Before refactors, snapshot `_complete` outputs for a case list and diff after. git cases need a throwaway repo (put it in the scratchpad).
 - Test install/uninstall only with `PREFIX=<scratch> PROFILE=<scratch file>`; never touch the real `~/.bash_profile` or `/usr/local`.
 - Docker values need a running daemon; empty output without one is expected, not a bug.
+
+- Interactive display (what the user actually sees on TAB/listing) can only be checked in a pty: fork `/bin/bash --rcfile <rc> -i` via Python `pty`, set a window size with `TIOCSWINSZ` (size 0x0 suppresses listings), send text + `\t`, then `\x1b?` (possible-completions) to get the list. A second `\t` in the harness didn't trigger the list.
 
 ## Gotchas
 - The harness safety check rejects `bash -c '...'` scripts containing ` rm` (e.g. a test line `git remote rm`); run such cases outside `bash -c`.

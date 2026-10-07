@@ -13,6 +13,7 @@ flags:
   --version:
 commands:
   run:
+    description: Create and run a new container from an image
     flags:
       -d:
       --detach:
@@ -54,6 +55,7 @@ commands:
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   exec:
+    description: Execute a command in a running container
     flags:
       -d:
       --detach:
@@ -71,6 +73,7 @@ commands:
     args:
       exec: docker ps --format '{{.Names}}'
   ps:
+    description: List containers
     flags:
       -a:
       --all:
@@ -87,6 +90,7 @@ commands:
       --size:
       --no-trunc:
   images:
+    description: List images
     flags:
       -a:
       --all:
@@ -98,6 +102,7 @@ commands:
       --digests:
       --no-trunc:
   pull:
+    description: Download an image from a registry
     flags:
       -a:
       --all-tags:
@@ -107,9 +112,11 @@ commands:
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   push:
+    description: Upload an image to a registry
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   build:
+    description: Build an image from a Dockerfile
     flags:
       -t: any
       --tag: any
@@ -128,6 +135,7 @@ commands:
       --secret: any
     args: dir
   start:
+    description: Start one or more stopped containers
     flags:
       -a:
       --attach:
@@ -136,6 +144,7 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   stop:
+    description: Stop one or more running containers
     flags:
       -t: any
       --time: any
@@ -144,6 +153,7 @@ commands:
     args:
       exec: docker ps --format '{{.Names}}'
   restart:
+    description: Restart one or more containers
     flags:
       -t: any
       --time: any
@@ -152,6 +162,7 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   rm:
+    description: Remove one or more containers
     flags:
       -f:
       --force:
@@ -162,6 +173,7 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   rmi:
+    description: Remove one or more images
     flags:
       -f:
       --force:
@@ -169,6 +181,7 @@ commands:
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   logs:
+    description: Fetch the logs of a container
     flags:
       -f:
       --follow:
@@ -182,6 +195,7 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   inspect:
+    description: Return low-level information on Docker objects
     flags:
       -f: any
       --format: any
@@ -191,12 +205,14 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   kill:
+    description: Kill one or more running containers
     flags:
       -s: any
       --signal: any
     args:
       exec: docker ps --format '{{.Names}}'
   cp:
+    description: Copy files/folders between a container and the local filesystem
     flags:
       -a:
       --archive:
@@ -210,12 +226,15 @@ commands:
         nospace: true
       - file
   tag:
+    description: Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   top:
+    description: Display the running processes of a container
     args:
       exec: docker ps --format '{{.Names}}'
   stats:
+    description: Display a live stream of container(s) resource usage statistics
     flags:
       -a:
       --all:
@@ -225,21 +244,27 @@ commands:
     args:
       exec: docker ps --format '{{.Names}}'
   attach:
+    description: Attach local standard input, output, and error streams to a running container
     args:
       exec: docker ps --format '{{.Names}}'
   port:
+    description: List port mappings or a specific mapping for the container
     args:
       exec: docker ps --format '{{.Names}}'
   rename:
+    description: Rename a container
     args:
       exec: docker ps -a --format '{{.Names}}'
   pause:
+    description: Pause all processes within one or more containers
     args:
       exec: docker ps --format '{{.Names}}'
   unpause:
+    description: Unpause all processes within one or more containers
     args:
       exec: docker ps -a --format '{{.Names}}'
   commit:
+    description: Create a new image from a container's changes
     flags:
       -a: any
       --author: any
@@ -252,18 +277,21 @@ commands:
     args:
       exec: docker ps -a --format '{{.Names}}'
   save:
+    description: Save one or more images to a tar archive (streamed to STDOUT by default)
     flags:
       -o: file
       --output: file
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
   load:
+    description: Load an image from a tar archive or STDIN
     flags:
       -i: file
       --input: file
       -q:
       --quiet:
   login:
+    description: Authenticate to a registry
     flags:
       -u: any
       --username: any
@@ -272,14 +300,20 @@ commands:
       --password-stdin:
     args: any
   logout:
+    description: Log out from a registry
     args: any
-  version: {}
-  info: {}
+  version:
+    description: Show the Docker version information
+  info:
+    description: Display system-wide information
   help:
+    description: Help about any command
     args: "@subcommands"
   network:
+    description: Manage networks
     commands:
       ls:
+        description: List networks
         flags:
           -q:
           --quiet:
@@ -287,6 +321,7 @@ commands:
           --filter: any
           --format: any
       create:
+        description: Create a network
         flags:
           -d: any
           --driver: any
@@ -296,9 +331,11 @@ commands:
           --attachable:
         args: any
       rm:
+        description: Remove one or more networks
         args:
           exec: docker network ls --format '{{.Name}}'
       inspect:
+        description: Display detailed information on one or more networks
         flags:
           -f: any
           --format: any
@@ -308,19 +345,24 @@ commands:
         args:
           exec: docker network ls --format '{{.Name}}'
       connect:
+        description: Connect a container to a network
         args:
           exec: docker network ls --format '{{.Name}}'
       disconnect:
+        description: Disconnect a container from a network
         args:
           exec: docker network ls --format '{{.Name}}'
       prune:
+        description: Remove all unused networks
         flags:
           -f:
           --force:
           --filter: any
   volume:
+    description: Manage volumes
     commands:
       ls:
+        description: List volumes
         flags:
           -q:
           --quiet:
@@ -328,6 +370,7 @@ commands:
           --filter: any
           --format: any
       create:
+        description: Create a volume
         flags:
           -d: any
           --driver: any
@@ -336,6 +379,7 @@ commands:
           --opt: any
         args: any
       rm:
+        description: Remove one or more volumes
         flags:
           -f:
           --force:
@@ -343,6 +387,7 @@ commands:
         args:
           exec: docker volume ls --format '{{.Name}}'
       inspect:
+        description: Display detailed information on one or more volumes
         flags:
           -f: any
           --format: any
@@ -352,15 +397,20 @@ commands:
         args:
           exec: docker volume ls --format '{{.Name}}'
       prune:
+        description: Remove unused local volumes
         flags:
           -f:
           --force:
           --filter: any
   system:
+    description: Manage Docker
     commands:
-      df: {}
-      info: {}
+      df:
+        description: Show docker disk usage
+      info:
+        description: Display system-wide information
       prune:
+        description: Remove unused data
         flags:
           -a:
           --all:
@@ -368,8 +418,10 @@ commands:
           --force:
           --volumes:
           --filter: any
-      events: {}
+      events:
+        description: Get real time events from the server
   compose:
+    description: Define and run multi-container applications
     flags:
       -f: file
       --file: file
@@ -379,6 +431,7 @@ commands:
       --env-file: file
     commands:
       up:
+        description: Create and start containers
         flags:
           -d:
           --detach:
@@ -389,12 +442,14 @@ commands:
           --wait:
         args: any
       down:
+        description: Stop and remove containers, networks
         flags:
           -v:
           --volumes:
           --remove-orphans:
           --rmi: any
       ps:
+        description: List containers
         flags:
           -a:
           --all:
@@ -412,6 +467,7 @@ commands:
           --no-trunc:
         args: any
       logs:
+        description: View output from containers
         flags:
           -f:
           --follow:
@@ -424,6 +480,7 @@ commands:
           --details:
         args: any
       build:
+        description: Build or rebuild services
         flags:
           -t: any
           --tag: any
@@ -442,10 +499,13 @@ commands:
           --secret: any
         args: any
       pull:
+        description: Pull service images
         args: any
       restart:
+        description: Restart service containers
         args: any
       exec:
+        description: Execute a command in a running container
         flags:
           -d:
           --detach:
@@ -462,7 +522,10 @@ commands:
           --privileged:
         args: any
       stop:
+        description: Stop services
         args: any
       start:
+        description: Start services
         args: any
-      config: {}
+      config:
+        description: Parse, resolve and render compose file

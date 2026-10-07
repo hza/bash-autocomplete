@@ -11,6 +11,7 @@ flags:
   --version:
 commands:
   add:
+    description: Add file contents to the index
     flags:
       -A:
       --all:
@@ -30,6 +31,7 @@ commands:
       - exec: git ls-files -m -o --exclude-standard
       - file
   restore:
+    description: Restore working tree files
     flags:
       -S:
       --staged:
@@ -45,6 +47,7 @@ commands:
       - exec: git diff --name-only --relative
       - exec: git diff --cached --name-only --relative
   rm:
+    description: Remove files from the working tree and from the index
     flags:
       -f:
       --force:
@@ -55,6 +58,7 @@ commands:
     args:
       exec: git ls-files
   mv:
+    description: Move or rename a file, a directory, or a symlink
     flags:
       -f:
       --force:
@@ -62,6 +66,7 @@ commands:
       --dry-run:
     args: file
   status:
+    description: Show the working tree status
     flags:
       -s:
       --short:
@@ -73,6 +78,7 @@ commands:
       --ignored:
     args: file
   diff:
+    description: Show changes between commits, commit and working tree, etc
     flags:
       --cached:
       --staged:
@@ -89,6 +95,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --name-only --relative
   commit:
+    description: Record changes to the repository
     flags:
       -m: any
       --message: any
@@ -111,6 +118,7 @@ commands:
     args:
       exec: git ls-files -m
   log:
+    description: Show commit logs
     flags:
       --oneline:
       --graph:
@@ -133,6 +141,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - file
   show:
+    description: Show various types of objects
     flags:
       --stat:
       --name-only:
@@ -142,6 +151,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   branch:
+    description: List, create, or delete branches
     flags:
       -a:
       --all:
@@ -168,6 +178,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads
   checkout:
+    description: Switch branches or restore working tree files
     flags:
       -b: any
       -B: any
@@ -183,6 +194,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --name-only --relative
   switch:
+    description: Switch branches
     flags:
       -c: any
       --create: any
@@ -199,6 +211,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes
   merge:
+    description: Join two or more development histories together
     flags:
       --no-ff:
       --ff-only:
@@ -212,6 +225,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   rebase:
+    description: Reapply commits on top of another base tip
     flags:
       -i:
       --interactive:
@@ -225,6 +239,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   cherry-pick:
+    description: Apply the changes introduced by some existing commits
     flags:
       --continue:
       --abort:
@@ -235,6 +250,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   reset:
+    description: Reset current HEAD to the specified state
     flags:
       --soft:
       --mixed:
@@ -246,6 +262,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --cached --name-only --relative
   revert:
+    description: Revert some existing commits
     flags:
       --continue:
       --abort:
@@ -255,6 +272,7 @@ commands:
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
   tag:
+    description: Create, list, delete or verify a tag object signed with GPG
     flags:
       -a:
       --annotate:
@@ -271,6 +289,7 @@ commands:
     args:
       exec: git tag
   fetch:
+    description: Download objects and refs from another repository
     flags:
       --all:
       -p:
@@ -281,6 +300,7 @@ commands:
     args:
       exec: git remote
   pull:
+    description: Fetch from and integrate with another repository or a local branch
     flags:
       --rebase:
       --no-rebase:
@@ -292,6 +312,7 @@ commands:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads
   push:
+    description: Update remote refs along with associated objects
     flags:
       -u:
       --set-upstream:
@@ -308,25 +329,31 @@ commands:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
   remote:
+    description: Manage set of tracked repositories
     flags:
       -v:
       --verbose:
     commands:
       add:
+        description: Add a remote
         flags:
           -f:
           -t: any
         args: any
       remove:
+        description: Remove a remote
         args:
           exec: git remote
       rm:
+        description: Remove a remote
         args:
           exec: git remote
       rename:
+        description: Rename a remote
         args:
           exec: git remote
       set-url:
+        description: Change the URL of a remote
         flags:
           --add:
           --delete:
@@ -334,17 +361,22 @@ commands:
         args:
           exec: git remote
       get-url:
+        description: Show the URL of a remote
         args:
           exec: git remote
       show:
+        description: Show information about a remote
         args:
           exec: git remote
       prune:
+        description: Delete stale remote-tracking branches
         args:
           exec: git remote
   stash:
+    description: Stash the changes in a dirty working directory away
     commands:
       push:
+        description: Save local changes to a new stash
         flags:
           -m: any
           --message: any
@@ -356,29 +388,37 @@ commands:
           --keep-index:
         args: file
       pop:
+        description: Apply a stash and remove it
         flags:
           --index:
         args:
           exec: git stash list --format='%gd'
       apply:
+        description: Apply a stash, keeping it
         flags:
           --index:
         args:
           exec: git stash list --format='%gd'
       drop:
+        description: Remove a stash
         args:
           exec: git stash list --format='%gd'
       show:
+        description: Show the changes in a stash
         flags:
           -p:
           --patch:
         args:
           exec: git stash list --format='%gd'
-      list: {}
-      clear: {}
+      list:
+        description: List stashes
+      clear:
+        description: Remove all stashes
       branch:
+        description: Create a branch from a stash
         args: any
   clone:
+    description: Clone a repository into a new directory
     flags:
       --depth: any
       -b: any
@@ -392,6 +432,7 @@ commands:
       --origin: any
     args: dir
   init:
+    description: Create an empty Git repository or reinitialize an existing one
     flags:
       --bare:
       -b: any
@@ -400,6 +441,7 @@ commands:
       --quiet:
     args: dir
   blame:
+    description: Show what revision and author last modified each line of a file
     flags:
       -L: any
       -w:
@@ -409,6 +451,7 @@ commands:
     args:
       exec: git ls-files
   clean:
+    description: Remove untracked files from the working tree
     flags:
       -n:
       --dry-run:
@@ -420,6 +463,7 @@ commands:
       -i:
     args: file
   grep:
+    description: Print lines matching a pattern
     flags:
       -i:
       --ignore-case:
@@ -431,46 +475,67 @@ commands:
       -E:
     args: any
   bisect:
+    description: Use binary search to find the commit that introduced a bug
     commands:
-      start: {}
-      good: {}
-      bad: {}
-      skip: {}
-      reset: {}
-      log: {}
+      start:
+        description: Start a bisect session
+      good:
+        description: Mark a commit as good
+      bad:
+        description: Mark a commit as bad
+      skip:
+        description: Skip a commit
+      reset:
+        description: End the bisect session
+      log:
+        description: Show the bisect log
       run:
+        description: Bisect automatically with a script
         args: file
   worktree:
+    description: Manage multiple working trees
     commands:
       add:
+        description: Create a new worktree
         flags:
           -b: any
           -f:
           --detach:
         args: dir
-      list: {}
+      list:
+        description: List worktrees
       remove:
+        description: Remove a worktree
         flags:
           -f:
           --force:
         args:
           exec: git worktree list --porcelain | sed -n 's/^worktree //p'
-      prune: {}
+      prune:
+        description: Prune stale worktree information
   submodule:
+    description: Initialize, update or inspect submodules
     commands:
       add:
+        description: Add a submodule
         args: any
       update:
+        description: Update submodules to the recorded commit
         flags:
           --init:
           --recursive:
           --remote:
-      status: {}
-      init: {}
-      sync: {}
+      status:
+        description: Show submodule status
+      init:
+        description: Initialize submodules
+      sync:
+        description: Sync submodule URLs
       foreach:
+        description: Run a command in each submodule
         args: any
   config:
+    description: Get and set repository or global options
     flags:
       --global:
       --local:
@@ -483,11 +548,14 @@ commands:
       --edit:
     args:
       exec: git config --list --name-only | sort -u
-  reflog: {}
+  reflog:
+    description: Manage reflog information
   describe:
+    description: Give an object a human readable name based on an available ref
     flags:
       --tags:
       --always:
       --abbrev: any
   help:
+    description: Display help information about Git
     args: "@subcommands"

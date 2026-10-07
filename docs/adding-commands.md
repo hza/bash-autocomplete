@@ -8,6 +8,7 @@ flags:
   --context: any
 commands:
   logs:
+    description: Print the logs of a pod    # shown when several commands match
     flags:
       -f:                 # flag without a value
     args:

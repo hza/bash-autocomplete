@@ -36,6 +36,8 @@ function, and nothing is loaded until you press TAB.
 - Live values: running containers, images, networks and volumes for docker; branches,
   tags, remotes, stashes and changed files for git; Makefile targets for make
   (honours `make -C dir` and `make -f file`).
+- Shows a short description next to each subcommand when several match
+  (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - New commands are plain YAML files, so there's nothing to compile
   ([how to add one](docs/adding-commands.md)).
