@@ -37,74 +37,7 @@ flags:
 commands:
   install:
     description: Install a package
-    flags:
-      --save-dev:
-        description: Save to devDependencies
-      -D:
-        description: Save to devDependencies
-      --save-optional:
-        description: Save to optionalDependencies
-      -O:
-        description: Save to optionalDependencies
-      --save-exact:
-        description: Pin exact version
-      -E:
-        description: Pin exact version
-      --no-save:
-        description: Do not update package.json
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --omit:
-        value:
-          exec: printf 'dev\noptional\npeer\n'
-        description: Dependency type to skip
-      --legacy-peer-deps:
-        description: Ignore peer dependency conflicts
-      --force:
-        description: Force fetches and overrides
-      --dry-run:
-        description: Show what would happen, change nothing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-    args: any
-  i:
-    description: Install a package (alias)
-    flags:
-      --save-dev:
-        description: Save to devDependencies
-      -D:
-        description: Save to devDependencies
-      --save-optional:
-        description: Save to optionalDependencies
-      -O:
-        description: Save to optionalDependencies
-      --save-exact:
-        description: Pin exact version
-      -E:
-        description: Pin exact version
-      --no-save:
-        description: Do not update package.json
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --omit:
-        value:
-          exec: printf 'dev\noptional\npeer\n'
-        description: Dependency type to skip
-      --legacy-peer-deps:
-        description: Ignore peer dependency conflicts
-      --force:
-        description: Force fetches and overrides
-      --dry-run:
-        description: Show what would happen, change nothing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-    args: any
-  add:
-    description: Install a package (alias)
+    aliases: [i, add]
     flags:
       --save-dev:
         description: Save to devDependencies
@@ -150,6 +83,7 @@ commands:
         description: Ignore peer dependency conflicts
   uninstall:
     description: Remove a package
+    aliases: [rm]
     flags:
       --global:
         description: Operate on global packages
@@ -161,12 +95,9 @@ commands:
         description: Show what would happen, change nothing
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  rm:
-    description: Remove a package (alias)
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   update:
     description: Update packages
+    aliases: [up]
     flags:
       --global:
         description: Operate on global packages
@@ -180,10 +111,6 @@ commands:
         description: Do not update package.json
       --dry-run:
         description: Show what would happen, change nothing
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  up:
-    description: Update packages (alias)
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   outdated:
@@ -221,68 +148,12 @@ commands:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   explain:
     description: Explain why a package is installed
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  why:
-    description: Explain why a package is installed (alias)
+    aliases: [why]
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   run:
     description: Run a package.json script
-    flags:
-      --if-present:
-        description: Don't fail if script is missing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-      --foreground-scripts:
-        description: Run scripts in the foreground, showing output
-      --include-workspace-root:
-        description: Also run in the root project with --workspaces
-      --script-shell:
-        value: file
-        description: Shell to run scripts with
-      --silent:
-        description: Suppress npm's own output
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  run-script:
-    description: Run a package.json script (alias)
-    flags:
-      --if-present:
-        description: Don't fail if script is missing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-      --foreground-scripts:
-        description: Run scripts in the foreground, showing output
-      --include-workspace-root:
-        description: Also run in the root project with --workspaces
-      --script-shell:
-        value: file
-        description: Shell to run scripts with
-      --silent:
-        description: Suppress npm's own output
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  rum:
-    description: Run a package.json script (alias)
-    flags:
-      --if-present:
-        description: Don't fail if script is missing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-      --foreground-scripts:
-        description: Run scripts in the foreground, showing output
-      --include-workspace-root:
-        description: Also run in the root project with --workspaces
-      --script-shell:
-        value: file
-        description: Shell to run scripts with
-      --silent:
-        description: Suppress npm's own output
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  urn:
-    description: Run a package.json script (alias)
+    aliases: [run-script, rum, urn]
     flags:
       --if-present:
         description: Don't fail if script is missing
@@ -301,8 +172,7 @@ commands:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   test:
     description: Run the test script
-  t:
-    description: Run the test script (alias)
+    aliases: [t]
   start:
     description: Run the start script
   stop:
@@ -411,9 +281,7 @@ commands:
       exec: printf 'major\nminor\npatch\npremajor\npreminor\nprepatch\nprerelease\n'
   view:
     description: Show registry info for a package
-    args: any
-  info:
-    description: Show registry info (alias)
+    aliases: [info]
     args: any
   search:
     description: Search the registry

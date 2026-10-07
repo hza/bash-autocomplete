@@ -372,6 +372,29 @@ static const char *spec_desc(const ynode *spec) {
     return d && d->type == Y_STR ? d->str : NULL;
 }
 
+/* Emit every subcommand of `cmds`, plus each of its "aliases". */
+static void emit_commands(const ynode *cmds) {
+    const ynode *c, *a;
+    for (c = cmds ? cmds->child : NULL; c; c = c->next) {
+        emit_desc(c->key, 1, spec_desc(c));
+        a = yaml_get(c, "aliases");
+        for (a = a && a->type == Y_ARR ? a->child : NULL; a; a = a->next)
+            if (a->type == Y_STR) emit_desc(a->str, 1, spec_desc(c));
+    }
+}
+
+/* Subcommand `name` of `cmds`, matched by key or by one of its "aliases". */
+static const ynode *find_command(const ynode *cmds, const char *name) {
+    const ynode *c, *a;
+    for (c = cmds ? cmds->child : NULL; c; c = c->next) {
+        if (!strcmp(c->key, name)) return c;
+        a = yaml_get(c, "aliases");
+        for (a = a && a->type == Y_ARR ? a->child : NULL; a; a = a->next)
+            if (a->type == Y_STR && !strcmp(a->str, name)) return c;
+    }
+    return NULL;
+}
+
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
@@ -386,11 +409,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         if (!strcmp(v->str, "file")) complete_files(0);
         else if (!strcmp(v->str, "dir")) complete_files(1);
         else if (!strcmp(v->str, "@make-targets")) complete_make_targets();
-        else if (!strcmp(v->str, "@subcommands")) {
-            const ynode *c;
-            for (c = yaml_get(parent, "commands") ? yaml_get(parent, "commands")->child : NULL; c; c = c->next)
-                emit_desc(c->key, 1, spec_desc(c));
-        }
+        else if (!strcmp(v->str, "@subcommands")) emit_commands(yaml_get(parent, "commands"));
         break;
     case Y_OBJ: {
         const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace");
@@ -455,7 +474,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
     size_t raw;
     int n = split(line, w, &raw), i;
-    const ynode *root, *c, *parent = NULL, *v = NULL, *subs;
+    const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash;
 
     g_wbreaks = wbreaks;
@@ -480,7 +499,7 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = yaml_get(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; }
     }
 
     /* value for previous flag? */
@@ -511,8 +530,7 @@ static int do_complete(const char *line, const char *wbreaks) {
         return 0;
     }
 
-    subs = yaml_get(c, "commands");
-    for (v = subs ? subs->child : NULL; v; v = v->next) emit_desc(v->key, 1, spec_desc(v));
+    emit_commands(yaml_get(c, "commands"));
     v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, v && v->type == Y_STR && !strcmp(v->str, "@subcommands") && parent ? parent : c);
