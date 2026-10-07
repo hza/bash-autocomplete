@@ -21,12 +21,18 @@ install: autocomplete
 	fi
 	@bin=autocomplete; \
 	[ "$$(command -v autocomplete)" = "$(PREFIX)/bin/autocomplete" ] || bin=$(PREFIX)/bin/autocomplete; \
+	cmd="eval \"\$$($$bin bash)\""; \
 	echo; \
 	echo "autocomplete is installed. New terminals will load it automatically."; \
+	note=; \
+	if command -v pbcopy >/dev/null 2>&1 && printf '%s' "$$cmd" | pbcopy 2>/dev/null; then \
+		note="This command is already in your clipboard, so just paste it and press Enter."; \
+	fi; \
 	echo "To enable it in this terminal right away, run:"; \
 	echo; \
-	echo "    eval \"\$$($$bin bash)\""; \
-	echo
+	echo "    $$cmd"; \
+	echo; \
+	[ -z "$$note" ] || { echo "$$note"; echo; }
 
 # Removes only what install added: the binary, our bundled specs, and the
 # exact init line (~/.config/autocomplete is left alone).
