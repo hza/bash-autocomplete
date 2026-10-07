@@ -1,0 +1,514 @@
+description: Node.js package manager
+flags:
+  -w:
+    value:
+      exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
+    description: Run in workspace
+  --workspace:
+    value:
+      exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
+    description: Run in workspace
+  --workspaces:
+    description: Run in all workspaces
+  --prefix:
+    value: dir
+    description: Directory to operate in
+  --registry:
+    value: any
+    description: Registry URL
+  --loglevel:
+    value:
+      exec: printf 'silent\nerror\nwarn\nnotice\nhttp\ninfo\nverbose\nsilly\n'
+    description: Log level
+  --silent:
+    description: No output
+  --verbose:
+    description: Verbose output
+  --json:
+    description: Output JSON
+  -h:
+    description: Show help
+  --help:
+    description: Show help
+  -v:
+    description: Show npm version
+  --version:
+    description: Show npm version
+commands:
+  install:
+    description: Install a package
+    flags:
+      --save-dev:
+        description: Save to devDependencies
+      -D:
+        description: Save to devDependencies
+      --save-optional:
+        description: Save to optionalDependencies
+      -O:
+        description: Save to optionalDependencies
+      --save-exact:
+        description: Pin exact version
+      -E:
+        description: Pin exact version
+      --no-save:
+        description: Do not update package.json
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+      --force:
+        description: Force fetches and overrides
+      --dry-run:
+        description: Show what would happen, change nothing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+    args: any
+  i:
+    description: Install a package (alias)
+    flags:
+      --save-dev:
+        description: Save to devDependencies
+      -D:
+        description: Save to devDependencies
+      --save-optional:
+        description: Save to optionalDependencies
+      -O:
+        description: Save to optionalDependencies
+      --save-exact:
+        description: Pin exact version
+      -E:
+        description: Pin exact version
+      --no-save:
+        description: Do not update package.json
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+      --force:
+        description: Force fetches and overrides
+      --dry-run:
+        description: Show what would happen, change nothing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+    args: any
+  add:
+    description: Install a package (alias)
+    flags:
+      --save-dev:
+        description: Save to devDependencies
+      -D:
+        description: Save to devDependencies
+      --save-optional:
+        description: Save to optionalDependencies
+      -O:
+        description: Save to optionalDependencies
+      --save-exact:
+        description: Pin exact version
+      -E:
+        description: Pin exact version
+      --no-save:
+        description: Do not update package.json
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+      --force:
+        description: Force fetches and overrides
+      --dry-run:
+        description: Show what would happen, change nothing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+    args: any
+  ci:
+    description: Clean install from lockfile
+    flags:
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+  uninstall:
+    description: Remove a package
+    flags:
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --no-save:
+        description: Do not update package.json
+      --dry-run:
+        description: Show what would happen, change nothing
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  rm:
+    description: Remove a package (alias)
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  update:
+    description: Update packages
+    flags:
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --save-dev:
+        description: Save to devDependencies
+      -D:
+        description: Save to devDependencies
+      --no-save:
+        description: Do not update package.json
+      --dry-run:
+        description: Show what would happen, change nothing
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  up:
+    description: Update packages (alias)
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  outdated:
+    description: Check for outdated packages
+    flags:
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --all:
+        description: Show all, not just direct deps
+      --long:
+        description: Show extended info
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  ls:
+    description: List installed packages
+    flags:
+      --all:
+        description: Show all dependencies
+      -a:
+        description: Show all dependencies
+      --depth:
+        value: any
+        description: Tree depth
+      --global:
+        description: Operate on global packages
+      -g:
+        description: Operate on global packages
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  explain:
+    description: Explain why a package is installed
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  why:
+    description: Explain why a package is installed (alias)
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  run:
+    description: Run a package.json script
+    flags:
+      --if-present:
+        description: Don't fail if script is missing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --foreground-scripts:
+        description: Run scripts in the foreground, showing output
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --script-shell:
+        value: file
+        description: Shell to run scripts with
+      --silent:
+        description: Suppress npm's own output
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  run-script:
+    description: Run a package.json script (alias)
+    flags:
+      --if-present:
+        description: Don't fail if script is missing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --foreground-scripts:
+        description: Run scripts in the foreground, showing output
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --script-shell:
+        value: file
+        description: Shell to run scripts with
+      --silent:
+        description: Suppress npm's own output
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  rum:
+    description: Run a package.json script (alias)
+    flags:
+      --if-present:
+        description: Don't fail if script is missing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --foreground-scripts:
+        description: Run scripts in the foreground, showing output
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --script-shell:
+        value: file
+        description: Shell to run scripts with
+      --silent:
+        description: Suppress npm's own output
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  urn:
+    description: Run a package.json script (alias)
+    flags:
+      --if-present:
+        description: Don't fail if script is missing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --foreground-scripts:
+        description: Run scripts in the foreground, showing output
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --script-shell:
+        value: file
+        description: Shell to run scripts with
+      --silent:
+        description: Suppress npm's own output
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  test:
+    description: Run the test script
+  t:
+    description: Run the test script (alias)
+  start:
+    description: Run the start script
+  stop:
+    description: Run the stop script
+  restart:
+    description: Run stop then start
+  exec:
+    description: Run a command from a package
+    flags:
+      --package:
+        value: any
+        description: Package to install
+      -c:
+        value: any
+        description: Shell command to run
+      --yes:
+        description: Install without prompting
+      --no:
+        description: Never install
+    args: any
+  init:
+    description: Create a package.json
+    flags:
+      --yes:
+        description: Use defaults
+      -y:
+        description: Use defaults
+      --scope:
+        value: any
+        description: Scope
+    args: any
+  audit:
+    description: Run a security audit
+    flags:
+      --audit-level:
+        value:
+          exec: printf 'info\nlow\nmoderate\nhigh\ncritical\n'
+        description: Minimum level to fail
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --production:
+        description: Only production deps
+    commands:
+      fix:
+        description: Apply fixes
+        flags:
+          --force:
+            description: Force fetches and overrides
+          --dry-run:
+            description: Show what would happen, change nothing
+      signatures:
+        description: Verify registry signatures
+  dedupe:
+    description: Reduce duplication in the tree
+  prune:
+    description: Remove extraneous packages
+  rebuild:
+    description: Rebuild native packages
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  link:
+    description: Symlink a package folder
+    args: dir
+  unlink:
+    description: Remove a linked package
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  pack:
+    description: Create a tarball
+    flags:
+      --dry-run:
+        description: Show what would happen, change nothing
+      --pack-destination:
+        value: dir
+        description: Output dir
+  publish:
+    description: Publish a package
+    flags:
+      --tag:
+        value: any
+        description: Dist tag
+      --access:
+        value:
+          exec: printf 'public\nrestricted\n'
+        description: Access level
+      --otp:
+        value: any
+        description: One-time password
+      --dry-run:
+        description: Show what would happen, change nothing
+    args: dir
+  unpublish:
+    description: Remove a package from the registry
+    args: any
+  version:
+    description: Bump the package version
+    flags:
+      --no-git-tag-version:
+        description: Don't commit or tag
+      --preid:
+        value: any
+        description: Prerelease id
+    args:
+      exec: printf 'major\nminor\npatch\npremajor\npreminor\nprepatch\nprerelease\n'
+  view:
+    description: Show registry info for a package
+    args: any
+  info:
+    description: Show registry info (alias)
+    args: any
+  search:
+    description: Search the registry
+    args: any
+  config:
+    description: Manage npm configuration
+    commands:
+      get:
+        description: Print a config value
+        args: any
+      set:
+        description: Set a config value
+        args: any
+      delete:
+        description: Delete a config key
+        args: any
+      list:
+        description: List config
+        flags:
+          --long:
+            description: Show defaults too
+          -l:
+            description: Show defaults too
+      edit:
+        description: Edit config file
+  pkg:
+    description: Manage package.json
+    commands:
+      get:
+        description: Get fields
+        args: any
+      set:
+        description: Set fields
+        args: any
+      delete:
+        description: Delete fields
+        args: any
+      fix:
+        description: Fix common errors
+  cache:
+    description: Manage the package cache
+    commands:
+      clean:
+        description: Delete cache data
+        flags:
+          --force:
+            description: Force fetches and overrides
+      ls:
+        description: List cache entries
+      verify:
+        description: Verify cache integrity
+  login:
+    description: Log in to a registry
+  logout:
+    description: Log out of a registry
+  whoami:
+    description: Show logged-in user
+  doctor:
+    description: Check the npm environment
+  fund:
+    description: Show funding info
+  prefix:
+    description: Show prefix
+    flags:
+      -g:
+        description: Operate on global packages
+  root:
+    description: Show node_modules dir
+    flags:
+      -g:
+        description: Operate on global packages
+  docs:
+    description: Open package docs
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  repo:
+    description: Open package repository
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  bugs:
+    description: Open package issue tracker
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  dist-tag:
+    description: Manage dist tags
+    commands:
+      add:
+        description: Add a tag
+        args: any
+      rm:
+        description: Remove a tag
+        args: any
+      ls:
+        description: List tags
+        args: any
+  help:
+    description: Get help on npm
+    args: '@subcommands'

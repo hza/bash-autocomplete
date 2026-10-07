@@ -13,7 +13,7 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 - `manparse.c`/`.h` — `man_spec(cmd)`: `MANWIDTH=1000 man -P cat | col -bx` → spec tree. Option entries = lines at the most common indent of entry-shaped lines; value from entry arg or SYNOPSIS `[-x arg]`. Heuristic; curl examples leak a few bogus flags.
 - `autocomplete man [-f] CMD` writes `~/.config/autocomplete/CMD.yaml` from `man_spec` via `yaml_write` (single-quotes anything ambiguous; `-1`-style keys must be quoted or PyYAML reads ints). No live man fallback: completion always comes from YAML.
 - Cache: only specs > `CACHE_MIN` (100 KB) get a `.cache` (`load_spec`, `autocomplete cache`); smaller ones are parsed from YAML every TAB.
-- `specs/*.yaml` — bundled specs (docker, make, git, kubectl, killall, autocomplete). Filename = command name.
+- `specs/*.yaml` — bundled specs (docker, make, git, kubectl, killall, npm, autocomplete). Filename = command name.
 - `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
 - `carapace` — upstream reference snippet only; not used.
 
