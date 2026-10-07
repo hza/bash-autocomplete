@@ -260,7 +260,7 @@ static void collapse_vars(void) {
     g_ncands = j;
     g_kind = "target"; /* sits among targets: no [kind] tags */
     /* U+00A0 no-break space: a plain one would be shown escaped ("\ ") */
-    emit_desc(" 🔧 vars", 0, strdup(names));
+    emit_desc("🔧 variables", 0, strdup(names));
 }
 
 /* Terminal columns of a UTF-8 string: continuation bytes take none and
@@ -495,8 +495,33 @@ static const char *spec_desc(const ynode *spec) {
     return d && d->type == Y_STR ? d->str : NULL;
 }
 
-/* Emit every subcommand of `cmds`. "aliases" are not listed, only shown in
- * the description ("desc (co, ch)"); an alias typed in full is emitted. */
+/* "when: {file, contains?}": true if `file` (relative to cwd) exists and,
+ * when given, contains the `contains` string. No "when" = always true. */
+static int when_ok(const ynode *spec) {
+    const ynode *w = yaml_get(spec, "when"), *f, *s;
+    FILE *fp;
+    char *buf;
+    long n;
+    int ok;
+    if (!w) return 1;
+    f = yaml_get(w, "file");
+    s = yaml_get(w, "contains");
+    if (!f || f->type != Y_STR || !(fp = fopen(f->str, "rb"))) return 0;
+    if (!s || s->type != Y_STR) { fclose(fp); return 1; }
+    fseek(fp, 0, SEEK_END);
+    n = ftell(fp);
+    rewind(fp);
+    if (n < 0 || !(buf = malloc((size_t)n + 1))) { fclose(fp); return 0; }
+    buf[fread(buf, 1, (size_t)n, fp)] = 0;
+    fclose(fp);
+    ok = strstr(buf, s->str) != NULL;
+    free(buf);
+    return ok;
+}
+
+/* Emit every subcommand of `cmds` whose "when" holds. "aliases" are not
+ * listed, only shown in the description ("desc (co, ch)"); an alias typed
+ * in full is emitted. */
 static void emit_commands(const ynode *cmds) {
     const ynode *c, *a, *al;
     g_kind = "command";
@@ -504,6 +529,7 @@ static void emit_commands(const ynode *cmds) {
         const char *d = spec_desc(c);
         char buf[1024];
         size_t len;
+        if (!when_ok(c)) continue;
         al = yaml_get(c, "aliases");
         al = al && al->type == Y_ARR ? al->child : NULL;
         if (!al) { emit_desc(c->key, 1, d); continue; }

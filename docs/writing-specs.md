@@ -45,6 +45,7 @@ A spec has five optional keys, and `commands` nests the same structure for subco
 | `commands` | Map of subcommand name → spec |
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (i, add)`); an alias is offered as a candidate only once typed in full |
+| `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
 
 Each flag is a map with two optional keys, usually written on one line:
 

@@ -154,9 +154,6 @@ commands:
   versions:display-plugin-updates:
     description: "Show newer plugin versions"
     args: "@subcommands"
-  spring-boot:run:
-    description: "Run a Spring Boot application"
-    args: "@subcommands"
   exec:java:
     description: "Run a Java main class"
     args: "@subcommands"
@@ -171,4 +168,92 @@ commands:
     args: "@subcommands"
   wrapper:wrapper:
     description: "Add the Maven wrapper to the project"
+    args: "@subcommands"
+  spring-boot:run:
+    description: "Run a Spring Boot application"
+    when: {file: pom.xml, contains: "<artifactId>spring-boot-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spring-boot:build-image:
+    description: "Build an OCI image of the application"
+    when: {file: pom.xml, contains: "<artifactId>spring-boot-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spring-boot:repackage:
+    description: "Repackage as an executable jar/war"
+    when: {file: pom.xml, contains: "<artifactId>spring-boot-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spotless:apply:
+    description: "Reformat code (Spotless)"
+    when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spotless:check:
+    description: "Check code formatting (Spotless)"
+    when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  checkstyle:check:
+    description: "Fail the build on Checkstyle violations"
+    when: {file: pom.xml, contains: "<artifactId>maven-checkstyle-plugin</artifactId>"}
+    args: "@subcommands"
+  checkstyle:checkstyle:
+    description: "Generate a Checkstyle report"
+    when: {file: pom.xml, contains: "<artifactId>maven-checkstyle-plugin</artifactId>"}
+    args: "@subcommands"
+  pmd:check:
+    description: "Fail the build on PMD violations"
+    when: {file: pom.xml, contains: "<artifactId>maven-pmd-plugin</artifactId>"}
+    args: "@subcommands"
+  pmd:pmd:
+    description: "Generate a PMD report"
+    when: {file: pom.xml, contains: "<artifactId>maven-pmd-plugin</artifactId>"}
+    args: "@subcommands"
+  pmd:cpd-check:
+    description: "Fail the build on duplicated code"
+    when: {file: pom.xml, contains: "<artifactId>maven-pmd-plugin</artifactId>"}
+    args: "@subcommands"
+  spotbugs:check:
+    description: "Fail the build on SpotBugs findings"
+    when: {file: pom.xml, contains: "<artifactId>spotbugs-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spotbugs:spotbugs:
+    description: "Run SpotBugs analysis"
+    when: {file: pom.xml, contains: "<artifactId>spotbugs-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  spotbugs:gui:
+    description: "Open SpotBugs GUI"
+    when: {file: pom.xml, contains: "<artifactId>spotbugs-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  jacoco:report:
+    description: "Generate a JaCoCo coverage report"
+    when: {file: pom.xml, contains: "<artifactId>jacoco-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  jacoco:check:
+    description: "Check coverage thresholds"
+    when: {file: pom.xml, contains: "<artifactId>jacoco-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  jib:build:
+    description: "Build and push an image (Jib)"
+    when: {file: pom.xml, contains: "<artifactId>jib-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  jib:dockerBuild:
+    description: "Build an image to the Docker daemon (Jib)"
+    when: {file: pom.xml, contains: "<artifactId>jib-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  flyway:migrate:
+    description: "Apply database migrations"
+    when: {file: pom.xml, contains: "<artifactId>flyway-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  flyway:info:
+    description: "Show migration status"
+    when: {file: pom.xml, contains: "<artifactId>flyway-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  flyway:clean:
+    description: "Drop all objects in the schemas"
+    when: {file: pom.xml, contains: "<artifactId>flyway-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  quarkus:dev:
+    description: "Run Quarkus in dev mode"
+    when: {file: pom.xml, contains: "<artifactId>quarkus-maven-plugin</artifactId>"}
+    args: "@subcommands"
+  quarkus:build:
+    description: "Build the Quarkus application"
+    when: {file: pom.xml, contains: "<artifactId>quarkus-maven-plugin</artifactId>"}
     args: "@subcommands"
