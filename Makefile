@@ -13,6 +13,7 @@ install: autocomplete
 	@if grep -qF 'autocomplete bash' $(PROFILE) 2>/dev/null; then \
 		echo "$(PROFILE): already set up"; \
 	else \
+		if [ -s $(PROFILE) ] && [ -n "$$(tail -c 1 $(PROFILE))" ]; then echo >> $(PROFILE); fi; \
 		echo '$(INIT)' >> $(PROFILE); \
 		echo '$(PROFILE): added $(INIT)'; \
 	fi
