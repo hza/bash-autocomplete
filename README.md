@@ -15,6 +15,20 @@ $ make in<TAB>
 $ make install
 ```
 
+## Why
+
+macOS still ships bash 3.2 as `/bin/bash`, and the usual completion tools don't fit it well:
+
+- **carapace** generates a bash script that relies on bash 4 features (`mapfile`,
+  `compopt`, negative array indexes). On bash 3.2 it doesn't work.
+- **bash-completion 2.x** requires bash 4.2+.
+- **bash-completion 1.3**, the last version for bash 3.2, is old and unmaintained. It loads
+  every completion script at shell startup, which makes each new terminal noticeably slower
+  to open.
+
+autocomplete works with the bash you already have. Shell startup only defines one small
+function, and nothing is loaded until you press TAB.
+
 ## Features
 
 - Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
