@@ -108,7 +108,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete list` | List commands that have a spec. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs into the cache (all if no names). |
-| `autocomplete register CMD...` | Complete CMD from its man page (adds it to `man.list`). |
+| `autocomplete man CMD...` | Complete CMD from its man page (adds it to `man.list`). |
 | `autocomplete gen [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
 
 ## Documentation

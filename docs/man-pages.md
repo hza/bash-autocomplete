@@ -28,12 +28,12 @@ registered.
 ## Live, without a spec file
 
 ```sh
-autocomplete register ps tar
+autocomplete man ps tar
 eval "$(autocomplete bash)"     # or open a new terminal
 ```
 
-`register` adds the names to `~/.config/autocomplete/man.list` (one per line, `#` comments
-allowed), which you can also edit by hand. Remove a line from that file to unregister.
+`man` adds the names to `~/.config/autocomplete/man.list` (one per line, `#` comments
+allowed), which you can also edit by hand. Remove a line from that file to stop using the man page.
 
 Any listed command that has no YAML spec gets completion straight from its man page. The
 page is parsed on the first TAB, which takes about 150 ms, and the result is cached. After

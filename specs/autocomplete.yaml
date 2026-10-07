@@ -10,7 +10,7 @@ commands:
   cache:
     description: "Precompile specs into the cache"
     args: {exec: "autocomplete list"}
-  register:
+  man:
     description: "Complete commands from their man pages"
     args: {exec: "compgen -c | sort -u"}
   gen:

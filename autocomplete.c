@@ -656,13 +656,13 @@ static int gen_specs(int argc, char **argv) {
     return rc;
 }
 
-/* `autocomplete register CMD...`: add commands to ~/.config/autocomplete/man.list. */
-static int register_cmds(int argc, char **argv) {
+/* `autocomplete man CMD...`: add commands to ~/.config/autocomplete/man.list. */
+static int man_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX];
     int i, rc = 0, added = 0;
     FILE *f;
     if (!getenv("HOME")) {
-        fprintf(stderr, "register: HOME is not set\n");
+        fprintf(stderr, "man: HOME is not set\n");
         return 1;
     }
     snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
@@ -675,14 +675,14 @@ static int register_cmds(int argc, char **argv) {
             fprintf(stderr, "%s: not a command name\n", argv[i]);
             rc = 1;
         } else if (in_man_list(argv[i])) {
-            printf("%s: already registered\n", argv[i]);
+            printf("%s: already in man.list\n", argv[i]);
         } else if (!(f = fopen(path, "a"))) {
             perror(path);
             return 1;
         } else {
             fprintf(f, "%s\n", argv[i]);
             fclose(f);
-            printf("%s: registered\n", argv[i]);
+            printf("%s: added to man.list\n", argv[i]);
             added = 1;
         }
     }
@@ -772,7 +772,7 @@ int main(int argc, char **argv) {
         for (i = 2; i < argc; i++) cache_spec(argv[i]);
         return g_cache_failed;
     }
-    if (argc >= 3 && !strcmp(argv[1], "register")) return register_cmds(argc - 2, argv + 2);
+    if (argc >= 3 && !strcmp(argv[1], "man")) return man_cmds(argc - 2, argv + 2);
     if (argc >= 3 && !strcmp(argv[1], "gen")) return gen_specs(argc - 2, argv + 2);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         each_spec(print_name);
@@ -783,7 +783,7 @@ int main(int argc, char **argv) {
             "       autocomplete list              list available specs\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile specs into the cache\n"
-            "       autocomplete register CMD...   complete CMD from its man page (adds it to man.list)\n"
+            "       autocomplete man CMD...   complete CMD from its man page (adds it to man.list)\n"
             "       autocomplete gen [-f] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
