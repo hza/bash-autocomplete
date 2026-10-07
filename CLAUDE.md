@@ -15,7 +15,7 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 - Cache: only specs > `CACHE_MIN` (100 KB) get a `.cache` (`load_spec`, `autocomplete cache`); smaller ones are parsed from YAML every TAB.
 - `specs/*.yaml` — bundled specs (docker, make, git, kubectl, killall, npm, autocomplete). Filename = command name.
 - `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
-- `carapace` — upstream reference snippet only; not used.
+- `tools/gen_npm.py` — regenerates `specs/npm.yaml` from the installed npm (`npm <cmd> --help` + npm's `docs/content/using-npm/config.md`): `python3 tools/gen_npm.py specs/npm.yaml`. Merges into the existing spec: hand-written root flags, command descriptions/`args`, flag values/descriptions win. Skips npm's typo aliases (`TYPOS`). Don't hand-edit generated flag lists in npm.yaml; change the generator or the hand-written parts and rerun (must be idempotent: rerun → no diff).
 
 ## Compatibility
 - Pre-release, no users yet: do NOT keep backward compatibility. Change the spec format, CLI, cache format etc. to the cleanest design and migrate the bundled specs and docs in the same change. No legacy fallbacks, aliases or dual syntaxes.

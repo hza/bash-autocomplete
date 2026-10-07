@@ -35,174 +35,41 @@ flags:
   --version:
     description: Show npm version
 commands:
-  install:
-    description: Install a package
-    aliases: [i, add]
+  access:
+    description: Set access level on published packages
     flags:
-      --save-dev:
-        description: Save to devDependencies
-      -D:
-        description: Save to devDependencies
-      --save-optional:
-        description: Save to optionalDependencies
-      -O:
-        description: Save to optionalDependencies
-      --save-exact:
-        description: Pin exact version
-      -E:
-        description: Pin exact version
-      --no-save:
-        description: Do not update package.json
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --omit:
-        value:
-          exec: printf 'dev\noptional\npeer\n'
-        description: Dependency type to skip
-      --legacy-peer-deps:
-        description: Ignore peer dependency conflicts
-      --force:
-        description: Force fetches and overrides
-      --dry-run:
-        description: Show what would happen, change nothing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+    commands:
+      list: {}
+      get: {}
+      set: {}
+      grant: {}
+      revoke: {}
     args: any
-  ci:
-    description: Clean install from lockfile
+  adduser:
+    description: Add a registry user account
+    aliases: [add-user]
     flags:
-      --omit:
-        value:
-          exec: printf 'dev\noptional\npeer\n'
-        description: Dependency type to skip
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-      --legacy-peer-deps:
-        description: Ignore peer dependency conflicts
-  uninstall:
-    description: Remove a package
-    aliases: [rm]
-    flags:
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --no-save:
-        description: Do not update package.json
-      --dry-run:
-        description: Show what would happen, change nothing
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  update:
-    description: Update packages
-    aliases: [up]
-    flags:
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --save-dev:
-        description: Save to devDependencies
-      -D:
-        description: Save to devDependencies
-      --no-save:
-        description: Do not update package.json
-      --dry-run:
-        description: Show what would happen, change nothing
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  outdated:
-    description: Check for outdated packages
-    flags:
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --all:
-        description: Show all, not just direct deps
-      --long:
-        description: Show extended info
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  ls:
-    description: List installed packages
-    flags:
-      --all:
-        description: Show all dependencies
-      -a:
-        description: Show all dependencies
-      --depth:
-        value: any
-        description: Tree depth
-      --global:
-        description: Operate on global packages
-      -g:
-        description: Operate on global packages
-      --omit:
-        value:
-          exec: printf 'dev\noptional\npeer\n'
-        description: Dependency type to skip
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  explain:
-    description: Explain why a package is installed
-    aliases: [why]
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  run:
-    description: Run a package.json script
-    aliases: [run-script, rum, urn]
-    flags:
-      --if-present:
-        description: Don't fail if script is missing
-      --ignore-scripts:
-        description: Do not run lifecycle scripts
-      --foreground-scripts:
-        description: Run scripts in the foreground, showing output
-      --include-workspace-root:
-        description: Also run in the root project with --workspaces
-      --script-shell:
-        value: file
-        description: Shell to run scripts with
-      --silent:
-        description: Suppress npm's own output
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  test:
-    description: Run the test script
-    aliases: [t]
-  start:
-    description: Run the start script
-  stop:
-    description: Run the stop script
-  restart:
-    description: Run stop then start
-  exec:
-    description: Run a command from a package
-    flags:
-      --package:
-        value: any
-        description: Package to install
-      -c:
-        value: any
-        description: Shell command to run
-      --yes:
-        description: Install without prompting
-      --no:
-        description: Never install
-    args: any
-  init:
-    description: Create a package.json
-    flags:
-      --yes:
-        description: Use defaults
-      -y:
-        description: Use defaults
       --scope:
         value: any
-        description: Scope
+        description: Associate an operation with a scope for a scoped registry
+      --auth-type:
+        value:
+          exec: printf '%s\n' legacy web
+        description: What authentication strategy to use with login
+  approve-scripts:
+    description: Approve install scripts for specific dependencies
+    flags:
+      -a:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --all:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --allow-scripts-pending:
+        description: List packages with install scripts that are not yet covered by the...
+      --no-allow-scripts-pin:
+        description: 'Disable: write pinned (pkg@version) entries when approving install scripts'
     args: any
   audit:
     description: Run a security audit
@@ -211,89 +78,162 @@ commands:
         value:
           exec: printf 'info\nlow\nmoderate\nhigh\ncritical\n'
         description: Minimum level to fail
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      -f:
+        description: Removes various protections against unfortunate side effects, common...
+      --force:
+        description: Removes various protections against unfortunate side effects, common...
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
       --omit:
         value:
           exec: printf 'dev\noptional\npeer\n'
         description: Dependency type to skip
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --include-attestations:
+        description: When used with npm audit signatures --json, includes the full sigstore...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
       --production:
         description: Only production deps
+  bugs:
+    description: Open package issue tracker
+    aliases: [issues]
+    flags:
+      --no-browser:
+        description: 'Disable: the browser that is called by npm commands to open websites'
+      --browser:
+        value: file
+        description: The browser that is called by npm commands to open websites
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  cache:
+    description: Manage the package cache
+    flags:
+      --cache:
+        value: dir
+        description: The location of npm's cache directory
     commands:
-      fix:
-        description: Apply fixes
+      add: {}
+      clean:
+        description: Delete cache data
         flags:
           --force:
             description: Force fetches and overrides
-          --dry-run:
-            description: Show what would happen, change nothing
-      signatures:
-        description: Verify registry signatures
-  dedupe:
-    description: Reduce duplication in the tree
-  prune:
-    description: Remove extraneous packages
-  rebuild:
-    description: Rebuild native packages
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  link:
-    description: Symlink a package folder
-    args: dir
-  unlink:
-    description: Remove a linked package
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  pack:
-    description: Create a tarball
+      ls:
+        description: List cache entries
+      verify:
+        description: Verify cache integrity
+      npx: {}
+    args: any
+  ci:
+    description: Clean install from lockfile
+    aliases: [clean-install, ic, install-clean]
     flags:
-      --dry-run:
-        description: Show what would happen, change nothing
-      --pack-destination:
-        value: dir
-        description: Output dir
-  publish:
-    description: Publish a package
-    flags:
-      --tag:
-        value: any
-        description: Dist tag
-      --access:
+      --install-strategy:
         value:
-          exec: printf 'public\nrestricted\n'
-        description: Access level
-      --otp:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --allow-scripts:
         value: any
-        description: One-time password
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
       --dry-run:
-        description: Show what would happen, change nothing
-    args: dir
-  unpublish:
-    description: Remove a package from the registry
-    args: any
-  version:
-    description: Bump the package version
-    flags:
-      --no-git-tag-version:
-        description: Don't commit or tag
-      --preid:
-        value: any
-        description: Prerelease id
-    args:
-      exec: printf 'major\nminor\npatch\npremajor\npreminor\nprepatch\nprerelease\n'
-  view:
-    description: Show registry info for a package
-    aliases: [info]
-    args: any
-  search:
-    description: Search the registry
-    args: any
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+  completion:
+    description: Tab Completion for npm
   config:
     description: Manage npm configuration
+    aliases: [c]
+    flags:
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --editor:
+        value: file
+        description: The command to run for npm edit and npm config edit
+      -L:
+        value:
+          exec: printf '%s\n' global user project
+        description: When passed to npm config this refers to which config file to use
+      --location:
+        value:
+          exec: printf '%s\n' global user project
+        description: When passed to npm config this refers to which config file to use
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended information in ls, search, and help-search
     commands:
-      get:
-        description: Print a config value
-        args: any
       set:
         description: Set a config value
+        args: any
+      get:
+        description: Print a config value
         args: any
       delete:
         description: Delete a config key
@@ -307,66 +247,120 @@ commands:
             description: Show defaults too
       edit:
         description: Edit config file
-  pkg:
-    description: Manage package.json
-    commands:
-      get:
-        description: Get fields
-        args: any
-      set:
-        description: Set fields
-        args: any
-      delete:
-        description: Delete fields
-        args: any
-      fix:
-        description: Fix common errors
-  cache:
-    description: Manage the package cache
-    commands:
-      clean:
-        description: Delete cache data
-        flags:
-          --force:
-            description: Force fetches and overrides
-      ls:
-        description: List cache entries
-      verify:
-        description: Verify cache integrity
-  login:
-    description: Log in to a registry
-  logout:
-    description: Log out of a registry
-  whoami:
-    description: Show logged-in user
-  doctor:
-    description: Check the npm environment
-  fund:
-    description: Show funding info
-  prefix:
-    description: Show prefix
+      fix: {}
+  dedupe:
+    description: Reduce duplication in the tree
+    aliases: [ddp]
     flags:
-      -g:
-        description: Operate on global packages
-  root:
-    description: Show node_modules dir
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+  deny-scripts:
+    description: Deny install scripts for specific dependencies
     flags:
+      -a:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --all:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --allow-scripts-pending:
+        description: List packages with install scripts that are not yet covered by the...
+      --no-allow-scripts-pin:
+        description: 'Disable: write pinned (pkg@version) entries when approving install scripts'
+    args: any
+  deprecate:
+    description: Deprecate a version of a package
+    flags:
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+    args: any
+  diff:
+    description: The registry diff command
+    flags:
+      --diff:
+        value: any
+        description: Define arguments to compare in npm diff
+      --diff-name-only:
+        description: Prints only filenames when using npm diff
+      --diff-unified:
+        value: any
+        description: The number of lines of context to print in npm diff
+      --diff-ignore-all-space:
+        description: Ignore whitespace when comparing lines in npm diff
+      --diff-no-prefix:
+        description: Do not show any source or destination prefix in npm diff output
+      --diff-src-prefix:
+        value: any
+        description: Source prefix to be used in npm diff output
+      --diff-dst-prefix:
+        value: any
+        description: Destination prefix to be used in npm diff output
+      --diff-text:
+        description: Treat all files as text in npm diff
       -g:
-        description: Operate on global packages
-  docs:
-    description: Open package docs
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  repo:
-    description: Open package repository
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
-  bugs:
-    description: Open package issue tracker
-    args:
-      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --tag:
+        value: any
+        description: If you ask npm to install a package and don't tell it a specific version,...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
   dist-tag:
     description: Manage dist tags
+    aliases: [dist-tags]
+    flags:
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
     commands:
       add:
         description: Add a tag
@@ -377,6 +371,1299 @@ commands:
       ls:
         description: List tags
         args: any
+    args: any
+  docs:
+    description: Open package docs
+    aliases: [home]
+    flags:
+      --no-browser:
+        description: 'Disable: the browser that is called by npm commands to open websites'
+      --browser:
+        value: file
+        description: The browser that is called by npm commands to open websites
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  doctor:
+    description: Check the npm environment
+  edit:
+    description: Edit an installed package
+    flags:
+      --editor:
+        value: file
+        description: The command to run for npm edit and npm config edit
+    args: any
+  exec:
+    description: Run a command from a package
+    aliases: [x]
+    flags:
+      --package:
+        value:
+          exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+        description: Package to install and run
+      -c:
+        value: any
+        description: Shell command to run
+      --call:
+        value: any
+        description: Shell command to run
+      --workspaces:
+        description: Run in all workspaces
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --yes:
+        description: Install without prompting
+      -y:
+        description: Install without prompting
+      --no:
+        description: Never install
+    args:
+      exec: d=$PWD; while :; do [ -d "$d/node_modules/.bin" ] && ls "$d/node_modules/.bin"; [ "$d" = / ] && break; d=$(dirname "$d"); done | sort -u
+  explain:
+    description: Explain why a package is installed
+    aliases: [why]
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  explore:
+    description: Browse an installed package
+    flags:
+      --shell:
+        value: any
+        description: The shell to run for the npm explore command
+    args: any
+  find-dupes:
+    description: Find duplication in the package tree
+    flags:
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+  fund:
+    description: Show funding info
+    flags:
+      --no-browser:
+        description: 'Disable: the browser that is called by npm commands to open websites'
+      --browser:
+        value: file
+        description: The browser that is called by npm commands to open websites
+      --no-unicode:
+        description: 'Disable: when set to true, npm uses unicode characters in the tree output'
+      --which:
+        value: any
+        description: If there are multiple funding sources, which 1-indexed source URL to open
+    args: any
+  get:
+    description: Get a value from the npm configuration
+    flags:
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended information in ls, search, and help-search
   help:
     description: Get help on npm
+    aliases: [hlep]
+    flags:
+      --viewer:
+        value: any
+        description: The program to use to view help content
     args: '@subcommands'
+  help-search:
+    description: Search npm help documentation
+    flags:
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended information in ls, search, and help-search
+  init:
+    description: Create a package.json
+    aliases: [create]
+    flags:
+      --init-author-name:
+        value: any
+        description: The value npm init should use by default for the package author's name
+      --init-author-url:
+        value: any
+        description: The value npm init should use by default for the package author's homepage
+      --init-license:
+        value: any
+        description: The value npm init should use by default for the package license
+      --init-module:
+        value: any
+        description: A module that will be loaded by the npm init command
+      --init-type:
+        value: any
+        description: The value that npm init should use by default for the package.json type field
+      --init-version:
+        value: any
+        description: The value that npm init should use by default for the package version...
+      --init-private:
+        description: The value npm init should use by default for the package's private flag
+      -y:
+        description: Use defaults
+      --yes:
+        description: Use defaults
+      -f:
+        description: Removes various protections against unfortunate side effects, common...
+      --force:
+        description: Removes various protections against unfortunate side effects, common...
+      --scope:
+        value: any
+        description: Scope
+      --no-workspaces-update:
+        description: 'Disable: if set to true, the npm cli will run an update after operations...'
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+    args: any
+  install:
+    description: Install a package
+    aliases: [add, i, in]
+    flags:
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: Do not update package.json
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save to devDependencies
+      --save-optional:
+        description: Save to optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      -E:
+        description: Pin exact version
+      --save-exact:
+        description: Pin exact version
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operate on global packages
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --prefer-dedupe:
+        description: Prefer to deduplicate packages if possible, rather than choosing a newer...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --before:
+        value: any
+        description: If passed to npm install, will rebuild the npm tree such that only versions...
+      --min-release-age:
+        value: any
+        description: If set, npm will build the npm tree such that only versions that were...
+      --min-release-age-exclude:
+        value:
+          exec: printf '%s\n' pkg glob
+        description: A list of package names or minimatch glob patterns that are exempt from the...
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Show what would happen, change nothing
+      --cpu:
+        value: any
+        description: Override CPU architecture of native modules to install
+      --os:
+        value: any
+        description: Override OS of native modules to install
+      --libc:
+        value: any
+        description: Override libc of native modules to install
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+      -D:
+        description: Save to devDependencies
+      -O:
+        description: Save to optionalDependencies
+      --legacy-peer-deps:
+        description: Ignore peer dependency conflicts
+      --force:
+        description: Force fetches and overrides
+    args: any
+  install-ci-test:
+    description: Install a project with a clean slate and run tests
+    aliases: [cit, clean-install-test, sit]
+    flags:
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+  install-scripts:
+    description: Manage install-script approvals for dependencies
+    flags:
+      -a:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --all:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --no-allow-scripts-pin:
+        description: 'Disable: write pinned (pkg@version) entries when approving install scripts'
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+    commands:
+      approve: {}
+      deny: {}
+      ls: {}
+      prune: {}
+    args: any
+  install-test:
+    description: Install package(s) and run tests
+    aliases: [it]
+    flags:
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: 'Disable: save installed packages to a package.json file as dependencies'
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save installed packages to a package.json file as devDependencies
+      --save-optional:
+        description: Save installed packages to a package.json file as optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      -E:
+        description: Dependencies saved to package.json will be configured with an exact version...
+      --save-exact:
+        description: Dependencies saved to package.json will be configured with an exact version...
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --prefer-dedupe:
+        description: Prefer to deduplicate packages if possible, rather than choosing a newer...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --before:
+        value: any
+        description: If passed to npm install, will rebuild the npm tree such that only versions...
+      --min-release-age:
+        value: any
+        description: If set, npm will build the npm tree such that only versions that were...
+      --min-release-age-exclude:
+        value:
+          exec: printf '%s\n' pkg glob
+        description: A list of package names or minimatch glob patterns that are exempt from the...
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --cpu:
+        value: any
+        description: Override CPU architecture of native modules to install
+      --os:
+        value: any
+        description: Override OS of native modules to install
+      --libc:
+        value: any
+        description: Override libc of native modules to install
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args: any
+  link:
+    description: Symlink a package folder
+    aliases: [ln]
+    flags:
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: 'Disable: save installed packages to a package.json file as dependencies'
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save installed packages to a package.json file as devDependencies
+      --save-optional:
+        description: Save installed packages to a package.json file as optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      -E:
+        description: Dependencies saved to package.json will be configured with an exact version...
+      --save-exact:
+        description: Dependencies saved to package.json will be configured with an exact version...
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-directory:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from directories
+      --allow-file:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to install dependencies from tarball files
+      --allow-git:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from git references
+      --allow-remote:
+        value:
+          exec: printf '%s\n' all none root
+        description: Limits the ability for npm to fetch dependencies from urls
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args: dir
+  ll:
+    description: List installed packages
+    aliases: [la]
+    flags:
+      -a:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --all:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended information in ls, search, and help-search
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --depth:
+        value: any
+        description: The depth to go when recursing packages for npm ls
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --link:
+        description: Used with npm ls, limiting output to only those packages that are linked
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --no-unicode:
+        description: 'Disable: when set to true, npm uses unicode characters in the tree output'
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args: any
+  login:
+    description: Log in to a registry
+    flags:
+      --scope:
+        value: any
+        description: Associate an operation with a scope for a scoped registry
+      --auth-type:
+        value:
+          exec: printf '%s\n' legacy web
+        description: What authentication strategy to use with login
+  logout:
+    description: Log out of a registry
+    flags:
+      --scope:
+        value: any
+        description: Associate an operation with a scope for a scoped registry
+  ls:
+    description: List installed packages
+    aliases: [list]
+    flags:
+      -a:
+        description: Show all dependencies
+      --all:
+        description: Show all dependencies
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended information in ls, search, and help-search
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operate on global packages
+      --depth:
+        value: any
+        description: Tree depth
+      --omit:
+        value:
+          exec: printf 'dev\noptional\npeer\n'
+        description: Dependency type to skip
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --link:
+        description: Used with npm ls, limiting output to only those packages that are linked
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --no-unicode:
+        description: 'Disable: when set to true, npm uses unicode characters in the tree output'
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  org:
+    description: Manage orgs
+    aliases: [ogr]
+    flags:
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+    commands:
+      set: {}
+      rm: {}
+      ls: {}
+  outdated:
+    description: Check for outdated packages
+    flags:
+      -a:
+        description: Show or act on all packages, not just the ones your project directly depends on
+      --all:
+        description: Show all, not just direct deps
+      -l:
+        description: Show extended information in ls, search, and help-search
+      --long:
+        description: Show extended info
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operate on global packages
+      --before:
+        value: any
+        description: If passed to npm install, will rebuild the npm tree such that only versions...
+      --min-release-age:
+        value: any
+        description: If set, npm will build the npm tree such that only versions that were...
+      --min-release-age-exclude:
+        value:
+          exec: printf '%s\n' pkg glob
+        description: A list of package names or minimatch glob patterns that are exempt from the...
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  owner:
+    description: Manage package owners
+    aliases: [author]
+    flags:
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+    commands:
+      add: {}
+      rm: {}
+      ls: {}
+    args: any
+  pack:
+    description: Create a tarball
+    flags:
+      --dry-run:
+        description: Show what would happen, change nothing
+      --pack-destination:
+        value: dir
+        description: Output dir
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+    args: any
+  ping:
+    description: Ping npm registry
+  pkg:
+    description: Manage package.json
+    flags:
+      -f:
+        description: Removes various protections against unfortunate side effects, common...
+      --force:
+        description: Removes various protections against unfortunate side effects, common...
+    commands:
+      set:
+        description: Set fields
+        args: any
+      get:
+        description: Get fields
+        args: any
+      delete:
+        description: Delete fields
+        args: any
+      fix:
+        description: Fix common errors
+  prefix:
+    description: Show prefix
+    flags:
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+  profile:
+    description: Change settings on your registry profile
+    flags:
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+    commands:
+      enable-2fa: {}
+      disable-2fa: {}
+      get: {}
+      set: {}
+  prune:
+    description: Remove extraneous packages
+    flags:
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args: any
+  publish:
+    description: Publish a package
+    flags:
+      --tag:
+        value: any
+        description: Dist tag
+      --access:
+        value:
+          exec: printf 'public\nrestricted\n'
+        description: Access level
+      --dry-run:
+        description: Show what would happen, change nothing
+      --otp:
+        value: any
+        description: One-time password
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --provenance:
+        description: When publishing from a supported cloud CI/CD system, the package will be...
+      --provenance-file:
+        value: file
+        description: When publishing, the provenance bundle at the given path will be used
+    args: dir
+  query:
+    description: Retrieve a filtered list of packages
+    flags:
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --expect-results:
+        description: Tells npm whether or not to expect results from the command
+      --expect-result-count:
+        value: any
+        description: Tells to expect a specific number of results from the command
+      --before:
+        value: any
+        description: If passed to npm install, will rebuild the npm tree such that only versions...
+      --min-release-age:
+        value: any
+        description: If set, npm will build the npm tree such that only versions that were...
+      --min-release-age-exclude:
+        value:
+          exec: printf '%s\n' pkg glob
+        description: A list of package names or minimatch glob patterns that are exempt from the...
+  rebuild:
+    description: Rebuild native packages
+    aliases: [rb]
+    flags:
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  repo:
+    description: Open package repository
+    flags:
+      --no-browser:
+        description: 'Disable: the browser that is called by npm commands to open websites'
+      --browser:
+        value: file
+        description: The browser that is called by npm commands to open websites
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  restart:
+    description: Run stop then start
+    flags:
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --script-shell:
+        value: file
+        description: The shell to use for scripts run with the npm exec, npm run and npm init...
+  root:
+    description: Show node_modules dir
+    flags:
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+  run:
+    description: Run a package.json script
+    aliases: [run-script, rum, urn]
+    flags:
+      --include-workspace-root:
+        description: Also run in the root project with --workspaces
+      --if-present:
+        description: Don't fail if script is missing
+      --ignore-scripts:
+        description: Do not run lifecycle scripts
+      --foreground-scripts:
+        description: Run scripts in the foreground, showing output
+      --script-shell:
+        value: file
+        description: Shell to run scripts with
+      --silent:
+        description: Suppress npm's own output
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  sbom:
+    description: Generate a Software Bill of Materials (SBOM)
+    flags:
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --package-lock-only:
+        description: If set to true, the current operation will only use the package-lock.json,...
+      --sbom-format:
+        value:
+          exec: printf '%s\n' cyclonedx spdx
+        description: SBOM format to use when generating SBOMs
+      --sbom-type:
+        value:
+          exec: printf '%s\n' library application framework
+        description: The type of package described by the generated SBOM. For SPDX, this is the...
+  search:
+    description: Search the registry
+    aliases: [find, s, se]
+    flags:
+      --color:
+        description: If false, never shows colors
+      --no-color:
+        description: 'Disable: if false, never shows colors'
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+      --no-description:
+        description: 'Disable: show the description in npm search'
+      --searchlimit:
+        value: any
+        description: Number of items to limit search results to
+      --searchopts:
+        value: any
+        description: Space-separated options that are always passed to search
+      --searchexclude:
+        value: any
+        description: Space-separated options that limit the results from search
+      --prefer-online:
+        description: If true, staleness checks for cached data will be forced, making the CLI...
+      --prefer-offline:
+        description: If true, staleness checks for cached data will be bypassed, but missing data...
+      --offline:
+        description: 'Force offline mode: no network requests will be done during install'
+    args: any
+  set:
+    description: Set a value in the npm configuration
+    flags:
+      -g:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      --global:
+        description: Operates in "global" mode, so that packages are installed into the prefix...
+      -L:
+        value:
+          exec: printf '%s\n' global user project
+        description: When passed to npm config this refers to which config file to use
+      --location:
+        value:
+          exec: printf '%s\n' global user project
+        description: When passed to npm config this refers to which config file to use
+  shrinkwrap:
+    description: Lock down dependency versions for publication
+  stage:
+    description: Stage packages for publishing, deferring proof-of-presence (2FA) to a later point in time
+    commands:
+      publish: {}
+      list: {}
+      view: {}
+      approve: {}
+      reject: {}
+      download: {}
+    args: any
+  star:
+    description: Mark your favorite packages
+    flags:
+      --no-unicode:
+        description: 'Disable: when set to true, npm uses unicode characters in the tree output'
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+    args: any
+  stars:
+    description: View packages marked as favorites
+  start:
+    description: Run the start script
+    flags:
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --script-shell:
+        value: file
+        description: The shell to use for scripts run with the npm exec, npm run and npm init...
+  stop:
+    description: Run the stop script
+    flags:
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --script-shell:
+        value: file
+        description: The shell to use for scripts run with the npm exec, npm run and npm init...
+  team:
+    description: Manage organization teams and team memberships
+    flags:
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+      -p:
+        description: Output parseable results from commands that write to standard output
+      --parseable:
+        description: Output parseable results from commands that write to standard output
+    commands:
+      create: {}
+      destroy: {}
+      add: {}
+      rm: {}
+      ls: {}
+  test:
+    description: Run the test script
+    aliases: [t]
+    flags:
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --script-shell:
+        value: file
+        description: The shell to use for scripts run with the npm exec, npm run and npm init...
+  token:
+    description: Manage your authentication tokens
+    flags:
+      --name:
+        value: any
+        description: When creating a Granular Access Token with npm token create, this sets the...
+      --token-description:
+        value: any
+        description: Description text for the token when using npm token create
+      --expires:
+        value: any
+        description: When creating a Granular Access Token with npm token create, this sets the...
+      --packages:
+        value: any
+        description: When creating a Granular Access Token with npm token create, this limits the...
+      --packages-all:
+        description: When creating a Granular Access Token with npm token create, grants the...
+      --scopes:
+        value: any
+        description: When creating a Granular Access Token with npm token create, this limits the...
+      --orgs:
+        value: any
+        description: When creating a Granular Access Token with npm token create, this limits the...
+      --packages-and-scopes-permission:
+        value:
+          exec: printf '%s\n' read-only read-write no-access
+        description: When creating a Granular Access Token with npm token create, sets the...
+      --orgs-permission:
+        value:
+          exec: printf '%s\n' read-only read-write no-access
+        description: When creating a Granular Access Token with npm token create, sets the...
+      --cidr:
+        value: any
+        description: This is a list of CIDR address to be used when configuring limited access...
+      --bypass-2fa:
+        description: When creating a Granular Access Token with npm token create, setting this to...
+      --password:
+        value: any
+        description: Password for authentication
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+      --read-only:
+        description: This is used to mark a token as unable to publish when configuring limited...
+    commands:
+      list: {}
+      revoke: {}
+      create: {}
+  trust:
+    description: Create a trusted relationship between a package and a OIDC provider
+    commands:
+      github: {}
+      gitlab: {}
+      circleci: {}
+      list: {}
+      revoke: {}
+  undeprecate:
+    description: Undeprecate a version of a package
+    flags:
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+    args: any
+  uninstall:
+    description: Remove a package
+    aliases: [unlink, remove, rm, r, un]
+    flags:
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: Do not update package.json
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save installed packages to a package.json file as devDependencies
+      --save-optional:
+        description: Save installed packages to a package.json file as optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operate on global packages
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+      --dry-run:
+        description: Show what would happen, change nothing
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  unpublish:
+    description: Remove a package from the registry
+    flags:
+      --dry-run:
+        description: Indicates that you don't want npm to make any changes and that it should...
+      -f:
+        description: Removes various protections against unfortunate side effects, common...
+      --force:
+        description: Removes various protections against unfortunate side effects, common...
+    args: any
+  unstar:
+    description: Remove an item from your favorite packages
+    flags:
+      --no-unicode:
+        description: 'Disable: when set to true, npm uses unicode characters in the tree output'
+      --otp:
+        value: any
+        description: This is a one-time password from a two-factor authenticator
+    args: any
+  update:
+    description: Update packages
+    aliases: [u, up, upgrade]
+    flags:
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: Do not update package.json
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save to devDependencies
+      --save-optional:
+        description: Save installed packages to a package.json file as optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      -g:
+        description: Operate on global packages
+      --global:
+        description: Operate on global packages
+      --install-strategy:
+        value:
+          exec: printf '%s\n' hoisted nested shallow linked
+        description: Sets the strategy for installing packages in node_modules
+      --legacy-bundling:
+        description: Instead of hoisting package installs in node_modules, install packages in...
+      --global-style:
+        description: Only install direct dependencies in the top level node_modules, but hoist on...
+      --omit:
+        value:
+          exec: printf '%s\n' dev optional peer
+        description: Dependency types to omit from the installation tree on disk
+      --include:
+        value:
+          exec: printf '%s\n' prod dev optional peer
+        description: Option that allows for defining which types of dependencies to install
+      --strict-peer-deps:
+        description: If set to true, and --legacy-peer-deps is not set, then _any_ conflicting...
+      --no-package-lock:
+        description: 'Disable: if set to false, then ignore package-lock.json files when installing'
+      --foreground-scripts:
+        description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+      --allow-scripts:
+        value: any
+        description: Comma-separated list of packages whose install-time lifecycle scripts...
+      --strict-allow-scripts:
+        description: If true, turn the install-script policy from a warning into a hard error:...
+      --dangerously-allow-all-scripts:
+        description: If true, bypass the allowScripts policy entirely and run every dependency...
+      --no-audit:
+        description: 'Disable: when "true" submit audit reports alongside the current npm command...'
+      --before:
+        value: any
+        description: If passed to npm install, will rebuild the npm tree such that only versions...
+      --min-release-age:
+        value: any
+        description: If set, npm will build the npm tree such that only versions that were...
+      --min-release-age-exclude:
+        value:
+          exec: printf '%s\n' pkg glob
+        description: A list of package names or minimatch glob patterns that are exempt from the...
+      --no-bin-links:
+        description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
+      --no-fund:
+        description: 'Disable: when "true" displays the message at the end of each npm install...'
+      --dry-run:
+        description: Show what would happen, change nothing
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --install-links:
+        description: 'When set file: protocol dependencies will be packed and installed as regular...'
+      -D:
+        description: Save to devDependencies
+    args:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+  version:
+    description: Bump the package version
+    aliases: [verison]
+    flags:
+      --allow-same-version:
+        description: Prevents throwing an error when npm version is used to set the new version...
+      --no-commit-hooks:
+        description: 'Disable: run git commit hooks when using the npm version command'
+      --no-git-tag-version:
+        description: Don't commit or tag
+      --preid:
+        value: any
+        description: Prerelease id
+      --sign-git-tag:
+        description: If set to true, then the npm version command will tag the version using -s...
+      -S:
+        description: Save installed packages to a package.json file as dependencies
+      --save:
+        description: Save installed packages to a package.json file as dependencies
+      --no-save:
+        description: 'Disable: save installed packages to a package.json file as dependencies'
+      --save-prod:
+        description: Save installed packages into dependencies specifically
+      --save-dev:
+        description: Save installed packages to a package.json file as devDependencies
+      --save-optional:
+        description: Save installed packages to a package.json file as optionalDependencies
+      --save-peer:
+        description: Save installed packages to a package.json file as peerDependencies
+      --save-bundle:
+        description: If a package would be saved at install time by the use of --save,...
+      --no-workspaces-update:
+        description: 'Disable: if set to true, the npm cli will run an update after operations...'
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+      --ignore-scripts:
+        description: If true, npm does not run scripts specified in package.json files
+    args:
+      exec: printf 'major\nminor\npatch\npremajor\npreminor\nprepatch\nprerelease\n'
+  view:
+    description: Show registry info for a package
+    aliases: [info, show, v]
+    flags:
+      --include-workspace-root:
+        description: Include the workspace root when workspaces are enabled for a command
+    args: any
+  whoami:
+    description: Show logged-in user
