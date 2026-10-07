@@ -34,7 +34,8 @@ function, and nothing is loaded until you press TAB.
 - Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
 - Bundled completions for **docker**, **git** and **make**.
 - Live values: running containers, images, networks and volumes for docker; branches,
-  tags, remotes, stashes and changed files for git; Makefile targets for make
+  tags, remotes, stashes and changed files for git; Makefile targets for make, with
+  descriptions taken from `## text` or the comment above each target
   (honours `make -C dir` and `make -f file`).
 - Shows a short description next to each subcommand and flag when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).

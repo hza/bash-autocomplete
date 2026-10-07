@@ -71,7 +71,7 @@ A value can be:
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
-| `"@make-targets"` | targets of the Makefile |
+| `"@make-targets"` | targets of the Makefile, with descriptions (see below) |
 | a list `[a, b]` | everything from each item, combined |
 
 Notes:
@@ -91,6 +91,14 @@ Notes:
   ```
   They are plain text: bash 3.2 can't display colors in the completion list. Long
   descriptions are cut to fit the terminal width.
+- `"@make-targets"` reads descriptions from the Makefile itself: either `## text` after the
+  target, or the comment lines directly above it (`##` wins if both are present):
+  ```make
+  # Build the binary
+  app: main.c
+
+  test: app  ## Run the test suite
+  ```
 - `exec` commands run in the current directory, and their errors are discarded.
 - Values starting with `@` must be quoted.
 

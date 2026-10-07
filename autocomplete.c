@@ -297,11 +297,23 @@ static void complete_files(int dirs_only) {
     closedir(d);
 }
 
+/* Text of a "# ..." comment line without the #s and surrounding blanks. */
+static char *comment_text(char *s) {
+    size_t n;
+    while (*s == '#') s++;
+    while (*s == ' ' || *s == '\t') s++;
+    n = strlen(s);
+    while (n && strchr(" \t\r\n", s[n - 1])) s[--n] = 0;
+    return s;
+}
+
 /* Emit explicit targets of a makefile: "name [name...]: deps", skipping
- * variable assignments, recipes, special (.PHONY) and pattern (%) rules. */
+ * variable assignments, recipes, special (.PHONY) and pattern (%) rules.
+ * A target's description is its "## text" after the deps, or else the
+ * comment lines directly above it. */
 static void complete_make_targets(void) {
     static const char *defaults[] = {"GNUmakefile", "makefile", "Makefile", 0};
-    char path[4096], line[4096];
+    char path[4096], line[4096], comment[1024] = "";
     const char **d;
     FILE *f = NULL;
     const char *g_makefile = seen("-f", "--file", "--makefile");
@@ -320,13 +332,24 @@ static void complete_make_targets(void) {
     }
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
-        char *colon = strchr(line, ':'), *tok;
-        if (line[0] == '\t' || line[0] == '#' || !colon) continue;
-        if (colon[1] == '=' || (colon[1] == ':' && colon[2] == '=')) continue;
-        *colon = 0;
-        if (strpbrk(line, "=$%")) continue;
-        for (tok = strtok(line, " \t"); tok; tok = strtok(NULL, " \t"))
-            if (tok[0] != '.') emit(tok, 1);
+        char *colon = strchr(line, ':'), *tok, *inline_doc, *desc;
+        if (line[0] == '#') { /* collect the comment block above a target */
+            char *t = comment_text(line);
+            size_t have = strlen(comment);
+            if (*t) snprintf(comment + have, sizeof comment - have, "%s%s", have ? " " : "", t);
+            continue;
+        }
+        desc = NULL;
+        if (line[0] != '\t' && colon && colon[1] != '=' && !(colon[1] == ':' && colon[2] == '=')) {
+            if ((inline_doc = strstr(colon, "##"))) desc = comment_text(inline_doc);
+            else if (*comment) desc = comment;
+            *colon = 0;
+            if (!strpbrk(line, "=$%")) {
+                for (tok = strtok(line, " \t"); tok; tok = strtok(NULL, " \t"))
+                    if (tok[0] != '.') emit_desc(tok, 1, desc && *desc ? strdup(desc) : NULL);
+            }
+        }
+        comment[0] = 0; /* a comment only documents the line right below it */
     }
     fclose(f);
 }
