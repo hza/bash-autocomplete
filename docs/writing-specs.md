@@ -73,6 +73,7 @@ A value can be:
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |
+| `"@make-variables"` | `NAME=` for each upper-case variable (`A-Z`, `0-9`, `_`) the Makefile assigns, for overrides like `make CC=clang` |
 | a list `[a, b]` | everything from each item, combined |
 
 Notes:
@@ -92,8 +93,28 @@ Notes:
   ```
   They are plain text: bash 3.2 can't display colors in the completion list. Long
   descriptions are cut to fit the terminal width.
-- `"@make-targets"` reads descriptions from the Makefile itself: either `## text` after the
-  target, or the comment lines directly above it (`##` wins if both are present):
+- When one list mixes kinds of suggestions (subcommands, files, make targets and
+  variables), each line is tagged, since bash sorts the list and can't show section headers.
+  Make variables also show the value the Makefile assigns:
+  ```
+  $ make D<TAB>
+  Dockerfile  -- [target] Generate the Dockerfile
+  DESTDIR=    -- [var]    Staging root · ?= /tmp/stage
+  ```
+  On a bare `make <TAB>` the variables are folded into one display-only `🔧 vars`
+  line listing their names, so targets come first. It is never inserted; type a letter
+  (`make C<TAB>`) to list matching variables with their values:
+  ```
+  $ make <TAB>
+  all      -- Build everything
+  build
+  🔧 vars  -- CC PREFIX X
+  $ make C<TAB>
+  CC=      -- C compiler · ?= cc
+  CFLAGS=  -- ?= -O2
+  ```
+- `"@make-targets"` and `"@make-variables"` read descriptions from the Makefile itself: either `## text` after the
+  target or assignment, or the comment lines directly above it (`##` wins if both are present):
   ```make
   # Build the binary
   app: main.c

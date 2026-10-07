@@ -30,4 +30,4 @@ flags:
   --version: {description: "Print the version number of make and exit"}
   -h: {description: "Print this message and exit"}
   --help: {description: "Print this message and exit"}
-args: "@make-targets"
+args: ["@make-targets", "@make-variables"]

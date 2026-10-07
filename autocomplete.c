@@ -167,9 +167,11 @@ typedef struct {
     char *text;       /* escaped, trimmed to bash's current word */
     int space;        /* finished word: append a space */
     const char *desc; /* optional description (spec "description") */
+    const char *kind; /* source, e.g. "target"; tagged when kinds mix */
 } cand;
 static cand g_cands[MAXCANDS];
 static int g_ncands;
+static const char *g_kind; /* kind given to candidates emitted now */
 
 /* Escape for bash and queue, trimmed to bash's current word. Duplicates
  * (union values can overlap) are dropped, keeping the first description. */
@@ -207,6 +209,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
     if (g_ncands < MAXCANDS) {
         g_cands[g_ncands].text = strdup(p);
         g_cands[g_ncands].space = space;
+        g_cands[g_ncands].kind = g_kind;
         g_cands[g_ncands++].desc = desc;
     }
 }
@@ -226,16 +229,63 @@ static int term_width(void) {
 
 /* Print queued candidates. With several matches and any description, each
  * candidate becomes "name  -- description", padded so bash lists one per
- * line. bash only inserts the common prefix of ambiguous matches, and names
+ * line. When candidates of different kinds mix (make targets and variables),
+ * the description starts with a "[kind]" tag, since bash sorts the list and
+ * real section headers are impossible. bash only inserts the common prefix of ambiguous matches, and names
  * differ before the padding starts, so descriptions never reach the command
  * line. A single match is always printed bare so it can be inserted. */
+/* On an empty word, make variables are folded into one display-only
+ * "🔧 vars" entry (description: their names) so the list shows targets
+ * first; typing a letter lists matching ones. It is never inserted: other
+ * candidates remain and share no prefix with it. Kept unfolded when there
+ * are no targets to show. */
+static int is_var(const cand *c) { return c->kind && !strcmp(c->kind, "var"); }
+
+static void collapse_vars(void) {
+    char names[1024] = "";
+    int i, j, hidden = 0;
+    size_t have = 0;
+    if (*g_cur) return;
+    for (i = 0; i < g_ncands; i++)
+        if (is_var(&g_cands[i])) {
+            const char *t = g_cands[i].text;
+            hidden++;
+            if (have < sizeof names - 1)
+                have += (size_t)snprintf(names + have, sizeof names - have, "%s%.*s", have ? " " : "",
+                                         (int)strcspn(t, "="), t);
+        }
+    if (!hidden || hidden == g_ncands) return;
+    for (i = j = 0; i < g_ncands; i++)
+        if (!is_var(&g_cands[i])) g_cands[j++] = g_cands[i];
+    g_ncands = j;
+    g_kind = "target"; /* sits among targets: no [kind] tags */
+    /* U+00A0 no-break space: a plain one would be shown escaped ("\ ") */
+    emit_desc(" 🔧 vars", 0, strdup(names));
+}
+
+/* Terminal columns of a UTF-8 string: continuation bytes take none and
+ * 4-byte sequences (emoji) take two. */
+static int dwidth(const char *s) {
+    int w = 0;
+    for (; *s; s++) {
+        unsigned char c = (unsigned char)*s;
+        if ((c & 0xC0) != 0x80) w += c >= 0xF0 ? 2 : 1;
+    }
+    return w;
+}
+
 static void flush(void) {
-    int i, any = 0, width = 0, cols, line;
+    int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
+    collapse_vars();
     for (i = 0; i < g_ncands; i++) {
-        int len = (int)strlen(g_cands[i].text);
+        int len = dwidth(g_cands[i].text);
+        const char *k = g_cands[i].kind;
         if (g_cands[i].desc) any = 1;
         if (len > width) width = len;
+        if (k && (int)strlen(k) + 2 > kwidth) kwidth = (int)strlen(k) + 2;
+        if (i && (k ? !g_cands[0].kind || strcmp(k, g_cands[0].kind) : !!g_cands[0].kind)) mixed = 1;
     }
+    if (mixed) any = 1;
     if (g_ncands < 2 || !any) {
         for (i = 0; i < g_ncands; i++)
             printf("%s%s\n", g_cands[i].text, g_cands[i].space ? " " : "");
@@ -245,9 +295,16 @@ static void flush(void) {
     line = cols / 2 + 1; /* wider than half the screen: one per line */
     for (i = 0; i < g_ncands; i++) {
         char buf[4096];
+        char tag[64] = "";
         int n;
-        if (g_cands[i].desc)
-            n = snprintf(buf, sizeof buf, "%-*s  -- %s", width, g_cands[i].text, g_cands[i].desc);
+        if (mixed && g_cands[i].kind) snprintf(tag, sizeof tag, "[%s]", g_cands[i].kind);
+        if (mixed)
+            n = snprintf(buf, sizeof buf, "%-*s  -- %-*s %s",
+                         width + (int)strlen(g_cands[i].text) - dwidth(g_cands[i].text), g_cands[i].text, kwidth, tag,
+                         g_cands[i].desc ? g_cands[i].desc : "");
+        else if (g_cands[i].desc)
+            n = snprintf(buf, sizeof buf, "%-*s  -- %s",
+                         width + (int)strlen(g_cands[i].text) - dwidth(g_cands[i].text), g_cands[i].text, g_cands[i].desc);
         else
             n = snprintf(buf, sizeof buf, "%s", g_cands[i].text);
         if (n >= (int)sizeof buf) n = (int)sizeof buf - 1;
@@ -323,9 +380,11 @@ static char *comment_text(char *s) {
  * variable assignments, recipes, special (.PHONY) and pattern (%) rules.
  * A target's description is its "## text" after the deps, or else the
  * comment lines directly above it. */
-static void complete_make_targets(void) {
+/* Open the makefile make would read, honouring -f/--file/--makefile and
+ * -C/--directory seen on the line. */
+static FILE *open_makefile(void) {
     static const char *defaults[] = {"GNUmakefile", "makefile", "Makefile", 0};
-    char path[4096], line[4096], comment[1024] = "";
+    char path[4096];
     const char **d;
     FILE *f = NULL;
     const char *g_makefile = seen("-f", "--file", "--makefile");
@@ -342,6 +401,12 @@ static void complete_make_targets(void) {
         snprintf(path, sizeof path, "%s%s%s", g_makedir ? g_makedir : "", g_makedir ? "/" : "", *d);
         f = fopen(path, "r");
     }
+    return f;
+}
+
+static void complete_make_targets(void) {
+    char line[4096], comment[1024] = "";
+    FILE *f = open_makefile();
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
         char *colon = strchr(line, ':'), *tok, *inline_doc, *desc;
@@ -366,6 +431,64 @@ static void complete_make_targets(void) {
     fclose(f);
 }
 
+/* Overridable-looking variable name: capitals, digits and _ only, so
+ * internal lowercase helpers and special ".NAME" variables are skipped. */
+static int upper_name(const char *s, const char *end) {
+    for (; s < end; s++)
+        if (!((*s >= 'A' && *s <= 'Z') || (*s >= '0' && *s <= '9') || *s == '_')) return 0;
+    return 1;
+}
+
+/* Emit "NAME=" for each upper-case variable assigned in the makefile (NAME =
+ * / := / ::= / ?= / += / != value, optionally after "export"/"override"), for
+ * command-line overrides like "make CC=clang". Description as for targets. */
+static void complete_make_variables(void) {
+    char line[4096], comment[1024] = "";
+    FILE *f = open_makefile();
+    if (!f) return;
+    while (fgets(line, sizeof line, f)) {
+        char *p = line, *name, *end, *doc, *desc = NULL;
+        if (line[0] == '#') {
+            char *t = comment_text(line);
+            size_t have = strlen(comment);
+            if (*t) snprintf(comment + have, sizeof comment - have, "%s%s", have ? " " : "", t);
+            continue;
+        }
+        if (line[0] != '\t') {
+            for (;;) { /* skip export/override prefixes */
+                while (*p == ' ') p++;
+                if (!strncmp(p, "export ", 7)) p += 7;
+                else if (!strncmp(p, "override ", 9)) p += 9;
+                else break;
+            }
+            name = p;
+            while (*p && !strchr(" \t:?+!=#$%()", *p)) p++;
+            end = p;
+            while (*p == ' ' || *p == '\t') p++;
+            if (end > name && upper_name(name, end) && (*p == '=' || !strncmp(p, ":=", 2) || !strncmp(p, "::=", 3) ||
+                               !strncmp(p, "?=", 2) || !strncmp(p, "+=", 2) || !strncmp(p, "!=", 2))) {
+                char buf[1024], full[2048], *op = p, *val = strchr(p, '=') + 1;
+                size_t n;
+                if ((doc = strstr(val, "##"))) { *doc = 0; desc = comment_text(doc + 2); }
+                else if (*comment) desc = comment;
+                /* the assigned value, shown as "C compiler · ?= cc" */
+                while (*val == ' ' || *val == '\t') val++;
+                n = strlen(val);
+                while (n && strchr(" \t\r\n\\", val[n - 1])) val[--n] = 0;
+                if (*val)
+                    snprintf(full, sizeof full, "%s%s%.*s %s", desc && *desc ? desc : "",
+                             desc && *desc ? " · " : "", (int)(strchr(op, '=') - op + 1), op, val);
+                else
+                    snprintf(full, sizeof full, "%s", desc ? desc : "");
+                snprintf(buf, sizeof buf, "%.*s=", (int)(end - name), name);
+                emit_desc(buf, 0, *full ? strdup(full) : NULL);
+            }
+        }
+        comment[0] = 0;
+    }
+    fclose(f);
+}
+
 /* "description" of a command or flag spec, if any. */
 static const char *spec_desc(const ynode *spec) {
     const ynode *d = yaml_get(spec, "description");
@@ -375,6 +498,7 @@ static const char *spec_desc(const ynode *spec) {
 /* Emit every subcommand of `cmds`, plus each of its "aliases". */
 static void emit_commands(const ynode *cmds) {
     const ynode *c, *a;
+    g_kind = "command";
     for (c = cmds ? cmds->child : NULL; c; c = c->next) {
         emit_desc(c->key, 1, spec_desc(c));
         a = yaml_get(c, "aliases");
@@ -406,9 +530,10 @@ static void complete_value(const ynode *v, const ynode *parent) {
         break;
     }
     case Y_STR:
-        if (!strcmp(v->str, "file")) complete_files(0);
-        else if (!strcmp(v->str, "dir")) complete_files(1);
-        else if (!strcmp(v->str, "@make-targets")) complete_make_targets();
+        if (!strcmp(v->str, "file")) { g_kind = "file"; complete_files(0); }
+        else if (!strcmp(v->str, "dir")) { g_kind = "dir"; complete_files(1); }
+        else if (!strcmp(v->str, "@make-targets")) { g_kind = "target"; complete_make_targets(); }
+        else if (!strcmp(v->str, "@make-variables")) { g_kind = "var"; complete_make_variables(); }
         else if (!strcmp(v->str, "@subcommands")) emit_commands(yaml_get(parent, "commands"));
         break;
     case Y_OBJ: {
@@ -416,6 +541,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         char shell[4096];
         if (!ex || ex->type != Y_STR) break;
         snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
+        g_kind = NULL;
         emit_cmd_output(shell, sx && sx->type == Y_STR ? sx->str : NULL,
                         !(ns && ns->type == Y_BOOL && ns->b));
         break;
