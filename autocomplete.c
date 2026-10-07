@@ -4,7 +4,8 @@
  *   eval "$(autocomplete bash)"          # register completions for all specs
  *   autocomplete _complete "$COMP_LINE_UP_TO_POINT" "$COMP_WORDBREAKS"
  *
- * Commands are described by JSON specs (<command>.json), looked up in:
+ * Commands are described by YAML specs, <command>.yaml or <command>.yml,
+ * looked up in:
  *   $AUTOCOMPLETE_SPECS (colon list), ~/.config/autocomplete,
  *   <binary dir>/specs, <binary dir>/../share/autocomplete
  *
@@ -24,7 +25,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-#include "json.h"
+#include "yaml.h"
 
 /* ------------------------------------------------------------ spec dirs */
 
@@ -64,19 +65,65 @@ static void init_dirs(void) {
     add_dir(buf);
 }
 
-static jnode *load_spec(const char *name) {
-    char path[PATH_MAX], err[256];
-    int i;
-    if (strchr(name, '/') || name[0] == '.') return NULL;
-    for (i = 0; i < g_ndirs; i++) {
-        jnode *n;
-        snprintf(path, sizeof path, "%s/%s.json", g_dirs[i], name);
-        if (access(path, R_OK) != 0) continue;
-        n = json_load(path, err, sizeof err);
-        if (!n && getenv("AUTOCOMPLETE_DEBUG")) fprintf(stderr, "autocomplete: %s: %s\n", path, err);
-        return n;
+static const char *g_exts[] = {".yaml", ".yml", 0};
+
+/* Path of the YAML spec for `name` (first dir/ext that exists), or 0. */
+static int find_spec(const char *name, char *path, size_t size) {
+    int i, e;
+    if (strchr(name, '/') || name[0] == '.') return 0;
+    for (i = 0; i < g_ndirs; i++)
+        for (e = 0; g_exts[e]; e++) {
+            snprintf(path, size, "%s/%s%s", g_dirs[i], name, g_exts[e]);
+            if (access(path, R_OK) == 0) return 1;
+        }
+    return 0;
+}
+
+/* Compiled specs live in $XDG_CACHE_HOME/autocomplete or ~/.cache/autocomplete
+ * as <name>.cache; creates the directory when `create` is set. */
+static int cache_path(const char *name, char *path, size_t size, int create) {
+    const char *xdg = getenv("XDG_CACHE_HOME"), *home = getenv("HOME");
+    char dir[PATH_MAX];
+    if (getenv("AUTOCOMPLETE_NOCACHE")) return 0;
+    if (xdg && *xdg) snprintf(dir, sizeof dir, "%s/autocomplete", xdg);
+    else if (home) snprintf(dir, sizeof dir, "%s/.cache/autocomplete", home);
+    else return 0;
+    if (create) {
+        char *s;
+        for (s = dir + 1; *s; s++)
+            if (*s == '/') { *s = 0; mkdir(dir, 0755); *s = '/'; }
+        mkdir(dir, 0755);
     }
-    return NULL;
+    snprintf(path, size, "%s/%s.cache", dir, name);
+    return 1;
+}
+
+static int save_cache(const char *name, const ynode *n, const char *src, char *out, size_t size) {
+    return cache_path(name, out, size, 1) && yaml_save_bin(n, out, src);
+}
+
+#ifdef __APPLE__
+#define MTIME(st) (st).st_mtimespec
+#else
+#define MTIME(st) (st).st_mtim
+#endif
+
+/* Load a spec, from its compiled cache when that is newer than the YAML. */
+static ynode *load_spec(const char *name) {
+    char path[PATH_MAX], bin[PATH_MAX], err[256];
+    struct stat ys, bs;
+    ynode *n;
+    if (!find_spec(name, path, sizeof path)) return NULL;
+    if (cache_path(name, bin, sizeof bin, 0) && stat(path, &ys) == 0 && stat(bin, &bs) == 0 &&
+        (MTIME(bs).tv_sec > MTIME(ys).tv_sec ||
+         (MTIME(bs).tv_sec == MTIME(ys).tv_sec && MTIME(bs).tv_nsec > MTIME(ys).tv_nsec)) &&
+        (n = yaml_load_bin(bin, path)))
+        return n;
+    n = yaml_load(path, err, sizeof err);
+    if (!n && getenv("AUTOCOMPLETE_DEBUG")) fprintf(stderr, "autocomplete: %s: %s\n", path, err);
+    if (n && !save_cache(name, n, path, bin, sizeof bin) && getenv("AUTOCOMPLETE_DEBUG"))
+        fprintf(stderr, "autocomplete: cannot write cache for %s\n", name);
+    return n;
 }
 
 /* ------------------------------------------------------------- output */
@@ -223,31 +270,31 @@ static void complete_make_targets(void) {
 
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
-static void complete_value(const jnode *v, const jnode *parent) {
+static void complete_value(const ynode *v, const ynode *parent) {
     if (!v) return;
     switch (v->type) {
-    case J_ARR: {
-        const jnode *e;
+    case Y_ARR: {
+        const ynode *e;
         for (e = v->child; e; e = e->next) complete_value(e, parent);
         break;
     }
-    case J_STR:
+    case Y_STR:
         if (!strcmp(v->str, "file")) complete_files(0);
         else if (!strcmp(v->str, "dir")) complete_files(1);
         else if (!strcmp(v->str, "@make-targets")) complete_make_targets();
         else if (!strcmp(v->str, "@subcommands")) {
-            const jnode *c;
-            for (c = json_get(parent, "commands") ? json_get(parent, "commands")->child : NULL; c; c = c->next)
+            const ynode *c;
+            for (c = yaml_get(parent, "commands") ? yaml_get(parent, "commands")->child : NULL; c; c = c->next)
                 emit(c->key, 1);
         }
         break;
-    case J_OBJ: {
-        const jnode *ex = json_get(v, "exec"), *sx = json_get(v, "suffix"), *ns = json_get(v, "nospace");
+    case Y_OBJ: {
+        const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace");
         char shell[4096];
-        if (!ex || ex->type != J_STR) break;
-        snprintf(shell, sizeof shell, "%s 2>/dev/null", ex->str);
-        emit_cmd_output(shell, sx && sx->type == J_STR ? sx->str : NULL,
-                        !(ns && ns->type == J_BOOL && ns->num));
+        if (!ex || ex->type != Y_STR) break;
+        snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
+        emit_cmd_output(shell, sx && sx->type == Y_STR ? sx->str : NULL,
+                        !(ns && ns->type == Y_BOOL && ns->b));
         break;
     }
     default: break;
@@ -255,13 +302,13 @@ static void complete_value(const jnode *v, const jnode *parent) {
 }
 
 /* Find flag `name` in cmd's flags; *val receives its value spec. */
-static int find_flag(const jnode *cmd, const char *name, const jnode **val) {
-    const jnode *f = json_get(json_get(cmd, "flags"), name);
+static int find_flag(const ynode *cmd, const char *name, const ynode **val) {
+    const ynode *f = yaml_get(yaml_get(cmd, "flags"), name);
     if (f) *val = f;
     return f != NULL;
 }
 
-static int takes_value(const jnode *v) { return v && v->type != J_NULL; }
+static int takes_value(const ynode *v) { return v && v->type != Y_NULL; }
 
 /* ------------------------------------------------------------ parsing */
 
@@ -303,7 +350,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
     size_t raw;
     int n = split(line, w, &raw), i;
-    const jnode *root, *c, *parent = NULL, *v = NULL, *subs;
+    const ynode *root, *c, *parent = NULL, *v = NULL, *subs;
     const char *cur, *slash;
 
     g_wbreaks = wbreaks;
@@ -315,7 +362,7 @@ static int do_complete(const char *line, const char *wbreaks) {
 
     /* walk the already-typed words */
     for (i = 1; i < n - 1; i++) {
-        const jnode *s;
+        const ynode *s;
         if (!strcmp(w[i], "--")) continue;
         if (w[i][0] == '-') {
             if (strchr(w[i], '=')) continue;
@@ -328,7 +375,7 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = json_get(json_get(c, "commands"), w[i]))) { parent = c; c = s; }
+        if ((s = yaml_get(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; }
     }
 
     /* value for previous flag? */
@@ -353,17 +400,17 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     if (cur[0] == '-') {
-        const jnode *f;
-        for (f = json_get(c, "flags") ? json_get(c, "flags")->child : NULL; f; f = f->next)
+        const ynode *f;
+        for (f = yaml_get(c, "flags") ? yaml_get(c, "flags")->child : NULL; f; f = f->next)
             emit(f->key, 1);
         return 0;
     }
 
-    subs = json_get(c, "commands");
+    subs = yaml_get(c, "commands");
     for (v = subs ? subs->child : NULL; v; v = v->next) emit(v->key, 1);
-    v = json_get(c, "args");
+    v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
-    complete_value(v, v && v->type == J_STR && !strcmp(v->str, "@subcommands") && parent ? parent : c);
+    complete_value(v, v && v->type == Y_STR && !strcmp(v->str, "@subcommands") && parent ? parent : c);
     return 0;
 }
 
@@ -378,9 +425,15 @@ static void each_spec(void (*fn)(const char *)) {
         struct dirent *e;
         if (!d) continue;
         while ((e = readdir(d)) && nn < 512) {
-            size_t len = strlen(e->d_name);
-            if (len <= 5 || e->d_name[0] == '.' || strcmp(e->d_name + len - 5, ".json")) continue;
-            e->d_name[len - 5] = 0;
+            size_t len = strlen(e->d_name), xl = 0;
+            int x;
+            if (e->d_name[0] == '.') continue;
+            for (x = 0; g_exts[x]; x++) {
+                xl = strlen(g_exts[x]);
+                if (len > xl && !strcmp(e->d_name + len - xl, g_exts[x])) break;
+            }
+            if (!g_exts[x]) continue;
+            e->d_name[len - xl] = 0;
             for (j = 0; j < nn && strcmp(names[j], e->d_name); j++) {}
             if (j == nn) names[nn++] = strdup(e->d_name);
         }
@@ -391,6 +444,30 @@ static void each_spec(void (*fn)(const char *)) {
 
 static void print_complete(const char *name) { printf("complete -o nospace -F _autocomplete %s\n", name); }
 static void print_name(const char *name) { puts(name); }
+
+static int g_cache_failed;
+
+/* `autocomplete cache`: parse a spec and write its cache unconditionally. */
+static void cache_spec(const char *name) {
+    char path[PATH_MAX], bin[PATH_MAX], err[256];
+    ynode *n;
+    if (!find_spec(name, path, sizeof path)) {
+        fprintf(stderr, "%s: no such spec\n", name);
+        g_cache_failed = 1;
+        return;
+    }
+    if (!(n = yaml_load(path, err, sizeof err))) {
+        fprintf(stderr, "%s: %s\n", path, err);
+        g_cache_failed = 1;
+        return;
+    }
+    if (save_cache(name, n, path, bin, sizeof bin)) printf("%s -> %s\n", path, bin);
+    else {
+        fprintf(stderr, "%s: cannot write cache%s\n", name, getenv("AUTOCOMPLETE_NOCACHE") ? " (AUTOCOMPLETE_NOCACHE set)" : "");
+        g_cache_failed = 1;
+    }
+    yaml_free(n);
+}
 
 static void print_bash(const char *self) {
     printf(
@@ -405,6 +482,45 @@ static void print_bash(const char *self) {
     each_spec(print_complete);
 }
 
+/* Print a parsed spec as JSON (for `autocomplete check`). */
+static void dump(const ynode *n, int ind) {
+    const ynode *c;
+    const char *s;
+    switch (n->type) {
+    case Y_NULL: printf("null"); break;
+    case Y_BOOL: printf(n->b ? "true" : "false"); break;
+    case Y_STR:
+        putchar('"');
+        for (s = n->str; *s; s++) {
+            if (*s == '"' || *s == '\\') printf("\\%c", *s);
+            else if (*s == '\n') printf("\\n");
+            else if (*s == '\t') printf("\\t");
+            else putchar(*s);
+        }
+        putchar('"');
+        break;
+    case Y_ARR:
+    case Y_OBJ:
+        putchar(n->type == Y_OBJ ? '{' : '[');
+        for (c = n->child; c; c = c->next) {
+            printf("\n%*s", ind + 2, "");
+            if (n->type == Y_OBJ) {
+                ynode k;
+                memset(&k, 0, sizeof k);
+                k.type = Y_STR;
+                k.str = c->key;
+                dump(&k, 0);
+                printf(": ");
+            }
+            dump(c, ind + 2);
+            if (c->next) putchar(',');
+        }
+        if (n->child) printf("\n%*s", ind, "");
+        putchar(n->type == Y_OBJ ? '}' : ']');
+        break;
+    }
+}
+
 int main(int argc, char **argv) {
     init_dirs();
     if (argc >= 2 && !strcmp(argv[1], "bash")) {
@@ -415,6 +531,23 @@ int main(int argc, char **argv) {
     }
     if (argc >= 3 && !strcmp(argv[1], "_complete"))
         return do_complete(argv[2], argc >= 4 ? argv[3] : "\"'@><=;|&(:");
+    if (argc >= 3 && !strcmp(argv[1], "check")) {
+        char err[256];
+        ynode *n = yaml_load(argv[2], err, sizeof err);
+        if (!n) {
+            fprintf(stderr, "%s: %s\n", argv[2], err);
+            return 1;
+        }
+        dump(n, 0);
+        putchar('\n');
+        return 0;
+    }
+    if (argc >= 2 && !strcmp(argv[1], "cache")) {
+        int i;
+        if (argc == 2) each_spec(cache_spec);
+        for (i = 2; i < argc; i++) cache_spec(argv[i]);
+        return g_cache_failed;
+    }
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         each_spec(print_name);
         return 0;
@@ -422,6 +555,8 @@ int main(int argc, char **argv) {
     fprintf(stderr,
             "usage: autocomplete bash              print bash init script\n"
             "       autocomplete list              list available specs\n"
+            "       autocomplete check FILE        validate a spec, print it as JSON\n"
+            "       autocomplete cache [NAME...]   precompile specs into the cache\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
 }

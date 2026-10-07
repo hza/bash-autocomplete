@@ -1,0 +1,493 @@
+flags:
+  -C: dir
+  -c: any
+  --git-dir: dir
+  --work-tree: dir
+  --no-pager:
+  -p:
+  --paginate:
+  --bare:
+  --help:
+  --version:
+commands:
+  add:
+    flags:
+      -A:
+      --all:
+      -u:
+      --update:
+      -p:
+      --patch:
+      -n:
+      --dry-run:
+      -f:
+      --force:
+      -v:
+      --verbose:
+      -N:
+      --intent-to-add:
+    args:
+      - exec: git ls-files -m -o --exclude-standard
+      - file
+  restore:
+    flags:
+      -S:
+      --staged:
+      -W:
+      --worktree:
+      -s:
+        exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      --source:
+        exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      -p:
+      --patch:
+    args:
+      - exec: git diff --name-only --relative
+      - exec: git diff --cached --name-only --relative
+  rm:
+    flags:
+      -f:
+      --force:
+      -r:
+      --cached:
+      -n:
+      --dry-run:
+    args:
+      exec: git ls-files
+  mv:
+    flags:
+      -f:
+      --force:
+      -n:
+      --dry-run:
+    args: file
+  status:
+    flags:
+      -s:
+      --short:
+      -b:
+      --branch:
+      --porcelain:
+      -u: any
+      --untracked-files: any
+      --ignored:
+    args: file
+  diff:
+    flags:
+      --cached:
+      --staged:
+      --stat:
+      --name-only:
+      --name-status:
+      -w:
+      --ignore-all-space:
+      --word-diff:
+      --color-words:
+      --no-index:
+      -U: any
+    args:
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      - exec: git diff --name-only --relative
+  commit:
+    flags:
+      -m: any
+      --message: any
+      -a:
+      --all:
+      --amend:
+      --no-edit:
+      -F: file
+      --file: file
+      -v:
+      --verbose:
+      -n:
+      --no-verify:
+      -s:
+      --signoff:
+      --fixup: any
+      --allow-empty:
+      -p:
+      --patch:
+    args:
+      exec: git ls-files -m
+  log:
+    flags:
+      --oneline:
+      --graph:
+      --all:
+      --decorate:
+      -p:
+      --patch:
+      --stat:
+      -n: any
+      --max-count: any
+      --author: any
+      --since: any
+      --until: any
+      --grep: any
+      --follow:
+      --reverse:
+      --pretty: any
+      --format: any
+    args:
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      - file
+  show:
+    flags:
+      --stat:
+      --name-only:
+      --oneline:
+      --pretty: any
+      --format: any
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+  branch:
+    flags:
+      -a:
+      --all:
+      -r:
+      --remotes:
+      -d:
+      --delete:
+      -D:
+      -m:
+      --move:
+      -M:
+      -c:
+      --copy:
+      -v:
+      -vv:
+      -u:
+        exec: git for-each-ref --format='%(refname:short)' refs/remotes
+      --set-upstream-to:
+        exec: git for-each-ref --format='%(refname:short)' refs/remotes
+      --unset-upstream:
+      --show-current:
+      --merged:
+      --no-merged:
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads
+  checkout:
+    flags:
+      -b: any
+      -B: any
+      --orphan: any
+      -f:
+      --force:
+      -t:
+      --track:
+      --detach:
+      -p:
+      --patch:
+    args:
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      - exec: git diff --name-only --relative
+  switch:
+    flags:
+      -c: any
+      --create: any
+      -C: any
+      --force-create: any
+      -d:
+      --detach:
+      -t:
+      --track:
+      --orphan: any
+      -f:
+      --force:
+      --discard-changes:
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes
+  merge:
+    flags:
+      --no-ff:
+      --ff-only:
+      --squash:
+      --abort:
+      --continue:
+      -m: any
+      --no-edit:
+      -s: any
+      --strategy: any
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+  rebase:
+    flags:
+      -i:
+      --interactive:
+      --continue:
+      --abort:
+      --skip:
+      --onto:
+        exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      --autosquash:
+      --autostash:
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+  cherry-pick:
+    flags:
+      --continue:
+      --abort:
+      --skip:
+      -n:
+      --no-commit:
+      -x:
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+  reset:
+    flags:
+      --soft:
+      --mixed:
+      --hard:
+      --keep:
+      -p:
+      --patch:
+    args:
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      - exec: git diff --cached --name-only --relative
+  revert:
+    flags:
+      --continue:
+      --abort:
+      --no-edit:
+      -n:
+      --no-commit:
+    args:
+      exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
+  tag:
+    flags:
+      -a:
+      --annotate:
+      -m: any
+      --message: any
+      -d:
+      --delete:
+      -l:
+      --list:
+      -f:
+      --force:
+      -s:
+      --sign:
+    args:
+      exec: git tag
+  fetch:
+    flags:
+      --all:
+      -p:
+      --prune:
+      --tags:
+      --depth: any
+      -v:
+    args:
+      exec: git remote
+  pull:
+    flags:
+      --rebase:
+      --no-rebase:
+      --ff-only:
+      --all:
+      --autostash:
+      -v:
+    args:
+      - exec: git remote
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads
+  push:
+    flags:
+      -u:
+      --set-upstream:
+      -f:
+      --force:
+      --force-with-lease:
+      --tags:
+      --all:
+      -d:
+      --delete:
+      --dry-run:
+      --no-verify:
+    args:
+      - exec: git remote
+      - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
+  remote:
+    flags:
+      -v:
+      --verbose:
+    commands:
+      add:
+        flags:
+          -f:
+          -t: any
+        args: any
+      remove:
+        args:
+          exec: git remote
+      rm:
+        args:
+          exec: git remote
+      rename:
+        args:
+          exec: git remote
+      set-url:
+        flags:
+          --add:
+          --delete:
+          --push:
+        args:
+          exec: git remote
+      get-url:
+        args:
+          exec: git remote
+      show:
+        args:
+          exec: git remote
+      prune:
+        args:
+          exec: git remote
+  stash:
+    commands:
+      push:
+        flags:
+          -m: any
+          --message: any
+          -u:
+          --include-untracked:
+          -p:
+          --patch:
+          -k:
+          --keep-index:
+        args: file
+      pop:
+        flags:
+          --index:
+        args:
+          exec: git stash list --format='%gd'
+      apply:
+        flags:
+          --index:
+        args:
+          exec: git stash list --format='%gd'
+      drop:
+        args:
+          exec: git stash list --format='%gd'
+      show:
+        flags:
+          -p:
+          --patch:
+        args:
+          exec: git stash list --format='%gd'
+      list: {}
+      clear: {}
+      branch:
+        args: any
+  clone:
+    flags:
+      --depth: any
+      -b: any
+      --branch: any
+      --single-branch:
+      --recursive:
+      --recurse-submodules:
+      --bare:
+      --mirror:
+      -o: any
+      --origin: any
+    args: dir
+  init:
+    flags:
+      --bare:
+      -b: any
+      --initial-branch: any
+      -q:
+      --quiet:
+    args: dir
+  blame:
+    flags:
+      -L: any
+      -w:
+      -C:
+      -M:
+      -e:
+    args:
+      exec: git ls-files
+  clean:
+    flags:
+      -n:
+      --dry-run:
+      -f:
+      --force:
+      -d:
+      -x:
+      -X:
+      -i:
+    args: file
+  grep:
+    flags:
+      -i:
+      --ignore-case:
+      -n:
+      --line-number:
+      -l:
+      -w:
+      -e: any
+      -E:
+    args: any
+  bisect:
+    commands:
+      start: {}
+      good: {}
+      bad: {}
+      skip: {}
+      reset: {}
+      log: {}
+      run:
+        args: file
+  worktree:
+    commands:
+      add:
+        flags:
+          -b: any
+          -f:
+          --detach:
+        args: dir
+      list: {}
+      remove:
+        flags:
+          -f:
+          --force:
+        args:
+          exec: git worktree list --porcelain | sed -n 's/^worktree //p'
+      prune: {}
+  submodule:
+    commands:
+      add:
+        args: any
+      update:
+        flags:
+          --init:
+          --recursive:
+          --remote:
+      status: {}
+      init: {}
+      sync: {}
+      foreach:
+        args: any
+  config:
+    flags:
+      --global:
+      --local:
+      --system:
+      -l:
+      --list:
+      --get:
+      --unset:
+      -e:
+      --edit:
+    args:
+      exec: git config --list --name-only | sort -u
+  reflog: {}
+  describe:
+    flags:
+      --tags:
+      --always:
+      --abbrev: any
+  help:
+    args: "@subcommands"

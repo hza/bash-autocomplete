@@ -1,0 +1,468 @@
+flags:
+  --config: dir
+  -c: any
+  --context: any
+  -D:
+  --debug:
+  -H: any
+  --host: any
+  -l: any
+  --log-level: any
+  --help:
+  -v:
+  --version:
+commands:
+  run:
+    flags:
+      -d:
+      --detach:
+      -i:
+      --interactive:
+      -t:
+      --tty:
+      --rm:
+      --name: any
+      -e: any
+      --env: any
+      --env-file: file
+      -p: any
+      --publish: any
+      -P:
+      -v: any
+      --volume: any
+      --mount: any
+      -w: any
+      --workdir: any
+      --network:
+        exec: docker network ls --format '{{.Name}}'
+      --entrypoint: any
+      -u: any
+      --user: any
+      --restart: any
+      --platform: any
+      --pull: any
+      -h: any
+      --hostname: any
+      -m: any
+      --memory: any
+      --cpus: any
+      --privileged:
+      -l: any
+      --label: any
+      --volumes-from:
+        exec: docker ps -a --format '{{.Names}}'
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  exec:
+    flags:
+      -d:
+      --detach:
+      -i:
+      --interactive:
+      -t:
+      --tty:
+      -e: any
+      --env: any
+      -u: any
+      --user: any
+      -w: any
+      --workdir: any
+      --privileged:
+    args:
+      exec: docker ps --format '{{.Names}}'
+  ps:
+    flags:
+      -a:
+      --all:
+      -q:
+      --quiet:
+      -f: any
+      --filter: any
+      --format: any
+      -n: any
+      --last: any
+      -l:
+      --latest:
+      -s:
+      --size:
+      --no-trunc:
+  images:
+    flags:
+      -a:
+      --all:
+      -q:
+      --quiet:
+      -f: any
+      --filter: any
+      --format: any
+      --digests:
+      --no-trunc:
+  pull:
+    flags:
+      -a:
+      --all-tags:
+      --platform: any
+      -q:
+      --quiet:
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  push:
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  build:
+    flags:
+      -t: any
+      --tag: any
+      -f: file
+      --file: file
+      --build-arg: any
+      --target: any
+      --no-cache:
+      --pull:
+      --platform: any
+      -q:
+      --quiet:
+      --progress: any
+      --network:
+        exec: docker network ls --format '{{.Name}}'
+      --secret: any
+    args: dir
+  start:
+    flags:
+      -a:
+      --attach:
+      -i:
+      --interactive:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  stop:
+    flags:
+      -t: any
+      --time: any
+      -s: any
+      --signal: any
+    args:
+      exec: docker ps --format '{{.Names}}'
+  restart:
+    flags:
+      -t: any
+      --time: any
+      -s: any
+      --signal: any
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  rm:
+    flags:
+      -f:
+      --force:
+      -v:
+      --volumes:
+      -l:
+      --link:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  rmi:
+    flags:
+      -f:
+      --force:
+      --no-prune:
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  logs:
+    flags:
+      -f:
+      --follow:
+      -n: any
+      --tail: any
+      -t:
+      --timestamps:
+      --since: any
+      --until: any
+      --details:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  inspect:
+    flags:
+      -f: any
+      --format: any
+      -s:
+      --size:
+      --type: any
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  kill:
+    flags:
+      -s: any
+      --signal: any
+    args:
+      exec: docker ps --format '{{.Names}}'
+  cp:
+    flags:
+      -a:
+      --archive:
+      -L:
+      --follow-link:
+      -q:
+      --quiet:
+    args:
+      - exec: docker ps -a --format '{{.Names}}'
+        suffix: ":"
+        nospace: true
+      - file
+  tag:
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  top:
+    args:
+      exec: docker ps --format '{{.Names}}'
+  stats:
+    flags:
+      -a:
+      --all:
+      --no-stream:
+      --no-trunc:
+      --format: any
+    args:
+      exec: docker ps --format '{{.Names}}'
+  attach:
+    args:
+      exec: docker ps --format '{{.Names}}'
+  port:
+    args:
+      exec: docker ps --format '{{.Names}}'
+  rename:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  pause:
+    args:
+      exec: docker ps --format '{{.Names}}'
+  unpause:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  commit:
+    flags:
+      -a: any
+      --author: any
+      -m: any
+      --message: any
+      -c: any
+      --change: any
+      -p:
+      --pause:
+    args:
+      exec: docker ps -a --format '{{.Names}}'
+  save:
+    flags:
+      -o: file
+      --output: file
+    args:
+      exec: docker images --format '{{.Repository}}:{{.Tag}}'
+  load:
+    flags:
+      -i: file
+      --input: file
+      -q:
+      --quiet:
+  login:
+    flags:
+      -u: any
+      --username: any
+      -p: any
+      --password: any
+      --password-stdin:
+    args: any
+  logout:
+    args: any
+  version: {}
+  info: {}
+  help:
+    args: "@subcommands"
+  network:
+    commands:
+      ls:
+        flags:
+          -q:
+          --quiet:
+          -f: any
+          --filter: any
+          --format: any
+      create:
+        flags:
+          -d: any
+          --driver: any
+          --subnet: any
+          --gateway: any
+          --internal:
+          --attachable:
+        args: any
+      rm:
+        args:
+          exec: docker network ls --format '{{.Name}}'
+      inspect:
+        flags:
+          -f: any
+          --format: any
+          -s:
+          --size:
+          --type: any
+        args:
+          exec: docker network ls --format '{{.Name}}'
+      connect:
+        args:
+          exec: docker network ls --format '{{.Name}}'
+      disconnect:
+        args:
+          exec: docker network ls --format '{{.Name}}'
+      prune:
+        flags:
+          -f:
+          --force:
+          --filter: any
+  volume:
+    commands:
+      ls:
+        flags:
+          -q:
+          --quiet:
+          -f: any
+          --filter: any
+          --format: any
+      create:
+        flags:
+          -d: any
+          --driver: any
+          --label: any
+          -o: any
+          --opt: any
+        args: any
+      rm:
+        flags:
+          -f:
+          --force:
+          --no-prune:
+        args:
+          exec: docker volume ls --format '{{.Name}}'
+      inspect:
+        flags:
+          -f: any
+          --format: any
+          -s:
+          --size:
+          --type: any
+        args:
+          exec: docker volume ls --format '{{.Name}}'
+      prune:
+        flags:
+          -f:
+          --force:
+          --filter: any
+  system:
+    commands:
+      df: {}
+      info: {}
+      prune:
+        flags:
+          -a:
+          --all:
+          -f:
+          --force:
+          --volumes:
+          --filter: any
+      events: {}
+  compose:
+    flags:
+      -f: file
+      --file: file
+      -p: any
+      --project-name: any
+      --profile: any
+      --env-file: file
+    commands:
+      up:
+        flags:
+          -d:
+          --detach:
+          --build:
+          --force-recreate:
+          --no-deps:
+          --remove-orphans:
+          --wait:
+        args: any
+      down:
+        flags:
+          -v:
+          --volumes:
+          --remove-orphans:
+          --rmi: any
+      ps:
+        flags:
+          -a:
+          --all:
+          -q:
+          --quiet:
+          -f: any
+          --filter: any
+          --format: any
+          -n: any
+          --last: any
+          -l:
+          --latest:
+          -s:
+          --size:
+          --no-trunc:
+        args: any
+      logs:
+        flags:
+          -f:
+          --follow:
+          -n: any
+          --tail: any
+          -t:
+          --timestamps:
+          --since: any
+          --until: any
+          --details:
+        args: any
+      build:
+        flags:
+          -t: any
+          --tag: any
+          -f: file
+          --file: file
+          --build-arg: any
+          --target: any
+          --no-cache:
+          --pull:
+          --platform: any
+          -q:
+          --quiet:
+          --progress: any
+          --network:
+            exec: docker network ls --format '{{.Name}}'
+          --secret: any
+        args: any
+      pull:
+        args: any
+      restart:
+        args: any
+      exec:
+        flags:
+          -d:
+          --detach:
+          -i:
+          --interactive:
+          -t:
+          --tty:
+          -e: any
+          --env: any
+          -u: any
+          --user: any
+          -w: any
+          --workdir: any
+          --privileged:
+        args: any
+      stop:
+        args: any
+      start:
+        args: any
+      config: {}

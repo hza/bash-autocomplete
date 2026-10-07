@@ -1,64 +1,109 @@
 # autocomplete
 
-Tiny carapace-like completion engine in C for macOS's stock bash 3.2.
+Fast, dependency-free command-line completion for the **bash 3.2 that ships with macOS**,
+inspired by [carapace](https://github.com/carapace-sh/carapace).
 
-## Build & enable
+Completions are described in small YAML files, so adding a new command doesn't need a
+rebuild. The engine is a single C binary with no runtime dependencies.
 
-    make && make install            # PREFIX=/usr/local by default
-    echo 'eval "$(autocomplete bash)"' >> ~/.bash_profile
-
-To load it into the current shell:
-
-    eval "$(./autocomplete bash)"                       # recommended
-    source /dev/stdin <<<"$(./autocomplete bash)"       # if you want to use source
-
-Note: `source <(autocomplete bash)` silently does nothing in bash 3.2 (known bug).
-
-## How it works
-
-The init script registers `_autocomplete` (with `complete -o nospace`) for every spec.
-On TAB it runs `autocomplete _complete "<line up to cursor>" "$COMP_WORDBREAKS"`, which
-prints one ready-to-use candidate per line (escaped, trimmed to bash's current word).
-bash 3.2 has no `compopt`/`mapfile`, so the engine appends the trailing space itself.
-
-## Specs
-
-Each command is described by `<command>.json`. Specs are looked up in this order
-(first match wins):
-
-1. `$AUTOCOMPLETE_SPECS` (colon-separated directories)
-2. `~/.config/autocomplete`
-3. `specs/` next to the binary
-4. `../share/autocomplete` relative to the binary (where `make install` puts them)
-
-Adding a command needs no rebuild: drop `<command>.json` into `~/.config/autocomplete`
-and run `eval "$(autocomplete bash)"` again. `autocomplete list` shows the available specs.
-Set `AUTOCOMPLETE_DEBUG=1` to see JSON errors on stderr.
-
-```json
-{
-  "flags":    { "--context": "any", "--debug": null, "--config": "dir" },
-  "args":     "file",
-  "commands": {
-    "stop": {
-      "flags": { "-t": "any" },
-      "args":  { "exec": "docker ps --format '{{.Names}}'" }
-    }
-  }
-}
+```console
+$ docker run --network <TAB>
+bridge   host   none   my_app_default
+$ git checkout fe<TAB>
+$ git checkout feature/login
+$ make in<TAB>
+$ make install
 ```
 
-`flags` maps each flag to its value, and `args` describes positional arguments.
-A value is one of:
+## Features
 
-| Value | Meaning |
+- Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
+- Bundled completions for **docker**, **git** and **make**.
+- Live values: running containers, images, networks and volumes for docker; branches,
+  tags, remotes, stashes and changed files for git; Makefile targets for make
+  (honours `make -C dir` and `make -f file`).
+- Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
+- New commands are plain YAML files, so there's nothing to compile
+  ([how to add one](docs/adding-commands.md)).
+- Parsed specs are cached, so a TAB doesn't re-read the YAML each time.
+
+## Requirements
+
+- macOS with the Xcode Command Line Tools (`xcode-select --install`) for `cc` and `make`.
+- bash 3.2 or newer.
+
+## Installation
+
+```sh
+git clone <repo-url> autocomplete
+cd autocomplete
+make install
+```
+
+`make install`:
+
+- installs the binary to `/usr/local/bin/autocomplete`,
+- installs the bundled specs to `/usr/local/share/autocomplete/`,
+- precompiles them into the cache,
+- adds `eval "$(autocomplete bash)"` to `~/.bash_profile`, unless it's already there.
+
+Open a new terminal (or run `source ~/.bash_profile`) and press TAB after `docker`, `git`
+or `make`.
+
+Options:
+
+```sh
+make install PREFIX=$HOME/.local          # install without sudo (put ~/.local/bin on PATH first)
+make install PROFILE=$HOME/.bashrc        # use a different startup file
+```
+
+If `/usr/local` isn't writable, use `sudo make install`. In that case the cache isn't built
+during install; it's built on your first completion instead.
+
+### Using it without installing
+
+```sh
+make
+eval "$(./autocomplete bash)"                     # recommended
+source /dev/stdin <<<"$(./autocomplete bash)"     # if you prefer `source`
+```
+
+> `source <(autocomplete bash)` does **not** work in bash 3.2. A long-standing bash bug
+> makes it silently read nothing. Use one of the forms above.
+
+### Uninstalling
+
+```sh
+make uninstall          # use the same PREFIX / PROFILE you installed with
+```
+
+This removes the binary, the bundled specs, their cache files and the exact `eval` line
+from your profile. Your own specs in `~/.config/autocomplete` are left untouched.
+
+## Commands
+
+| Command | Description |
 |---|---|
-| `null` | flag takes no value / nothing to complete |
-| `"any"` | free text, no suggestions |
-| `"file"`, `"dir"` | paths |
-| `{"exec": "cmd", "suffix": ":", "nospace": true}` | one suggestion per output line of `cmd` |
-| `"@make-targets"` | targets of the makefile (honours `-f` and `-C`) |
-| `"@subcommands"` | the parent command's subcommands (e.g. `docker help`) |
-| `[ ... ]` | all of the listed values |
+| `autocomplete bash` | Print the bash init script (use with `eval`). |
+| `autocomplete list` | List commands that have a spec. |
+| `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
+| `autocomplete cache [NAME...]` | Precompile specs into the cache (all if no names). |
 
-Flags at the top level are recognised at any depth.
+## Documentation
+
+- [Adding your own commands](docs/adding-commands.md): a quick start for new commands
+- [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
+  where specs are looked up
+- [Cache](docs/cache.md): how parsed specs are cached and how to reset it
+- [Troubleshooting](docs/troubleshooting.md): common problems and fixes
+- [How it works](docs/how-it-works.md): what happens when you press TAB
+
+## Building from source
+
+```sh
+make            # builds ./autocomplete
+make clean
+```
+
+The code is plain C with no dependencies: `autocomplete.c` (engine) and `yaml.c` (YAML
+reader). Bundled specs live in `specs/`.

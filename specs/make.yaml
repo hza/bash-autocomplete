@@ -1,0 +1,33 @@
+flags:
+  -f: file
+  --file: file
+  --makefile: file
+  -C: dir
+  --directory: dir
+  -j: any
+  --jobs: any
+  -k:
+  --keep-going:
+  -n:
+  --dry-run:
+  -B:
+  --always-make:
+  -s:
+  --silent:
+  -i:
+  --ignore-errors:
+  -e:
+  --environment-overrides:
+  -p:
+  --print-data-base:
+  -q:
+  --question:
+  -I: dir
+  --include-dir: dir
+  -d:
+  --debug:
+  -v:
+  --version:
+  -h:
+  --help:
+args: "@make-targets"
