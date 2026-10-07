@@ -8,12 +8,15 @@
  * looked up in:
  *   $AUTOCOMPLETE_SPECS (colon list), ~/.config/autocomplete,
  *   <binary dir>/specs, <binary dir>/../share/autocomplete
+ * Commands listed in man.list in those dirs (one per line) and without a
+ * spec get one built from their man page; `autocomplete gen` saves it.
  *
  * Output of _complete: one candidate per line, already shell-escaped and
  * already trimmed to bash's notion of the current word (COMP_WORDBREAKS).
  * Candidates that are "finished" end with a space; bash 3.2 has no compopt,
  * so the function is registered with -o nospace and we add spaces ourselves.
  */
+#include <ctype.h>
 #include <dirent.h>
 #include <limits.h>
 #include <stdio.h>
@@ -27,6 +30,7 @@
 #include <mach-o/dyld.h>
 #endif
 
+#include "manparse.h"
 #include "yaml.h"
 
 /* ------------------------------------------------------------ spec dirs */
@@ -81,6 +85,31 @@ static int find_spec(const char *name, char *path, size_t size) {
     return 0;
 }
 
+/* Is `name` listed in a man.list in any spec dir? */
+static int in_man_list(const char *name) {
+    char path[PATH_MAX], line[256];
+    int i, found = 0;
+    for (i = 0; i < g_ndirs && !found; i++) {
+        FILE *f;
+        snprintf(path, sizeof path, "%s/man.list", g_dirs[i]);
+        if (!(f = fopen(path, "r"))) continue;
+        while (!found && fgets(line, sizeof line, f)) {
+            line[strcspn(line, " \t\r\n#")] = 0;
+            found = *line && !strcmp(line, name);
+        }
+        fclose(f);
+    }
+    return found;
+}
+
+/* mkdir -p */
+static void mkdirs(char *dir) {
+    char *s;
+    for (s = dir + 1; *s; s++)
+        if (*s == '/') { *s = 0; mkdir(dir, 0755); *s = '/'; }
+    mkdir(dir, 0755);
+}
+
 /* Compiled specs live in $XDG_CACHE_HOME/autocomplete or ~/.cache/autocomplete
  * as <name>.cache; creates the directory when `create` is set. */
 static int cache_path(const char *name, char *path, size_t size, int create) {
@@ -90,12 +119,7 @@ static int cache_path(const char *name, char *path, size_t size, int create) {
     if (xdg && *xdg) snprintf(dir, sizeof dir, "%s/autocomplete", xdg);
     else if (home) snprintf(dir, sizeof dir, "%s/.cache/autocomplete", home);
     else return 0;
-    if (create) {
-        char *s;
-        for (s = dir + 1; *s; s++)
-            if (*s == '/') { *s = 0; mkdir(dir, 0755); *s = '/'; }
-        mkdir(dir, 0755);
-    }
+    if (create) mkdirs(dir);
     snprintf(path, size, "%s/%s.cache", dir, name);
     return 1;
 }
@@ -115,7 +139,15 @@ static ynode *load_spec(const char *name) {
     char path[PATH_MAX], bin[PATH_MAX], err[256];
     struct stat ys, bs;
     ynode *n;
-    if (!find_spec(name, path, sizeof path)) return NULL;
+    if (!find_spec(name, path, sizeof path)) {
+        /* man.list entry: the cache is kept until `autocomplete cache` */
+        if (!in_man_list(name)) return NULL;
+        snprintf(path, sizeof path, "man:%s", name);
+        if (cache_path(name, bin, sizeof bin, 0) && (n = yaml_load_bin(bin, path))) return n;
+        if ((n = man_spec(name)) && !save_cache(name, n, path, bin, sizeof bin) && getenv("AUTOCOMPLETE_DEBUG"))
+            fprintf(stderr, "autocomplete: cannot write cache for %s\n", name);
+        return n;
+    }
     if (cache_path(name, bin, sizeof bin, 0) && stat(path, &ys) == 0 && stat(bin, &bs) == 0 &&
         (MTIME(bs).tv_sec > MTIME(ys).tv_sec ||
          (MTIME(bs).tv_sec == MTIME(ys).tv_sec && MTIME(bs).tv_nsec > MTIME(ys).tv_nsec)) &&
@@ -532,6 +564,19 @@ static void each_spec(void (*fn)(const char *)) {
         }
         closedir(d);
     }
+    for (i = 0; i < g_ndirs; i++) {
+        char path[PATH_MAX], line[256];
+        FILE *f;
+        snprintf(path, sizeof path, "%s/man.list", g_dirs[i]);
+        if (!(f = fopen(path, "r"))) continue;
+        while (fgets(line, sizeof line, f) && nn < 512) {
+            line[strcspn(line, " \t\r\n#")] = 0;
+            if (!*line) continue;
+            for (j = 0; j < nn && strcmp(names[j], line); j++) {}
+            if (j == nn) names[nn++] = strdup(line);
+        }
+        fclose(f);
+    }
     for (i = 0; i < nn; i++) fn(names[i]);
 }
 
@@ -540,17 +585,26 @@ static void print_name(const char *name) { puts(name); }
 
 static int g_cache_failed;
 
-/* `autocomplete cache`: parse a spec and write its cache unconditionally. */
+/* `autocomplete cache`: parse a spec (or man page, for man.list entries)
+ * and write its cache unconditionally. */
 static void cache_spec(const char *name) {
     char path[PATH_MAX], bin[PATH_MAX], err[256];
     ynode *n;
-    if (!find_spec(name, path, sizeof path)) {
+    if (find_spec(name, path, sizeof path)) {
+        if (!(n = yaml_load(path, err, sizeof err))) {
+            fprintf(stderr, "%s: %s\n", path, err);
+            g_cache_failed = 1;
+            return;
+        }
+    } else if (in_man_list(name)) {
+        snprintf(path, sizeof path, "man:%s", name);
+        if (!(n = man_spec(name))) {
+            fprintf(stderr, "%s: no man page with options\n", name);
+            g_cache_failed = 1;
+            return;
+        }
+    } else {
         fprintf(stderr, "%s: no such spec\n", name);
-        g_cache_failed = 1;
-        return;
-    }
-    if (!(n = yaml_load(path, err, sizeof err))) {
-        fprintf(stderr, "%s: %s\n", path, err);
         g_cache_failed = 1;
         return;
     }
@@ -560,6 +614,80 @@ static void cache_spec(const char *name) {
         g_cache_failed = 1;
     }
     yaml_free(n);
+}
+
+/* `autocomplete gen [-f] CMD...`: write ~/.config/autocomplete/CMD.yaml
+ * from the man page. */
+static int gen_specs(int argc, char **argv) {
+    char dir[PATH_MAX], path[PATH_MAX];
+    int i, force = 0, rc = 0;
+    if (!getenv("HOME")) {
+        fprintf(stderr, "gen: HOME is not set\n");
+        return 1;
+    }
+    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
+    mkdirs(dir);
+    for (i = 0; i < argc; i++) {
+        ynode *n;
+        FILE *f;
+        if (!strcmp(argv[i], "-f")) { force = 1; continue; }
+        snprintf(path, sizeof path, "%s/%s.yaml", dir, argv[i]);
+        if (!force && access(path, F_OK) == 0) {
+            fprintf(stderr, "%s: exists (use -f to overwrite)\n", path);
+            rc = 1;
+            continue;
+        }
+        if (!(n = man_spec(argv[i]))) {
+            fprintf(stderr, "%s: no man page with options\n", argv[i]);
+            rc = 1;
+            continue;
+        }
+        if (!(f = fopen(path, "w"))) {
+            perror(path);
+            rc = 1;
+        } else {
+            fprintf(f, "# generated by `autocomplete gen %s`; edit freely\n", argv[i]);
+            yaml_write(f, n);
+            fclose(f);
+            puts(path);
+        }
+        yaml_free(n);
+    }
+    return rc;
+}
+
+/* `autocomplete register CMD...`: add commands to ~/.config/autocomplete/man.list. */
+static int register_cmds(int argc, char **argv) {
+    char dir[PATH_MAX], path[PATH_MAX];
+    int i, rc = 0, added = 0;
+    FILE *f;
+    if (!getenv("HOME")) {
+        fprintf(stderr, "register: HOME is not set\n");
+        return 1;
+    }
+    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
+    mkdirs(dir);
+    snprintf(path, sizeof path, "%s/man.list", dir);
+    for (i = 0; i < argc; i++) {
+        const char *p;
+        for (p = argv[i]; *p && (isalnum((unsigned char)*p) || strchr("._+-", *p)); p++) {}
+        if (*p || !*argv[i] || argv[i][0] == '.' || argv[i][0] == '-') {
+            fprintf(stderr, "%s: not a command name\n", argv[i]);
+            rc = 1;
+        } else if (in_man_list(argv[i])) {
+            printf("%s: already registered\n", argv[i]);
+        } else if (!(f = fopen(path, "a"))) {
+            perror(path);
+            return 1;
+        } else {
+            fprintf(f, "%s\n", argv[i]);
+            fclose(f);
+            printf("%s: registered\n", argv[i]);
+            added = 1;
+        }
+    }
+    if (added) printf("Run `eval \"$(autocomplete bash)\"` or open a new terminal to use it.\n");
+    return rc;
 }
 
 static void print_bash(const char *self) {
@@ -644,6 +772,8 @@ int main(int argc, char **argv) {
         for (i = 2; i < argc; i++) cache_spec(argv[i]);
         return g_cache_failed;
     }
+    if (argc >= 3 && !strcmp(argv[1], "register")) return register_cmds(argc - 2, argv + 2);
+    if (argc >= 3 && !strcmp(argv[1], "gen")) return gen_specs(argc - 2, argv + 2);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         each_spec(print_name);
         return 0;
@@ -653,6 +783,8 @@ int main(int argc, char **argv) {
             "       autocomplete list              list available specs\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile specs into the cache\n"
+            "       autocomplete register CMD...   complete CMD from its man page (adds it to man.list)\n"
+            "       autocomplete gen [-f] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
 }

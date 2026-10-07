@@ -1,5 +1,6 @@
 #include "yaml.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -453,4 +454,75 @@ ynode *yaml_load_bin(const char *path, const char *src) {
     free(buf);
     fclose(f);
     return n;
+}
+
+/* ------------------------------------------------------------- writing */
+
+ynode *yaml_new(ynode *parent, ytype t, const char *key, const char *str) {
+    ynode *n = node(t), **tail;
+    if (!n) return NULL;
+    if (key) n->key = strdup(key);
+    if (str) n->str = strdup(str);
+    if (parent) {
+        for (tail = &parent->child; *tail; tail = &(*tail)->next) {}
+        *tail = n;
+    }
+    return n;
+}
+
+/* Plain when it can't be mistaken for anything else, else 'single-quoted'. */
+static void put_scalar(FILE *f, const char *s) {
+    const char *p;
+    int plain_ok = *s && *s != '-' && *s != '@' && strcmp(s, "null") && strcmp(s, "true") &&
+                   strcmp(s, "false") && strcmp(s, "~");
+    for (p = s; *p && plain_ok; p++)
+        if (!strchr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_./", *p)) plain_ok = 0;
+    if (plain_ok || (*s == '-' && (isalpha((unsigned char)s[1]) || s[1] == '-') && !strpbrk(s, " :#'\"{}[],&*!|>%@`"))) {
+        fputs(s, f);
+        return;
+    }
+    fputc('\'', f);
+    for (p = s; *p; p++) {
+        if (*p == '\'') fputc('\'', f);
+        fputc(*p, f);
+    }
+    fputc('\'', f);
+}
+
+static void write_inline(FILE *f, const ynode *n) {
+    switch (n->type) {
+    case Y_NULL: break;
+    case Y_BOOL: fputs(n->b ? "true" : "false", f); break;
+    case Y_STR: put_scalar(f, n->str); break;
+    case Y_ARR: fputs("[]", f); break;
+    case Y_OBJ: fputs("{}", f); break;
+    }
+}
+
+static void write_block(FILE *f, const ynode *n, int ind) {
+    const ynode *c;
+    for (c = n->child; c; c = c->next) {
+        fprintf(f, "%*s", ind, "");
+        if (n->type == Y_OBJ) {
+            put_scalar(f, c->key);
+            fputc(':', f);
+        } else
+            fputc('-', f);
+        if ((c->type == Y_OBJ || c->type == Y_ARR) && c->child) {
+            fputc('\n', f);
+            write_block(f, c, ind + 2);
+        } else {
+            if (c->type != Y_NULL) fputc(' ', f);
+            write_inline(f, c);
+            fputc('\n', f);
+        }
+    }
+}
+
+void yaml_write(FILE *f, const ynode *n) {
+    if ((n->type == Y_OBJ || n->type == Y_ARR) && n->child) write_block(f, n, 0);
+    else {
+        write_inline(f, n);
+        fputc('\n', f);
+    }
 }

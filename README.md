@@ -32,7 +32,7 @@ function, and nothing is loaded until you press TAB.
 ## Features
 
 - Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
-- Bundled completions for **docker**, **git** and **make**.
+- Bundled completions for **docker**, **git**, **make** and `autocomplete` itself.
 - Live values: running containers, images, networks and volumes for docker; branches,
   tags, remotes, stashes and changed files for git; Makefile targets for make, with
   descriptions taken from `## text` or the comment above each target
@@ -42,6 +42,8 @@ function, and nothing is loaded until you press TAB.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - New commands are plain YAML files, so there's nothing to compile
   ([how to add one](docs/adding-commands.md)).
+- System commands like `ps`, `ls` or `tar` can get flag completion generated from their
+  man pages ([details](docs/man-pages.md)).
 - Parsed specs are cached, so a TAB doesn't re-read the YAML each time.
 
 ## Requirements
@@ -105,12 +107,15 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete list` | List commands that have a spec. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs into the cache (all if no names). |
+| `autocomplete register CMD...` | Complete CMD from its man page (adds it to `man.list`). |
+| `autocomplete gen [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
 
 ## Documentation
 
 - [Adding your own commands](docs/adding-commands.md): a quick start for new commands
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
+- [Completions from man pages](docs/man-pages.md): `autocomplete gen` and `man.list`
 - [Cache](docs/cache.md): how parsed specs are cached and how to reset it
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB
@@ -122,5 +127,5 @@ make            # builds ./autocomplete
 make clean
 ```
 
-The code is plain C with no dependencies: `autocomplete.c` (engine) and `yaml.c` (YAML
-reader). Bundled specs live in `specs/`.
+The code is plain C with no dependencies: `autocomplete.c` (engine), `yaml.c` (YAML
+reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`.

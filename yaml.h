@@ -8,6 +8,8 @@
 #ifndef AUTOCOMPLETE_YAML_H
 #define AUTOCOMPLETE_YAML_H
 
+#include <stdio.h>
+
 typedef enum { Y_NULL, Y_BOOL, Y_STR, Y_ARR, Y_OBJ } ytype;
 
 typedef struct ynode {
@@ -26,6 +28,12 @@ ynode *yaml_load(const char *path, char *err, int errlen);
 /* Member of a mapping by key, or NULL. */
 ynode *yaml_get(const ynode *map, const char *key);
 void yaml_free(ynode *n);
+
+/* Build trees: a new node (key/str copied, may be NULL), appended to
+ * parent's children when parent is given. */
+ynode *yaml_new(ynode *parent, ytype t, const char *key, const char *str);
+/* Write a tree as block YAML that yaml_parse reads back unchanged. */
+void yaml_write(FILE *f, const ynode *n);
 
 /* Compiled form: write a tree to `path` (atomically) tagged with its source
  * file `src`; load it back, NULL if missing, corrupt or made from another src. */

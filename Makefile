@@ -3,8 +3,8 @@ CFLAGS ?= -O2 -Wall -Wextra
 PROFILE ?= $(HOME)/.bash_profile
 INIT = eval "$$(autocomplete bash)"
 
-autocomplete: autocomplete.c yaml.c yaml.h  ## Build the autocomplete binary
-	$(CC) $(CFLAGS) -o $@ autocomplete.c yaml.c
+autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the autocomplete binary
+	$(CC) $(CFLAGS) -o $@ autocomplete.c yaml.c manparse.c
 
 install: autocomplete  ## Install binary and specs, set up ~/.bash_profile
 	install -d $(PREFIX)/bin $(PREFIX)/share/autocomplete

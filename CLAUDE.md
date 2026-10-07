@@ -10,7 +10,9 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 ## Files
 - `autocomplete.c` — engine: spec dir lookup, line tokenizer (`split`), spec walk (`do_complete`), candidate output (`emit`), built-in completers (`complete_files`, `complete_make_targets`), `bash`/`list`/`check`/`_complete` subcommands.
 - `yaml.c`/`yaml.h` — own YAML-subset parser → `ynode` tree (`Y_NULL/BOOL/STR/ARR/OBJ`). No numbers: non-null/bool scalars are strings. No anchors, tags, `|`/`>` scalars. Tabs in indent = error.
-- `specs/*.yaml` — bundled specs (docker, make, git). Filename = command name.
+- `manparse.c`/`.h` — `man_spec(cmd)`: `MANWIDTH=1000 man -P cat | col -bx` → spec tree. Option entries = lines at the most common indent of entry-shaped lines; value from entry arg or SYNOPSIS `[-x arg]`. Heuristic; curl examples leak a few bogus flags.
+- `autocomplete gen [-f] CMD` writes `~/.config/autocomplete/CMD.yaml` via `yaml_write` (single-quotes anything ambiguous; `-1`-style keys must be quoted or PyYAML reads ints). `man.list` (any spec dir, one name per line) → live `man_spec` fallback when no YAML, cached under src `man:<cmd>`, never auto-invalidated; also registered by `bash`/`list`. `autocomplete register CMD...` appends to `~/.config/autocomplete/man.list` (skips dupes/invalid names).
+- `specs/*.yaml` — bundled specs (docker, make, git, autocomplete). Filename = command name.
 - `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
 - `carapace` — upstream reference snippet only; not used.
 

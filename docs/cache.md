@@ -3,7 +3,9 @@
 Parsed specs are stored as `~/.cache/autocomplete/<command>.cache`
 (`$XDG_CACHE_HOME/autocomplete` if set). A cache file is used only while it's newer than
 its YAML and was built from the same file; otherwise it's rebuilt automatically on the
-next TAB.
+next TAB. Commands completed from their man page through `man.list`
+([details](man-pages.md)) have no YAML to compare with, so their cache is kept until
+`autocomplete cache` rebuilds it.
 
 - `autocomplete cache` (or `make cache`) rebuilds everything now.
 - `AUTOCOMPLETE_NOCACHE=1` turns the cache off.
