@@ -1,0 +1,260 @@
+{
+  "flags": {
+    "-C": "dir",
+    "-c": "any",
+    "--git-dir": "dir",
+    "--work-tree": "dir",
+    "--no-pager": null,
+    "-p": null,
+    "--paginate": null,
+    "--bare": null,
+    "--help": null,
+    "--version": null
+  },
+  "commands": {
+    "add": {
+      "flags": {
+        "-A": null, "--all": null, "-u": null, "--update": null,
+        "-p": null, "--patch": null, "-n": null, "--dry-run": null,
+        "-f": null, "--force": null, "-v": null, "--verbose": null,
+        "-N": null, "--intent-to-add": null
+      },
+      "args": [
+        { "exec": "git ls-files -m -o --exclude-standard" },
+        "file"
+      ]
+    },
+    "restore": {
+      "flags": {
+        "-S": null, "--staged": null, "-W": null, "--worktree": null,
+        "-s": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        "--source": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        "-p": null, "--patch": null
+      },
+      "args": [
+        { "exec": "git diff --name-only --relative" },
+        { "exec": "git diff --cached --name-only --relative" }
+      ]
+    },
+    "rm": {
+      "flags": { "-f": null, "--force": null, "-r": null, "--cached": null, "-n": null, "--dry-run": null },
+      "args": { "exec": "git ls-files" }
+    },
+    "mv": {
+      "flags": { "-f": null, "--force": null, "-n": null, "--dry-run": null },
+      "args": "file"
+    },
+    "status": {
+      "flags": {
+        "-s": null, "--short": null, "-b": null, "--branch": null,
+        "--porcelain": null, "-u": "any", "--untracked-files": "any", "--ignored": null
+      },
+      "args": "file"
+    },
+    "diff": {
+      "flags": {
+        "--cached": null, "--staged": null, "--stat": null, "--name-only": null,
+        "--name-status": null, "-w": null, "--ignore-all-space": null,
+        "--word-diff": null, "--color-words": null, "--no-index": null, "-U": "any"
+      },
+      "args": [
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        { "exec": "git diff --name-only --relative" }
+      ]
+    },
+    "commit": {
+      "flags": {
+        "-m": "any", "--message": "any", "-a": null, "--all": null,
+        "--amend": null, "--no-edit": null, "-F": "file", "--file": "file",
+        "-v": null, "--verbose": null, "-n": null, "--no-verify": null,
+        "-s": null, "--signoff": null, "--fixup": "any", "--allow-empty": null,
+        "-p": null, "--patch": null
+      },
+      "args": { "exec": "git ls-files -m" }
+    },
+    "log": {
+      "flags": {
+        "--oneline": null, "--graph": null, "--all": null, "--decorate": null,
+        "-p": null, "--patch": null, "--stat": null, "-n": "any", "--max-count": "any",
+        "--author": "any", "--since": "any", "--until": "any", "--grep": "any",
+        "--follow": null, "--reverse": null, "--pretty": "any", "--format": "any"
+      },
+      "args": [
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        "file"
+      ]
+    },
+    "show": {
+      "flags": { "--stat": null, "--name-only": null, "--oneline": null, "--pretty": "any", "--format": "any" },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" }
+    },
+    "branch": {
+      "flags": {
+        "-a": null, "--all": null, "-r": null, "--remotes": null,
+        "-d": null, "--delete": null, "-D": null, "-m": null, "--move": null,
+        "-M": null, "-c": null, "--copy": null, "-v": null, "-vv": null,
+        "-u": { "exec": "git for-each-ref --format='%(refname:short)' refs/remotes" },
+        "--set-upstream-to": { "exec": "git for-each-ref --format='%(refname:short)' refs/remotes" },
+        "--unset-upstream": null, "--show-current": null, "--merged": null, "--no-merged": null
+      },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads" }
+    },
+    "checkout": {
+      "flags": {
+        "-b": "any", "-B": "any", "--orphan": "any", "-f": null, "--force": null,
+        "-t": null, "--track": null, "--detach": null, "-p": null, "--patch": null
+      },
+      "args": [
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        { "exec": "git diff --name-only --relative" }
+      ]
+    },
+    "switch": {
+      "flags": {
+        "-c": "any", "--create": "any", "-C": "any", "--force-create": "any",
+        "-d": null, "--detach": null, "-t": null, "--track": null,
+        "--orphan": "any", "-f": null, "--force": null, "--discard-changes": null
+      },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes" }
+    },
+    "merge": {
+      "flags": {
+        "--no-ff": null, "--ff-only": null, "--squash": null, "--abort": null,
+        "--continue": null, "-m": "any", "--no-edit": null, "-s": "any", "--strategy": "any"
+      },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" }
+    },
+    "rebase": {
+      "flags": {
+        "-i": null, "--interactive": null, "--continue": null, "--abort": null,
+        "--skip": null, "--onto": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        "--autosquash": null, "--autostash": null
+      },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" }
+    },
+    "cherry-pick": {
+      "flags": { "--continue": null, "--abort": null, "--skip": null, "-n": null, "--no-commit": null, "-x": null },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" }
+    },
+    "reset": {
+      "flags": { "--soft": null, "--mixed": null, "--hard": null, "--keep": null, "-p": null, "--patch": null },
+      "args": [
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags" },
+        { "exec": "git diff --cached --name-only --relative" }
+      ]
+    },
+    "revert": {
+      "flags": { "--continue": null, "--abort": null, "--no-edit": null, "-n": null, "--no-commit": null },
+      "args": { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/tags" }
+    },
+    "tag": {
+      "flags": {
+        "-a": null, "--annotate": null, "-m": "any", "--message": "any",
+        "-d": null, "--delete": null, "-l": null, "--list": null, "-f": null, "--force": null,
+        "-s": null, "--sign": null
+      },
+      "args": { "exec": "git tag" }
+    },
+    "fetch": {
+      "flags": { "--all": null, "-p": null, "--prune": null, "--tags": null, "--depth": "any", "-v": null },
+      "args": { "exec": "git remote" }
+    },
+    "pull": {
+      "flags": { "--rebase": null, "--no-rebase": null, "--ff-only": null, "--all": null, "--autostash": null, "-v": null },
+      "args": [
+        { "exec": "git remote" },
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads" }
+      ]
+    },
+    "push": {
+      "flags": {
+        "-u": null, "--set-upstream": null, "-f": null, "--force": null,
+        "--force-with-lease": null, "--tags": null, "--all": null,
+        "-d": null, "--delete": null, "--dry-run": null, "--no-verify": null
+      },
+      "args": [
+        { "exec": "git remote" },
+        { "exec": "git for-each-ref --format='%(refname:short)' refs/heads refs/tags" }
+      ]
+    },
+    "remote": {
+      "flags": { "-v": null, "--verbose": null },
+      "commands": {
+        "add": { "flags": { "-f": null, "-t": "any" }, "args": "any" },
+        "remove": { "args": { "exec": "git remote" } },
+        "rm": { "args": { "exec": "git remote" } },
+        "rename": { "args": { "exec": "git remote" } },
+        "set-url": { "flags": { "--add": null, "--delete": null, "--push": null }, "args": { "exec": "git remote" } },
+        "get-url": { "args": { "exec": "git remote" } },
+        "show": { "args": { "exec": "git remote" } },
+        "prune": { "args": { "exec": "git remote" } }
+      }
+    },
+    "stash": {
+      "commands": {
+        "push": { "flags": { "-m": "any", "--message": "any", "-u": null, "--include-untracked": null, "-p": null, "--patch": null, "-k": null, "--keep-index": null }, "args": "file" },
+        "pop": { "flags": { "--index": null }, "args": { "exec": "git stash list --format='%gd'" } },
+        "apply": { "flags": { "--index": null }, "args": { "exec": "git stash list --format='%gd'" } },
+        "drop": { "args": { "exec": "git stash list --format='%gd'" } },
+        "show": { "flags": { "-p": null, "--patch": null }, "args": { "exec": "git stash list --format='%gd'" } },
+        "list": {},
+        "clear": {},
+        "branch": { "args": "any" }
+      }
+    },
+    "clone": {
+      "flags": {
+        "--depth": "any", "-b": "any", "--branch": "any", "--single-branch": null,
+        "--recursive": null, "--recurse-submodules": null, "--bare": null, "--mirror": null,
+        "-o": "any", "--origin": "any"
+      },
+      "args": "dir"
+    },
+    "init": {
+      "flags": { "--bare": null, "-b": "any", "--initial-branch": "any", "-q": null, "--quiet": null },
+      "args": "dir"
+    },
+    "blame": {
+      "flags": { "-L": "any", "-w": null, "-C": null, "-M": null, "-e": null },
+      "args": { "exec": "git ls-files" }
+    },
+    "clean": {
+      "flags": { "-n": null, "--dry-run": null, "-f": null, "--force": null, "-d": null, "-x": null, "-X": null, "-i": null },
+      "args": "file"
+    },
+    "grep": {
+      "flags": { "-i": null, "--ignore-case": null, "-n": null, "--line-number": null, "-l": null, "-w": null, "-e": "any", "-E": null },
+      "args": "any"
+    },
+    "bisect": {
+      "commands": {
+        "start": {}, "good": {}, "bad": {}, "skip": {}, "reset": {}, "log": {}, "run": { "args": "file" }
+      }
+    },
+    "worktree": {
+      "commands": {
+        "add": { "flags": { "-b": "any", "-f": null, "--detach": null }, "args": "dir" },
+        "list": {},
+        "remove": { "flags": { "-f": null, "--force": null }, "args": { "exec": "git worktree list --porcelain | sed -n 's/^worktree //p'" } },
+        "prune": {}
+      }
+    },
+    "submodule": {
+      "commands": {
+        "add": { "args": "any" },
+        "update": { "flags": { "--init": null, "--recursive": null, "--remote": null } },
+        "status": {}, "init": {}, "sync": {}, "foreach": { "args": "any" }
+      }
+    },
+    "config": {
+      "flags": {
+        "--global": null, "--local": null, "--system": null, "-l": null, "--list": null,
+        "--get": null, "--unset": null, "-e": null, "--edit": null
+      },
+      "args": { "exec": "git config --list --name-only | sort -u" }
+    },
+    "reflog": {},
+    "describe": { "flags": { "--tags": null, "--always": null, "--abbrev": "any" } },
+    "help": { "args": "@subcommands" }
+  }
+}
