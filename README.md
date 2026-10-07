@@ -45,7 +45,7 @@ function, and nothing is loaded until you press TAB.
   ([how to add one](docs/adding-commands.md)).
 - System commands like `ps`, `ls` or `tar` can get flag completion generated from their
   man pages ([details](docs/man-pages.md)).
-- Parsed specs are cached, so a TAB doesn't re-read the YAML each time.
+- Very large specs (over 100 KB) are compiled to a cache, so a TAB doesn't re-read the YAML each time.
 
 ## Requirements
 
@@ -64,7 +64,7 @@ make install
 
 - installs the binary to `/usr/local/bin/autocomplete`,
 - installs the bundled specs to `/usr/local/share/autocomplete/`,
-- precompiles them into the cache,
+- precompiles any spec over 100 KB into the cache,
 - adds `eval "$(autocomplete bash)"` to `~/.bash_profile`, unless it's already there.
 
 Open a new terminal (or run `source ~/.bash_profile`) and press TAB after `docker`, `git`
@@ -107,16 +107,15 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
 | `autocomplete list` | List commands that have a spec. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
-| `autocomplete cache [NAME...]` | Precompile specs into the cache (all if no names). |
-| `autocomplete man CMD...` | Complete CMD from its man page (adds it to `man.list`). |
-| `autocomplete gen [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
+| `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
+| `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
 
 ## Documentation
 
 - [Adding your own commands](docs/adding-commands.md): a quick start for new commands
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
-- [Completions from man pages](docs/man-pages.md): `autocomplete gen` and `man.list`
+- [Completions from man pages](docs/man-pages.md): `autocomplete man`
 - [Cache](docs/cache.md): how parsed specs are cached and how to reset it
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB

@@ -4,13 +4,9 @@ Most system commands (`ps`, `ls`, `grep`, `tar`, `ssh`, ...) document their opti
 man page. autocomplete can read the page and turn it into flag completion with
 descriptions, so you don't have to write a spec by hand.
 
-There are two ways to use it.
-
-## Generate a spec (recommended)
-
 ```sh
-autocomplete gen ps ls grep     # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
-autocomplete gen -f ps          # overwrite an existing file
+autocomplete man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
+autocomplete man -f ps         # overwrite an existing file
 ```
 
 The result is an ordinary spec. Open it and fix anything the parser got wrong, or add
@@ -23,22 +19,8 @@ live values (see [Writing specs](writing-specs.md)). For example, change `-p`'s 
 ```
 
 Open a new terminal (or run `eval "$(autocomplete bash)"` again) so the new command is
-registered.
-
-## Live, without a spec file
-
-```sh
-autocomplete man ps tar
-eval "$(autocomplete bash)"     # or open a new terminal
-```
-
-`man` adds the names to `~/.config/autocomplete/man.list` (one per line, `#` comments
-allowed), which you can also edit by hand. Remove a line from that file to stop using the man page.
-
-Any listed command that has no YAML spec gets completion straight from its man page. The
-page is parsed on the first TAB, which takes about 150 ms, and the result is cached. After
-a system update changes a man page, run `autocomplete cache` to re-read it. If a command
-has both a YAML spec and a `man.list` entry, the YAML spec wins.
+registered. After a system update changes a man page, run `autocomplete man -f CMD` to
+regenerate the spec (this overwrites your edits).
 
 ## What gets extracted
 

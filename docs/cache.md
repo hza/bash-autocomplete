@@ -1,13 +1,12 @@
 # Cache
 
-Parsed specs are stored as `~/.cache/autocomplete/<command>.cache`
-(`$XDG_CACHE_HOME/autocomplete` if set). A cache file is used only while it's newer than
-its YAML and was built from the same file; otherwise it's rebuilt automatically on the
-next TAB. Commands completed from their man page through `man.list`
-([details](man-pages.md)) have no YAML to compare with, so their cache is kept until
-`autocomplete cache` rebuilds it.
+Specs larger than 100 KB are compiled to `~/.cache/autocomplete/<command>.cache`
+(`$XDG_CACHE_HOME/autocomplete` if set). Smaller specs are read straight from the YAML on
+every TAB; at that size the cache saves nothing (see below). A cache file is used only while
+it's newer than its YAML and was built from the same file; otherwise it's rebuilt
+automatically on the next TAB.
 
-- `autocomplete cache` (or `make cache`) rebuilds everything now.
+- `autocomplete cache` (or `make cache`) rebuilds the cache for every big spec now.
 - `AUTOCOMPLETE_NOCACHE=1` turns the cache off.
 - `rm -rf ~/.cache/autocomplete` resets it.
 
@@ -18,7 +17,7 @@ a TAB takes about 5 ms with or without the cache for all bundled specs (docker, 
 each under 10 KB). That time is mostly starting the program, and an `exec` command such as
 `docker ps` usually takes far longer than that.
 
-The cache starts to pay off only for very large specs:
+The cache starts to pay off only for very large specs, hence the 100 KB threshold:
 
 | Spec size | With cache | Without cache |
 |---|---|---|

@@ -8,12 +8,9 @@ commands:
     description: "Validate a spec and print it as JSON"
     args: file
   cache:
-    description: "Precompile specs into the cache"
+    description: "Precompile big specs (> 100 KB) into the cache"
     args: {exec: "autocomplete list"}
   man:
-    description: "Complete commands from their man pages"
-    args: {exec: "compgen -c | sort -u"}
-  gen:
     description: "Write a spec for a command from its man page"
     flags:
       -f: {description: "Overwrite an existing spec"}
