@@ -1,33 +1,33 @@
 flags:
-  -f: file
-  --file: file
-  --makefile: file
-  -C: dir
-  --directory: dir
-  -j: any
-  --jobs: any
-  -k:
-  --keep-going:
-  -n:
-  --dry-run:
-  -B:
-  --always-make:
-  -s:
-  --silent:
-  -i:
-  --ignore-errors:
-  -e:
-  --environment-overrides:
-  -p:
-  --print-data-base:
-  -q:
-  --question:
-  -I: dir
-  --include-dir: dir
-  -d:
-  --debug:
-  -v:
-  --version:
-  -h:
-  --help:
+  -f: {value: file, description: "Read FILE as a makefile"}
+  --file: {value: file, description: "Read FILE as a makefile"}
+  --makefile: {value: file, description: "Read FILE as a makefile"}
+  -C: {value: dir, description: "Change to DIRECTORY before doing anything"}
+  --directory: {value: dir, description: "Change to DIRECTORY before doing anything"}
+  -j: {value: any, description: "Allow N jobs at once; infinite jobs with no arg"}
+  --jobs: {value: any, description: "Allow N jobs at once; infinite jobs with no arg"}
+  -k: {description: "Keep going when some targets can't be made"}
+  --keep-going: {description: "Keep going when some targets can't be made"}
+  -n: {description: "Don't actually run any commands; just print them"}
+  --dry-run: {description: "Don't actually run any commands; just print them"}
+  -B: {description: "Unconditionally make all targets"}
+  --always-make: {description: "Unconditionally make all targets"}
+  -s: {description: "Don't echo commands"}
+  --silent: {description: "Don't echo commands"}
+  -i: {description: "Ignore errors from commands"}
+  --ignore-errors: {description: "Ignore errors from commands"}
+  -e: {description: "Environment variables override makefiles"}
+  --environment-overrides: {description: "Environment variables override makefiles"}
+  -p: {description: "Print make's internal database"}
+  --print-data-base: {description: "Print make's internal database"}
+  -q: {description: "Run no commands; exit status says if up to date"}
+  --question: {description: "Run no commands; exit status says if up to date"}
+  -I: {value: dir, description: "Search DIRECTORY for included makefiles"}
+  --include-dir: {value: dir, description: "Search DIRECTORY for included makefiles"}
+  -d: {description: "Print lots of debugging information"}
+  --debug: {description: "Print various types of debugging information"}
+  -v: {description: "Print the version number of make and exit"}
+  --version: {description: "Print the version number of make and exit"}
+  -h: {description: "Print this message and exit"}
+  --help: {description: "Print this message and exit"}
 args: "@make-targets"

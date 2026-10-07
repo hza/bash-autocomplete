@@ -11,10 +11,10 @@ effect on the next TAB.
 
 ```yaml
 flags:
-  -n: { exec: "kubectl get ns -o name | cut -d/ -f2" }
-  --namespace: { exec: "kubectl get ns -o name | cut -d/ -f2" }
-  --context: any
-  -h:                   # no value
+  -n: {value: {exec: "kubectl get ns -o name | cut -d/ -f2"}, description: Namespace}
+  --namespace: {value: {exec: "kubectl get ns -o name | cut -d/ -f2"}, description: Namespace}
+  --context: {value: any, description: Name of the kubeconfig context}
+  -h: {description: Show help}        # no value
 commands:
   get:
     commands:           # fixed words are written as subcommands
@@ -23,33 +23,48 @@ commands:
       services: {}
   logs:
     flags:
-      -f:
-      --tail: any
+      -f: {description: Stream the logs}
+      --tail: {value: any, description: Number of lines to show}
     args:
       exec: kubectl get pods -o name | cut -d/ -f2
   apply:
     flags:
-      -f: file
+      -f: {value: file, description: File to apply}
   help:
     args: "@subcommands"
 ```
 
 ## Spec format
 
-A spec has three optional keys, and `commands` nests the same structure for subcommands:
+A spec has four optional keys, and `commands` nests the same structure for subcommands:
 
 | Key | Meaning |
 |---|---|
-| `flags` | Map of flag name → what its value completes to |
-| `args` | What positional arguments complete to |
+| `flags` | Map of flag name → flag (see below) |
+| `args` | What positional arguments complete to (a value) |
 | `commands` | Map of subcommand name → spec |
 | `description` | One-line summary shown next to this command when several commands match |
+
+Each flag is a map with two optional keys, usually written on one line:
+
+| Key | Meaning |
+|---|---|
+| `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
+| `description` | One-line summary shown next to the flag when several flags match |
+
+```yaml
+flags:
+  --rm: {description: Remove the container when it exits}   # takes no value
+  --name: {value: any, description: Assign a name}
+  -f: {value: file}
+  -q: {}                                                     # no value, no description
+```
 
 A value can be:
 
 | Value | Completes to |
 |---|---|
-| *(empty)*, `~`, `null` | nothing; for a flag it means the flag takes no value |
+| *(empty)*, `~`, `null` | nothing |
 | `any` | free text, no suggestions |
 | `file` / `dir` | paths / directories only |
 | `exec: <shell command>` | one suggestion per output line |
@@ -66,7 +81,7 @@ Notes:
   subcommands (`commands: {pods: {}, deployments: {}}`) or use `exec: printf '%s\n' pods deployments`.
 - Run `autocomplete check <file>` to validate a spec; errors include line numbers.
 - Flags defined at the top level are recognised after any subcommand.
-- Descriptions appear when more than one command matches:
+- Descriptions appear when more than one command or flag matches:
   ```
   $ git stash <TAB>
   apply   -- Apply a stash, keeping it
@@ -75,8 +90,7 @@ Notes:
   ...
   ```
   They are plain text: bash 3.2 can't display colors in the completion list. Long
-  descriptions are cut to fit the terminal width. Only commands can have descriptions,
-  not flags.
+  descriptions are cut to fit the terminal width.
 - `exec` commands run in the current directory, and their errors are discarded.
 - Values starting with `@` must be quoted.
 

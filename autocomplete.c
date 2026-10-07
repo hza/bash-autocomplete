@@ -331,7 +331,7 @@ static void complete_make_targets(void) {
     fclose(f);
 }
 
-/* "description" of a command spec, if any. */
+/* "description" of a command or flag spec, if any. */
 static const char *spec_desc(const ynode *spec) {
     const ynode *d = yaml_get(spec, "description");
     return d && d->type == Y_STR ? d->str : NULL;
@@ -370,10 +370,11 @@ static void complete_value(const ynode *v, const ynode *parent) {
     }
 }
 
-/* Find flag `name` in cmd's flags; *val receives its value spec. */
+/* Find flag `name` in cmd's flags; *val receives its "value" spec (NULL
+ * when the flag takes no value). Flags are maps: {value, description}. */
 static int find_flag(const ynode *cmd, const char *name, const ynode **val) {
     const ynode *f = yaml_get(yaml_get(cmd, "flags"), name);
-    if (f) *val = f;
+    if (f) *val = yaml_get(f, "value");
     return f != NULL;
 }
 
@@ -471,7 +472,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     if (cur[0] == '-') {
         const ynode *f;
         for (f = yaml_get(c, "flags") ? yaml_get(c, "flags")->child : NULL; f; f = f->next)
-            emit(f->key, 1);
+            emit_desc(f->key, 1, spec_desc(f));
         return 0;
     }
 

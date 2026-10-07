@@ -5,17 +5,17 @@ Drop a YAML file into `~/.config/autocomplete/`, named after the command:
 ```yaml
 # ~/.config/autocomplete/kubectl.yaml
 flags:
-  --context: any
+  --context: {value: any, description: Name of the kubeconfig context}
 commands:
   logs:
     description: Print the logs of a pod    # shown when several commands match
     flags:
-      -f:                 # flag without a value
+      -f: {description: Stream the logs}    # no "value": the flag takes none
     args:
       exec: kubectl get pods -o name | cut -d/ -f2
   apply:
     flags:
-      -f: file
+      -f: {value: file, description: File to apply}
 ```
 
 Then run `eval "$(autocomplete bash)"` again (or open a new terminal).

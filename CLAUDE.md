@@ -14,17 +14,20 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 - `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
 - `carapace` — upstream reference snippet only; not used.
 
+## Compatibility
+- Pre-release, no users yet: do NOT keep backward compatibility. Change the spec format, CLI, cache format etc. to the cleanest design and migrate the bundled specs and docs in the same change. No legacy fallbacks, aliases or dual syntaxes.
+
 ## Hard constraints
 - bash 3.2: no `compopt`, `mapfile`, `${arr[-1]}`, assoc arrays; `source <(...)` silently does nothing (use `eval "$(...)"`). Init script must stay 3.2-compatible.
 - Function registered with `complete -o nospace`; the engine appends a trailing space to "finished" candidates. Dirs and `nospace: true` exec values get no space. Keep this convention in any new completer (`emit(cand, space)`).
 - `emit`/`emit_desc` shell-escape, filter by prefix of `g_cur`, de-duplicate, trim to bash's current word using `COMP_WORDBREAKS` (needed for `image:tag`, `--flag=value`), and queue into `g_cands`; `flush()` (called once in `main` after `do_complete`) prints. Never `printf` candidates directly.
-- Descriptions (`description:` on a command spec): `flush` prints `name  -- desc` lines padded to > half terminal width (one per line) only when ≥2 candidates and any has a desc; a single candidate is always bare. Correctness relies on bash inserting only the common prefix of ambiguous matches; never let two candidates share text past the name.
+- Descriptions (`description:` on a command or flag spec): `flush` prints `name  -- desc` lines padded to > half terminal width (one per line) only when ≥2 candidates and any has a desc; a single candidate is always bare. Correctness relies on bash inserting only the common prefix of ambiguous matches; never let two candidates share text past the name.
 - No colors: bash 3.2 readline prints ESC as literal `^[` in the match list (verified).
 - C only, no external deps, `-Wall -Wextra` must stay warning-free.
 - Spec format is YAML only (JSON support was removed deliberately; don't re-add).
 
 ## Spec schema
-`{flags: {name: value}, args: value, commands: {name: spec}}`. Value: null/empty (flag takes no value), `any`, `file`, `dir`, `{exec, suffix?, nospace?}` (popen, one candidate per line, `<none>` lines skipped, stderr dropped), `"@subcommands"` (parent's commands), `"@make-targets"` (reads `-f/--file/--makefile`, `-C/--directory` from flag values seen on the line), or a list (union). Root flags are matched at every depth. Lookup dirs: `$AUTOCOMPLETE_SPECS` (colon list) → `~/.config/autocomplete` → `<bin dir>/specs` → `<bin dir>/../share/autocomplete`; first `<cmd>.yaml|.yml` wins.
+`{description?, flags: {name: {value?, description?}}, args: value, commands: {name: spec}}`. A flag without `value` takes no value (`find_flag` returns the inner `value`). Value: null/empty (nothing), `any`, `file`, `dir`, `{exec, suffix?, nospace?}` (popen, one candidate per line, `<none>` lines skipped, stderr dropped), `"@subcommands"` (parent's commands), `"@make-targets"` (reads `-f/--file/--makefile`, `-C/--directory` from flag values seen on the line), or a list (union). Root flags are matched at every depth. Lookup dirs: `$AUTOCOMPLETE_SPECS` (colon list) → `~/.config/autocomplete` → `<bin dir>/specs` → `<bin dir>/../share/autocomplete`; first `<cmd>.yaml|.yml` wins.
 
 ## Verify after changes
 - `make` — zero warnings.
