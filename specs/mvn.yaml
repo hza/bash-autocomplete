@@ -1,0 +1,174 @@
+flags:
+  -am: {description: "Also build projects required by the -pl list"}
+  --also-make: {description: "Also build projects required by the -pl list"}
+  -amd: {description: "Also build projects that depend on the -pl list"}
+  --also-make-dependents: {description: "Also build projects that depend on the -pl list"}
+  -B: {description: "Run in non-interactive (batch) mode"}
+  --batch-mode: {description: "Run in non-interactive (batch) mode"}
+  -b: {value: any, description: "Build strategy id"}
+  --builder: {value: any, description: "Build strategy id"}
+  -C: {description: "Fail the build if checksums don't match"}
+  --strict-checksums: {description: "Fail the build if checksums don't match"}
+  -c: {description: "Warn if checksums don't match"}
+  --lax-checksums: {description: "Warn if checksums don't match"}
+  --color: {value: {exec: "printf 'auto\\nalways\\nnever\\n'"}, description: "Output color mode"}
+  -D: {value: any, description: "Define a user property"}
+  --define: {value: any, description: "Define a user property"}
+  -e: {description: "Produce execution error messages"}
+  --errors: {description: "Produce execution error messages"}
+  -emp: {value: any, description: "Encrypt master security password"}
+  --encrypt-master-password: {value: any, description: "Encrypt master security password"}
+  -ep: {value: any, description: "Encrypt server password"}
+  --encrypt-password: {value: any, description: "Encrypt server password"}
+  -f: {value: file, description: "Alternate POM file (or directory with pom.xml)"}
+  --file: {value: file, description: "Alternate POM file (or directory with pom.xml)"}
+  -fae: {description: "Fail the build only at the end"}
+  --fail-at-end: {description: "Fail the build only at the end"}
+  -ff: {description: "Stop at first failure in reactor builds"}
+  --fail-fast: {description: "Stop at first failure in reactor builds"}
+  -fn: {description: "Never fail the build"}
+  --fail-never: {description: "Never fail the build"}
+  -gs: {value: file, description: "Alternate global settings file"}
+  --global-settings: {value: file, description: "Alternate global settings file"}
+  -gt: {value: file, description: "Alternate global toolchains file"}
+  --global-toolchains: {value: file, description: "Alternate global toolchains file"}
+  -h: {description: "Display help information"}
+  --help: {description: "Display help information"}
+  -itr: {description: "Ignore repositories from transitive dependencies"}
+  --ignore-transitive-repositories: {description: "Ignore repositories from transitive dependencies"}
+  -l: {value: file, description: "Log file for all build output"}
+  --log-file: {value: file, description: "Log file for all build output"}
+  -N: {description: "Do not recurse into sub-projects"}
+  --non-recursive: {description: "Do not recurse into sub-projects"}
+  -nsu: {description: "Suppress SNAPSHOT updates"}
+  --no-snapshot-updates: {description: "Suppress SNAPSHOT updates"}
+  -ntp: {description: "Do not display transfer progress"}
+  --no-transfer-progress: {description: "Do not display transfer progress"}
+  -o: {description: "Work offline"}
+  --offline: {description: "Work offline"}
+  -P: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate"}
+  --activate-profiles: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate"}
+  -pl: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build"}
+  --projects: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build"}
+  -q: {description: "Quiet output, only show errors"}
+  --quiet: {description: "Quiet output, only show errors"}
+  -rf: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
+  --resume-from: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
+  -s: {value: file, description: "Alternate user settings file"}
+  --settings: {value: file, description: "Alternate user settings file"}
+  -t: {value: file, description: "Alternate user toolchains file"}
+  --toolchains: {value: file, description: "Alternate user toolchains file"}
+  -T: {value: any, description: "Thread count, e.g. 4 or 1C"}
+  --threads: {value: any, description: "Thread count, e.g. 4 or 1C"}
+  -U: {description: "Force update of missing releases and snapshots"}
+  --update-snapshots: {description: "Force update of missing releases and snapshots"}
+  -v: {description: "Display version information"}
+  --version: {description: "Display version information"}
+  -V: {description: "Display version information and continue the build"}
+  --show-version: {description: "Display version information and continue the build"}
+  -X: {description: "Produce execution debug output"}
+  --debug: {description: "Produce execution debug output"}
+args: "@subcommands"
+commands:
+  validate:
+    description: "Validate the project is correct"
+    args: "@subcommands"
+  compile:
+    description: "Compile the source code"
+    args: "@subcommands"
+  test:
+    description: "Run unit tests"
+    args: "@subcommands"
+  package:
+    description: "Package compiled code (jar, war...)"
+    args: "@subcommands"
+  verify:
+    description: "Run integration test checks"
+    args: "@subcommands"
+  install:
+    description: "Install the package into the local repository"
+    args: "@subcommands"
+  deploy:
+    description: "Copy the package to the remote repository"
+    args: "@subcommands"
+  clean:
+    description: "Remove previous build output"
+    args: "@subcommands"
+  site:
+    description: "Generate project site documentation"
+    args: "@subcommands"
+  initialize:
+    description: "Initialize build state"
+    args: "@subcommands"
+  generate-sources:
+    description: "Generate source code"
+    args: "@subcommands"
+  process-resources:
+    description: "Copy resources to the output dir"
+    args: "@subcommands"
+  test-compile:
+    description: "Compile test sources"
+    args: "@subcommands"
+  integration-test:
+    description: "Run integration tests"
+    args: "@subcommands"
+  dependency:tree:
+    description: "Display the dependency tree"
+    args: "@subcommands"
+  dependency:resolve:
+    description: "Resolve all dependencies"
+    args: "@subcommands"
+  dependency:analyze:
+    description: "Analyze used/declared dependencies"
+    args: "@subcommands"
+  dependency:go-offline:
+    description: "Download everything for offline use"
+    args: "@subcommands"
+  dependency:purge-local-repository:
+    description: "Remove project dependencies from local repo"
+    args: "@subcommands"
+  dependency:copy-dependencies:
+    description: "Copy dependencies to target/dependency"
+    args: "@subcommands"
+  help:effective-pom:
+    description: "Display the effective POM"
+    args: "@subcommands"
+  help:effective-settings:
+    description: "Display effective settings"
+    args: "@subcommands"
+  help:active-profiles:
+    description: "List active profiles"
+    args: "@subcommands"
+  help:describe:
+    description: "Describe a plugin or goal"
+    args: "@subcommands"
+  help:evaluate:
+    description: "Evaluate a Maven expression"
+    args: "@subcommands"
+  versions:set:
+    description: "Set the project version"
+    args: "@subcommands"
+  versions:display-dependency-updates:
+    description: "Show newer dependency versions"
+    args: "@subcommands"
+  versions:display-plugin-updates:
+    description: "Show newer plugin versions"
+    args: "@subcommands"
+  spring-boot:run:
+    description: "Run a Spring Boot application"
+    args: "@subcommands"
+  exec:java:
+    description: "Run a Java main class"
+    args: "@subcommands"
+  archetype:generate:
+    description: "Generate a project from an archetype"
+    args: "@subcommands"
+  release:prepare:
+    description: "Prepare a release"
+    args: "@subcommands"
+  release:perform:
+    description: "Perform a release"
+    args: "@subcommands"
+  wrapper:wrapper:
+    description: "Add the Maven wrapper to the project"
+    args: "@subcommands"
