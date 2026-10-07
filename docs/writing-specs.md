@@ -54,6 +54,8 @@ Each flag is a map with two optional keys, usually written on one line:
 | `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
 | `description` | One-line summary shown next to the flag when several flags match |
 
+Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it. Quote such keys in YAML.
+
 ```yaml
 flags:
   --rm: {description: Remove the container when it exits}   # takes no value

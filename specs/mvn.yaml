@@ -14,6 +14,33 @@ flags:
   --color: {value: {exec: "printf 'auto\\nalways\\nnever\\n'"}, description: "Output color mode"}
   -D: {value: any, description: "Define a user property"}
   --define: {value: any, description: "Define a user property"}
+  -DskipTests: {description: "Compile tests but don't run them"}
+  '-Dmaven.test.skip=true': {description: "Skip compiling and running tests"}
+  -DskipITs: {description: "Skip integration tests (failsafe)"}
+  '-Dtest=': {description: "Run only the given test class/method"}
+  '-Dit.test=': {description: "Run only the given integration test"}
+  '-DfailIfNoTests=false': {description: "Don't fail when -Dtest matches nothing"}
+  '-Dsurefire.failIfNoSpecifiedTests=false': {description: "Don't fail when -Dtest matches nothing in a module"}
+  '-Dmaven.javadoc.skip=true': {description: "Skip Javadoc generation"}
+  '-Dmaven.source.skip=true': {description: "Skip source jar"}
+  -Dgpg.skip: {description: "Skip GPG signing"}
+  -Dcheckstyle.skip: {description: "Skip Checkstyle"}
+  '-Dspotless.check.skip=true': {description: "Skip Spotless check"}
+  '-Dpmd.skip=true': {description: "Skip PMD"}
+  '-Dspotbugs.skip=true': {description: "Skip SpotBugs"}
+  '-Djacoco.skip=true': {description: "Skip JaCoCo"}
+  '-Denforcer.skip=true': {description: "Skip Maven Enforcer"}
+  -Dmaven.main.skip: {description: "Skip main compilation"}
+  '-DdownloadSources=true': {description: "Download source jars"}
+  '-DdownloadJavadocs=true': {description: "Download javadoc jars"}
+  '-DnewVersion=': {description: "New version for versions:set"}
+  '-DgenerateBackupPoms=false': {description: "No pom.xml.versionsBackup (versions plugin)"}
+  '-Dspring-boot.run.profiles=': {description: "Spring profiles for spring-boot:run"}
+  '-Dspring-boot.run.jvmArguments=': {description: "JVM args for spring-boot:run"}
+  '-Dexec.mainClass=': {description: "Main class for exec:java"}
+  '-Dexec.args=': {description: "Program arguments for exec:java"}
+  '-Dexpression=': {description: "Expression for help:evaluate"}
+  -DforceStdout: {description: "Print only the value (help:evaluate)"}
   -e: {description: "Produce execution error messages"}
   --errors: {description: "Produce execution error messages"}
   -emp: {value: any, description: "Encrypt master security password"}

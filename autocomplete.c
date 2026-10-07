@@ -688,9 +688,15 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     if (cur[0] == '-') {
-        const ynode *f;
-        for (f = yaml_get(c, "flags") ? yaml_get(c, "flags")->child : NULL; f; f = f->next)
-            emit_desc(f->key, 1, spec_desc(f));
+        /* own flags, then root flags (valid at every depth); "-Dx=" takes
+         * its value attached, so no space */
+        const ynode *f, *s = c;
+        for (;;) {
+            for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next)
+                emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
+            if (s == root) break;
+            s = root;
+        }
         return 0;
     }
 
