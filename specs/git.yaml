@@ -27,6 +27,7 @@ commands:
       --verbose: {description: "Be verbose"}
       -N: {description: "Record only the fact that the path will be added later"}
       --intent-to-add: {description: "Record only the fact that the path will be added later"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git ls-files -m -o --exclude-standard
       - file
@@ -41,6 +42,7 @@ commands:
       --source: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags"}, description: "Which tree-ish to checkout from"}
       -p: {description: "Select hunks interactively"}
       --patch: {description: "Select hunks interactively"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git diff --name-only --relative
       - exec: git diff --cached --name-only --relative
@@ -53,6 +55,7 @@ commands:
       --cached: {description: "Only remove from the index"}
       -n: {description: "Dry run"}
       --dry-run: {description: "Dry run"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git ls-files
   mv:
@@ -62,6 +65,7 @@ commands:
       --force: {description: "Force move/rename even if target exists"}
       -n: {description: "Dry run"}
       --dry-run: {description: "Dry run"}
+      --help: {description: "Show the manual page"}
     args: file
   status:
     description: Show the working tree status
@@ -74,6 +78,7 @@ commands:
       -u: {value: any, description: "Show untracked files, optional modes: all, normal, no. (Default: all)"}
       --untracked-files: {value: any, description: "Show untracked files, optional modes: all, normal, no. (Default: all)"}
       --ignored: {description: "Show ignored files, optional modes: traditional, matching, no. (Default: traditional)"}
+      --help: {description: "Show the manual page"}
     args: file
   diff:
     description: Show changes between commits, commit and working tree, etc
@@ -89,6 +94,7 @@ commands:
       --color-words: {description: "Show a colored word diff"}
       --no-index: {description: "Compare two paths on the filesystem"}
       -U: {value: any, description: "Generate diffs with <n> lines of context"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --name-only --relative
@@ -113,6 +119,7 @@ commands:
       --allow-empty: {description: "Allow a commit with no changes"}
       -p: {description: "Interactively add changes"}
       --patch: {description: "Interactively add changes"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git ls-files -m
   log:
@@ -135,6 +142,7 @@ commands:
       --reverse: {description: "Show commits in reverse order"}
       --pretty: {value: any, description: "Pretty-print commits in a given format"}
       --format: {value: any, description: "Pretty-print commits in a given format"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - file
@@ -146,6 +154,7 @@ commands:
       --oneline: {description: "Show the commit on one line"}
       --pretty: {value: any, description: "Pretty-print in a given format"}
       --format: {value: any, description: "Pretty-print in a given format"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   branch:
@@ -171,6 +180,7 @@ commands:
       --show-current: {description: "Show current branch name"}
       --merged: {description: "Print only branches that are merged"}
       --no-merged: {description: "Print only branches that are not merged"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads
   checkout:
@@ -186,6 +196,7 @@ commands:
       --detach: {description: "Detach HEAD at named commit"}
       -p: {description: "Select hunks interactively"}
       --patch: {description: "Select hunks interactively"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --name-only --relative
@@ -204,6 +215,7 @@ commands:
       -f: {description: "Force checkout (throw away local modifications)"}
       --force: {description: "Force checkout (throw away local modifications)"}
       --discard-changes: {description: "Throw away local modifications"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes
   merge:
@@ -218,6 +230,7 @@ commands:
       --no-edit: {description: "Accept the auto-generated merge message"}
       -s: {value: any, description: "Merge strategy to use"}
       --strategy: {value: any, description: "Merge strategy to use"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   rebase:
@@ -231,6 +244,7 @@ commands:
       --onto: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags"}, description: "Rebase onto given branch instead of upstream"}
       --autosquash: {description: "Move commits that begin with squash!/fixup! under -i"}
       --autostash: {description: "Automatically stash/stash pop before and after"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   cherry-pick:
@@ -242,6 +256,7 @@ commands:
       -n: {description: "Don't automatically commit"}
       --no-commit: {description: "Don't automatically commit"}
       -x: {description: "Append commit name"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   reset:
@@ -253,6 +268,7 @@ commands:
       --keep: {description: "Reset HEAD but keep local changes"}
       -p: {description: "Select hunks interactively"}
       --patch: {description: "Select hunks interactively"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
       - exec: git diff --cached --name-only --relative
@@ -264,6 +280,7 @@ commands:
       --no-edit: {description: "Do not start the commit message editor"}
       -n: {description: "Don't automatically commit"}
       --no-commit: {description: "Don't automatically commit"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
   tag:
@@ -281,6 +298,7 @@ commands:
       --force: {description: "Replace the tag if exists"}
       -s: {description: "Annotated and GPG-signed tag"}
       --sign: {description: "Annotated and GPG-signed tag"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git tag
   fetch:
@@ -292,6 +310,7 @@ commands:
       --tags: {description: "Fetch all tags and associated objects"}
       --depth: {value: any, description: "Deepen history of shallow clone"}
       -v: {description: "Be more verbose"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git remote
   pull:
@@ -303,6 +322,7 @@ commands:
       --all: {description: "Fetch from all remotes"}
       --autostash: {description: "Automatically stash/stash pop before and after"}
       -v: {description: "Be more verbose"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads
@@ -320,6 +340,7 @@ commands:
       --delete: {description: "Delete refs"}
       --dry-run: {description: "Dry run"}
       --no-verify: {description: "Bypass pre-push hook"}
+      --help: {description: "Show the manual page"}
     args:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
@@ -328,23 +349,31 @@ commands:
     flags:
       -v: {description: "Be verbose; must be placed before a subcommand"}
       --verbose: {description: "Be verbose; must be placed before a subcommand"}
+      --help: {description: "Show the manual page"}
     commands:
       add:
         description: Add a remote
         flags:
           -f: {description: "Fetch the remote branches"}
           -t: {value: any, description: "Branch(es) to track"}
+          --help: {description: "Show the manual page"}
         args: any
       remove:
         description: Remove a remote
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       rm:
         description: Remove a remote
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       rename:
         description: Rename a remote
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       set-url:
@@ -353,22 +382,31 @@ commands:
           --add: {description: "Add URL"}
           --delete: {description: "Delete URLs"}
           --push: {description: "Manipulate push URLs"}
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       get-url:
         description: Show the URL of a remote
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       show:
         description: Show information about a remote
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
       prune:
         description: Delete stale remote-tracking branches
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git remote
   stash:
     description: Stash the changes in a dirty working directory away
+    flags:
+      --help: {description: "Show the manual page"}
     commands:
       push:
         description: Save local changes to a new stash
@@ -381,21 +419,26 @@ commands:
           --patch: {description: "Stash in patch mode"}
           -k: {description: "Keep index"}
           --keep-index: {description: "Keep index"}
+          --help: {description: "Show the manual page"}
         args: file
       pop:
         description: Apply a stash and remove it
         flags:
           --index: {description: "Attempt to recreate the index"}
+          --help: {description: "Show the manual page"}
         args:
           exec: git stash list --format='%gd'
       apply:
         description: Apply a stash, keeping it
         flags:
           --index: {description: "Attempt to recreate the index"}
+          --help: {description: "Show the manual page"}
         args:
           exec: git stash list --format='%gd'
       drop:
         description: Remove a stash
+        flags:
+          --help: {description: "Show the manual page"}
         args:
           exec: git stash list --format='%gd'
       show:
@@ -403,14 +446,21 @@ commands:
         flags:
           -p: {description: "Show the stash as a patch"}
           --patch: {description: "Show the stash as a patch"}
+          --help: {description: "Show the manual page"}
         args:
           exec: git stash list --format='%gd'
       list:
         description: List stashes
+        flags:
+          --help: {description: "Show the manual page"}
       clear:
         description: Remove all stashes
+        flags:
+          --help: {description: "Show the manual page"}
       branch:
         description: Create a branch from a stash
+        flags:
+          --help: {description: "Show the manual page"}
         args: any
   clone:
     description: Clone a repository into a new directory
@@ -425,6 +475,7 @@ commands:
       --mirror: {description: "Create a mirror repository (implies bare)"}
       -o: {value: any, description: "Use <name> instead of 'origin' to track upstream"}
       --origin: {value: any, description: "Use <name> instead of 'origin' to track upstream"}
+      --help: {description: "Show the manual page"}
     args: dir
   init:
     description: Create an empty Git repository or reinitialize an existing one
@@ -434,6 +485,7 @@ commands:
       --initial-branch: {value: any, description: "Override the name of the initial branch"}
       -q: {description: "Be quiet"}
       --quiet: {description: "Be quiet"}
+      --help: {description: "Show the manual page"}
     args: dir
   blame:
     description: Show what revision and author last modified each line of a file
@@ -443,6 +495,7 @@ commands:
       -C: {description: "Find line copies within and across files"}
       -M: {description: "Find line movements within and across files"}
       -e: {description: "Show author email instead of name (Default: off)"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git ls-files
   clean:
@@ -456,6 +509,7 @@ commands:
       -x: {description: "Remove ignored files, too"}
       -X: {description: "Remove only ignored files"}
       -i: {description: "Interactive cleaning"}
+      --help: {description: "Show the manual page"}
     args: file
   grep:
     description: Print lines matching a pattern
@@ -468,27 +522,46 @@ commands:
       -w: {description: "Match patterns only at word boundaries"}
       -e: {value: any, description: "Match <pattern>"}
       -E: {description: "Use extended POSIX regular expressions"}
+      --help: {description: "Show the manual page"}
     args: any
   bisect:
     description: Use binary search to find the commit that introduced a bug
+    flags:
+      --help: {description: "Show the manual page"}
     commands:
       start:
         description: Start a bisect session
+        flags:
+          --help: {description: "Show the manual page"}
       good:
         description: Mark a commit as good
+        flags:
+          --help: {description: "Show the manual page"}
       bad:
         description: Mark a commit as bad
+        flags:
+          --help: {description: "Show the manual page"}
       skip:
         description: Skip a commit
+        flags:
+          --help: {description: "Show the manual page"}
       reset:
         description: End the bisect session
+        flags:
+          --help: {description: "Show the manual page"}
       log:
         description: Show the bisect log
+        flags:
+          --help: {description: "Show the manual page"}
       run:
         description: Bisect automatically with a script
+        flags:
+          --help: {description: "Show the manual page"}
         args: file
   worktree:
     description: Manage multiple working trees
+    flags:
+      --help: {description: "Show the manual page"}
     commands:
       add:
         description: Create a new worktree
@@ -496,23 +569,33 @@ commands:
           -b: {value: any, description: "Create a new branch"}
           -f: {description: "Checkout <branch> even if already checked out in other worktree"}
           --detach: {description: "Detach HEAD at named commit"}
+          --help: {description: "Show the manual page"}
         args: dir
       list:
         description: List worktrees
+        flags:
+          --help: {description: "Show the manual page"}
       remove:
         description: Remove a worktree
         flags:
           -f: {description: "Force removal even if worktree is dirty or locked"}
           --force: {description: "Force removal even if worktree is dirty or locked"}
+          --help: {description: "Show the manual page"}
         args:
           exec: git worktree list --porcelain | sed -n 's/^worktree //p'
       prune:
         description: Prune stale worktree information
+        flags:
+          --help: {description: "Show the manual page"}
   submodule:
     description: Initialize, update or inspect submodules
+    flags:
+      --help: {description: "Show the manual page"}
     commands:
       add:
         description: Add a submodule
+        flags:
+          --help: {description: "Show the manual page"}
         args: any
       update:
         description: Update submodules to the recorded commit
@@ -520,14 +603,23 @@ commands:
           --init: {description: "Initialize submodules that are not yet initialized"}
           --recursive: {description: "Update nested submodules too"}
           --remote: {description: "Update to the remote-tracking branch"}
+          --help: {description: "Show the manual page"}
       status:
         description: Show submodule status
+        flags:
+          --help: {description: "Show the manual page"}
       init:
         description: Initialize submodules
+        flags:
+          --help: {description: "Show the manual page"}
       sync:
         description: Sync submodule URLs
+        flags:
+          --help: {description: "Show the manual page"}
       foreach:
         description: Run a command in each submodule
+        flags:
+          --help: {description: "Show the manual page"}
         args: any
   config:
     description: Get and set repository or global options
@@ -541,16 +633,22 @@ commands:
       --unset: {description: "Remove a variable: name [value-pattern]"}
       -e: {description: "Open an editor"}
       --edit: {description: "Open an editor"}
+      --help: {description: "Show the manual page"}
     args:
       exec: git config --list --name-only | sort -u
   reflog:
     description: Manage reflog information
+    flags:
+      --help: {description: "Show the manual page"}
   describe:
     description: Give an object a human readable name based on an available ref
     flags:
       --tags: {description: "Use any tag, even unannotated"}
       --always: {description: "Show abbreviated commit object as fallback"}
       --abbrev: {value: any, description: "Use <n> digits to display object names"}
+      --help: {description: "Show the manual page"}
   help:
     description: Display help information about Git
+    flags:
+      --help: {description: "Show the manual page"}
     args: "@subcommands"
