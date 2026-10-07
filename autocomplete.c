@@ -495,15 +495,27 @@ static const char *spec_desc(const ynode *spec) {
     return d && d->type == Y_STR ? d->str : NULL;
 }
 
-/* Emit every subcommand of `cmds`, plus each of its "aliases". */
+/* Emit every subcommand of `cmds`. "aliases" are not listed, only shown in
+ * the description ("desc (co, ch)"); an alias typed in full is emitted. */
 static void emit_commands(const ynode *cmds) {
-    const ynode *c, *a;
+    const ynode *c, *a, *al;
     g_kind = "command";
     for (c = cmds ? cmds->child : NULL; c; c = c->next) {
-        emit_desc(c->key, 1, spec_desc(c));
-        a = yaml_get(c, "aliases");
-        for (a = a && a->type == Y_ARR ? a->child : NULL; a; a = a->next)
-            if (a->type == Y_STR) emit_desc(a->str, 1, spec_desc(c));
+        const char *d = spec_desc(c);
+        char buf[1024];
+        size_t len;
+        al = yaml_get(c, "aliases");
+        al = al && al->type == Y_ARR ? al->child : NULL;
+        if (!al) { emit_desc(c->key, 1, d); continue; }
+        len = (size_t)snprintf(buf, sizeof buf, "%s%s(", d ? d : "", d ? " " : "");
+        for (a = al; a && len < sizeof buf; a = a->next)
+            if (a->type == Y_STR) {
+                len += (size_t)snprintf(buf + len, sizeof buf - len, "%s%s",
+                                        buf[len - 1] == '(' ? "" : ", ", a->str);
+                if (!strcmp(a->str, g_cur)) emit_desc(a->str, 1, d);
+            }
+        if (len < sizeof buf - 1) strcat(buf, ")");
+        emit_desc(c->key, 1, strdup(buf));
     }
 }
 

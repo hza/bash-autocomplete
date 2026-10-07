@@ -159,6 +159,7 @@ commands:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   branch:
     description: List, create, or delete branches
+    aliases: [br]
     flags:
       -a: {description: "List both remote-tracking and local branches"}
       --all: {description: "List both remote-tracking and local branches"}
@@ -185,6 +186,7 @@ commands:
       exec: git for-each-ref --format='%(refname:short)' refs/heads
   checkout:
     description: Switch branches or restore working tree files
+    aliases: [co]
     flags:
       -b: {value: any, description: "Create and checkout a new branch"}
       -B: {value: any, description: "Create/reset and checkout a branch"}
@@ -235,6 +237,7 @@ commands:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   rebase:
     description: Reapply commits on top of another base tip
+    aliases: [re]
     flags:
       -i: {description: "Let the user edit the list of commits to rebase"}
       --interactive: {description: "Let the user edit the list of commits to rebase"}
@@ -249,6 +252,7 @@ commands:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
   cherry-pick:
     description: Apply the changes introduced by some existing commits
+    aliases: [cp]
     flags:
       --continue: {description: "Resume revert or cherry-pick sequence"}
       --abort: {description: "Cancel revert or cherry-pick sequence"}
@@ -303,6 +307,7 @@ commands:
       exec: git tag
   fetch:
     description: Download objects and refs from another repository
+    aliases: [fe]
     flags:
       --all: {description: "Fetch from all remotes"}
       -p: {description: "Prune remote-tracking branches no longer on remote"}
@@ -328,6 +333,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads
   push:
     description: Update remote refs along with associated objects
+    aliases: [pu]
     flags:
       -u: {description: "Set upstream for git pull/status"}
       --set-upstream: {description: "Set upstream for git pull/status"}

@@ -44,7 +44,7 @@ A spec has five optional keys, and `commands` nests the same structure for subco
 | `args` | What positional arguments complete to (a value) |
 | `commands` | Map of subcommand name → spec |
 | `description` | One-line summary shown next to this command when several commands match |
-| `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each completes and is matched like the main name |
+| `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (i, add)`); an alias is offered as a candidate only once typed in full |
 
 Each flag is a map with two optional keys, usually written on one line:
 
