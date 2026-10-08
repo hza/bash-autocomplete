@@ -1,0 +1,38 @@
+description: "Open files, directories, or URLs"
+flags:
+  -a:
+    value:
+      exec: "ls /Applications /System/Applications /System/Applications/Utilities 2>/dev/null | grep '\\.app$' | sed 's/\\.app$//'"
+    description: "Open with application"
+  -e: {description: "Open with TextEdit"}
+  -t: {description: "Open with default text editor"}
+  -f: {description: "Read from stdin and open with TextEdit"}
+  -F: {description: "Open fresh (without state restoration)"}
+  -W: {description: "Wait for application to exit"}
+  -R: {description: "Reveal in Finder"}
+  -n: {description: "Open new instance even if already running"}
+  -g: {description: "Do not bring application to foreground"}
+  -j: {description: "Launch hidden"}
+  -h: {description: "Search headers for the given string"}
+  -b:
+    value: {exec: "for a in /Applications/*.app /System/Applications/*.app /System/Applications/Utilities/*.app; do i=$(defaults read \"$a/Contents/Info\" CFBundleIdentifier 2>/dev/null) && printf '%s\\t%s\\n' \"$i\" \"$(basename \"$a\" .app)\"; done"}
+    description: "Open with bundle identifier"
+  -s:
+    value: any
+    description: "Partial SDK name to search headers in"
+  --args: {description: "Pass remaining arguments to application"}
+  --env:
+    value: any
+    description: "Set environment variable for the application"
+  --stderr:
+    value: file
+    description: "Redirect stderr to file"
+  --stdin:
+    value: file
+    description: "Send file to stdin"
+  --stdout:
+    value: file
+    description: "Redirect stdout to file"
+args:
+  - file
+  - dir

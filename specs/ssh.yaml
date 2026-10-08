@@ -1,0 +1,36 @@
+description: OpenSSH remote login client
+flags:
+  -p: {value: any, description: "Port to connect to on the remote host"}
+  -i: {value: file, description: "Identity file (private key)"}
+  -L: {value: any, description: "Local port forwarding (local:host:hostport)"}
+  -R: {value: any, description: "Remote port forwarding (remote:host:hostport)"}
+  -D: {value: any, description: "Dynamic application-level port forwarding"}
+  -l: {value: any, description: "Login name on the remote machine"}
+  -o: {value: any, description: "Option in ssh_config format"}
+  -N: {description: "Do not execute a remote command"}
+  -f: {description: "Go to background just before command execution"}
+  '-4': {description: "Force IPv4 connections only"}
+  '-6': {description: "Force IPv6 connections only"}
+  -A: {description: "Enable forwarding of the authentication agent connection"}
+  -X: {description: "Enable X11 forwarding"}
+  -x: {description: "Disable X11 forwarding"}
+  -v: {description: "Verbose mode (repeat for more verbosity)"}
+  -q: {description: "Quiet mode"}
+  -C: {description: "Request compression of all data"}
+  -t: {description: "Force pseudo-terminal allocation"}
+  -T: {description: "Disable pseudo-terminal allocation"}
+  -W: {value: any, description: "Forward stdin/stdout to host:port"}
+  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)"}
+  -E: {value: file, description: "Append debug logs to log_file"}
+  -F: {value: file, description: "Specify config file"}
+  -b: {value: any, description: "Bind address"}
+  -c: {value: any, description: "Cipher spec"}
+  -e: {value: any, description: "Escape character"}
+  -g: {description: "Allow remote hosts to connect to local forwarded ports"}
+  -k: {description: "Disable GSSAPI credential forwarding"}
+  -M: {description: "Master mode for connection sharing"}
+  -n: {description: "Redirect stdin from /dev/null"}
+  -S: {value: any, description: "Control socket for connection sharing"}
+  -w: {value: any, description: "Tunnel device forwarding"}
+  -Y: {description: "Enable trusted X11 forwarding"}
+args: [{exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, {exec: "cut -d' ' -f1 ~/.ssh/known_hosts 2>/dev/null | tr ',' '\\n' | grep -v '^[[|]' | grep -v '^[0-9.:]*$' | sort -u"}]

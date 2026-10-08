@@ -1,0 +1,106 @@
+description: macOS launchd service management
+flags:
+  --help: {description: "Show help"}
+commands:
+  load:
+    description: Load configuration files and/or directories
+    args: [{exec: "ls ~/Library/LaunchAgents/*.plist /Library/LaunchAgents/*.plist /Library/LaunchDaemons/*.plist 2>/dev/null"}, file]
+  unload:
+    description: Unload configuration files and/or directories
+    args: [{exec: "ls ~/Library/LaunchAgents/*.plist /Library/LaunchAgents/*.plist /Library/LaunchDaemons/*.plist 2>/dev/null"}, file]
+  start:
+    description: Start the specified job by label
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  stop:
+    description: Stop the specified job by label
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  list:
+    description: List jobs and information about jobs
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  remove:
+    description: Remove the job from launchd
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  enable:
+    description: Enable the specified service
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  disable:
+    description: Disable the specified service
+    args:
+      exec: "launchctl list 2>/dev/null | tail -n +2 | awk '{print $3}' | grep -v '^-$'"
+  bootstrap:
+    description: Bootstrap a launchd domain or a service into a domain
+    flags:
+      -p: {value: {exec: "printf 'system\\nuser/%d\\ngui/%d\\n' \"$(id -u)\" \"$(id -u)\" \"$(id -u)\""}, description: "Target domain"}
+  bootout:
+    description: Teardown a launchd domain or remove a service from a domain
+    flags:
+      -p: {value: {exec: "printf 'system\\nuser/%d\\ngui/%d\\n' \"$(id -u)\" \"$(id -u)\" \"$(id -u)\""}, description: "Target domain"}
+  kickstart:
+    description: Force an existing service to start
+    flags:
+      -k: {description: "Kill any running instance before restarting"}
+      -p: {value: {exec: "printf 'system\\nuser/%d\\ngui/%d\\n' \"$(id -u)\" \"$(id -u)\" \"$(id -u)\""}, description: "Target domain"}
+  kill:
+    description: Send a signal to the service instance
+    flags:
+      -s: {value: {exec: "kill -l 2>/dev/null | tr ' ' '\\n'"}, description: "Signal name or number"}
+  print:
+    description: Print a description of a domain or service
+    args:
+      exec: "printf 'system\\nuser/%d\\ngui/%d\\nlogin/%d\\npid/%d\\n' \"$(id -u)\" \"$(id -u)\" \"$(id -u)\" \"$(id -u)\""
+  print-cache:
+    description: Print information about the service cache
+  print-disabled:
+    description: Print the list of disabled services
+  blame:
+    description: Print the reason a service is running
+  runstats:
+    description: Print performance statistics for a service
+  examine:
+    description: Examine and manipulate the launchd execution context
+  config:
+    description: Modify persistent configuration parameters for launchd domains
+  debug:
+    description: Attach the system's debugger to a service
+  reboot:
+    description: Reboot the system
+  error:
+    description: Print a description of an error
+  limit:
+    description: View and adjust resource limits
+  procinfo:
+    description: Print port information about a process
+  hostinfo:
+    description: Print port information about the host
+  resolveport:
+    description: Resolve a port name to an address
+  dumpstate:
+    description: Dump the state of launchd
+  dumpjpcategory:
+    description: Dump the job policy category for a service
+  managerpid:
+    description: Print the PID of the launchd controlling the session
+  manageruid:
+    description: Print the UID of the current launchd session
+  managername:
+    description: Print the name of the current launchd session
+  bslist:
+    description: List Mach services
+  bsexec:
+    description: Execute a program in another process's Mach bootstrap context
+  asuser:
+    description: Execute a program in the bootstrap context of a given user
+  submit:
+    description: Submit a job from the command line
+    flags:
+      -l: {value: any, description: "Label"}
+      -p: {value: file, description: "Program"}
+      -o: {value: file, description: "Standard out file"}
+      -e: {value: file, description: "Standard error file"}
+  help:
+    description: Show help

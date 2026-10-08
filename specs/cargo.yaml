@@ -1,0 +1,483 @@
+description: Rust package manager
+flags:
+  --help: {description: "Show help"}
+  -h: {description: "Show help"}
+  --version: {description: "Show version"}
+  -V: {description: "Show version"}
+  -v: {description: "Use verbose output"}
+  --verbose: {description: "Use verbose output"}
+  -q: {description: "Do not print cargo log messages"}
+  --quiet: {description: "Do not print cargo log messages"}
+  --color: {value: any, description: "Coloring: auto, always, never"}
+  --frozen: {description: "Require Cargo.lock and cache are up to date"}
+  --locked: {description: "Require Cargo.lock is up to date"}
+  --offline: {description: "Run without accessing the network"}
+  -Z: {value: any, description: "Unstable (nightly-only) flags to Cargo"}
+commands:
+  build:
+    description: Compile the current package
+    aliases: [b]
+    flags:
+      -p: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to build"}
+      --package: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to build"}
+      --bin: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bin' in t['kind']]\""}, description: "Build only the specified binary"}
+      --lib: {description: "Build only this package's library"}
+      --example: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'example' in t['kind']]\""}, description: "Build only the specified example"}
+      --test: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'test' in t['kind']]\""}, description: "Build only the specified test target"}
+      --bench: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bench' in t['kind']]\""}, description: "Build only the specified bench target"}
+      -r: {description: "Build artifacts in release mode"}
+      --release: {description: "Build artifacts in release mode"}
+      --debug: {description: "Build artifacts in debug mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -j: {value: any, description: "Number of parallel jobs"}
+      --jobs: {value: any, description: "Number of parallel jobs"}
+      --target: {value: any, description: "Build for the target triple"}
+      --target-dir: {value: dir, description: "Directory for all generated artifacts"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      -q: {description: "Do not print cargo log messages"}
+      --quiet: {description: "Do not print cargo log messages"}
+      --color: {value: any, description: "Coloring: auto, always, never"}
+      -Z: {value: any, description: "Unstable (nightly-only) flags to Cargo"}
+      --frozen: {description: "Require Cargo.lock and cache are up to date"}
+      --locked: {description: "Require Cargo.lock is up to date"}
+      --offline: {description: "Run without accessing the network"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  check:
+    description: Check the current package for errors
+    aliases: [c]
+    flags:
+      -p: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to check"}
+      --package: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to check"}
+      --bin: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bin' in t['kind']]\""}, description: "Check only the specified binary"}
+      --lib: {description: "Check only this package's library"}
+      --example: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'example' in t['kind']]\""}, description: "Check only the specified example"}
+      --test: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'test' in t['kind']]\""}, description: "Check only the specified test target"}
+      --bench: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bench' in t['kind']]\""}, description: "Check only the specified bench target"}
+      --release: {description: "Check artifacts in release mode"}
+      -r: {description: "Check artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -j: {value: any, description: "Number of parallel jobs"}
+      --jobs: {value: any, description: "Number of parallel jobs"}
+      --target: {value: any, description: "Check for the target triple"}
+      --target-dir: {value: dir, description: "Directory for all generated artifacts"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      -q: {description: "Do not print cargo log messages"}
+      --quiet: {description: "Do not print cargo log messages"}
+      --color: {value: any, description: "Coloring: auto, always, never"}
+      --frozen: {description: "Require Cargo.lock and cache are up to date"}
+      --locked: {description: "Require Cargo.lock is up to date"}
+      --offline: {description: "Run without accessing the network"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  run:
+    description: Run a binary or example of the local package
+    aliases: [r]
+    flags:
+      -p: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to run"}
+      --package: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to run"}
+      --bin: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bin' in t['kind']]\""}, description: "Name of the bin target to run"}
+      --example: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'example' in t['kind']]\""}, description: "Name of the example target to run"}
+      --release: {description: "Build artifacts in release mode"}
+      -r: {description: "Build artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -j: {value: any, description: "Number of parallel jobs"}
+      --jobs: {value: any, description: "Number of parallel jobs"}
+      --target: {value: any, description: "Build for the target triple"}
+      --target-dir: {value: dir, description: "Directory for all generated artifacts"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      -q: {description: "Do not print cargo log messages"}
+      --quiet: {description: "Do not print cargo log messages"}
+      --color: {value: any, description: "Coloring: auto, always, never"}
+      --frozen: {description: "Require Cargo.lock and cache are up to date"}
+      --locked: {description: "Require Cargo.lock is up to date"}
+      --offline: {description: "Run without accessing the network"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  test:
+    description: Execute unit and integration tests and build examples of a local package
+    aliases: [t]
+    flags:
+      -p: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to test"}
+      --package: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(p['name']) for p in json.load(sys.stdin)['packages']]\""}, description: "Package to test"}
+      --bin: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bin' in t['kind']]\""}, description: "Test only the specified binary"}
+      --lib: {description: "Test only this package's library unit tests"}
+      --example: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'example' in t['kind']]\""}, description: "Test only the specified example"}
+      --test: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'test' in t['kind']]\""}, description: "Test only the specified test target"}
+      --bench: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bench' in t['kind']]\""}, description: "Test only the specified bench target"}
+      --doc: {description: "Test only this library's documentation"}
+      --release: {description: "Build artifacts in release mode"}
+      -r: {description: "Build artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -j: {value: any, description: "Number of parallel jobs"}
+      --jobs: {value: any, description: "Number of parallel jobs"}
+      --target: {value: any, description: "Build for the target triple"}
+      --target-dir: {value: dir, description: "Directory for all generated artifacts"}
+      --no-run: {description: "Compile, but don't run tests"}
+      --no-fail-fast: {description: "Run all tests regardless of failure"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      -q: {description: "Do not print cargo log messages"}
+      --quiet: {description: "Do not print cargo log messages"}
+      --color: {value: any, description: "Coloring: auto, always, never"}
+      --frozen: {description: "Require Cargo.lock and cache are up to date"}
+      --locked: {description: "Require Cargo.lock is up to date"}
+      --offline: {description: "Run without accessing the network"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  bench:
+    description: Execute all benchmarks of a local package
+    flags:
+      -p: {value: any, description: "Package to benchmark"}
+      --package: {value: any, description: "Package to benchmark"}
+      --bench: {value: {exec: "cargo metadata --no-deps --format-version=1 2>/dev/null | python3 -c \"import json,sys;[print(t['name']) for p in json.load(sys.stdin)['packages'] for t in p['targets'] if 'bench' in t['kind']]\""}, description: "Benchmark only the specified bench target"}
+      --release: {description: "Build artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      --target: {value: any, description: "Build for the target triple"}
+      --no-run: {description: "Compile, but don't run benchmarks"}
+      --help: {description: "Show help"}
+  doc:
+    description: Build a package's documentation
+    flags:
+      -p: {value: any, description: "Package to document"}
+      --package: {value: any, description: "Package to document"}
+      --no-deps: {description: "Do not build documentation for dependencies"}
+      --open: {description: "Opens the docs in a browser after the operation"}
+      --release: {description: "Build artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      --target: {value: any, description: "Build for the target triple"}
+      --help: {description: "Show help"}
+  new:
+    description: Create a new Cargo package
+    flags:
+      --bin: {description: "Use a binary (application) template"}
+      --lib: {description: "Use a library template"}
+      --name: {value: any, description: "Set the resulting package name"}
+      --edition: {value: any, description: "Edition to set for the crate generated"}
+      --vcs: {value: any, description: "Initialize a new repository for the given version control system"}
+      --registry: {value: any, description: "Registry to use"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  init:
+    description: Create a new Cargo package in an existing directory
+    flags:
+      --bin: {description: "Use a binary (application) template"}
+      --lib: {description: "Use a library template"}
+      --name: {value: any, description: "Set the resulting package name"}
+      --edition: {value: any, description: "Edition to set for the crate generated"}
+      --vcs: {value: any, description: "Initialize a new repository for the given version control system"}
+      --registry: {value: any, description: "Registry to use"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  add:
+    description: Add dependencies to a Cargo.toml manifest file
+    flags:
+      --dev: {description: "Add as development dependency"}
+      --build: {description: "Add as build dependency"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --default-features: {description: "Re-enable the default features"}
+      --no-default-features: {description: "Disable the default features"}
+      --optional: {description: "Mark the dependency as optional"}
+      --path: {value: dir, description: "Filesystem path to local crate to add"}
+      --git: {value: any, description: "Git repository location"}
+      --branch: {value: any, description: "Git branch to download the crate from"}
+      --tag: {value: any, description: "Git tag to download the crate from"}
+      --rev: {value: any, description: "Git reference to download the crate from"}
+      --registry: {value: any, description: "Registry to use"}
+      -p: {value: any, description: "Package to modify"}
+      --package: {value: any, description: "Package to modify"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  remove:
+    description: Remove dependencies from a Cargo.toml manifest file
+    flags:
+      --dev: {description: "Remove as development dependency"}
+      --build: {description: "Remove as build dependency"}
+      -p: {value: any, description: "Package to modify"}
+      --package: {value: any, description: "Package to modify"}
+      --help: {description: "Show help"}
+  update:
+    description: Update dependencies as recorded in the local lock file
+    aliases: [up]
+    flags:
+      -p: {value: any, description: "Package to update"}
+      --package: {value: any, description: "Package to update"}
+      --aggressive: {description: "Force updating all dependencies"}
+      --precise: {value: any, description: "Update a single dependency to exactly the specified version"}
+      --dry-run: {description: "Display what would be updated, but don't write the lock file"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  search:
+    description: Search packages in crates.io
+    flags:
+      --limit: {value: any, description: "Limit the number of results"}
+      --index: {value: any, description: "Registry index URL to upload the package to"}
+      --registry: {value: any, description: "Registry to use"}
+      --help: {description: "Show help"}
+  publish:
+    description: Upload a package to the registry
+    flags:
+      --index: {value: any, description: "Registry index URL to upload the package to"}
+      --token: {value: any, description: "Token to use when uploading"}
+      --no-verify: {description: "Don't verify the contents by building them"}
+      --allow-dirty: {description: "Allow dirty working directories to be packaged"}
+      --registry: {value: any, description: "Registry to use"}
+      --dry-run: {description: "Perform all checks without uploading"}
+      --help: {description: "Show help"}
+  install:
+    description: Install a Rust binary
+    flags:
+      --version: {value: any, description: "Specify a version to install"}
+      --git: {value: any, description: "Git URL to install the specified crate from"}
+      --branch: {value: any, description: "Branch to use when installing from git"}
+      --tag: {value: any, description: "Tag to use when installing from git"}
+      --rev: {value: any, description: "Specific commit to use when installing from git"}
+      --path: {value: dir, description: "Filesystem path to local crate to install"}
+      --bin: {value: any, description: "Install only the specified binary"}
+      --root: {value: dir, description: "Directory to install packages into"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -f: {description: "Force overwriting existing crates or binaries"}
+      --force: {description: "Force overwriting existing crates or binaries"}
+      --no-track: {description: "Don't keep track of this package"}
+      -j: {value: any, description: "Number of parallel jobs"}
+      --jobs: {value: any, description: "Number of parallel jobs"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+    args:
+      exec: "cargo install --list 2>/dev/null | grep -v '^\\s' | awk '{print $1}'"
+  uninstall:
+    description: Remove a Rust binary
+    flags:
+      --root: {value: dir, description: "Directory to uninstall packages from"}
+      --bin: {value: any, description: "Only uninstall the binary name"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+    args:
+      exec: "cargo install --list 2>/dev/null | grep -v '^\\s' | awk '{print $1}'"
+  fetch:
+    description: Fetch dependencies of a package from the network
+    flags:
+      --target: {value: any, description: "Fetch dependencies for the target triple"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  generate-lockfile:
+    description: Generate the lockfile for a package
+    flags:
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  locate-project:
+    description: Print a JSON representation of a Cargo.toml file's location
+    flags:
+      --message-format: {value: any, description: "Output representation (json, plain)"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --workspace: {description: "Locate Cargo.toml of the workspace root"}
+      --help: {description: "Show help"}
+  metadata:
+    description: Output the resolved dependencies of a package in machine-readable format
+    flags:
+      --format-version: {value: any, description: "Format version"}
+      --no-deps: {description: "Output information only about the workspace members"}
+      --filter-platform: {value: any, description: "Only include resolve dependencies matching the given target-triple"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  pkgid:
+    description: Print a fully qualified package specification
+    flags:
+      -p: {value: any, description: "Argument to get the package id specifier for"}
+      --package: {value: any, description: "Argument to get the package id specifier for"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  tree:
+    description: Display a tree visualization of a dependency graph
+    flags:
+      -p: {value: any, description: "Package to use as the root"}
+      --package: {value: any, description: "Package to use as the root"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      -i: {value: any, description: "Invert the tree direction and focus on the given package"}
+      --invert: {value: any, description: "Invert the tree direction and focus on the given package"}
+      -d: {description: "Show only dependencies which come in multiple versions"}
+      --duplicates: {description: "Show only dependencies which come in multiple versions"}
+      --charset: {value: any, description: "Character set to use in output: utf8, ascii"}
+      -f: {value: any, description: "Format string used for printing dependencies"}
+      --format: {value: any, description: "Format string used for printing dependencies"}
+      -e: {value: any, description: "Types of dependencies to display"}
+      --edges: {value: any, description: "Types of dependencies to display"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  vendor:
+    description: Vendor all dependencies locally
+    flags:
+      -s: {value: file, description: "Additional Cargo.toml to vendor"}
+      --sync: {value: file, description: "Additional Cargo.toml to vendor"}
+      --no-delete: {description: "Don't delete older crates in the vendor directory"}
+      --respect-source-config: {description: "Respect [source] configuration in .cargo/config.toml"}
+      --versioned-dirs: {description: "Vendor into a directory with version information"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  verify-project:
+    description: Check correctness of crate manifest
+    flags:
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  version:
+    description: Show version information
+    flags:
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  yank:
+    description: Remove a pushed crate from the index
+    flags:
+      --vers: {value: any, description: "The version to yank or un-yank"}
+      --undo: {description: "Undo a yank, putting a version back into the index"}
+      --index: {value: any, description: "Registry index to yank from"}
+      --token: {value: any, description: "API token to use when authenticating"}
+      --registry: {value: any, description: "Registry to use"}
+      --help: {description: "Show help"}
+  login:
+    description: Save an API token from the registry locally
+    flags:
+      --registry: {value: any, description: "Registry to use"}
+      --help: {description: "Show help"}
+  logout:
+    description: Remove an API token from the registry locally
+    flags:
+      --registry: {value: any, description: "Registry to use"}
+      --help: {description: "Show help"}
+  owner:
+    description: Manage the owners of a crate on the registry
+    flags:
+      -a: {value: any, description: "Name of a user or team to invite as an owner"}
+      --add: {value: any, description: "Name of a user or team to invite as an owner"}
+      -r: {value: any, description: "Name of a user or team to remove as an owner"}
+      --remove: {value: any, description: "Name of a user or team to remove as an owner"}
+      -l: {description: "List owners of a crate"}
+      --list: {description: "List owners of a crate"}
+      --index: {value: any, description: "Registry index to modify owners for"}
+      --token: {value: any, description: "API token to use when authenticating"}
+      --registry: {value: any, description: "Registry to use"}
+      --help: {description: "Show help"}
+  package:
+    description: Assemble the local package into a distributable tarball
+    flags:
+      --no-verify: {description: "Don't verify the contents by building them"}
+      --allow-dirty: {description: "Allow dirty working directories to be packaged"}
+      --list: {description: "Print files included in a package without making one"}
+      -l: {description: "Print files included in a package without making one"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  report:
+    description: Generate and display various kinds of reports
+    commands:
+      future-incompat:
+        description: Reports any crates which will eventually stop compiling
+        flags:
+          -p: {value: any, description: "Package to display a report for"}
+          --package: {value: any, description: "Package to display a report for"}
+          --id: {value: any, description: "Show the report with the specified Cargo-generated id"}
+          --help: {description: "Show help"}
+  fix:
+    description: Automatically fix lint warnings reported by rustc
+    flags:
+      -p: {value: any, description: "Package(s) to fix"}
+      --package: {value: any, description: "Package(s) to fix"}
+      --lib: {description: "Fix only this package's library"}
+      --bin: {value: any, description: "Fix only the specified binary"}
+      --example: {value: any, description: "Fix only the specified example"}
+      --test: {value: any, description: "Fix only the specified test target"}
+      --bench: {value: any, description: "Fix only the specified bench target"}
+      --release: {description: "Fix artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      --target: {value: any, description: "Fix for the target triple"}
+      --edition: {description: "Fix in preparation for the next edition"}
+      --edition-idioms: {description: "Fix warnings to migrate to the idioms of an edition"}
+      --allow-no-vcs: {description: "Fix code even if a VCS was not detected"}
+      --allow-dirty: {description: "Fix code even if the working directory is dirty"}
+      --allow-staged: {description: "Fix code even if the working directory has staged changes"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  fmt:
+    description: Formats all bin and lib files of the current crate using rustfmt
+    aliases: [format]
+    flags:
+      -p: {value: any, description: "Specify package to format"}
+      --package: {value: any, description: "Specify package to format"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --message-format: {value: any, description: "Specify message-format: short|json|human"}
+      --all: {description: "Format all packages and also their local path-based dependencies"}
+      --check: {description: "Run rustfmt in check mode"}
+      --help: {description: "Show help"}
+  clippy:
+    description: Checks a package to catch common mistakes and improve your Rust code
+    flags:
+      -p: {value: any, description: "Package(s) to check"}
+      --package: {value: any, description: "Package(s) to check"}
+      --lib: {description: "Check only this package's library"}
+      --bin: {value: any, description: "Check only the specified binary"}
+      --example: {value: any, description: "Check only the specified example"}
+      --test: {value: any, description: "Check only the specified test target"}
+      --bench: {value: any, description: "Check only the specified bench target"}
+      --release: {description: "Check artifacts in release mode"}
+      --features: {value: any, description: "Space or comma separated list of features to activate"}
+      --all-features: {description: "Activate all available features"}
+      --no-default-features: {description: "Do not activate the default features"}
+      --target: {value: any, description: "Check for the target triple"}
+      --fix: {description: "Automatically apply lint suggestions"}
+      --allow-dirty: {description: "Allow fix to apply even if the working directory is dirty"}
+      --allow-staged: {description: "Allow fix to apply even if the working directory has staged changes"}
+      --no-deps: {description: "Run Clippy only on the given crate, without linting the dependencies"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      --help: {description: "Show help"}
+  clean:
+    description: Remove generated artifacts
+    flags:
+      -p: {value: any, description: "Package to clean artifacts for"}
+      --package: {value: any, description: "Package to clean artifacts for"}
+      --release: {description: "Whether or not to clean release artifacts"}
+      --target: {value: any, description: "Target triple to clean output for"}
+      --target-dir: {value: dir, description: "Directory for all generated artifacts"}
+      --doc: {description: "Whether or not to clean just the documentation directory"}
+      --manifest-path: {value: file, description: "Path to Cargo.toml"}
+      -v: {description: "Use verbose output"}
+      --verbose: {description: "Use verbose output"}
+      --help: {description: "Show help"}
+  miri:
+    description: Interpret a Rust program using the MIR interpreter
+    flags:
+      -p: {value: any, description: "Package to interpret"}
+      --package: {value: any, description: "Package to interpret"}
+      --help: {description: "Show help"}

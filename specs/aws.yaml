@@ -1,0 +1,261 @@
+description: AWS command line interface
+flags:
+  --debug: {description: "Turn on debug logging"}
+  --endpoint-url: {value: any, description: "Override command's default URL with the given URL"}
+  --no-verify-ssl: {description: "By default, the AWS CLI uses SSL when communicating with AWS services. For each SSL connection, the AWS CLI will verify SSL certificates"}
+  --no-paginate: {description: "Disable automatic pagination"}
+  --output: {value: {exec: "printf 'json\\ntext\\ntable\\nyaml\\nyaml-stream\\n'"}, description: "The formatting style for command output"}
+  --query: {value: any, description: "A JMESPath query to use in filtering the response data"}
+  --profile: {value: {exec: "aws configure list-profiles 2>/dev/null"}, description: "Use a specific profile from your credential file"}
+  --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The region to use"}
+  -v: {description: "Display the version of this tool"}
+  --version: {description: "Display the version of this tool"}
+  --color: {value: any, description: "Turn on/off color output (on, off, auto)"}
+  --no-color: {description: "Turn off color output"}
+  --ca-bundle: {value: file, description: "The CA certificate bundle to use when verifying SSL certificates"}
+  --cli-read-timeout: {value: any, description: "The maximum socket read time in seconds"}
+  --cli-connect-timeout: {value: any, description: "The maximum socket connect time in seconds"}
+  --cli-binary-format: {value: any, description: "The formatting style to be used for binary blobs"}
+  --no-cli-pager: {description: "Disable cli pager for output"}
+  --cli-auto-prompt: {description: "Automatically prompt for CLI input parameters"}
+  --no-cli-auto-prompt: {description: "Disable automatically prompt for CLI input parameters"}
+commands:
+  s3:
+    description: High-level S3 commands
+    commands:
+      cp:
+        description: Copies a local file or S3 object to another location locally or in S3
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      mv:
+        description: Moves a local file or S3 object to another location locally or in S3
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      rm:
+        description: Deletes an S3 object
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      ls:
+        description: List S3 objects and common prefixes under a prefix or all S3 buckets
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      sync:
+        description: Syncs directories and S3 prefixes
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      mb:
+        description: Creates an S3 bucket
+        args: {exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}
+      rb:
+        description: Deletes an empty S3 bucket
+        args: {exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}
+      presign:
+        description: Generate a pre-signed URL for an S3 object
+        args: [{exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}, file]
+      website:
+        description: Set the website configuration for a bucket
+        args: {exec: "aws s3 ls 2>/dev/null | awk '{print \"s3://\"$3\"/\"}'", nospace: true}
+      static-website:
+        description: Set up static website hosting for a bucket
+  s3api:
+    description: Low-level S3 API commands
+  ec2:
+    description: Elastic Compute Cloud
+  iam:
+    description: Identity and Access Management
+  lambda:
+    description: AWS Lambda
+  ecs:
+    description: Elastic Container Service
+  eks:
+    description: Elastic Kubernetes Service
+  rds:
+    description: Relational Database Service
+  cloudformation:
+    description: AWS CloudFormation
+  cloudwatch:
+    description: Amazon CloudWatch
+  logs:
+    description: Amazon CloudWatch Logs
+  ssm:
+    description: AWS Systems Manager
+  secretsmanager:
+    description: AWS Secrets Manager
+  kms:
+    description: AWS Key Management Service
+  route53:
+    description: Amazon Route 53
+  elb:
+    description: Elastic Load Balancing (v1)
+  elbv2:
+    description: Elastic Load Balancing (v2)
+  acm:
+    description: AWS Certificate Manager
+  sts:
+    description: AWS Security Token Service
+  sqs:
+    description: Amazon Simple Queue Service
+  sns:
+    description: Amazon Simple Notification Service
+  dynamodb:
+    description: Amazon DynamoDB
+  kinesis:
+    description: Amazon Kinesis
+  firehose:
+    description: Amazon Kinesis Data Firehose
+  glue:
+    description: AWS Glue
+  athena:
+    description: Amazon Athena
+  emr:
+    description: Amazon EMR
+  redshift:
+    description: Amazon Redshift
+  dms:
+    description: AWS Database Migration Service
+  codecommit:
+    description: AWS CodeCommit
+  codebuild:
+    description: AWS CodeBuild
+  codedeploy:
+    description: AWS CodeDeploy
+  codepipeline:
+    description: AWS CodePipeline
+  ecr:
+    description: Amazon Elastic Container Registry
+  ecrpublic:
+    description: Amazon Elastic Container Registry Public
+  sagemaker:
+    description: Amazon SageMaker
+  bedrock:
+    description: Amazon Bedrock
+  bedrock-runtime:
+    description: Amazon Bedrock Runtime
+  batch:
+    description: AWS Batch
+  stepfunctions:
+    description: AWS Step Functions
+  events:
+    description: Amazon EventBridge
+  scheduler:
+    description: Amazon EventBridge Scheduler
+  apigateway:
+    description: Amazon API Gateway (v1)
+  apigatewayv2:
+    description: Amazon API Gateway (v2)
+  cognito-idp:
+    description: Amazon Cognito User Pools
+  cognito-identity:
+    description: Amazon Cognito Identity
+  appsync:
+    description: AWS AppSync
+  amplify:
+    description: AWS Amplify
+  ses:
+    description: Amazon Simple Email Service (v1)
+  sesv2:
+    description: Amazon Simple Email Service (v2)
+  pinpoint:
+    description: Amazon Pinpoint
+  wafv2:
+    description: AWS WAF (v2)
+  shield:
+    description: AWS Shield
+  guardduty:
+    description: Amazon GuardDuty
+  securityhub:
+    description: AWS Security Hub
+  inspector2:
+    description: Amazon Inspector
+  macie2:
+    description: Amazon Macie
+  config:
+    description: AWS Config
+  cloudtrail:
+    description: AWS CloudTrail
+  xray:
+    description: AWS X-Ray
+  servicecatalog:
+    description: AWS Service Catalog
+  elasticache:
+    description: Amazon ElastiCache
+  opensearch:
+    description: Amazon OpenSearch Service
+  mq:
+    description: Amazon MQ
+  kafka:
+    description: Amazon Managed Streaming for Apache Kafka
+  appstream:
+    description: Amazon AppStream 2.0
+  workspaces:
+    description: Amazon WorkSpaces
+  chime:
+    description: Amazon Chime
+  connect:
+    description: Amazon Connect
+  transfer:
+    description: AWS Transfer Family
+  datasync:
+    description: AWS DataSync
+  backup:
+    description: AWS Backup
+  fsx:
+    description: Amazon FSx
+  efs:
+    description: Amazon Elastic File System
+  glacier:
+    description: Amazon S3 Glacier
+  storagegateway:
+    description: AWS Storage Gateway
+  mediaconvert:
+    description: AWS Elemental MediaConvert
+  mediapackage:
+    description: AWS Elemental MediaPackage
+  rekognition:
+    description: Amazon Rekognition
+  textract:
+    description: Amazon Textract
+  comprehend:
+    description: Amazon Comprehend
+  translate:
+    description: Amazon Translate
+  polly:
+    description: Amazon Polly
+  transcribe:
+    description: Amazon Transcribe
+  forecast:
+    description: Amazon Forecast
+  personalize:
+    description: Amazon Personalize
+  lookoutforvision:
+    description: Amazon Lookout for Vision
+  fraud-detector:
+    description: Amazon Fraud Detector
+  configure:
+    description: Configure AWS CLI settings
+    commands:
+      get:
+        description: Get a configuration value
+        args: {exec: "printf 'aws_access_key_id\\naws_secret_access_key\\naws_session_token\\nregion\\noutput\\nsso_session\\nsso_account_id\\nsso_role_name\\nsso_start_url\\nsso_region\\nrole_arn\\nsource_profile\\nmfa_serial\\ncli_pager\\n'"}
+      set:
+        description: Set a configuration value
+        args: {exec: "printf 'aws_access_key_id\\naws_secret_access_key\\naws_session_token\\nregion\\noutput\\nsso_session\\nsso_account_id\\nsso_role_name\\nsso_start_url\\nsso_region\\nrole_arn\\nsource_profile\\nmfa_serial\\ncli_pager\\n'"}
+      list:
+        description: List configuration data
+      list-profiles:
+        description: List configuration profile names
+      add-model:
+        description: Adds a service JSON model to the appropriate location
+        flags:
+          --service-model: {value: file, description: "The path to the service JSON model"}
+          --service-name: {value: any, description: "The name to use for the service"}
+      import:
+        description: Import CSV credentials generated from the AWS web console
+        flags:
+          --csv: {value: file, description: "Retrieve credentials from a CSV file"}
+          --skip-invalid: {description: "Skip lines that are invalid"}
+          --overwrite: {description: "Overwrite existing credentials if they exist"}
+      export:
+        description: Export credentials in a format compatible with other tools
+        flags:
+          --profile: {value: any, description: "The profile to export credentials from"}
+          --format: {value: any, description: "The format to export the credentials in"}
+      get-login-password:
+        description: Retrieves and displays a password for the specified registry
+        flags:
+          --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The AWS region to use"}

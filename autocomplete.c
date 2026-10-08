@@ -202,7 +202,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
         int i;
         for (i = 0; i < g_ncands; i++)
             if (!strcmp(g_cands[i].text, p)) {
-                if (!g_cands[i].desc) g_cands[i].desc = desc;
+                if (!g_cands[i].desc && desc) g_cands[i].desc = strdup(desc);
                 return;
             }
     }
@@ -210,7 +210,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
         g_cands[g_ncands].text = strdup(p);
         g_cands[g_ncands].space = space;
         g_cands[g_ncands].kind = g_kind;
-        g_cands[g_ncands++].desc = desc;
+        g_cands[g_ncands++].desc = desc ? strdup(desc) : NULL;
     }
 }
 
@@ -322,14 +322,18 @@ static void emit_cmd_output(const char *shell, const char *suffix, int space) {
     FILE *f = popen(shell, "r");
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
+        char *desc;
         line[strcspn(line, "\r\n")] = 0;
         if (!*line || strstr(line, "<none>")) continue;
+        /* "name<TAB>description" */
+        if ((desc = strchr(line, '\t'))) *desc++ = 0;
+        if (!*line) continue;
         if (suffix) {
             char buf[1100];
             snprintf(buf, sizeof buf, "%s%s", line, suffix);
-            emit(buf, space);
+            emit_desc(buf, space, desc);
         } else {
-            emit(line, space);
+            emit_desc(line, space, desc);
         }
     }
     pclose(f);

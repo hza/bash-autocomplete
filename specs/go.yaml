@@ -1,0 +1,207 @@
+description: Go programming language toolchain
+flags:
+  --help: {description: "Show help"}
+commands:
+  build:
+    description: Compile packages and dependencies
+    flags:
+      -o: {value: any, description: "Output file or directory"}
+      -v: {description: "Print the names of packages as they are compiled"}
+      --verbose: {description: "Print the names of packages as they are compiled"}
+      -race: {description: "Enable data race detection"}
+      -n: {description: "Print the commands but do not run them"}
+      -x: {description: "Print the commands"}
+      -a: {description: "Force rebuilding of packages that are already up-to-date"}
+      -p: {value: any, description: "Number of programs to run in parallel"}
+      -gcflags: {value: any, description: "Arguments to pass to each go tool compile invocation"}
+      -ldflags: {value: any, description: "Arguments to pass to each go tool link invocation"}
+      -tags: {value: any, description: "A comma-separated list of additional build tags"}
+      -trimpath: {description: "Remove all local file system paths from the compiled binary"}
+      -buildvcs: {value: any, description: "Whether to stamp binaries with version control information"}
+      -mod: {value: any, description: "Module download mode to use"}
+      -work: {description: "Print the name of the temporary work directory"}
+    args: [{exec: "go list -f '{{.ImportPath}}\\t{{.Name}}' ./... 2>/dev/null"}, file]
+  run:
+    description: Compile and run Go program
+    flags:
+      -v: {description: "Print the names of packages as they are compiled"}
+      -race: {description: "Enable data race detection"}
+      -n: {description: "Print the commands but do not run them"}
+      -x: {description: "Print the commands"}
+      -tags: {value: any, description: "A comma-separated list of additional build tags"}
+      -gcflags: {value: any, description: "Arguments to pass to each go tool compile invocation"}
+      -ldflags: {value: any, description: "Arguments to pass to each go tool link invocation"}
+      -mod: {value: any, description: "Module download mode to use"}
+    args: [{exec: "go list -f '{{.ImportPath}}\\t{{.Name}}' ./... 2>/dev/null"}, file]
+  test:
+    description: Test packages
+    flags:
+      -v: {description: "Verbose output"}
+      -run: {value: {exec: "grep -ho '^func \\(Test\\|Benchmark\\|Example\\|Fuzz\\)[A-Za-z0-9_]*' *_test.go 2>/dev/null | cut -c6- | sort -u"}, description: "Run only those tests matching the regular expression"}
+      -bench: {value: {exec: "grep -ho '^func \\(Test\\|Benchmark\\|Example\\|Fuzz\\)[A-Za-z0-9_]*' *_test.go 2>/dev/null | cut -c6- | sort -u"}, description: "Run only those benchmarks matching the regular expression"}
+      -benchmem: {description: "Print memory allocation statistics for benchmarks"}
+      -benchtime: {value: any, description: "Run each benchmark for duration d"}
+      -count: {value: any, description: "Run each test and benchmark n times"}
+      -timeout: {value: any, description: "Panic test binary after duration d"}
+      -race: {description: "Enable data race detection"}
+      -cover: {description: "Enable coverage analysis"}
+      -coverprofile: {value: file, description: "Write a coverage profile to the file"}
+      -covermode: {value: any, description: "Set the mode for coverage analysis"}
+      -cpu: {value: any, description: "Specify a list of GOMAXPROCS values"}
+      -parallel: {value: any, description: "Allow parallel execution of test functions"}
+      -short: {description: "Tell long-running tests to shorten their run time"}
+      -failfast: {description: "Do not start new tests after the first test failure"}
+      -json: {description: "Convert test output to JSON"}
+      -vet: {value: any, description: "Configure the invocation of vet during go test to use the comma-separated list of vet checks"}
+      -tags: {value: any, description: "A comma-separated list of additional build tags"}
+      -gcflags: {value: any, description: "Arguments to pass to each go tool compile invocation"}
+      -ldflags: {value: any, description: "Arguments to pass to each go tool link invocation"}
+      -mod: {value: any, description: "Module download mode to use"}
+    args: [{exec: "go list -f '{{.ImportPath}}\\t{{.Name}}' ./... 2>/dev/null"}, dir]
+  install:
+    description: Compile and install packages and dependencies
+    flags:
+      -v: {description: "Print the names of packages as they are compiled"}
+      -race: {description: "Enable data race detection"}
+      -tags: {value: any, description: "A comma-separated list of additional build tags"}
+      -gcflags: {value: any, description: "Arguments to pass to each go tool compile invocation"}
+      -ldflags: {value: any, description: "Arguments to pass to each go tool link invocation"}
+      -mod: {value: any, description: "Module download mode to use"}
+    args: [{exec: "go list -f '{{.ImportPath}}\\t{{.Name}}' ./... 2>/dev/null"}, file]
+  get:
+    description: Add dependencies to current module and install them
+    flags:
+      -u: {description: "Update modules providing dependencies"}
+      -d: {description: "Download the source code needed to build the named packages and dependencies"}
+      -v: {description: "Enable verbose progress and debug output"}
+      -insecure: {description: "Permit fetching from insecure origins"}
+      -t: {description: "Consider modules needed to build tests of packages named on the command line"}
+  clean:
+    description: Remove object files and cached files
+    flags:
+      -cache: {description: "Remove the entire go build cache"}
+      -testcache: {description: "Remove all test results in the go build cache"}
+      -modcache: {description: "Remove the entire module download cache"}
+      -fuzzcache: {description: "Remove files stored in the Go build cache for fuzz testing"}
+      -n: {description: "Print the remove commands but not run them"}
+      -x: {description: "Print remove commands as they are executed"}
+      -i: {description: "Remove the corresponding installed archive or binary"}
+      -r: {description: "Apply the clean command recursively"}
+  doc:
+    description: Show documentation for package or symbol
+    flags:
+      -all: {description: "Show all the documentation for the package"}
+      -c: {description: "Respect case when matching symbols"}
+      -cmd: {description: "Treat a command (package main) like a regular package"}
+      -short: {description: "One-line representation for each symbol"}
+      -src: {description: "Show the full source code for the symbol"}
+      -u: {description: "Show documentation for unexported as well as exported symbols"}
+  env:
+    description: Print Go environment information
+    flags:
+      -json: {description: "Print the environment in JSON format"}
+      -u: {description: "Unsets the default setting for the named environment variables"}
+      -w: {description: "Changes the default settings of the named environment variables"}
+    args:
+      exec: "go env 2>/dev/null | cut -d= -f1"
+  fix:
+    description: Update packages to use new APIs
+  fmt:
+    description: Gofmt (reformat) package sources
+    flags:
+      -n: {description: "Print the commands but do not run them"}
+      -x: {description: "Print commands as they are executed"}
+      -mod: {value: any, description: "Module download mode to use"}
+  generate:
+    description: Generate Go files by processing source
+    flags:
+      -run: {value: any, description: "Specifies a regular expression to select directives"}
+      -v: {description: "Print the names of files as they are processed"}
+      -n: {description: "Print commands that would be executed"}
+      -x: {description: "Print commands as they are executed"}
+  list:
+    description: List packages or modules
+    flags:
+      -json: {description: "Print the package data in JSON format"}
+      -m: {description: "List modules instead of packages"}
+      -versions: {description: "List all known versions of a module"}
+      -u: {description: "Add information about available upgrades"}
+      -mod: {value: any, description: "Module download mode to use"}
+      -f: {value: any, description: "Specify an alternate format for the list"}
+      -e: {description: "Change the handling of erroneous packages"}
+  mod:
+    description: Module maintenance
+    commands:
+      init:
+        description: Initialize new module in current directory
+      tidy:
+        description: Add missing and remove unused modules
+        flags:
+          -v: {description: "Print information about removed modules"}
+          -e: {description: "Attempt to proceed despite errors"}
+          -go: {value: any, description: "Update the go directive to the given version"}
+      vendor:
+        description: Make vendored copy of dependencies
+        flags:
+          -v: {description: "Print the names of vendored modules and packages"}
+          -e: {description: "Attempt to proceed despite errors encountered"}
+      verify:
+        description: Verify dependencies have expected content
+      download:
+        description: Download modules to local cache
+        flags:
+          -json: {description: "Print a sequence of JSON objects to standard output"}
+          -x: {description: "Print the commands download executes"}
+      edit:
+        description: Edit go.mod from tools or scripts
+        flags:
+          -json: {description: "Print the final go.mod file in JSON format"}
+          -module: {value: any, description: "Change the module's path"}
+          -go: {value: any, description: "Update the expected language version"}
+          -require: {value: any, description: "Add a requirement on the given module"}
+          -droprequire: {value: any, description: "Drop a requirement on the given module"}
+          -replace: {value: any, description: "Add a replacement of the given module"}
+          -dropreplace: {value: any, description: "Drop a replacement for the given module"}
+      graph:
+        description: Print module requirement graph
+      why:
+        description: Explain why packages or modules are needed
+        flags:
+          -m: {description: "Consider arguments as a list of modules"}
+          -vendor: {description: "Examine vendor/modules.txt"}
+  work:
+    description: Workspace maintenance
+    commands:
+      init:
+        description: Initialize workspace file
+      use:
+        description: Add modules to workspace file
+        args: dir
+      edit:
+        description: Edit go.work from tools or scripts
+        flags:
+          -json: {description: "Print the final go.work file in JSON format"}
+          -use: {value: dir, description: "Add a use directive"}
+          -dropuse: {value: dir, description: "Drop a use directive"}
+          -replace: {value: any, description: "Add a replacement"}
+          -dropreplace: {value: any, description: "Drop a replacement"}
+      sync:
+        description: Sync workspace build list to modules
+  vet:
+    description: Report likely mistakes in packages
+    flags:
+      -n: {description: "Print the commands but do not run them"}
+      -x: {description: "Print commands as they are executed"}
+      -tags: {value: any, description: "A comma-separated list of additional build tags"}
+    args: {exec: "go list -f '{{.ImportPath}}\\t{{.Name}}' ./... 2>/dev/null"}
+  tool:
+    description: Run specified go tool
+    flags:
+      -n: {description: "Print the command that would be executed"}
+  version:
+    description: Print Go version
+    flags:
+      -m: {description: "Print each executable's embedded module version information"}
+      -v: {description: "Report unrecognized files"}
+  help:
+    description: Help about any command

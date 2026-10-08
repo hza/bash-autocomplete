@@ -71,7 +71,7 @@ A value can be:
 | *(empty)*, `~`, `null` | nothing |
 | `any` | free text, no suggestions |
 | `file` / `dir` | paths / directories only |
-| `exec: <shell command>` | one suggestion per output line |
+| `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`) |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
@@ -152,4 +152,4 @@ The first match wins, so your own files override the bundled ones:
 
 Files must be named `<command>.yaml` or `<command>.yml`.
 
-The bundled [`specs/`](../specs) (docker, git, killall, kubectl, make, npm) are good real-world examples.
+The bundled [`specs/`](../specs) (e.g. docker, git, gh, kubectl, make, npm) are good real-world examples.

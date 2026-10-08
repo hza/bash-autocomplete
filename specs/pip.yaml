@@ -1,0 +1,193 @@
+description: Python package manager
+flags:
+  --help: {description: "Show help"}
+  -h: {description: "Show help"}
+  --version: {description: "Show version"}
+  -V: {description: "Show version"}
+  --isolated: {description: "Run pip in an isolated mode"}
+  --require-virtualenv: {description: "Allow pip to only run in a virtual environment"}
+  --require-venv: {description: "Allow pip to only run in a virtual environment"}
+  --python: {value: any, description: "Run pip with the specified Python interpreter"}
+  -q: {description: "Give less output"}
+  --quiet: {description: "Give less output"}
+  -v: {description: "Give more output"}
+  --verbose: {description: "Give more output"}
+commands:
+  install:
+    description: Install packages
+    flags:
+      -r: {value: file, description: "Install from the given requirements file"}
+      --requirement: {value: file, description: "Install from the given requirements file"}
+      -c: {value: file, description: "Constrain versions using the given constraints file"}
+      --constraint: {value: file, description: "Constrain versions using the given constraints file"}
+      --no-deps: {description: "Don't install package dependencies"}
+      --pre: {description: "Include pre-release and development versions"}
+      -e: {value: dir, description: "Install a project in editable mode"}
+      --editable: {value: dir, description: "Install a project in editable mode"}
+      -t: {value: dir, description: "Install packages into <dir>"}
+      --target: {value: dir, description: "Install packages into <dir>"}
+      -d: {value: dir, description: "Download packages into <dir>"}
+      --download: {value: dir, description: "Download packages into <dir>"}
+      -U: {description: "Upgrade all packages to the newest available version"}
+      --upgrade: {description: "Upgrade all packages to the newest available version"}
+      --upgrade-strategy: {value: any, description: "Determines how dependency upgrading should be handled"}
+      --force-reinstall: {description: "Reinstall all packages even if they are already up-to-date"}
+      -I: {description: "Ignore the installed packages, overwriting them"}
+      --ignore-installed: {description: "Ignore the installed packages, overwriting them"}
+      --no-index: {description: "Ignore package index"}
+      -f: {value: any, description: "Look for archives in this directory or on this HTML page"}
+      --find-links: {value: any, description: "Look for archives in this directory or on this HTML page"}
+      -i: {value: any, description: "Base URL of the Python Package Index"}
+      --index-url: {value: any, description: "Base URL of the Python Package Index"}
+      --extra-index-url: {value: any, description: "Extra URLs of package indexes"}
+      --trusted-host: {value: any, description: "Mark this host or host:port pair as trusted"}
+      --no-build-isolation: {description: "Disable isolation when building a modern source distribution"}
+      -q: {description: "Give less output"}
+      -v: {description: "Give more output"}
+      --dry-run: {description: "Don't actually install anything, just print what would be"}
+      --help: {description: "Show help"}
+    args:
+      exec: "{ pip3 list --format=freeze || pip list --format=freeze; } 2>/dev/null | cut -d= -f1"
+  uninstall:
+    description: Uninstall packages
+    aliases: [remove]
+    flags:
+      -r: {value: file, description: "Uninstall all the packages listed in the given requirements file"}
+      --requirement: {value: file, description: "Uninstall all the packages listed in the given requirements file"}
+      -y: {description: "Don't ask for confirmation of uninstall deletions"}
+      --yes: {description: "Don't ask for confirmation of uninstall deletions"}
+      -q: {description: "Give less output"}
+      -v: {description: "Give more output"}
+      --help: {description: "Show help"}
+    args:
+      exec: "{ pip3 list --format=freeze || pip list --format=freeze; } 2>/dev/null | cut -d= -f1"
+  list:
+    description: List installed packages
+    flags:
+      --outdated: {description: "List outdated packages"}
+      --uptodate: {description: "List up-to-date packages"}
+      --editable: {description: "List editable projects"}
+      --local: {description: "If in a virtualenv, do not list globally-installed packages"}
+      --user: {description: "Only output packages installed in user-site"}
+      --path: {value: any, description: "Restrict to the specified installation path"}
+      --pre: {description: "Include pre-release and development versions"}
+      --format: {value: any, description: "Select the output format (columns, freeze, json)"}
+      --not-required: {description: "List packages that are not dependencies of installed packages"}
+      --exclude-editable: {description: "Exclude editable package from output"}
+      --include-editable: {description: "Include editable package from output"}
+      --exclude: {value: any, description: "Exclude specified package from the output"}
+      -q: {description: "Give less output"}
+      -v: {description: "Give more output"}
+      --help: {description: "Show help"}
+  show:
+    description: Show information about installed packages
+    flags:
+      -f: {description: "Show the full list of installed files for each package"}
+      --files: {description: "Show the full list of installed files for each package"}
+      -q: {description: "Give less output"}
+      -v: {description: "Give more output"}
+      --help: {description: "Show help"}
+    args:
+      exec: "{ pip3 list --format=freeze || pip list --format=freeze; } 2>/dev/null | cut -d= -f1"
+  freeze:
+    description: Output installed packages in requirements format
+    flags:
+      -r: {value: file, description: "Use the order in the given requirements file"}
+      --requirement: {value: file, description: "Use the order in the given requirements file"}
+      --local: {description: "If in a virtualenv, do not report globally-installed packages"}
+      --user: {description: "Only output packages installed in user-site"}
+      --exclude-editable: {description: "Exclude editable package from output"}
+      --exclude: {value: any, description: "Exclude specified package from the output"}
+      --help: {description: "Show help"}
+  check:
+    description: Verify installed packages have compatible dependencies
+    flags:
+      --help: {description: "Show help"}
+  search:
+    description: Search PyPI for packages
+    flags:
+      -i: {value: any, description: "Base URL of the Python Package Index"}
+      --index: {value: any, description: "Base URL of the Python Package Index"}
+      --help: {description: "Show help"}
+  download:
+    description: Download packages
+    flags:
+      -r: {value: file, description: "Install from the given requirements file"}
+      --requirement: {value: file, description: "Install from the given requirements file"}
+      -c: {value: file, description: "Constrain versions using the given constraints file"}
+      --constraint: {value: file, description: "Constrain versions using the given constraints file"}
+      --no-deps: {description: "Don't install package dependencies"}
+      --pre: {description: "Include pre-release and development versions"}
+      -d: {value: dir, description: "Download packages into <dir>"}
+      --dest: {value: dir, description: "Download packages into <dir>"}
+      --no-index: {description: "Ignore package index"}
+      -f: {value: any, description: "Look for archives in this directory or on this HTML page"}
+      --find-links: {value: any, description: "Look for archives in this directory or on this HTML page"}
+      -i: {value: any, description: "Base URL of the Python Package Index"}
+      --index-url: {value: any, description: "Base URL of the Python Package Index"}
+      --help: {description: "Show help"}
+  wheel:
+    description: Build wheels from your requirements
+    flags:
+      -r: {value: file, description: "Install from the given requirements file"}
+      --requirement: {value: file, description: "Install from the given requirements file"}
+      -w: {value: dir, description: "Build wheels into <dir>"}
+      --wheel-dir: {value: dir, description: "Build wheels into <dir>"}
+      --no-deps: {description: "Don't install package dependencies"}
+      --help: {description: "Show help"}
+  hash:
+    description: Compute hashes of package archives
+    flags:
+      -a: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512"}
+      --algorithm: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512"}
+      --help: {description: "Show help"}
+    args: file
+  config:
+    description: Manage local and global configuration
+    flags:
+      --help: {description: "Show help"}
+      --editor: {value: any, description: "Editor to use to edit the file"}
+      --global: {description: "Use the system-wide configuration file only"}
+      --user: {description: "Use the user configuration file only"}
+      --site: {description: "Use the current environment configuration file only"}
+    commands:
+      get:
+        description: Get the value associated with name or list configuration values
+        args: {exec: "{ pip3 config list || pip config list; } 2>/dev/null | cut -d= -f1"}
+      set:
+        description: Set the name=value
+        args: {exec: "{ pip3 config list || pip config list; } 2>/dev/null | cut -d= -f1"}
+      unset:
+        description: Unset the value associated with name
+        args: {exec: "{ pip3 config list || pip config list; } 2>/dev/null | cut -d= -f1"}
+      list:
+        description: List the active configuration (or from the file specified)
+      debug:
+        description: List the configuration files and values defined under them
+  cache:
+    description: Inspect and manage pip's wheel cache
+    flags:
+      --help: {description: "Show help"}
+    commands:
+      dir:
+        description: Show the cache directory
+      list:
+        description: List filenames of packages stored in the wheel cache
+        args: any
+      info:
+        description: Show information about the cache
+      remove:
+        description: Remove one or more package from the cache
+        args: any
+      purge:
+        description: Remove all items from the cache
+  debug:
+    description: Show information useful for debugging
+    flags:
+      --help: {description: "Show help"}
+  inspect:
+    description: Inspect the python environment and print the results as JSON
+    flags:
+      --help: {description: "Show help"}
+  help:
+    description: Show help for commands

@@ -1,0 +1,149 @@
+description: "macOS disk utility management"
+commands:
+  list:
+    description: "List disks and partitions"
+    flags:
+      -plist: {description: "Output as plist"}
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  info:
+    description: "Show information about a disk or partition"
+    flags:
+      -plist: {description: "Output as plist"}
+      -all: {description: "Show all info"}
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  mount:
+    description: "Mount a disk or partition"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  unmount:
+    description: "Unmount a volume"
+    flags:
+      force: {description: "Force unmount"}
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  unmountDisk:
+    description: "Unmount a whole disk"
+    flags:
+      force: {description: "Force unmount"}
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  eject:
+    description: "Eject a disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  mountDisk:
+    description: "Mount a whole disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  enableJournal:
+    description: "Enable journaling on HFS+ volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  disableJournal:
+    description: "Disable journaling on HFS+ volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  verifyVolume:
+    description: "Verify a volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  repairVolume:
+    description: "Repair a volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  verifyDisk:
+    description: "Verify a disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  repairDisk:
+    description: "Repair a disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  eraseDisk:
+    description: "Erase a disk and reformat"
+    args:
+      - exec: "printf 'APFS\nHFS+\nHFS+J\nexFAT\nFAT32\nfree\n'"
+  eraseVolume:
+    description: "Erase a volume and reformat"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  reformat:
+    description: "Reformat a volume with same name and type"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  rename:
+    description: "Rename a volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  partitionDisk:
+    description: "Partition a whole disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  resizeVolume:
+    description: "Resize a volume"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  splitPartition:
+    description: "Split a partition into two"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  mergePartitions:
+    description: "Merge partitions into one"
+    args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  secureErase:
+    description: "Securely erase a disk or freespace"
+    args:
+      - exec: "printf '0\n1\n2\n3\n4\n'"
+  zeroDisk:
+    description: "Zero a disk"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  randomDisk:
+    description: "Overwrite a disk with random data"
+    args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+  apfs:
+    description: "APFS volume and container management"
+    commands:
+      list:
+        description: "List APFS containers and volumes"
+        args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}
+      create:
+        description: "Create an APFS container"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      createContainer:
+        description: "Create an APFS container"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      deleteContainer:
+        description: "Delete an APFS container"
+        args: {exec: "diskutil apfs list 2>/dev/null | grep 'Container disk' | awk '{print $NF}'"}
+      addVolume:
+        description: "Add a volume to an APFS container"
+        args: {exec: "diskutil apfs list 2>/dev/null | grep 'Container disk' | awk '{print $NF}'"}
+      deleteVolume:
+        description: "Delete an APFS volume"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      encryptVolume:
+        description: "Encrypt an APFS volume"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      decryptVolume:
+        description: "Decrypt an APFS volume"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      unlockVolume:
+        description: "Unlock an encrypted APFS volume"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      changeVolumeRole:
+        description: "Change the role of an APFS volume"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+      resizeContainer:
+        description: "Resize an APFS container"
+        args: {exec: "diskutil apfs list 2>/dev/null | grep 'Container disk' | awk '{print $NF}'"}
+      convert:
+        description: "Convert HFS+ to APFS"
+        args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
+  cs:
+    description: "CoreStorage logical volume management"
+    commands:
+      list:
+        description: "List CoreStorage logical volume groups"
+      createLVG:
+        description: "Create a CoreStorage logical volume group"
+      deleteLVG:
+        description: "Delete a CoreStorage logical volume group"
+      createLV:
+        description: "Create a CoreStorage logical volume"
+      deleteLV:
+        description: "Delete a CoreStorage logical volume"
+      encryptVolume:
+        description: "Encrypt a CoreStorage volume"
+      decryptVolume:
+        description: "Decrypt a CoreStorage volume"
+      unlockVolume:
+        description: "Unlock a CoreStorage volume"
+      revert:
+        description: "Revert a CoreStorage volume to HFS+"
+      convert:
+        description: "Convert a partition to CoreStorage"
+  quiet: {description: "Suppress most output"}
+  help: {description: "Show help"}

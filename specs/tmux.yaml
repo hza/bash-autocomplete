@@ -1,0 +1,563 @@
+description: Terminal multiplexer
+flags:
+  -L: {value: any, description: "Socket name"}
+  -S: {value: any, description: "Socket path"}
+  -f: {value: file, description: "Configuration file"}
+  -v: {description: "Verbose logging"}
+  -u: {description: "Write UTF-8 output to the terminal"}
+  '-2': {description: "Force tmux to assume the terminal supports 256 colours"}
+  -c: {value: dir, description: "Start directory"}
+  -T: {value: any, description: "Set terminal features"}
+commands:
+  new-session:
+    description: Create a new session
+    aliases: [new, n]
+    flags:
+      -d: {description: "Detach from the new session"}
+      -s: {value: any, description: "Session name"}
+      -n: {value: any, description: "Window name"}
+      -c: {value: dir, description: "Start directory"}
+      -x: {value: any, description: "Width"}
+      -y: {value: any, description: "Height"}
+      -e: {value: any, description: "Set environment variable"}
+      -f: {value: file, description: "Configuration file"}
+      -P: {description: "Print information about the new session after it has been created"}
+      -A: {description: "If session-name already exists attach to it"}
+      -D: {description: "If -A is set, any other clients attached to the session are detached"}
+      -X: {description: "If -D is set, the other clients are signalled to exit"}
+  attach-session:
+    description: Attach to a session
+    aliases: [attach, a]
+    flags:
+      -d: {description: "Detach all other clients attached to the session"}
+      -r: {description: "Attach the session in read-only mode"}
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -c: {value: dir, description: "Working directory"}
+      -e: {value: any, description: "Set environment variable"}
+      -f: {value: any, description: "Client flags"}
+      -x: {description: "Detach the client when bigger session or window changes"}
+  kill-session:
+    description: Kill a session
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -a: {description: "Kill all sessions except the current one"}
+      -C: {description: "Clear the alert flags for the target session"}
+  list-sessions:
+    description: List sessions
+    aliases: [ls]
+    flags:
+      -F: {value: any, description: "Format string"}
+      -f: {value: any, description: "Filter sessions"}
+  switch-client:
+    description: Switch the attached client to another session
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -l: {description: "Switch to the last session"}
+      -n: {description: "Switch to the next session"}
+      -p: {description: "Switch to the previous session"}
+      -r: {description: "Toggle whether a client is read-only"}
+      -E: {description: "Don't apply update-environment option"}
+      -Z: {description: "Keep the window zoomed if it is zoomed"}
+  rename-session:
+    description: Rename a session
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+  has-session:
+    description: Check if a session exists
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+  new-window:
+    description: Create a new window
+    aliases: [neww]
+    flags:
+      -d: {description: "Do not set the new window as the current window"}
+      -n: {value: any, description: "Window name"}
+      -c: {value: dir, description: "Start directory"}
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target window"}
+      -a: {description: "Insert the new window at the next index up"}
+      -b: {description: "Insert the new window at the previous index"}
+      -e: {value: any, description: "Set environment variable"}
+      -k: {description: "If the target-window already exists, destroy it"}
+      -P: {description: "Print information about the new window after it has been created"}
+      -S: {description: "If target-window already exists, don't create a new window, just select it"}
+  kill-window:
+    description: Kill a window
+    aliases: [killw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -a: {description: "Kill all windows except the current one"}
+  list-windows:
+    description: List windows
+    aliases: [lsw]
+    flags:
+      -a: {description: "List windows on all sessions"}
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -F: {value: any, description: "Format string"}
+      -f: {value: any, description: "Filter windows"}
+  next-window:
+    description: Move to the next window
+    aliases: [next]
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -a: {description: "Move all clients attached to the current window"}
+  prev-window:
+    description: Move to the previous window
+    aliases: [prev]
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -a: {description: "Move all clients attached to the current window"}
+  rename-window:
+    description: Rename a window
+    aliases: [renamew]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+  select-window:
+    description: Select a window
+    aliases: [selectw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -l: {description: "Select the previously selected window"}
+      -n: {description: "Select the next window"}
+      -p: {description: "Select the previous window"}
+      -T: {description: "If the selected window is already the current window, behave like last-window"}
+  split-window:
+    description: Split a pane into two
+    aliases: [splitw]
+    flags:
+      -v: {description: "Split vertically (default)"}
+      -h: {description: "Split horizontally"}
+      -d: {description: "Do not change the active pane"}
+      -b: {description: "Create the new pane to the left or above the target pane"}
+      -f: {description: "Split the full window height or width instead of the pane"}
+      -p: {value: any, description: "Percentage of the pane to use for new pane"}
+      -l: {value: any, description: "Size of the new pane in lines or columns"}
+      -c: {value: dir, description: "Start directory"}
+      -t: {value: any, description: "Target pane"}
+      -e: {value: any, description: "Set environment variable"}
+      -F: {value: any, description: "Format string"}
+  kill-pane:
+    description: Kill a pane
+    aliases: [killp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -a: {description: "Kill all panes except the current one"}
+  list-panes:
+    description: List panes
+    aliases: [lsp]
+    flags:
+      -a: {description: "List all panes on the server"}
+      -s: {description: "List all panes in the session"}
+      -t: {value: any, description: "Target window"}
+      -F: {value: any, description: "Format string"}
+      -f: {value: any, description: "Filter panes"}
+  select-pane:
+    description: Select a pane
+    aliases: [selectp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -L: {description: "Select the pane to the left"}
+      -R: {description: "Select the pane to the right"}
+      -U: {description: "Select the pane above"}
+      -D: {description: "Select the pane below"}
+      -l: {description: "Select the previously selected pane"}
+      -m: {description: "Set the marked pane"}
+      -M: {description: "Clear the marked pane"}
+      -e: {description: "Enable input to the pane"}
+      -d: {description: "Disable input to the pane"}
+      -Z: {description: "Keep the window zoomed if it is zoomed"}
+      -P: {description: "Change the style of the pane"}
+  resize-pane:
+    description: Resize a pane
+    aliases: [resizep]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -L: {description: "Resize to the left"}
+      -R: {description: "Resize to the right"}
+      -U: {description: "Resize upward"}
+      -D: {description: "Resize downward"}
+      -x: {value: any, description: "Width"}
+      -y: {value: any, description: "Height"}
+      -Z: {description: "Toggle zoom of the pane"}
+  send-keys:
+    description: Send keys to a window
+    aliases: [send]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target pane"}
+      -l: {description: "Disable key name lookup and send keys literally"}
+      -H: {description: "Each argument is a hexadecimal number for a UTF-8 character to send"}
+      -M: {description: "Pass through a mouse event"}
+      -R: {description: "Cause the terminal state to be reset"}
+      -X: {description: "Send a command into copy mode"}
+  send-prefix:
+    description: Send the prefix key to a window
+    flags:
+      -t: {value: any, description: "Target pane"}
+      '-2': {description: "Send the secondary prefix key"}
+  copy-mode:
+    description: Enter copy mode
+    aliases: [copymode]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -u: {description: "Scroll one page up"}
+      -e: {description: "Scroll to the bottom and exit copy mode when the end of the history is reached"}
+      -H: {description: "Hide the position indicator in the top right"}
+      -M: {description: "Begin a mouse drag"}
+      -q: {description: "Cancel copy mode and any selection"}
+  paste-buffer:
+    description: Insert a paste buffer into the specified pane
+    aliases: [pasteb]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -b: {value: {exec: "tmux list-buffers -F '#{buffer_name}\\t#{buffer_sample}' 2>/dev/null"}, description: "Buffer index or name"}
+      -d: {description: "Delete the buffer after pasting"}
+      -p: {description: "Use the most recently copied buffer from other programs"}
+      -r: {description: "Do not replace newlines with carriage returns"}
+      -s: {value: any, description: "Separator to use between multiple buffers"}
+  list-buffers:
+    description: List paste buffers
+    aliases: [lsb]
+    flags:
+      -F: {value: any, description: "Format string"}
+      -f: {value: any, description: "Filter buffers"}
+  delete-buffer:
+    description: Delete a paste buffer
+    aliases: [deleteb]
+    flags:
+      -b: {value: any, description: "Buffer index or name"}
+  show-buffer:
+    description: Display the contents of a paste buffer
+    aliases: [showb]
+    flags:
+      -b: {value: any, description: "Buffer index or name"}
+  load-buffer:
+    description: Load a file into a paste buffer
+    aliases: [loadb]
+    flags:
+      -b: {value: any, description: "Buffer index or name"}
+      -t: {value: any, description: "Target client"}
+      -w: {description: "Load the buffer from the clipboard using xclip, xsel, or wl-clipboard"}
+    args: file
+  save-buffer:
+    description: Save a paste buffer to a file
+    aliases: [saveb]
+    flags:
+      -b: {value: any, description: "Buffer index or name"}
+      -a: {description: "Append to rather than overwrite the file"}
+    args: file
+  choose-tree:
+    description: Put a pane into tree mode
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -s: {description: "Start with sessions, not windows"}
+      -w: {description: "Start with windows, not sessions"}
+      -G: {description: "Include all sessions in the tree"}
+      -F: {value: any, description: "Format string"}
+      -f: {value: any, description: "Filter items"}
+      -O: {value: any, description: "Initial sort field"}
+      -r: {description: "Reverse the sort order"}
+  display-message:
+    description: Display a message in the status line
+    aliases: [display]
+    flags:
+      -t: {value: any, description: "Target client or pane"}
+      -c: {value: any, description: "Target client"}
+      -d: {value: any, description: "Delay in milliseconds before the message is cleared"}
+      -I: {description: "Forward any input read from stdin to the empty target pane"}
+      -N: {description: "Wait for the client to exit before printing output"}
+      -p: {description: "Print the output to stdout rather than displaying it in the status line"}
+      -F: {value: any, description: "Format string"}
+      -v: {description: "Print verbose logging as the format is parsed"}
+  set-option:
+    description: Set a session or server option
+    aliases: [set]
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session or window"}
+      -g: {description: "Set a global option"}
+      -s: {description: "Set a server option"}
+      -w: {description: "Set a window option"}
+      -p: {description: "Set a pane option"}
+      -a: {description: "Append to rather than replacing the option value"}
+      -F: {description: "Expand formats in the option value"}
+      -o: {description: "Prevent setting a option that is not already set"}
+      -q: {description: "Suppress errors about unknown or ambiguous options"}
+      -u: {description: "Unset an option"}
+      -U: {description: "Unset a pane option from a pane"}
+  show-options:
+    description: Show session or server options
+    aliases: [show]
+    flags:
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session or window"}
+      -g: {description: "Show global options"}
+      -s: {description: "Show server options"}
+      -w: {description: "Show window options"}
+      -p: {description: "Show pane options"}
+      -A: {description: "Include options inherited from a parent set of options"}
+      -H: {description: "Include hook options"}
+      -q: {description: "Suppress errors about unknown or ambiguous options"}
+      -v: {description: "Show only the option value, not the name"}
+  set-window-option:
+    description: Set a window option
+    aliases: [setw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -g: {description: "Set a global option"}
+      -a: {description: "Append to the option value"}
+      -o: {description: "Prevent setting a option that is not already set"}
+      -q: {description: "Suppress errors about unknown or ambiguous options"}
+      -u: {description: "Unset an option"}
+  show-window-options:
+    description: Show window options
+    aliases: [showw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -g: {description: "Show global options"}
+      -v: {description: "Show only the option value, not the name"}
+  set-hook:
+    description: Set a hook to a command
+    flags:
+      -t: {value: any, description: "Target session or window"}
+      -g: {description: "Set a global hook"}
+      -w: {description: "Set a window hook"}
+      -a: {description: "Append to rather than replacing the hook"}
+      -u: {description: "Unset the hook"}
+      -R: {description: "Trigger the hook immediately"}
+  show-hooks:
+    description: Show hooks
+    flags:
+      -t: {value: any, description: "Target session or window"}
+      -g: {description: "Show global hooks"}
+      -w: {description: "Show window hooks"}
+  bind-key:
+    description: Bind a key to a command
+    aliases: [bind]
+    flags:
+      -T: {value: any, description: "Key table to use"}
+      -t: {value: any, description: "Key table (deprecated)"}
+      -n: {description: "Bind in the root key table (no prefix needed)"}
+      -r: {description: "Command may repeat"}
+      -N: {value: any, description: "Note for the key binding"}
+  unbind-key:
+    description: Unbind a key
+    aliases: [unbind]
+    flags:
+      -T: {value: any, description: "Key table to use"}
+      -t: {value: any, description: "Key table (deprecated)"}
+      -n: {description: "Unbind in the root key table"}
+      -q: {description: "Suppress errors about unknown key bindings"}
+      -a: {description: "Remove all key bindings"}
+  list-keys:
+    description: List key bindings
+    aliases: [lsk]
+    flags:
+      -T: {value: any, description: "Key table to use"}
+      '-1': {description: "List a single key binding"}
+      -N: {description: "List key bindings with notes"}
+      -P: {value: any, description: "Prefix for each line"}
+  source-file:
+    description: Execute commands from a file
+    aliases: [source]
+    flags:
+      -n: {description: "Parse but do not execute commands"}
+      -q: {description: "Suppress errors about nonexistent files"}
+      -v: {description: "Show the parsed commands"}
+    args: file
+  run-shell:
+    description: Execute a command in the background
+    aliases: [run]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -b: {description: "Run the command in the background"}
+      -c: {value: dir, description: "Working directory"}
+      -d: {value: any, description: "Delay in seconds before running the command"}
+  clock-mode:
+    description: Display a large clock
+    flags:
+      -t: {value: any, description: "Target pane"}
+  refresh-client:
+    description: Refresh the current client
+    aliases: [refresh]
+    flags:
+      -t: {value: any, description: "Target client"}
+      -l: {description: "Request the clipboard from the client"}
+      -L: {value: any, description: "Move the visible portion of a window left by adjustment"}
+      -U: {value: any, description: "Move the visible portion of a window up by adjustment"}
+      -D: {value: any, description: "Move the visible portion of a window down by adjustment"}
+      -R: {value: any, description: "Move the visible portion of a window right by adjustment"}
+      -S: {description: "Only update the client's status bar"}
+      -A: {value: any, description: "Update the client's size or style"}
+      -B: {value: any, description: "Set a subscription to a format for the client"}
+      -c: {value: any, description: "Make the visible area of the window display the pane"}
+      -C: {value: any, description: "Set the width and height of a client"}
+      -f: {value: any, description: "Set the flags for the client"}
+  info:
+    description: Show information about the tmux server
+  server-info:
+    description: Show information about the server and clients
+  start-server:
+    description: Start the tmux server
+  kill-server:
+    description: Kill the tmux server
+  suspend-client:
+    description: Suspend a client
+    flags:
+      -t: {value: any, description: "Target client"}
+  lock-client:
+    description: Lock a client
+    flags:
+      -t: {value: any, description: "Target client"}
+  detach-client:
+    description: Detach a client from the server
+    aliases: [detach]
+    flags:
+      -t: {value: any, description: "Target client"}
+      -a: {description: "Detach all clients except the named client"}
+      -P: {description: "Send SIGHUP to the parent process of the client"}
+      -E: {value: any, description: "Run shell-command in place of the shell"}
+      -s: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+  pipe-pane:
+    description: Pipe output from a pane to a shell command
+    aliases: [pipep]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -I: {description: "Connect stdin of the command to the pty master of the pane"}
+      -O: {description: "Connect stdout of the command to the pty master of the pane"}
+      -o: {description: "Open a new pipe only if no previous pipe exists"}
+  find-window:
+    description: Search for a pattern in windows
+    aliases: [findw]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -i: {description: "Make the search case-insensitive"}
+      -N: {description: "Search only in window names"}
+      -T: {description: "Search only in window titles"}
+      -C: {description: "Search only in visible window contents"}
+      -r: {description: "Use a regular expression"}
+      -Z: {description: "Zoom the pane"}
+  break-pane:
+    description: Break a pane from an existing into a new window
+    aliases: [breakp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -s: {value: any, description: "Source pane"}
+      -d: {description: "Do not change the active window"}
+      -n: {value: any, description: "Window name"}
+      -P: {description: "Print information about the new window after it has been created"}
+      -F: {value: any, description: "Format string"}
+  join-pane:
+    description: Join a pane to another window
+    aliases: [joinp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -s: {value: any, description: "Source pane"}
+      -h: {description: "Join horizontally"}
+      -v: {description: "Join vertically"}
+      -d: {description: "Do not change the active pane"}
+      -b: {description: "Add the new pane before the target pane"}
+      -f: {description: "Full window height or width"}
+      -p: {value: any, description: "Size as a percentage"}
+      -l: {value: any, description: "Size in lines or columns"}
+  move-pane:
+    description: Move a pane into a new space in the specified window
+    aliases: [movep]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -s: {value: any, description: "Source pane"}
+      -h: {description: "Move horizontally"}
+      -v: {description: "Move vertically"}
+      -d: {description: "Do not change the active pane"}
+      -b: {description: "Add the new pane before the target pane"}
+      -f: {description: "Full window height or width"}
+      -p: {value: any, description: "Size as a percentage"}
+      -l: {value: any, description: "Size in lines or columns"}
+  swap-pane:
+    description: Swap two panes
+    aliases: [swapp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -s: {value: any, description: "Source pane"}
+      -d: {description: "Do not change the active pane"}
+      -D: {description: "Swap with the next pane"}
+      -U: {description: "Swap with the previous pane"}
+      -Z: {description: "Keep the window zoomed if it is zoomed"}
+  rotate-window:
+    description: Rotate the positions of the panes within a window
+    aliases: [rotatew]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -D: {description: "Rotate downward (the default direction)"}
+      -U: {description: "Rotate upward"}
+      -Z: {description: "Keep the window zoomed if it is zoomed"}
+  move-window:
+    description: Move a window to another position
+    aliases: [movew]
+    flags:
+      -t: {value: any, description: "Target window"}
+      -s: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Source window"}
+      -a: {description: "Move to the next index up from the target"}
+      -b: {description: "Move to the next index down from the target"}
+      -d: {description: "Do not make the new window the current window"}
+      -k: {description: "If the target window exists, destroy it"}
+      -r: {description: "Renumber windows in the target session"}
+  swap-window:
+    description: Swap two windows
+    aliases: [swapw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -s: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Source window"}
+      -d: {description: "Do not make the new window the current window"}
+  link-window:
+    description: Link a window to another position
+    aliases: [linkw]
+    flags:
+      -t: {value: any, description: "Target window"}
+      -s: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Source window"}
+      -a: {description: "Move to the next index up from the target"}
+      -b: {description: "Move to the next index down from the target"}
+      -d: {description: "Do not make the new window the current window"}
+      -k: {description: "If the target window exists, destroy it"}
+  unlink-window:
+    description: Unlink a window
+    aliases: [unlinkw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -k: {description: "Kill the window if it would be removed from all sessions"}
+  respawn-pane:
+    description: Reactivate a pane in which the command has exited
+    aliases: [respawnp]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -c: {value: dir, description: "Start directory"}
+      -e: {value: any, description: "Set environment variable"}
+      -k: {description: "Kill the pane if still active"}
+  respawn-window:
+    description: Reactivate a window in which the command has exited
+    aliases: [respawnw]
+    flags:
+      -t: {value: {exec: "tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' 2>/dev/null"}, description: "Target window"}
+      -c: {value: dir, description: "Start directory"}
+      -e: {value: any, description: "Set environment variable"}
+      -k: {description: "Kill the window if still active"}
+  wait-for:
+    description: Wait for a named channel or timer
+    aliases: [wait]
+    flags:
+      -S: {description: "Signal the named channel"}
+      -L: {description: "Lock the named channel"}
+      -U: {description: "Unlock the named channel"}
+  if-shell:
+    description: Execute a tmux command if a shell command succeeds
+    aliases: [if]
+    flags:
+      -t: {value: any, description: "Target pane"}
+      -b: {description: "Run the shell command in the background"}
+      -F: {description: "Treat the first argument as a format string, not a shell command"}
+  command-prompt:
+    description: Open the tmux command prompt in a client
+    flags:
+      -t: {value: any, description: "Target client"}
+      -I: {value: any, description: "Comma-separated list of initial text for each prompt"}
+      -N: {description: "Accept only numeric input"}
+      -R: {description: "Move the cursor to the right-most possible position first"}
+      -p: {value: any, description: "Comma-separated list of prompts"}
+      '-1': {description: "Only accept a single key press"}
+      -F: {description: "Expand formats in the initial text"}

@@ -1,0 +1,319 @@
+description: Infrastructure as Code tool
+flags:
+  --help: {description: "Show help"}
+  -chdir: {value: dir, description: "Switch to a different working directory before executing the given subcommand"}
+  -version: {description: "Show the current Terraform version"}
+commands:
+  init:
+    description: Prepare your working directory for other commands
+    flags:
+      -backend: {value: any, description: "Configure the backend for this configuration"}
+      -backend-config: {value: any, description: "Configuration to be merged with the configuration in the root module"}
+      -reconfigure: {description: "Reconfigure the backend, ignoring any saved configuration"}
+      -migrate-state: {description: "Reconfigure a backend and attempt to migrate any existing state"}
+      -upgrade: {description: "Install the latest module and provider versions"}
+      -lockfile: {value: any, description: "Set a dependency lockfile mode"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      --help: {description: "Show help"}
+  validate:
+    description: Check whether the configuration is valid
+    flags:
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      --help: {description: "Show help"}
+  plan:
+    description: Show changes required by the current configuration
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables in the root module of the configuration"}
+      -var-file: {value: [{exec: "ls *.tfvars *.tfvars.json 2>/dev/null"}, file], description: "Load variable values from the given file"}
+      -target: {value: {exec: "terraform state list 2>/dev/null"}, description: "Limit the planning operation to only the given module, resource, or resource instance"}
+      -refresh: {value: any, description: "Skip checking for external changes to remote objects"}
+      -refresh-only: {description: "Create a plan whose goal is only to update the Terraform state"}
+      -replace: {value: {exec: "terraform state list 2>/dev/null"}, description: "Force replacement of a particular resource instance using its resource address"}
+      -parallelism: {value: any, description: "Limit the number of concurrent operations as Terraform walks the graph"}
+      -compact-warnings: {description: "Show warnings in a more compact form that includes only the summary messages"}
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -out: {value: any, description: "Write a plan file to the given path"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      --help: {description: "Show help"}
+  apply:
+    description: Create or update infrastructure
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables in the root module of the configuration"}
+      -var-file: {value: [{exec: "ls *.tfvars *.tfvars.json 2>/dev/null"}, file], description: "Load variable values from the given file"}
+      -target: {value: {exec: "terraform state list 2>/dev/null"}, description: "Limit the operation to only the given module, resource, or resource instance"}
+      -auto-approve: {description: "Skip interactive approval of plan before applying"}
+      -refresh: {value: any, description: "Skip checking for external changes to remote objects"}
+      -refresh-only: {description: "Create a plan whose goal is only to update the Terraform state"}
+      -replace: {value: {exec: "terraform state list 2>/dev/null"}, description: "Force replacement of a particular resource instance using its resource address"}
+      -parallelism: {value: any, description: "Limit the number of concurrent operations as Terraform walks the graph"}
+      -compact-warnings: {description: "Show warnings in a more compact form that includes only the summary messages"}
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      --help: {description: "Show help"}
+  destroy:
+    description: Destroy previously-created infrastructure
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables in the root module of the configuration"}
+      -var-file: {value: [{exec: "ls *.tfvars *.tfvars.json 2>/dev/null"}, file], description: "Load variable values from the given file"}
+      -target: {value: {exec: "terraform state list 2>/dev/null"}, description: "Limit the operation to only the given module, resource, or resource instance"}
+      -auto-approve: {description: "Skip interactive approval of plan before applying"}
+      -refresh: {value: any, description: "Skip checking for external changes to remote objects"}
+      -refresh-only: {description: "Create a plan whose goal is only to update the Terraform state"}
+      -parallelism: {value: any, description: "Limit the number of concurrent operations as Terraform walks the graph"}
+      -compact-warnings: {description: "Show warnings in a more compact form that includes only the summary messages"}
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      --help: {description: "Show help"}
+  refresh:
+    description: Update the state to match remote systems
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables"}
+      -var-file: {value: file, description: "Load variable values from the given file"}
+      -target: {value: any, description: "Limit the operation to only the given resource"}
+      -parallelism: {value: any, description: "Limit the number of concurrent operations"}
+      -compact-warnings: {description: "Show warnings in a more compact form"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      --help: {description: "Show help"}
+  show:
+    description: Show the current state or a saved plan
+    flags:
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      --help: {description: "Show help"}
+  state:
+    description: Advanced state management
+    commands:
+      list:
+        description: List resources in the state
+        flags:
+          -id: {value: any, description: "Filters the results to include only instances whose resource types have an attribute named id whose value equals the given id string"}
+          -state: {value: file, description: "Path to a Terraform state file to use"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform state list 2>/dev/null"
+      show:
+        description: Show a resource in the state
+        flags:
+          -state: {value: file, description: "Path to a Terraform state file to use"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform state list 2>/dev/null"
+      mv:
+        description: Move an item in the state
+        flags:
+          -backup: {value: any, description: "Path where Terraform should write the backup state"}
+          -backup-out: {value: any, description: "Path where Terraform should write the backup for the destination state"}
+          -dry-run: {description: "If set, prints out what would've been moved but doesn't actually move anything"}
+          -lock: {value: any, description: "Don't hold a state lock during the operation"}
+          -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+          -state: {value: file, description: "Path to the source state file"}
+          -state-out: {value: any, description: "Path to the destination state file"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform state list 2>/dev/null"
+      rm:
+        description: Remove instances from the state
+        flags:
+          -backup: {value: any, description: "Path where Terraform should write the backup state"}
+          -dry-run: {description: "If set, prints out what would've been removed but doesn't actually remove anything"}
+          -lock: {value: any, description: "Don't hold a state lock during the operation"}
+          -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+          -state: {value: file, description: "Path to the state file to update"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform state list 2>/dev/null"
+      pull:
+        description: Pull current state and output to stdout
+        flags:
+          --help: {description: "Show help"}
+      push:
+        description: Update remote state from a local state file
+        flags:
+          -force: {description: "Write the state even if lineages don't match or the remote serial is higher"}
+          --help: {description: "Show help"}
+        args: file
+      replace-provider:
+        description: Replace provider in the state
+        flags:
+          --help: {description: "Show help"}
+      import:
+        description: Import existing infrastructure into your Terraform state
+        flags:
+          -var: {value: any, description: "Set a value for one of the input variables"}
+          -var-file: {value: file, description: "Load variable values from the given file"}
+          -input: {value: any, description: "Ask for input for variables if not directly set"}
+          -no-color: {description: "Disable color codes in the command output"}
+          --help: {description: "Show help"}
+  output:
+    description: Show output values from your root module
+    flags:
+      -json: {description: "Machine readable output will be printed in JSON format"}
+      -raw: {description: "Print the raw string value without any quoting or escaping"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -state: {value: file, description: "Path to the state file to read"}
+      --help: {description: "Show help"}
+    args:
+      exec: "terraform output -json 2>/dev/null | python3 -c \"import json,sys; [print(k) for k in json.load(sys.stdin)]\" 2>/dev/null"
+  console:
+    description: Try Terraform expressions at an interactive command prompt
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables"}
+      -var-file: {value: file, description: "Load variable values from the given file"}
+      -state: {value: file, description: "Path to the state file to read"}
+      --help: {description: "Show help"}
+  fmt:
+    description: Reformat your configuration in the standard style
+    flags:
+      -recursive: {description: "Also process files in subdirectories"}
+      -check: {description: "Check if the input is formatted"}
+      -diff: {description: "Display diffs of formatting changes"}
+      -list: {value: any, description: "List files whose formatting differs"}
+      -write: {value: any, description: "Write result to source file instead of stdout"}
+      -no-color: {description: "Disable color codes in the command output"}
+      --help: {description: "Show help"}
+  get:
+    description: Install or upgrade remote Terraform modules
+    flags:
+      -update: {description: "Check already-downloaded modules for available updates and install the newest versions available"}
+      -no-color: {description: "Disable color codes in the command output"}
+      --help: {description: "Show help"}
+  graph:
+    description: Generate a Graphviz graph of the steps in an operation
+    flags:
+      -plan: {value: file, description: "Render graph using the specified plan file instead of the configuration in the current directory"}
+      -draw-cycles: {description: "Highlight any cycles in the graph with colored edges"}
+      -type: {value: any, description: "Type of graph to output"}
+      -no-color: {description: "Disable color codes in the command output"}
+      --help: {description: "Show help"}
+  import:
+    description: Associate existing infrastructure with a Terraform resource
+    flags:
+      -var: {value: any, description: "Set a value for one of the input variables"}
+      -var-file: {value: file, description: "Load variable values from the given file"}
+      -input: {value: any, description: "Ask for input for variables if not directly set"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -parallelism: {value: any, description: "Limit the number of concurrent operations"}
+      --help: {description: "Show help"}
+  login:
+    description: Obtain and save credentials for a remote host
+    flags:
+      --help: {description: "Show help"}
+  logout:
+    description: Remove locally-stored credentials for a remote host
+    flags:
+      --help: {description: "Show help"}
+  metadata:
+    description: Metadata related commands
+    commands:
+      functions:
+        description: Show signatures and descriptions for the available functions
+        flags:
+          -json: {description: "Produce output in a machine-readable JSON format"}
+          --help: {description: "Show help"}
+  providers:
+    description: Show the providers required for this configuration
+    flags:
+      --help: {description: "Show help"}
+    commands:
+      lock:
+        description: Write out dependency locks for the configured providers
+        flags:
+          -fs-mirror: {value: dir, description: "Consult the given filesystem mirror directory instead of origin registries"}
+          -net-mirror: {value: any, description: "Consult the given network mirror (given as a base URL) instead of origin registries"}
+          -platform: {value: any, description: "Choose a target platform to request package checksums for"}
+          --help: {description: "Show help"}
+      mirror:
+        description: Save local copies of all required provider plugins
+        flags:
+          -platform: {value: any, description: "Choose a target platform to include in the mirror"}
+          --help: {description: "Show help"}
+      schema:
+        description: Show schemas for the providers used in the configuration
+        flags:
+          -json: {description: "Produce output in a machine-readable JSON format"}
+          --help: {description: "Show help"}
+  taint:
+    description: Mark a resource instance as not fully functional
+    flags:
+      -allow-missing: {description: "If specified, the command will succeed (exit code 0) even if the resource is missing"}
+      -backup: {value: any, description: "Path where Terraform should write the backup for the original state"}
+      -lock: {value: any, description: "Don't hold a state lock during the operation"}
+      -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+      -state: {value: file, description: "Path to the state file"}
+      --help: {description: "Show help"}
+    args:
+      exec: "terraform state list 2>/dev/null"
+  untaint:
+    description: Remove the 'tainted' state from a resource instance
+    flags:
+      -allow-missing: {description: "If specified, the command will succeed (exit code 0) even if the resource is missing"}
+      -backup: {value: any, description: "Path where Terraform should write the backup for the original state"}
+      -lock: {value: any, description: "Don't hold a state lock during the operation"}
+      -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+      -state: {value: file, description: "Path to the state file"}
+      --help: {description: "Show help"}
+    args:
+      exec: "terraform state list 2>/dev/null"
+  test:
+    description: Execute integration tests for Terraform modules
+    flags:
+      -filter: {value: file, description: "If provided, only run the specified test files"}
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      -no-color: {description: "Disable color codes in the command output"}
+      -var: {value: any, description: "Set a value for one of the input variables"}
+      -var-file: {value: file, description: "Load variable values from the given file"}
+      --help: {description: "Show help"}
+  workspace:
+    description: Workspace management
+    commands:
+      list:
+        description: List Workspaces
+        flags:
+          --help: {description: "Show help"}
+      new:
+        description: Create a new workspace
+        flags:
+          -state: {value: file, description: "Copy an existing state file into the new workspace"}
+          -lock: {value: any, description: "Don't hold a state lock during the operation"}
+          -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+          --help: {description: "Show help"}
+      select:
+        description: Select a workspace
+        flags:
+          -or-create: {description: "Create the Terraform workspace if it doesn't exist"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform workspace list 2>/dev/null | sed 's/^[* ]*//'"
+      show:
+        description: Show the name of the current workspace
+        flags:
+          --help: {description: "Show help"}
+      delete:
+        description: Delete a workspace
+        flags:
+          -force: {description: "Remove a workspace even if it is managing resources"}
+          -lock: {value: any, description: "Don't hold a state lock during the operation"}
+          -lock-timeout: {value: any, description: "Duration to retry a state lock"}
+          --help: {description: "Show help"}
+        args:
+          exec: "terraform workspace list 2>/dev/null | sed 's/^[* ]*//'"
+  version:
+    description: Show the current Terraform version
+    flags:
+      -json: {description: "Produce output in a machine-readable JSON format"}
+      --help: {description: "Show help"}
+  force-unlock:
+    description: Release a stuck lock on the current workspace
+    flags:
+      -force: {description: "Don't ask for input for unlock confirmation"}
+      --help: {description: "Show help"}
+  unlock:
+    description: Release a stuck lock on the current workspace
+    flags:
+      --help: {description: "Show help"}

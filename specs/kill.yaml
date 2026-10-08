@@ -1,0 +1,20 @@
+description: Send a signal to a process
+flags:
+  -s:
+    value:
+      exec: "kill -l 2>/dev/null | tr ' ' '\\n' | grep -v '^$'"
+    description: "Signal name to send"
+  -l: {description: "List signal names"}
+  '-9': {description: "Send SIGKILL (forceful termination)"}
+  '-15': {description: "Send SIGTERM (default)"}
+  -HUP: {description: "Send SIGHUP"}
+  -INT: {description: "Send SIGINT"}
+  -QUIT: {description: "Send SIGQUIT"}
+  -KILL: {description: "Send SIGKILL"}
+  -TERM: {description: "Send SIGTERM"}
+  -STOP: {description: "Send SIGSTOP"}
+  -CONT: {description: "Send SIGCONT"}
+  -USR1: {description: "Send SIGUSR1"}
+  -USR2: {description: "Send SIGUSR2"}
+args:
+  exec: "ps -xo pid=,comm= | awk '{p=$1; sub(/^ *[0-9]+ /, \"\"); sub(/.*\\//, \"\"); printf \"%s\\t%s\\n\", p, $0}'"

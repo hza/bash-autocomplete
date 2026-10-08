@@ -1,0 +1,18 @@
+description: Secure copy (remote file copy)
+flags:
+  -P: {value: any, description: "Port to connect to on the remote host"}
+  -i: {value: file, description: "Identity file (private key)"}
+  -r: {description: "Recursively copy entire directories"}
+  -p: {description: "Preserve modification times, access times, and modes"}
+  -q: {description: "Quiet mode"}
+  -C: {description: "Enable compression"}
+  '-3': {description: "Copy through the local host (three-party copy)"}
+  '-4': {description: "Force IPv4 connections only"}
+  '-6': {description: "Force IPv6 connections only"}
+  -o: {value: any, description: "Option in ssh_config format"}
+  -F: {value: file, description: "Specify ssh config file"}
+  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)"}
+  -l: {value: any, description: "Bandwidth limit in Kbit/s"}
+  -v: {description: "Verbose mode"}
+  --help: {description: "Show help"}
+args: [file, {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null", suffix: ":", nospace: true}]

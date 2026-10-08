@@ -1,0 +1,105 @@
+description: macOS user defaults management
+flags:
+  --help: {description: "Show help"}
+  -app: {value: any, description: "Application name"}
+  -host: {value: any, description: "Hostname"}
+  -currentHost: {description: "Use current host"}
+  -g: {description: "Use global domain"}
+  -globalDomain: {description: "Use global domain"}
+  -container: {value: any, description: "Container identifier"}
+commands:
+  read:
+    description: Read the specified default(s) from the defaults system
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  write:
+    description: Write the specified default to the defaults system
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+      -string: {description: "Write a string value"}
+      -data: {description: "Write a data value"}
+      -int: {description: "Write an integer value"}
+      -integer: {description: "Write an integer value"}
+      -float: {description: "Write a float value"}
+      -bool: {description: "Write a boolean value"}
+      -boolean: {description: "Write a boolean value"}
+      -date: {description: "Write a date value"}
+      -array: {description: "Write an array value"}
+      -array-add: {description: "Append to an existing array value"}
+      -dict: {description: "Write a dictionary value"}
+      -dict-add: {description: "Append to an existing dictionary value"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  delete:
+    description: Delete the specified default(s) from the defaults system
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  domains:
+    description: List all domains in the user's defaults system
+  find:
+    description: Search for default name, key, and value
+  help:
+    description: Print a list of possible commands and a synopsis of each
+  read-type:
+    description: Read the type of the specified default
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  rename:
+    description: Rename the specified default
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  export:
+    description: Export the defaults for a specified domain
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+  import:
+    description: Import the defaults for a specified domain
+    flags:
+      -app: {value: any, description: "Application name"}
+      -globalDomain: {description: "Use global domain"}
+      -g: {description: "Use global domain"}
+      -host: {value: any, description: "Hostname"}
+      -currentHost: {description: "Use current host"}
+      -container: {value: any, description: "Container identifier"}
+    args:
+      exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"

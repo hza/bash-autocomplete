@@ -1,0 +1,287 @@
+description: Fast, disk space efficient package manager
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -v: {description: "Show pnpm version"}
+  --version: {description: "Show pnpm version"}
+  -r: {description: "Run in every package found in subdirectories"}
+  --recursive: {description: "Run in every package found in subdirectories"}
+  --filter:
+    value: {exec: "pnpm ls -r --depth -1 --json 2>/dev/null | node -e 'let s=\"\";process.stdin.on(\"data\",d=>s+=d).on(\"end\",()=>{try{for(const p of JSON.parse(s))if(p.name)console.log(p.name)}catch(e){}})'"}
+    description: "Filtering allows you to restrict commands to specific subsets of packages"
+  -C:
+    value: dir
+    description: "Run as if pnpm was started in <path> instead of the current working directory"
+  --dir:
+    value: dir
+    description: "Run as if pnpm was started in <path> instead of the current working directory"
+  -w: {description: "Run as if pnpm was started in the root of the workspace"}
+  --workspace-root: {description: "Run as if pnpm was started in the root of the workspace"}
+  --json: {description: "Output as JSON"}
+  --reporter:
+    value: any
+    description: "Allows to choose the reporter that will print info about the installation progress"
+commands:
+  add:
+    description: Install a package
+    flags:
+      -D: {description: "Save to devDependencies"}
+      --save-dev: {description: "Save to devDependencies"}
+      -P: {description: "Save to peerDependencies"}
+      --save-peer: {description: "Save to peerDependencies"}
+      -O: {description: "Save to optionalDependencies"}
+      --save-optional: {description: "Save to optionalDependencies"}
+      -E: {description: "Install exact version"}
+      --save-exact: {description: "Install exact version"}
+      -g: {description: "Install globally"}
+      --global: {description: "Install globally"}
+      --workspace: {description: "Only adds the new dependency if it can be found in the workspace"}
+      --ignore-workspace-root-check: {description: "Allow to install a dependency in the workspace root"}
+    args: any
+  remove:
+    description: Remove a package from node_modules and from the project's package.json
+    aliases: [uninstall, rm, un]
+    flags:
+      -g: {description: "Remove global package"}
+      --global: {description: "Remove global package"}
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  install:
+    description: Install all dependencies for a project
+    aliases: [i]
+    flags:
+      --frozen-lockfile: {description: "Don't generate a lockfile and fail if an update is needed"}
+      --lockfile-only: {description: "Only lockfile is updated, nothing is written to the node_modules directory"}
+      --fix-lockfile: {description: "Fix broken lockfile entries automatically"}
+      --no-lockfile: {description: "Don't read or generate a lockfile"}
+      --prefer-offline: {description: "Skip staleness checks for cached data"}
+      --offline: {description: "Trigger an error if any required dependencies are not available in local store"}
+      --force: {description: "Force reinstallation of packages"}
+      --ignore-scripts: {description: "Don't run lifecycle scripts"}
+      --production: {description: "Only install dependencies, not devDependencies"}
+      --dev: {description: "Only install devDependencies and remove production packages"}
+  update:
+    description: Update packages to their latest version based on the specified range
+    aliases: [up, upgrade]
+    flags:
+      -r: {description: "Update in every package found in subdirectories"}
+      --recursive: {description: "Update in every package found in subdirectories"}
+      -g: {description: "Update global packages"}
+      --global: {description: "Update global packages"}
+      -L: {description: "Ignore version ranges in package.json"}
+      --latest: {description: "Ignore version ranges in package.json"}
+      -i: {description: "Show outdated dependencies and select which ones to update"}
+      --interactive: {description: "Show outdated dependencies and select which ones to update"}
+      --no-save: {description: "Don't save to package.json"}
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  run:
+    description: Run a script
+    flags:
+      --parallel: {description: "Completely disregard concurrency and topological ordering, running a given script immediately in all matching packages with prefixed streaming output"}
+      --if-present: {description: "Avoid exiting with a non-zero exit code when the script is undefined"}
+      --stream: {description: "Stream output from child processes immediately"}
+    args:
+      exec: "node -e 'try{const s=require(\"./package.json\").scripts||{};Object.keys(s).forEach(k=>console.log(k))}catch(e){}'"
+  test:
+    description: Run the test script
+    aliases: [t]
+  build:
+    description: Run the build script
+  start:
+    description: Run the start script
+  init:
+    description: Create a package.json file
+    flags:
+      -y: {description: "Use default values"}
+      --yes: {description: "Use default values"}
+  publish:
+    description: Publish a package to the registry
+    flags:
+      --access: {value: any, description: "Tells the registry whether this package should be published as public or restricted"}
+      --tag: {value: any, description: "Registers the published package with the given tag"}
+      --otp: {value: any, description: "Specify a one-time password from a two-factor authenticator"}
+      --dry-run: {description: "Print details about the planned publish but do not actually publish to the registry"}
+      --no-git-checks: {description: "Don't check if current branch is your publish branch, if your branch is clean, or if your branch is up-to-date"}
+      -r: {description: "Publish packages from all subpackages"}
+      --recursive: {description: "Publish packages from all subpackages"}
+  pack:
+    description: Create a tarball from a package
+    flags:
+      --pack-destination: {value: dir, description: "Directory in which pnpm pack output is saved"}
+  link:
+    description: Connect the local project to another one
+    aliases: [ln]
+    flags:
+      -g: {description: "Link global package"}
+      --global: {description: "Link global package"}
+    args: any
+  unlink:
+    description: Unlinks a package. Like yarn unlink but pnpm re-installs the dependency after removing the external link
+    args: any
+  dlx:
+    description: Fetch a package from the registry without installing it as a dependency, hotload it, and run whatever default command binary it exposes
+    flags:
+      --package: {value: any, description: "The package to install before running the command"}
+      -c: {description: "Run the shell command within a shell interpreter"}
+      --shell: {description: "Run the shell command within a shell interpreter"}
+    args: any
+  exec:
+    description: Execute a shell command in scope of a project
+    flags:
+      -r: {description: "Execute in every project of the workspace"}
+      --recursive: {description: "Execute in every project of the workspace"}
+      --parallel: {description: "Completely disregard concurrency and topological ordering"}
+      --stream: {description: "Stream output from child processes immediately"}
+      --shell-mode: {description: "Run the command inside of a shell interpreter"}
+    args: any
+  create:
+    description: Create a project from a create-* or @foo/create-* starter kit
+    args: any
+  store:
+    description: Manage the package store
+    commands:
+      status:
+        description: Return exit code 0 if packages in the store are not modified
+      add:
+        description: Add new packages to the store
+        args: any
+      prune:
+        description: Remove unreferenced (extraneous, orphan) packages from the store
+      path:
+        description: Print the path to the active store directory
+  cache:
+    description: Manage the package cache
+    commands:
+      list:
+        description: List the packages accessible in the specified store
+      delete:
+        description: Delete cached responses of resolved packages from the store
+        args: any
+      verify:
+        description: Verify the integrity of all the packages in the store
+  audit:
+    description: Check for known security issues with the installed packages
+    flags:
+      --audit-level: {value: any, description: "Only print advisories with severity greater than or equal to one of the following: low|moderate|high|critical"}
+      --fix: {description: "Automatically install the recommended updates for vulnerable dependencies"}
+      --json: {description: "Output audit report in JSON format"}
+      --dev: {description: "Only audit dev dependencies"}
+      --prod: {description: "Only audit prod dependencies"}
+  list:
+    description: Print all the versions of packages that are installed
+    aliases: [ls]
+    flags:
+      -r: {description: "Perform command on every package in subdirectories"}
+      --recursive: {description: "Perform command on every package in subdirectories"}
+      --json: {description: "Show information in JSON format"}
+      -g: {description: "List packages in the global install prefix instead of in the current project"}
+      --global: {description: "List packages in the global install prefix instead of in the current project"}
+      --depth: {value: any, description: "Max display depth of the dependency tree"}
+      --prod: {description: "Display only the dependency tree for packages in dependencies"}
+      --dev: {description: "Display only the dependency tree for packages in devDependencies"}
+      --only-projects: {description: "If enabled, only projects of the monorepo are shown"}
+      --parseable: {description: "Output parseable results instead of tree view"}
+  outdated:
+    description: Check for outdated packages
+    flags:
+      -r: {description: "Check packages outdated in every package found in subdirectories"}
+      --recursive: {description: "Check packages outdated in every package found in subdirectories"}
+      --json: {description: "Show information in JSON format"}
+      -g: {description: "Check packages outdated in the global install prefix"}
+      --global: {description: "Check packages outdated in the global install prefix"}
+      --format: {value: any, description: "Output format: list|table|json"}
+      --compatible: {description: "Print only versions that satisfy specs in package.json"}
+      --long: {description: "By default, details about the outdated packages (such as a link to the repo) are not displayed. To display the details, pass this flag."}
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  why:
+    description: Show all packages that depend on the specified package
+    flags:
+      -r: {description: "Show packages from all projects in the workspace"}
+      --recursive: {description: "Show packages from all projects in the workspace"}
+      --json: {description: "Log output in JSON format"}
+      -g: {description: "Look in global pnpm store"}
+      --global: {description: "Look in global pnpm store"}
+      --parseable: {description: "Show parseable output instead of tree view"}
+      --dev: {description: "Show path only through dev dependencies"}
+      --prod: {description: "Show path only through non-dev dependencies"}
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  patch:
+    description: Prepare a package for patching
+    args: any
+  patch-commit:
+    description: Generate a patch out of a directory
+    args: dir
+  fetch:
+    description: Fetch packages from a lockfile into virtual store, package manifest is ignored
+    flags:
+      --prod: {description: "Only fetch the production packages"}
+      --dev: {description: "Only fetch the dev packages"}
+  install-completion:
+    description: Install completion for the specified shell
+    args: any
+  root:
+    description: Print the effective modules directory
+    flags:
+      -g: {description: "Print the global modules directory"}
+      --global: {description: "Print the global modules directory"}
+  bin:
+    description: Print the directory where pnpm will install executables
+    flags:
+      -g: {description: "Print the global executables directory"}
+      --global: {description: "Print the global executables directory"}
+  setup:
+    description: Set up pnpm's global bin directory and add it to PATH
+  self-update:
+    description: Update pnpm itself to the latest version
+  config:
+    description: Manage the pnpm configuration files
+    commands:
+      get:
+        description: Print the value of a config key
+        args: any
+      set:
+        description: Set a config key to a value
+        args: any
+      delete:
+        description: Remove a config key from the config file
+        args: any
+      list:
+        description: Print all the config settings
+        flags:
+          --json: {description: "Show settings in JSON format"}
+          -g: {description: "Print the global config only"}
+          --global: {description: "Print the global config only"}
+  env:
+    description: Manage the Node.js environment
+    commands:
+      use:
+        description: Installs and sets the specified version of Node.js
+        flags:
+          -g: {description: "Installs globally"}
+          --global: {description: "Installs globally"}
+          --bin: {description: "Show the path to the binaries of the Node.js version"}
+        args: any
+      remove:
+        description: Remove the specified version(s) of Node.js
+        flags:
+          -g: {description: "Remove globally"}
+          --global: {description: "Remove globally"}
+        args: any
+      list:
+        description: List local or global Node.js versions
+        flags:
+          -g: {description: "List global versions"}
+          --global: {description: "List global versions"}
+          --json: {description: "Show info in JSON format"}
+          --remote: {description: "List the remote versions of Node.js"}
+      add:
+        description: Fetch specified Node.js version
+        args: any
+  deploy:
+    description: Deploy a package from a workspace
+    flags:
+      --filter: {value: any, description: "Filtering allows you to restrict commands to specific subsets of packages"}
+      --dev: {description: "Deploy dev dependencies too"}
+      --no-optional: {description: "Don't deploy optional dependencies"}
+      --prod: {description: "Deploy only production dependencies"}
+      --ignore-scripts: {description: "Ignore any scripts defined in package.json"}
+    args: dir

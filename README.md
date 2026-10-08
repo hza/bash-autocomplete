@@ -40,7 +40,9 @@ autocomplete works with the bash already on your Mac:
 ## Features
 
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **npm**,
-  **killall** and `autocomplete` itself.
+  **yarn**, **pnpm**, **pip**, **go**, **cargo**, **gradle**, **brew**, **gh**, **ssh**,
+  **scp**, **terraform**, **helm**, **aws**, **tmux**, **kill**, **pkill**, **killall**,
+  macOS **open**, **launchctl**, **defaults**, **diskutil**, and `autocomplete` itself.
 - Live values from your environment:
   - docker: running containers, images, networks, volumes
   - git: branches, tags, remotes, stashes, changed files
@@ -49,7 +51,15 @@ autocomplete works with the bash already on your Mac:
   - mvn: profiles and modules from `pom.xml`, plugin goals for plugins the project uses
   - make: Makefile targets and variables, with descriptions from `## text` or the comment
     above each target (honors `make -C dir` and `make -f file`)
-  - killall: your running process names
+  - killall, pkill: your running process names; kill: PIDs with process names
+  - ssh, scp: hosts from `~/.ssh/config` and `known_hosts` (`scp gr<TAB>` → `grafana:`)
+  - brew: installed formulae and services
+  - gh: pull requests, issues, workflow runs, gists, labels, releases, repos
+  - yarn, pnpm: `package.json` scripts, dependencies and workspace packages
+  - pip: installed packages; go: packages and test names; cargo: bins, examples, tests
+  - terraform: resources from state, `*.tfvars`; helm: releases, repo charts, namespaces
+  - aws: profiles, regions, S3 buckets; tmux: sessions and buffers
+  - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.

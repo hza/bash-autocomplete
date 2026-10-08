@@ -1,0 +1,1264 @@
+description: GitHub CLI
+flags:
+  --help: {description: "Show help"}
+  -R:
+    value: {exec: "gh repo list --limit 200 --json nameWithOwner,description --jq '.[] | \"\\(.nameWithOwner)\\t\\(.description // \"\")\"' 2>/dev/null"}
+    description: "Select another repository using the [HOST/]OWNER/REPO format"
+  --repo:
+    value: {exec: "gh repo list --limit 200 --json nameWithOwner,description --jq '.[] | \"\\(.nameWithOwner)\\t\\(.description // \"\")\"' 2>/dev/null"}
+    description: "Select another repository using the [HOST/]OWNER/REPO format"
+  --hostname:
+    value: any
+    description: "The hostname of the GitHub instance to authenticate with"
+commands:
+  pr:
+    description: Manage pull requests
+    flags:
+      -R: {value: any, description: "Select another repository"}
+      --repo: {value: any, description: "Select another repository"}
+    commands:
+      list:
+        description: List pull requests in a repository
+        flags:
+          -a: {value: any, description: "Filter by assignee"}
+          --assignee: {value: any, description: "Filter by assignee"}
+          -A: {value: any, description: "Filter by author"}
+          --author: {value: any, description: "Filter by author"}
+          -B: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by base branch"}
+          --base: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by base branch"}
+          -H: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by head branch"}
+          --head: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by head branch"}
+          -l: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Filter by label"}
+          --label: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Filter by label"}
+          -L: {value: any, description: "Maximum number of results"}
+          --limit: {value: any, description: "Maximum number of results"}
+          -s: {value: any, description: "Filter by state: {open|closed|merged|all}"}
+          --state: {value: any, description: "Filter by state: {open|closed|merged|all}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+          --jq: {value: any, description: "Filter JSON output using a jq expression"}
+      view:
+        description: View a pull request
+        flags:
+          -w: {description: "Open PR in the browser"}
+          --web: {description: "Open PR in the browser"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+          --jq: {value: any, description: "Filter JSON output using a jq expression"}
+          --comments: {description: "View pull request comments"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      checkout:
+        description: Check out a pull request in git
+        flags:
+          -b: {value: any, description: "Local branch name to use"}
+          --branch: {value: any, description: "Local branch name to use"}
+          --detach: {description: "Checkout PR with a detached HEAD"}
+          -f: {description: "Reset the existing local branch to the latest state of the pull request"}
+          --force: {description: "Reset the existing local branch to the latest state of the pull request"}
+          --recurse-submodules: {description: "Update all active submodules"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      create:
+        description: Create a pull request
+        flags:
+          -B: {value: any, description: "The branch into which you want your code merged"}
+          --base: {value: any, description: "The branch into which you want your code merged"}
+          -H: {value: any, description: "The branch that contains commits for your pull request"}
+          --head: {value: any, description: "The branch that contains commits for your pull request"}
+          -t: {value: any, description: "Title"}
+          --title: {value: any, description: "Title"}
+          -b: {value: any, description: "Body"}
+          --body: {value: any, description: "Body"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+          -d: {description: "Mark pull request as a draft"}
+          --draft: {description: "Mark pull request as a draft"}
+          -f: {description: "Do not prompt for title/body and just use commit info"}
+          --fill: {description: "Do not prompt for title/body and just use commit info"}
+          --fill-first: {description: "Do not prompt for title/body, use first commit info only"}
+          -l: {value: any, description: "Add labels by name"}
+          --label: {value: any, description: "Add labels by name"}
+          -a: {value: any, description: "Assign people by their login"}
+          --assignee: {value: any, description: "Assign people by their login"}
+          -r: {value: any, description: "Request reviews from people or teams by their handle"}
+          --reviewer: {value: any, description: "Request reviews from people or teams by their handle"}
+          -m: {value: any, description: "Add the pull request to a milestone by name"}
+          --milestone: {value: any, description: "Add the pull request to a milestone by name"}
+          -w: {description: "Open the browser after creating the pull request"}
+          --web: {description: "Open the browser after creating the pull request"}
+      merge:
+        description: Merge a pull request
+        flags:
+          --auto: {description: "Automatically merge only after necessary requirements are met"}
+          --disable-auto: {description: "Disable auto-merge for this pull request"}
+          -d: {description: "Delete the local and remote branch after merge"}
+          --delete-branch: {description: "Delete the local and remote branch after merge"}
+          -m: {value: any, description: "Merge commit message"}
+          --merge-strategy: {value: any, description: "The merge strategy to use"}
+          --squash: {description: "Squash the commits into one commit and merge it into the base branch"}
+          --rebase: {description: "Rebase the commits onto the base branch and fast-forward"}
+          --merge: {description: "Merge the commits with a merge commit"}
+          -t: {value: any, description: "Title text of the merge commit"}
+          -b: {value: any, description: "Body text of the merge commit"}
+          -F: {value: file, description: "Read merge body text from file"}
+          --admin: {description: "Use administrator privileges to merge a pull request that does not meet requirements"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      close:
+        description: Close a pull request
+        flags:
+          --comment: {value: any, description: "Leave a closing comment"}
+          -d: {description: "Delete the local and remote branch after close"}
+          --delete-branch: {description: "Delete the local and remote branch after close"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      reopen:
+        description: Reopen a pull request
+        flags:
+          --comment: {value: any, description: "Add a reopening comment"}
+        args:
+          exec: "gh pr list --state closed --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      review:
+        description: Add a review to a pull request
+        flags:
+          -a: {description: "Approve pull request"}
+          --approve: {description: "Approve pull request"}
+          -r: {description: "Request changes on a pull request"}
+          --request-changes: {description: "Request changes on a pull request"}
+          -c: {description: "Leave a review comment without approving or requesting changes"}
+          --comment: {description: "Leave a review comment without approving or requesting changes"}
+          -b: {value: any, description: "Specify the body of a review"}
+          --body: {value: any, description: "Specify the body of a review"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      diff:
+        description: View changes in a pull request
+        flags:
+          --patch: {description: "Display diff as a git patch"}
+          -w: {description: "Open the browser to view the diff"}
+          --web: {description: "Open the browser to view the diff"}
+          --name-only: {description: "Display only names of changed files"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      checks:
+        description: Show CI status for a single pull request
+        flags:
+          --interval: {value: any, description: "Refresh interval in seconds when using --watch"}
+          --watch: {description: "Watch checks until all checks complete"}
+          --fail-fast: {description: "Exit watch mode on first check failure"}
+          -w: {description: "Open the browser to show details about checks"}
+          --web: {description: "Open the browser to show details about checks"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      edit:
+        description: Edit a pull request
+        flags:
+          --add-assignee: {value: any, description: "Add assigned users by their login"}
+          --remove-assignee: {value: any, description: "Remove assigned users by their login"}
+          --add-label: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Add labels by name"}
+          --remove-label: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Remove labels by name"}
+          --add-reviewer: {value: any, description: "Add reviewers by their login"}
+          --remove-reviewer: {value: any, description: "Remove reviewers by their login"}
+          -m: {value: any, description: "Edit milestone by name"}
+          --milestone: {value: any, description: "Edit milestone by name"}
+          -t: {value: any, description: "Set the new title"}
+          --title: {value: any, description: "Set the new title"}
+          -b: {value: any, description: "Set the new body"}
+          --body: {value: any, description: "Set the new body"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      ready:
+        description: Mark a pull request as ready for review
+        flags:
+          --undo: {description: "Convert a pull request to a draft"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      comment:
+        description: Add a comment to a pull request
+        flags:
+          -b: {value: any, description: "The comment body text"}
+          --body: {value: any, description: "The comment body text"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+          --edit-last: {description: "Edit the last comment of the same author"}
+        args:
+          exec: "gh pr list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+  issue:
+    description: Manage issues
+    flags:
+      -R: {value: any, description: "Select another repository"}
+      --repo: {value: any, description: "Select another repository"}
+    commands:
+      list:
+        description: List issues in a repository
+        flags:
+          -a: {value: any, description: "Filter by assignee"}
+          --assignee: {value: any, description: "Filter by assignee"}
+          -A: {value: any, description: "Filter by author"}
+          --author: {value: any, description: "Filter by author"}
+          -l: {value: any, description: "Filter by label"}
+          --label: {value: any, description: "Filter by label"}
+          -L: {value: any, description: "Maximum number of results"}
+          --limit: {value: any, description: "Maximum number of results"}
+          -m: {value: any, description: "Filter by milestone number or title"}
+          --milestone: {value: any, description: "Filter by milestone number or title"}
+          -s: {value: any, description: "Filter by state: {open|closed|all}"}
+          --state: {value: any, description: "Filter by state: {open|closed|all}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+      view:
+        description: View an issue
+        flags:
+          -w: {description: "Open issue in the browser"}
+          --web: {description: "Open issue in the browser"}
+          --comments: {description: "View issue comments"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      create:
+        description: Create an issue
+        flags:
+          -t: {value: any, description: "Supply a title"}
+          --title: {value: any, description: "Supply a title"}
+          -b: {value: any, description: "Supply a body"}
+          --body: {value: any, description: "Supply a body"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+          -a: {value: any, description: "Assign people by their login"}
+          --assignee: {value: any, description: "Assign people by their login"}
+          -l: {value: any, description: "Add labels by name"}
+          --label: {value: any, description: "Add labels by name"}
+          -m: {value: any, description: "Add the issue to a milestone by name"}
+          --milestone: {value: any, description: "Add the issue to a milestone by name"}
+          -p: {value: any, description: "Add the issue to projects by name"}
+          --project: {value: any, description: "Add the issue to projects by name"}
+          -w: {description: "Open the browser after creating the issue"}
+          --web: {description: "Open the browser after creating the issue"}
+      close:
+        description: Close an issue
+        flags:
+          --comment: {value: any, description: "Leave a closing comment"}
+          -r: {value: any, description: "Reason for closing: {completed|not planned|reopened}"}
+          --reason: {value: any, description: "Reason for closing: {completed|not planned|reopened}"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      reopen:
+        description: Reopen an issue
+        flags:
+          --comment: {value: any, description: "Add a reopening comment"}
+        args:
+          exec: "gh issue list --state closed --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      edit:
+        description: Edit an issue
+        flags:
+          --add-assignee: {value: any, description: "Add assigned users by their login"}
+          --remove-assignee: {value: any, description: "Remove assigned users by their login"}
+          --add-label: {value: any, description: "Add labels by name"}
+          --remove-label: {value: any, description: "Remove labels by name"}
+          -m: {value: any, description: "Edit milestone by name"}
+          --milestone: {value: any, description: "Edit milestone by name"}
+          -t: {value: any, description: "Set the new title"}
+          --title: {value: any, description: "Set the new title"}
+          -b: {value: any, description: "Set the new body"}
+          --body: {value: any, description: "Set the new body"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      comment:
+        description: Add a comment to an issue
+        flags:
+          -b: {value: any, description: "The comment body text"}
+          --body: {value: any, description: "The comment body text"}
+          -F: {value: file, description: "Read body text from file"}
+          --body-file: {value: file, description: "Read body text from file"}
+          --edit-last: {description: "Edit the last comment of the same author"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      pin:
+        description: Pin an issue
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      unpin:
+        description: Unpin an issue
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      transfer:
+        description: Transfer issue to another repository
+        flags:
+          --skip-confirm: {description: "Skip confirmation prompt"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      delete:
+        description: Delete an issue
+        flags:
+          --yes: {description: "Confirm deletion without prompting"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+      develop:
+        description: Manage linked branches for an issue
+        flags:
+          -b: {value: any, description: "Name of the branch to create"}
+          --branch-repo: {value: any, description: "Name or URL of the repository to create the development branch in"}
+          --checkout: {description: "Checkout the branch after creating it"}
+          --issue-repo: {value: any, description: "Name or URL of the issue's repository"}
+          --list: {description: "List linked branches for the issue"}
+        args:
+          exec: "gh issue list --json number,title --jq '.[] | \"\\(.number)\\t\\(.title)\"' 2>/dev/null"
+  repo:
+    description: Manage repositories
+    flags:
+      -R: {value: any, description: "Select another repository"}
+      --repo: {value: any, description: "Select another repository"}
+    commands:
+      clone:
+        description: Clone a repository locally
+        flags:
+          --upstream-remote-name: {value: any, description: "Upstream remote name when cloning a fork"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      fork:
+        description: Create a fork of a repository
+        flags:
+          --clone: {description: "Clone the fork"}
+          --remote: {description: "Add a remote for the fork"}
+          --remote-name: {value: any, description: "Specify the name for the new remote"}
+          --org: {value: any, description: "Create the fork in an organization"}
+          --default-branch-only: {description: "Only include the default branch in the fork"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      create:
+        description: Create a new repository
+        flags:
+          -d: {value: any, description: "Description of the repository"}
+          --description: {value: any, description: "Description of the repository"}
+          --public: {description: "Make the repository public"}
+          --private: {description: "Make the repository private"}
+          --internal: {description: "Make the repository internal"}
+          --push: {description: "Push local commits to the new repository"}
+          --source: {value: dir, description: "Path to local repository to use as source"}
+          --remote: {value: any, description: "Specify remote name for the new repository"}
+          --homepage: {value: any, description: "A URL with more information about the repository"}
+          --template: {value: any, description: "Make the new repository based on a template repository"}
+          --clone: {description: "Clone the new repository to the current directory"}
+          -g: {value: any, description: "Specify a gitignore template for the repository"}
+          --gitignore: {value: any, description: "Specify a gitignore template for the repository"}
+          -l: {value: any, description: "Specify an Open Source License for the repository"}
+          --license: {value: any, description: "Specify an Open Source License for the repository"}
+          --disable-issues: {description: "Disable issues in the new repository"}
+          --disable-wiki: {description: "Disable wiki in the new repository"}
+        args: any
+      view:
+        description: View a repository
+        flags:
+          -w: {description: "Open a repository in the browser"}
+          --web: {description: "Open a repository in the browser"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+          --jq: {value: any, description: "Filter JSON output using a jq expression"}
+          -b: {value: any, description: "View a specific branch of the repository"}
+          --branch: {value: any, description: "View a specific branch of the repository"}
+        args: {exec: "gh repo list --limit 200 --json nameWithOwner,description --jq '.[] | \"\\(.nameWithOwner)\\t\\(.description // \"\")\"' 2>/dev/null"}
+      list:
+        description: List repositories owned by user or organization
+        flags:
+          --archived: {description: "Show only archived repositories"}
+          --no-archived: {description: "Omit archived repositories"}
+          --fork: {description: "Show only forks"}
+          --source: {description: "Show only non-forks"}
+          -l: {value: any, description: "Filter by primary coding language"}
+          --language: {value: any, description: "Filter by primary coding language"}
+          -L: {value: any, description: "Maximum number of repositories listed"}
+          --limit: {value: any, description: "Maximum number of repositories listed"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+          -t: {value: any, description: "Format each repository using a Go template"}
+          --template: {value: any, description: "Format each repository using a Go template"}
+          -q: {value: any, description: "Filter JSON output using a jq expression"}
+          --jq: {value: any, description: "Filter JSON output using a jq expression"}
+          --topic: {value: any, description: "Filter by topic"}
+          --visibility: {value: any, description: "Filter by repository visibility: {public|private|internal}"}
+        args: any
+      edit:
+        description: Edit repository settings
+        flags:
+          --default-branch: {value: any, description: "Set the default branch name"}
+          --description: {value: any, description: "Edit the repository description"}
+          --homepage: {value: any, description: "Edit the repository homepage URL"}
+          --visibility: {value: any, description: "Change the repository visibility: {public|private|internal}"}
+          --enable-issues: {description: "Enable issues in the repository"}
+          --disable-issues: {description: "Disable issues in the repository"}
+          --enable-wiki: {description: "Enable wiki in the repository"}
+          --disable-wiki: {description: "Disable wiki in the repository"}
+          --enable-projects: {description: "Enable projects in the repository"}
+          --disable-projects: {description: "Disable projects in the repository"}
+          --enable-discussions: {description: "Enable discussions in the repository"}
+          --disable-discussions: {description: "Disable discussions in the repository"}
+          --enable-merge-commit: {description: "Enable merging pull requests via merge commit"}
+          --disable-merge-commit: {description: "Disable merging pull requests via merge commit"}
+          --enable-squash-merge: {description: "Enable merging pull requests via squashed commit"}
+          --disable-squash-merge: {description: "Disable merging pull requests via squashed commit"}
+          --enable-rebase-merge: {description: "Enable merging pull requests via rebase"}
+          --disable-rebase-merge: {description: "Disable merging pull requests via rebase"}
+          --enable-auto-merge: {description: "Enable auto-merge functionality"}
+          --disable-auto-merge: {description: "Disable auto-merge functionality"}
+          --enable-delete-branch-on-merge: {description: "Enable automatically deleting head branches when pull requests are merged"}
+          --disable-delete-branch-on-merge: {description: "Disable automatically deleting head branches when pull requests are merged"}
+        args: {exec: "gh repo list --limit 200 --json nameWithOwner,description --jq '.[] | \"\\(.nameWithOwner)\\t\\(.description // \"\")\"' 2>/dev/null"}
+      sync:
+        description: Sync a repository
+        flags:
+          -b: {value: any, description: "Branch to sync"}
+          --branch: {value: any, description: "Branch to sync"}
+          --force: {description: "Hard reset the branch of the target repository to match the source repository"}
+          --source: {value: any, description: "Source repository"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      archive:
+        description: Archive a repository
+        flags:
+          -y: {description: "Skip the confirmation prompt"}
+          --yes: {description: "Skip the confirmation prompt"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      unarchive:
+        description: Unarchive a repository
+        flags:
+          -y: {description: "Skip the confirmation prompt"}
+          --yes: {description: "Skip the confirmation prompt"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      rename:
+        description: Rename a repository
+        flags:
+          -y: {description: "Skip the confirmation prompt"}
+          --yes: {description: "Skip the confirmation prompt"}
+        args: {exec: "gh repo list --limit 200 --json nameWithOwner,description --jq '.[] | \"\\(.nameWithOwner)\\t\\(.description // \"\")\"' 2>/dev/null"}
+      delete:
+        description: Delete a repository
+        flags:
+          --yes: {description: "Confirm deletion without prompting"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+      deploy-key:
+        description: Manage deploy keys in a repository
+        commands:
+          list:
+            description: List deploy keys in a GitHub repository
+          add:
+            description: Add a deploy key to a GitHub repository
+            flags:
+              -t: {value: any, description: "Title of the deploy key"}
+              --title: {value: any, description: "Title of the deploy key"}
+              -k: {value: file, description: "Path to a file containing the public key"}
+              --key: {value: file, description: "Path to a file containing the public key"}
+              -w: {description: "Allow write access for the deploy key"}
+              --allow-write: {description: "Allow write access for the deploy key"}
+          delete:
+            description: Delete a deploy key from a GitHub repository
+            args: any
+  gist:
+    description: Manage gists
+    commands:
+      list:
+        description: List your gists
+        flags:
+          -L: {value: any, description: "Maximum number of gists listed"}
+          --limit: {value: any, description: "Maximum number of gists listed"}
+          --public: {description: "Show only public gists"}
+          --secret: {description: "Show only secret gists"}
+      view:
+        description: View a gist
+        flags:
+          -f: {value: any, description: "Display a single file from the gist"}
+          --filename: {value: any, description: "Display a single file from the gist"}
+          -r: {description: "Print raw instead of rendered gist contents"}
+          --raw: {description: "Print raw instead of rendered gist contents"}
+          -w: {description: "Open gist in the browser"}
+          --web: {description: "Open gist in the browser"}
+        args: {exec: "gh gist list --limit 100 2>/dev/null | awk -F'\\t' '{print $1\"\\t\"$2}'"}
+      create:
+        description: Create a new gist
+        flags:
+          -d: {value: any, description: "A description for this gist"}
+          --desc: {value: any, description: "A description for this gist"}
+          -f: {value: any, description: "Provide a filename to be used when reading from STDIN"}
+          --filename: {value: any, description: "Provide a filename to be used when reading from STDIN"}
+          -p: {description: "List the gist publicly"}
+          --public: {description: "List the gist publicly"}
+          -w: {description: "Open the web browser with created gist"}
+          --web: {description: "Open the web browser with created gist"}
+        args: file
+      edit:
+        description: Edit one of your gists
+        flags:
+          -a: {value: any, description: "Add a new file to the gist"}
+          --add: {value: any, description: "Add a new file to the gist"}
+          -d: {value: any, description: "A description for this gist"}
+          --desc: {value: any, description: "A description for this gist"}
+          -f: {value: any, description: "Select a file to edit"}
+          --filename: {value: any, description: "Select a file to edit"}
+          -r: {value: any, description: "Remove a file from the gist"}
+          --remove: {value: any, description: "Remove a file from the gist"}
+        args: {exec: "gh gist list --limit 100 2>/dev/null | awk -F'\\t' '{print $1\"\\t\"$2}'"}
+      delete:
+        description: Delete a gist
+        flags:
+          --yes: {description: "Skip the confirmation prompt"}
+        args: {exec: "gh gist list --limit 100 2>/dev/null | awk -F'\\t' '{print $1\"\\t\"$2}'"}
+      clone:
+        description: Clone a gist locally
+        args: {exec: "gh gist list --limit 100 2>/dev/null | awk -F'\\t' '{print $1\"\\t\"$2}'"}
+  workflow:
+    description: View details about GitHub Actions workflows
+    commands:
+      list:
+        description: List workflows in a repository
+        flags:
+          -a: {description: "Also show disabled workflows"}
+          --all: {description: "Also show disabled workflows"}
+          -L: {value: any, description: "Maximum number of workflows listed"}
+          --limit: {value: any, description: "Maximum number of workflows listed"}
+      view:
+        description: View the summary of a workflow
+        flags:
+          -r: {value: any, description: "The branch or tag name which contains the version of the workflow file"}
+          --ref: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "The branch or tag name which contains the version of the workflow file"}
+          -w: {description: "Open workflow in the browser"}
+          --web: {description: "Open workflow in the browser"}
+          -y: {description: "View the workflow yaml file"}
+          --yaml: {description: "View the workflow yaml file"}
+        args:
+          exec: "gh workflow list --jq '.[].name' --json name 2>/dev/null"
+      run:
+        description: Run a workflow by creating a workflow_dispatch event
+        flags:
+          -r: {value: any, description: "The branch or tag name which contains the version of the workflow file"}
+          --ref: {value: any, description: "The branch or tag name which contains the version of the workflow file"}
+          -F: {value: any, description: "Add a string parameter in key=value format, loading value from file"}
+          --field: {value: any, description: "Add a string parameter in key=value format, loading value from file"}
+          -f: {value: any, description: "Add a string parameter in key=value format"}
+          --raw-field: {value: any, description: "Add a string parameter in key=value format"}
+          --json: {value: any, description: "Read workflow inputs as JSON via STDIN"}
+        args:
+          exec: "gh workflow list --jq '.[].name' --json name 2>/dev/null"
+      enable:
+        description: Enable a workflow
+        args:
+          exec: "gh workflow list --all --jq '.[].name' --json name 2>/dev/null"
+      disable:
+        description: Disable a workflow
+        args:
+          exec: "gh workflow list --jq '.[].name' --json name 2>/dev/null"
+  run:
+    description: View details about workflow runs
+    commands:
+      list:
+        description: List recent workflow runs
+        flags:
+          -b: {value: any, description: "Filter runs by branch name"}
+          --branch: {value: any, description: "Filter runs by branch name"}
+          -e: {value: any, description: "Filter runs by which event triggered the run"}
+          --event: {value: any, description: "Filter runs by which event triggered the run"}
+          -L: {value: any, description: "Maximum number of runs listed"}
+          --limit: {value: any, description: "Maximum number of runs listed"}
+          -s: {value: any, description: "Filter runs by status: {queued|in_progress|completed|waiting|requested|pending}"}
+          --status: {value: any, description: "Filter runs by status"}
+          -u: {value: any, description: "Filter runs by the login of the user who triggered the run"}
+          --user: {value: any, description: "Filter runs by the login of the user who triggered the run"}
+          -w: {value: any, description: "Filter runs by workflow"}
+          --workflow: {value: any, description: "Filter runs by workflow"}
+      view:
+        description: View a summary of a workflow run
+        flags:
+          -v: {description: "Show job steps"}
+          --verbose: {description: "Show job steps"}
+          --log: {description: "View full log for either a single step or an entire job"}
+          --log-failed: {description: "View the log for any failed steps in a run or specific job"}
+          -j: {value: any, description: "View a specific job ID from a run"}
+          --job: {value: any, description: "View a specific job ID from a run"}
+          -w: {description: "Open run in the browser"}
+          --web: {description: "Open run in the browser"}
+          --exit-status: {description: "Exit with non-zero status if run failed"}
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+      download:
+        description: Download artifacts generated by a workflow run
+        flags:
+          -D: {value: dir, description: "The directory to download artifacts into"}
+          --dir: {value: dir, description: "The directory to download artifacts into"}
+          -n: {value: any, description: "Only download artifacts that match any of the given names"}
+          --name: {value: any, description: "Only download artifacts that match any of the given names"}
+          -p: {value: any, description: "Only download artifacts that match a glob pattern"}
+          --pattern: {value: any, description: "Only download artifacts that match a glob pattern"}
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+      rerun:
+        description: Rerun a run
+        flags:
+          --failed: {description: "Rerun only failed jobs, including their dependencies"}
+          -d: {description: "Rerun with debugging enabled"}
+          --debug: {description: "Rerun with debugging enabled"}
+          -j: {value: any, description: "Rerun a specific job from a run, including dependencies"}
+          --job: {value: any, description: "Rerun a specific job from a run, including dependencies"}
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+      cancel:
+        description: Cancel a workflow run
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+      watch:
+        description: Watch a run until it completes, showing its progress
+        flags:
+          --exit-status: {description: "Exit with non-zero status if run failed"}
+          --interval: {value: any, description: "Refresh interval in seconds"}
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+      delete:
+        description: Delete a workflow run
+        flags:
+          --yes: {description: "Do not prompt for confirmation"}
+        args: {exec: "gh run list --json databaseId,displayTitle,status --jq '.[] | \"\\(.databaseId)\\t\\(.status): \\(.displayTitle)\"' 2>/dev/null"}
+  release:
+    description: Manage GitHub releases
+    commands:
+      list:
+        description: List releases in a repository
+        flags:
+          --exclude-drafts: {description: "Exclude draft releases"}
+          --exclude-pre-releases: {description: "Exclude pre-releases"}
+          -L: {value: any, description: "Maximum number of items to fetch"}
+          --limit: {value: any, description: "Maximum number of items to fetch"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+      view:
+        description: View information about a release
+        flags:
+          -w: {description: "Open the release in the browser"}
+          --web: {description: "Open the release in the browser"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+        args:
+          exec: "gh release list --json tagName --jq '.[].tagName' 2>/dev/null"
+      create:
+        description: Create a new release
+        flags:
+          --draft: {description: "Save the release as a draft instead of publishing it"}
+          --prerelease: {description: "Mark the release as a prerelease"}
+          --latest: {description: "Mark this release as the latest release"}
+          --verify-tag: {description: "Abort in case the git tag doesn't already exist in the remote repository"}
+          -t: {value: any, description: "Release title"}
+          --title: {value: any, description: "Release title"}
+          -n: {value: any, description: "Release notes"}
+          --notes: {value: any, description: "Release notes"}
+          -F: {value: file, description: "Read release notes from file"}
+          --notes-file: {value: file, description: "Read release notes from file"}
+          --notes-start-tag: {value: {exec: "git tag --sort=-creatordate 2>/dev/null"}, description: "Tag to use as the starting point for generating release notes"}
+          --generate-notes: {description: "Automatically generate title and notes for the release"}
+          --target: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Target branch or full commit SHA"}
+          --discussion-category: {value: any, description: "Start a discussion in the specified category when publishing a release"}
+        args: {exec: "git tag --sort=-creatordate 2>/dev/null"}
+      delete:
+        description: Delete a release
+        flags:
+          --yes: {description: "Skip the confirmation prompt"}
+          --cleanup-tag: {description: "Delete the specified tag in addition to its release"}
+        args:
+          exec: "gh release list --json tagName --jq '.[].tagName' 2>/dev/null"
+      edit:
+        description: Edit a release
+        flags:
+          --draft: {description: "Save the release as a draft instead of publishing it"}
+          --prerelease: {description: "Mark the release as a prerelease"}
+          --latest: {description: "Mark this release as the latest release"}
+          -t: {value: any, description: "Release title"}
+          --title: {value: any, description: "Release title"}
+          -n: {value: any, description: "Release notes"}
+          --notes: {value: any, description: "Release notes"}
+          -F: {value: file, description: "Read release notes from file"}
+          --notes-file: {value: file, description: "Read release notes from file"}
+          --tag: {value: any, description: "The name of the tag"}
+          --target: {value: any, description: "Target branch or full commit SHA"}
+          --discussion-category: {value: any, description: "Start a discussion in the specified category when publishing a release"}
+        args:
+          exec: "gh release list --json tagName --jq '.[].tagName' 2>/dev/null"
+      download:
+        description: Download release assets
+        flags:
+          -A: {value: any, description: "Download only assets that match a glob pattern"}
+          --pattern: {value: any, description: "Download only assets that match a glob pattern"}
+          -D: {value: dir, description: "The directory to download files into"}
+          --dir: {value: dir, description: "The directory to download files into"}
+          -O: {description: "Write downloaded asset to stdout"}
+          --output: {description: "Write downloaded asset to stdout"}
+          --skip-existing: {description: "Skip downloading when local file is found"}
+          --clobber: {description: "Overwrite existing files of the same name"}
+        args:
+          exec: "gh release list --json tagName --jq '.[].tagName' 2>/dev/null"
+      upload:
+        description: Upload assets to a release
+        flags:
+          --clobber: {description: "Overwrite existing assets of the same name"}
+        args: [{exec: "gh release list --json tagName,name --jq '.[] | \"\\(.tagName)\\t\\(.name)\"' 2>/dev/null"}, file]
+  auth:
+    description: Authenticate gh and git with GitHub
+    commands:
+      login:
+        description: Authenticate with a GitHub host
+        flags:
+          -h: {value: any, description: "The hostname of the GitHub instance to authenticate with"}
+          --hostname: {value: any, description: "The hostname of the GitHub instance to authenticate with"}
+          -p: {value: any, description: "The protocol to use for git operations: {ssh|https}"}
+          --git-protocol: {value: any, description: "The protocol to use for git operations: {ssh|https}"}
+          --with-token: {description: "Read token from standard input"}
+          -s: {value: any, description: "Additional authentication scopes to request"}
+          --scopes: {value: any, description: "Additional authentication scopes to request"}
+          --secure-storage: {description: "Save authentication credentials in secure credential store"}
+          --skip-ssh-key: {description: "Skip generate/upload SSH key prompt"}
+          -w: {description: "Open a browser to authenticate"}
+          --web: {description: "Open a browser to authenticate"}
+      logout:
+        description: Log out of a GitHub host
+        flags:
+          -h: {value: any, description: "The hostname of the GitHub instance to log out of"}
+          --hostname: {value: any, description: "The hostname of the GitHub instance to log out of"}
+          -u: {value: any, description: "The account to log out of"}
+          --user: {value: any, description: "The account to log out of"}
+      status:
+        description: View authentication status
+        flags:
+          -h: {value: any, description: "Check a specific hostname's auth status"}
+          --hostname: {value: any, description: "Check a specific hostname's auth status"}
+          -t: {description: "Display the auth token"}
+          --show-token: {description: "Display the auth token"}
+          -u: {value: any, description: "Check a specific user's auth status"}
+          --user: {value: any, description: "Check a specific user's auth status"}
+          --active: {description: "Display the active account only"}
+      token:
+        description: Print the auth token gh is configured to use
+        flags:
+          -h: {value: any, description: "Get the auth token for a specific hostname"}
+          --hostname: {value: any, description: "Get the auth token for a specific hostname"}
+          -u: {value: any, description: "Get the auth token for a specific user"}
+          --user: {value: any, description: "Get the auth token for a specific user"}
+          -s: {value: any, description: "Check for a specific scope"}
+          --secure-storage: {description: "Get the token from secure credential store"}
+      refresh:
+        description: Expand or fix the permission scopes for stored credentials
+        flags:
+          -h: {value: any, description: "The hostname of the GitHub instance to authenticate with"}
+          --hostname: {value: any, description: "The hostname of the GitHub instance to authenticate with"}
+          -s: {value: any, description: "Additional authentication scopes for gh to have"}
+          --scopes: {value: any, description: "Additional authentication scopes for gh to have"}
+          --secure-storage: {description: "Save authentication credentials in secure credential store"}
+          --reset-scopes: {description: "Reset authentication scopes to the default minimum set of scopes"}
+          --remove-scopes: {value: any, description: "Authentication scopes to remove from gh"}
+      setup-git:
+        description: Configure git to use GitHub CLI as a credential helper
+        flags:
+          --force: {description: "Force setup even if the host is not known to GitHub"}
+          -h: {value: any, description: "The hostname to configure git for"}
+          --hostname: {value: any, description: "The hostname to configure git for"}
+  config:
+    description: Manage configuration for gh
+    commands:
+      get:
+        description: Print the value of a given configuration key
+        flags:
+          -h: {value: any, description: "Get per-host setting"}
+          --host: {value: any, description: "Get per-host setting"}
+        args: {exec: "printf 'git_protocol\\neditor\\nprompt\\nprefer_editor_prompt\\npager\\nhttp_unix_socket\\nbrowser\\ncolor_labels\\naccessible_colors\\naccessible_prompter\\nspinner\\n'"}
+      set:
+        description: Update configuration with a value for the given key
+        flags:
+          -h: {value: any, description: "Set per-host setting"}
+          --host: {value: any, description: "Set per-host setting"}
+        args: {exec: "printf 'git_protocol\\neditor\\nprompt\\nprefer_editor_prompt\\npager\\nhttp_unix_socket\\nbrowser\\ncolor_labels\\naccessible_colors\\naccessible_prompter\\nspinner\\n'"}
+      list:
+        description: Print a list of configuration keys and values
+        flags:
+          -h: {value: any, description: "Get per-host setting"}
+          --host: {value: any, description: "Get per-host setting"}
+  alias:
+    description: Create command shortcuts
+    commands:
+      set:
+        description: Create a shortcut for a gh command
+        flags:
+          -s: {description: "Declare an alias to be passed through a shell interpreter"}
+          --shell: {description: "Declare an alias to be passed through a shell interpreter"}
+        args: any
+      delete:
+        description: Delete set aliases
+        flags:
+          --all: {description: "Delete all aliases"}
+        args:
+          exec: "gh alias list 2>/dev/null | awk '{print $1}'"
+      list:
+        description: List your aliases
+      import:
+        description: Import aliases from a YAML file
+        flags:
+          --clobber: {description: "Overwrite existing aliases of the same name"}
+        args: file
+  ssh-key:
+    description: Manage SSH keys
+    commands:
+      list:
+        description: Lists SSH keys in a GitHub account
+      add:
+        description: Add an SSH key to your GitHub account
+        flags:
+          -t: {value: any, description: "Name for the SSH key"}
+          --title: {value: any, description: "Name for the SSH key"}
+          --type: {value: any, description: "Type of the SSH key: {authentication|signing}"}
+        args: file
+      delete:
+        description: Delete an SSH key from your GitHub account
+        flags:
+          --yes: {description: "Skip the confirmation prompt"}
+        args: {exec: "gh ssh-key list 2>/dev/null | awk -F'\\t' '{print $5\"\\t\"$1}'"}
+  gpg-key:
+    description: Manage GPG keys
+    commands:
+      list:
+        description: Lists GPG keys in a GitHub account
+      add:
+        description: Add a GPG key to your GitHub account
+        args: file
+      delete:
+        description: Delete a GPG key from your GitHub account
+        flags:
+          --yes: {description: "Skip the confirmation prompt"}
+        args: {exec: "gh gpg-key list 2>/dev/null | awk -F'\\t' '{print $2\"\\t\"$1}'"}
+  label:
+    description: Manage labels
+    commands:
+      list:
+        description: List labels in a repository
+        flags:
+          -L: {value: any, description: "Maximum number of labels to fetch"}
+          --limit: {value: any, description: "Maximum number of labels to fetch"}
+          -q: {value: any, description: "Filter query to apply"}
+          --search: {value: any, description: "Filter query to apply"}
+          -S: {value: any, description: "Sort fetched labels: {created|name}"}
+          --sort: {value: any, description: "Sort fetched labels: {created|name}"}
+          --order: {value: any, description: "Order of labels returned: {asc|desc}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+      create:
+        description: Create a new label
+        flags:
+          -c: {value: any, description: "Color for the label"}
+          --color: {value: any, description: "Color for the label"}
+          -d: {value: any, description: "Description of the label"}
+          --description: {value: any, description: "Description of the label"}
+          -f: {description: "Overwrite label settings if label already exists"}
+          --force: {description: "Overwrite label settings if label already exists"}
+        args: any
+      delete:
+        description: Delete a label from a repository
+        flags:
+          --yes: {description: "Confirm deletion without prompting"}
+        args: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}
+      edit:
+        description: Edit a label
+        flags:
+          -c: {value: any, description: "New color for the label"}
+          --color: {value: any, description: "New color for the label"}
+          -d: {value: any, description: "New description of the label"}
+          --description: {value: any, description: "New description of the label"}
+          -n: {value: any, description: "New name of the label"}
+          --name: {value: any, description: "New name of the label"}
+        args: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}
+      clone:
+        description: Clones labels from one repository to another
+        flags:
+          -f: {description: "Overwrite labels in the destination repository"}
+          --force: {description: "Overwrite labels in the destination repository"}
+        args:
+          exec: "gh repo list --json nameWithOwner --jq '.[].nameWithOwner' 2>/dev/null"
+  variable:
+    description: Manage GitHub Actions variables
+    commands:
+      list:
+        description: List variables in a repository or organization
+        flags:
+          -o: {value: any, description: "List variables for an organization"}
+          --org: {value: any, description: "List variables for an organization"}
+          -e: {value: any, description: "List variables for an environment"}
+          --env: {value: any, description: "List variables for an environment"}
+      get:
+        description: Get a variable from a repository or organization
+        flags:
+          -o: {value: any, description: "Get a variable for an organization"}
+          --org: {value: any, description: "Get a variable for an organization"}
+          -e: {value: any, description: "Get a variable for an environment"}
+          --env: {value: any, description: "Get a variable for an environment"}
+        args: {exec: "gh variable list --json name --jq '.[].name' 2>/dev/null"}
+      set:
+        description: Create or update variables
+        flags:
+          -b: {value: any, description: "The value for the variable"}
+          --body: {value: any, description: "The value for the variable"}
+          -e: {value: any, description: "Set deployment environment variable"}
+          --env: {value: any, description: "Set deployment environment variable"}
+          -f: {value: file, description: "Load variable value pairs from a file"}
+          --env-file: {value: file, description: "Load variable value pairs from a file"}
+          -o: {value: any, description: "Set variable for an organization"}
+          --org: {value: any, description: "Set variable for an organization"}
+          -v: {value: any, description: "Set visibility for an organization variable: {all|private|selected}"}
+          --visibility: {value: any, description: "Set visibility for an organization variable"}
+          -r: {value: any, description: "List of repository names to share the variable with"}
+          --repos: {value: any, description: "List of repository names to share the variable with"}
+        args: any
+      delete:
+        description: Delete a variable from a repository or organization
+        flags:
+          -e: {value: any, description: "Delete a variable for an environment"}
+          --env: {value: any, description: "Delete a variable for an environment"}
+          -o: {value: any, description: "Delete a variable for an organization"}
+          --org: {value: any, description: "Delete a variable for an organization"}
+        args: {exec: "gh variable list --json name --jq '.[].name' 2>/dev/null"}
+  secret:
+    description: Manage GitHub secrets
+    commands:
+      list:
+        description: List secrets in a repository or organization
+        flags:
+          -a: {value: any, description: "List secrets for a specific app: {actions|codespaces|dependabot}"}
+          --app: {value: any, description: "List secrets for a specific app"}
+          -e: {value: any, description: "List secrets for an environment"}
+          --env: {value: any, description: "List secrets for an environment"}
+          -o: {value: any, description: "List secrets for an organization"}
+          --org: {value: any, description: "List secrets for an organization"}
+          -u: {value: any, description: "Filter by user login of the authenticated user"}
+          --user: {value: any, description: "Filter by user login of the authenticated user"}
+      set:
+        description: Create or update secrets
+        flags:
+          -a: {value: any, description: "Set the application for a secret: {actions|codespaces|dependabot}"}
+          --app: {value: any, description: "Set the application for a secret"}
+          -b: {value: any, description: "The value for the secret"}
+          --body: {value: any, description: "The value for the secret"}
+          -e: {value: any, description: "Set deployment environment secret"}
+          --env: {value: any, description: "Set deployment environment secret"}
+          -f: {value: file, description: "Load secret names and values from a DOTENV-formatted file"}
+          --env-file: {value: file, description: "Load secret names and values from a DOTENV-formatted file"}
+          --no-store: {description: "Print the encrypted, base64-encoded value instead of storing it"}
+          -o: {value: any, description: "Set secret for an organization"}
+          --org: {value: any, description: "Set secret for an organization"}
+          -r: {value: any, description: "List of repository names to share the secret with"}
+          --repos: {value: any, description: "List of repository names to share the secret with"}
+          -u: {value: any, description: "Set a secret for your user"}
+          --user: {value: any, description: "Set a secret for your user"}
+          -v: {value: any, description: "Set visibility for an organization secret: {all|private|selected}"}
+          --visibility: {value: any, description: "Set visibility for an organization secret"}
+        args: {exec: "gh secret list --json name --jq '.[].name' 2>/dev/null"}
+      delete:
+        description: Delete secrets
+        flags:
+          -a: {value: any, description: "Delete a secret for a specific app"}
+          --app: {value: any, description: "Delete a secret for a specific app"}
+          -e: {value: any, description: "Delete a secret for an environment"}
+          --env: {value: any, description: "Delete a secret for an environment"}
+          -o: {value: any, description: "Delete a secret for an organization"}
+          --org: {value: any, description: "Delete a secret for an organization"}
+          -u: {value: any, description: "Delete a secret for your user"}
+          --user: {value: any, description: "Delete a secret for your user"}
+        args: {exec: "gh secret list --json name --jq '.[].name' 2>/dev/null"}
+  cache:
+    description: Manage GitHub Actions caches
+    commands:
+      list:
+        description: List GitHub Actions caches
+        flags:
+          -L: {value: any, description: "Maximum number of caches to fetch"}
+          --limit: {value: any, description: "Maximum number of caches to fetch"}
+          -k: {value: any, description: "Filter by cache key prefix"}
+          --key: {value: any, description: "Filter by cache key prefix"}
+          -r: {value: any, description: "Filter by ref (branch, tag, or ref)"}
+          --ref: {value: any, description: "Filter by ref (branch, tag, or ref)"}
+          -S: {value: any, description: "Sort by: {created_at|last_accessed_at|size_in_bytes}"}
+          --sort: {value: any, description: "Sort by a specific field"}
+          --order: {value: any, description: "Order of caches returned: {asc|desc}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+      delete:
+        description: Delete GitHub Actions caches
+        flags:
+          --all: {description: "Delete all caches"}
+        args: {exec: "gh cache list --json id,key --jq '.[] | \"\\(.id)\\t\\(.key)\"' 2>/dev/null"}
+  extension:
+    description: Manage gh extensions
+    commands:
+      list:
+        description: List installed extension commands
+      install:
+        description: Install a gh extension from a repository
+        flags:
+          --pin: {value: any, description: "Pin extension to a release tag or commit ref"}
+        args: any
+      uninstall:
+        description: Remove an installed extension
+        aliases: [remove]
+        args:
+          exec: "gh extension list 2>/dev/null | awk '{print $3}'"
+      upgrade:
+        description: Upgrade installed extensions
+        flags:
+          --all: {description: "Upgrade all extensions"}
+          --force: {description: "Force upgrade extension"}
+          --dry-run: {description: "Only display upgrades"}
+        args:
+          exec: "gh extension list 2>/dev/null | awk '{print $3}'"
+      create:
+        description: Create a new extension
+        flags:
+          --precompiled: {value: any, description: "Create a precompiled extension: {go|other}"}
+        args: any
+      exec:
+        description: Execute an installed extension
+        args:
+          exec: "gh extension list 2>/dev/null | awk '{print $3}'"
+      browse:
+        description: Enter a UI for browsing, adding, and removing extensions
+        flags:
+          -q: {description: "Skip prompts, accept defaults"}
+          --single-column: {description: "Render single-column layout"}
+  search:
+    description: Search for repositories, issues, and pull requests
+    commands:
+      repos:
+        description: Search for repositories
+        flags:
+          --archived: {description: "Filter based on the repository archived state"}
+          --created: {value: any, description: "Filter based on created at date"}
+          --followers: {value: any, description: "Filter based on number of followers"}
+          --forks: {value: any, description: "Filter on number of forks"}
+          --good-first-issues: {value: any, description: "Filter on number of issues with the 'good first issue' label"}
+          --help-wanted-issues: {value: any, description: "Filter on number of issues with the 'help wanted' label"}
+          --include-forks: {value: any, description: "Include forks in fetched repositories: {false|true|only}"}
+          -l: {value: any, description: "Filter on programming language"}
+          --language: {value: any, description: "Filter on programming language"}
+          --license: {value: any, description: "Filter based on license type"}
+          -L: {value: any, description: "Maximum number of repositories to fetch"}
+          --limit: {value: any, description: "Maximum number of repositories to fetch"}
+          --match: {value: any, description: "Restrict search to specific field of repository: {description|name|readme}"}
+          --number-topics: {value: any, description: "Filter on number of topics"}
+          --owner: {value: any, description: "Filter on repository owner"}
+          --size: {value: any, description: "Filter on a size range, in kilobytes"}
+          --sort: {value: any, description: "Sort fetched repositories: {forks|help-wanted-issues|stars|updated}"}
+          --stars: {value: any, description: "Filter on number of stars"}
+          --topic: {value: any, description: "Filter on repository topic"}
+          --updated: {value: any, description: "Filter on last updated at date"}
+          --visibility: {value: any, description: "Filter based on visibility: {public|private|internal}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+        args: any
+      issues:
+        description: Search for issues
+        flags:
+          --app: {value: any, description: "Filter by GitHub App author"}
+          --archived: {description: "Restrict search to archived repositories"}
+          --assignee: {value: any, description: "Filter by assignee"}
+          --author: {value: any, description: "Filter by author"}
+          --closed: {value: any, description: "Filter on closed at date"}
+          --commenter: {value: any, description: "Filter based on comments by user"}
+          --comments: {value: any, description: "Filter on number of comments"}
+          --created: {value: any, description: "Filter based on created at date"}
+          --include-prs: {description: "Include pull requests in results"}
+          --interactions: {value: any, description: "Filter on number of reactions and comments"}
+          --involves: {value: any, description: "Filter based on involvement of user"}
+          -l: {value: any, description: "Filter on label"}
+          --label: {value: any, description: "Filter on label"}
+          --language: {value: any, description: "Filter based on the coding language"}
+          -L: {value: any, description: "Maximum number of results to fetch"}
+          --limit: {value: any, description: "Maximum number of results to fetch"}
+          --locked: {description: "Filter on locked conversation status"}
+          --match: {value: any, description: "Restrict search to specific field of issue: {title|body|comments}"}
+          --mentions: {value: any, description: "Filter based on user mentions"}
+          --milestone: {value: any, description: "Filter by milestone title"}
+          --no-assignee: {description: "Filter on missing assignee"}
+          --no-label: {description: "Filter on missing label"}
+          --no-milestone: {description: "Filter on missing milestone"}
+          --no-project: {description: "Filter on missing project"}
+          --order: {value: any, description: "Order of results returned: {asc|desc}"}
+          --owner: {value: any, description: "Filter on repository owner"}
+          --project: {value: any, description: "Filter on project board number"}
+          --reactions: {value: any, description: "Filter on number of reactions"}
+          --repo: {value: any, description: "Filter on repository"}
+          --sort: {value: any, description: "Sort fetched results: {comments|created|interactions|reactions|reactions-+1|reactions--1|reactions-heart|reactions-smile|reactions-tada|reactions-thinking_face|updated}"}
+          --state: {value: any, description: "Filter based on state: {open|closed}"}
+          --team-mentions: {value: any, description: "Filter based on team mentions"}
+          --updated: {value: any, description: "Filter on last updated at date"}
+          --visibility: {value: any, description: "Filter based on repository visibility: {public|private|internal}"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+        args: any
+      prs:
+        description: Search for pull requests
+        args: any
+      commits:
+        description: Search for commits
+        args: any
+      code:
+        description: Search within code
+        args: any
+  codespace:
+    description: Connect to and manage codespaces
+    commands:
+      list:
+        description: List codespaces
+        flags:
+          -L: {value: any, description: "Maximum number of codespaces to list"}
+          --limit: {value: any, description: "Maximum number of codespaces to list"}
+          --json: {value: any, description: "Output JSON with specified fields"}
+          -o: {value: any, description: "List codespaces for an organization"}
+          --org: {value: any, description: "List codespaces for an organization"}
+          -u: {value: any, description: "List codespaces for a user in an organization"}
+          --user: {value: any, description: "List codespaces for a user in an organization"}
+      create:
+        description: Create a codespace
+        flags:
+          -b: {value: any, description: "Branch to develop against"}
+          --branch: {value: any, description: "Branch to develop against"}
+          -d: {value: any, description: "Display name for the codespace"}
+          --display-name: {value: any, description: "Display name for the codespace"}
+          --idle-timeout: {value: any, description: "Allowed inactivity before codespace is stopped"}
+          -l: {value: any, description: "Location: {EastUs|SouthEastAsia|WestEurope|WestUs2}"}
+          --location: {value: any, description: "Location"}
+          -m: {value: any, description: "Machine type to use"}
+          --machine: {value: any, description: "Machine type to use"}
+          --retention-period: {value: any, description: "Allowed time after shutting down before the codespace is automatically deleted"}
+          -s: {description: "Skip prompts, use defaults or specified values"}
+          --skip-confirmation: {description: "Skip prompts, use defaults or specified values"}
+          --status: {description: "Show status of post-create command and dotfiles"}
+          -w: {description: "Open in browser instead of waiting for the codespace to start"}
+          --web: {description: "Open in browser instead of waiting for the codespace to start"}
+      delete:
+        description: Delete a codespace
+        flags:
+          --all: {description: "Delete all codespaces"}
+          -d: {value: any, description: "Only delete codespaces that have been inactive for at least N days"}
+          --days: {value: any, description: "Only delete codespaces that have been inactive for at least N days"}
+          -f: {description: "Skip confirmation for codespaces that have unsaved changes"}
+          --force: {description: "Skip confirmation for codespaces that have unsaved changes"}
+          -o: {value: any, description: "The login handle of the organization to delete codespaces for"}
+          --org: {value: any, description: "The login handle of the organization to delete codespaces for"}
+          -u: {value: any, description: "The username to delete codespaces for"}
+          --user: {value: any, description: "The username to delete codespaces for"}
+      view:
+        description: View details about a codespace
+        flags:
+          --json: {value: any, description: "Output JSON with specified fields"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+      ssh:
+        description: SSH into a codespace
+        flags:
+          -d: {description: "Log debug data to a file"}
+          --debug: {description: "Log debug data to a file"}
+          --debug-file: {value: file, description: "Path of the file log to"}
+          --profile: {value: any, description: "Name of the SSH profile to use"}
+          --server-port: {value: any, description: "SSH server port number (0 => pick random port)"}
+          -c: {value: any, description: "Codespace name"}
+          --codespace: {value: any, description: "Codespace name"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+      cp:
+        description: Copy files between local and remote file systems
+        flags:
+          -e: {description: "Expand remote file names on remote shell"}
+          --expand: {description: "Expand remote file names on remote shell"}
+          -r: {description: "Recursively copy directories"}
+          --recursive: {description: "Recursively copy directories"}
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+        args: file
+      ports:
+        description: List ports in a codespace
+        flags:
+          --json: {value: any, description: "Output JSON with specified fields"}
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+      edit:
+        description: Edit a codespace
+        flags:
+          -d: {value: any, description: "Display name"}
+          --display-name: {value: any, description: "Display name"}
+          -m: {value: any, description: "Machine type to use"}
+          --machine: {value: any, description: "Machine type to use"}
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+      stop:
+        description: Stop a running codespace
+        flags:
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+          -o: {value: any, description: "The login handle of the organization to stop codespaces for"}
+          --org: {value: any, description: "The login handle of the organization to stop codespaces for"}
+          -u: {value: any, description: "The username to stop codespaces for"}
+          --user: {value: any, description: "The username to stop codespaces for"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+      rebuild:
+        description: Rebuild a codespace
+        flags:
+          --full: {description: "Perform a full rebuild"}
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+      jupyter:
+        description: Open a codespace in JupyterLab
+        flags:
+          -c: {value: any, description: "Name of the codespace"}
+          --codespace: {value: any, description: "Name of the codespace"}
+        args:
+          exec: "gh codespace list --json name --jq '.[].name' 2>/dev/null"
+  browse:
+    description: Open the repository in the browser
+    flags:
+      -b: {value: any, description: "Branch to open"}
+      --branch: {value: any, description: "Branch to open"}
+      -c: {description: "Open the last commit"}
+      --commit: {description: "Open the last commit"}
+      -n: {description: "Print destination URL instead of opening browser"}
+      --no-browser: {description: "Print destination URL instead of opening browser"}
+      -p: {description: "Open the repository projects tab"}
+      --projects: {description: "Open the repository projects tab"}
+      -s: {description: "Open the repository settings"}
+      --settings: {description: "Open the repository settings"}
+      -w: {description: "Open the repository wiki"}
+      --wiki: {description: "Open the repository wiki"}
+      -R: {value: any, description: "Select another repository using the [HOST/]OWNER/REPO format"}
+      --repo: {value: any, description: "Select another repository using the [HOST/]OWNER/REPO format"}
+  completion:
+    description: Generate shell completion scripts
+    flags:
+      -s: {value: any, description: "Shell type: {bash|zsh|fish|powershell}"}
+      --shell: {value: any, description: "Shell type: {bash|zsh|fish|powershell}"}
+  status:
+    description: Print information about relevant issues, pull requests, and notifications
+    flags:
+      -e: {value: any, description: "Exclude a repository from status"}
+      --exclude: {value: any, description: "Exclude a repository from status"}
+      -o: {value: any, description: "Show status for an organization"}
+      --org: {value: any, description: "Show status for an organization"}
+  api:
+    description: Make an authenticated GitHub API request
+    flags:
+      --cache: {value: any, description: "Cache the response, e.g. \"3600s\", \"60m\", \"1h\""}
+      -F: {value: any, description: "Add a parameter of inferred type (key=value)"}
+      --field: {value: any, description: "Add a parameter of inferred type (key=value)"}
+      -H: {value: any, description: "Add a HTTP request header in key:value format"}
+      --header: {value: any, description: "Add a HTTP request header in key:value format"}
+      --hostname: {value: any, description: "The GitHub hostname for the request"}
+      -i: {description: "Include HTTP response status line and headers in the output"}
+      --include: {description: "Include HTTP response status line and headers in the output"}
+      --input: {value: file, description: "The file to use as body for the HTTP request"}
+      -q: {value: any, description: "Query to select values from the response using jq syntax"}
+      --jq: {value: any, description: "Query to select values from the response using jq syntax"}
+      -X: {value: any, description: "The HTTP method for the request"}
+      --method: {value: any, description: "The HTTP method for the request"}
+      --paginate: {description: "Make additional HTTP requests to fetch all pages of results"}
+      --preview: {value: any, description: "GitHub API preview names to request (without the \"-preview\" suffix)"}
+      -f: {value: any, description: "Add a string parameter in key=value format"}
+      --raw-field: {value: any, description: "Add a string parameter in key=value format"}
+      --silent: {description: "Do not print the response body"}
+      -t: {value: any, description: "Format JSON output using a Go template; see \"gh help formatting\""}
+      --template: {value: any, description: "Format JSON output using a Go template"}
+      --verbose: {description: "Include full HTTP request and response in the output"}
+    args: any

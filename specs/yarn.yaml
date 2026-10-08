@@ -1,0 +1,243 @@
+description: Fast, reliable, and secure dependency management
+flags:
+  --verbose: {description: "Output verbose messages on internal operations"}
+  --json: {description: "Format Yarn log messages as lines of JSON"}
+  --help: {description: "Output usage information"}
+  -h: {description: "Output usage information"}
+  --no-lockfile: {description: "Don't read or generate a lockfile"}
+  --pure-lockfile: {description: "Don't generate a lockfile"}
+  --frozen-lockfile: {description: "Don't generate a lockfile and fail if an update is needed"}
+  --offline: {description: "Run with preferring offline (requires cached packages)"}
+  --prefer-offline: {description: "Use local cache where possible"}
+  --cwd:
+    value: dir
+    description: "Working directory to use"
+  --modules-folder:
+    value: dir
+    description: "Rather than installing modules into the node_modules folder relative to the cwd, output them here"
+  --registry:
+    value: any
+    description: "Override configuration registry"
+  --network-timeout:
+    value: any
+    description: "TCP timeout for network requests"
+  --network-concurrency:
+    value: any
+    description: "Maximum number of concurrent network requests"
+  --non-interactive: {description: "Do not show interactive prompts"}
+  --scripts-prepend-node-path: {description: "Prepend the node executable dir to the PATH in scripts"}
+commands:
+  add:
+    description: Install a package and add it to package.json
+    flags:
+      -D: {description: "Save package to devDependencies"}
+      --dev: {description: "Save package to devDependencies"}
+      -P: {description: "Save package to peerDependencies"}
+      --peer: {description: "Save package to peerDependencies"}
+      -O: {description: "Save package to optionalDependencies"}
+      --optional: {description: "Save package to optionalDependencies"}
+      -E: {description: "Install exact version"}
+      --exact: {description: "Install exact version"}
+      -T: {description: "Install tilde version"}
+      --tilde: {description: "Install tilde version"}
+      --audit: {description: "Run vulnerability audit on installed packages"}
+    args: any
+  remove:
+    description: Remove a package and update package.json
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  upgrade:
+    description: Upgrade packages to their latest version
+    flags:
+      -L: {description: "List upgradeable packages"}
+      --latest: {description: "List upgradeable packages"}
+      -E: {description: "Install exact version"}
+      --exact: {description: "Install exact version"}
+      -T: {description: "Install tilde version"}
+      --tilde: {description: "Install tilde version"}
+      -P: {value: any, description: "Upgrade packages with matching prefix (semver)"}
+      --pattern: {value: any, description: "Upgrade packages with matching prefix (semver)"}
+      -S: {value: any, description: "Upgrade to specific semver range"}
+      --scope: {value: any, description: "Upgrade to specific semver range"}
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  install:
+    description: Install all dependencies
+    aliases: [i]
+    flags:
+      --flat: {description: "Only allow one version of a package"}
+      --force: {description: "Force reinstall all packages"}
+      --har: {description: "Save HTTP Archive with the network requests performed during the installation"}
+      --ignore-scripts: {description: "Don't run lifecycle scripts"}
+      --modules-folder: {value: dir, description: "Rather than installing modules into the node_modules folder, output them here"}
+      --no-lockfile: {description: "Don't read or generate a lockfile"}
+      --production: {description: "Do not install dev packages if the NODE_ENV is production"}
+      --pure-lockfile: {description: "Don't generate a lockfile"}
+      --frozen-lockfile: {description: "Don't generate a lockfile and fail if an update is needed"}
+      --silent: {description: "Skip Yarn console logs, other types of logs (script output) will be printed"}
+      --audit: {description: "Run vulnerability audit on installed packages"}
+      --no-progress: {description: "Disable progress bar"}
+      --check-files: {description: "Verify files in node_modules have not been tampered with"}
+  run:
+    description: Run a defined package script
+    flags:
+      --inspect: {description: "To use the Node.js inspector, active when run with node"}
+      --inspect-brk: {description: "To use the Node.js inspector, active when run with node, and break before code starts"}
+    args:
+      exec: "node -e 'try{const s=require(\"./package.json\").scripts||{};Object.keys(s).forEach(k=>console.log(k))}catch(e){}'"
+  test:
+    description: Run the test script
+    aliases: [t]
+  build:
+    description: Run the build script
+  start:
+    description: Run the start script
+  init:
+    description: Interactively creates or updates a package.json file
+    flags:
+      -y: {description: "Skip questions and use default values"}
+      --yes: {description: "Skip questions and use default values"}
+      -p: {description: "Publish setup"}
+      --private: {description: "Publish setup"}
+  publish:
+    description: Publish a package to the npm registry
+    flags:
+      --new-version: {value: any, description: "New version to publish"}
+      --message: {value: any, description: "Commit message for the version"}
+      --no-git-tag-version: {description: "Do not create a git tag for the new version"}
+      --access: {value: any, description: "Public or restricted access for scoped packages"}
+      --tag: {value: any, description: "Tag"}
+  pack:
+    description: Create a compressed gzip archive of package dependencies
+    flags:
+      -f: {value: any, description: "Filename for the output file"}
+      --filename: {value: any, description: "Filename for the output file"}
+  link:
+    description: Symlink a package folder during development
+    args: any
+  unlink:
+    description: Unlink a previously created symlink for a package
+    args: any
+  cache:
+    description: Manage the user directory of cached modules
+    commands:
+      list:
+        description: Print out every cached package
+        flags:
+          --pattern: {value: any, description: "Filter cached packages by pattern"}
+      clean:
+        description: Clear the global cache
+        aliases: [dir]
+      dir:
+        description: Print the directory where yarn's global cache is stored
+  config:
+    description: Manage the yarn configuration files
+    commands:
+      get:
+        description: Print the value of a given key
+        args: any
+      set:
+        description: Sets the configuration key to a given value
+        flags:
+          -g: {description: "Set global config"}
+          --global: {description: "Set global config"}
+        args: any
+      delete:
+        description: Deletes the configuration key from the config file
+        args: any
+      list:
+        description: Print all configuration settings
+  global:
+    description: Install packages globally on your operating system
+    commands:
+      add:
+        description: Install packages globally
+        args: any
+      remove:
+        description: Remove global packages
+        args: any
+      upgrade:
+        description: Upgrade globally installed packages
+        args: any
+      ls:
+        description: List globally installed packages
+      bin:
+        description: Displays the location of the yarn bin folder
+  info:
+    description: Show information about a package
+    args: any
+  list:
+    description: List installed packages
+    aliases: [ls]
+    flags:
+      --depth: {value: any, description: "Limit the depth of the shown dependencies"}
+      --pattern: {value: any, description: "Filter dependencies by pattern"}
+  login:
+    description: Store registry username and email
+  logout:
+    description: Clear registry username and email
+  outdated:
+    description: Check for outdated package dependencies
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  why:
+    description: Show information about why a package is installed
+    args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
+  workspace:
+    description: Run a command within a single workspace
+    args: {exec: "yarn -s workspaces info 2>/dev/null | node -e 'let s=\"\";process.stdin.on(\"data\",d=>s+=d).on(\"end\",()=>{try{for(const k of Object.keys(JSON.parse(s)))console.log(k)}catch(e){}})'"}
+  workspaces:
+    description: Show information about workspaces
+    commands:
+      info:
+        description: Display the workspace dependency tree
+      run:
+        description: Run a command in each workspace
+        args: any
+  audit:
+    description: Perform a vulnerability audit against installed packages
+    flags:
+      --verbose: {description: "Output verbose message"}
+      --json: {description: "Format Yarn log messages as lines of JSON"}
+      --level: {value: any, description: "Only print advisories with severity greater than or equal to one of the following: info|low|moderate|high|critical"}
+      --groups: {value: any, description: "Only audit dependencies from listed groups"}
+  licenses:
+    description: List licenses for installed packages
+    commands:
+      list:
+        description: List licenses for installed packages
+      generate-disclaimer:
+        description: Generate disclaimer of all packages' licenses
+  generate-lock-entry:
+    description: Generates a lock file entry
+  import:
+    description: Generates yarn.lock from an npm package-lock.json file
+  policies:
+    description: Defines project-wide policies for your project
+    commands:
+      set-version:
+        description: Forces the version of Yarn to use
+        args: any
+  self-update:
+    description: Updates Yarn to the latest version
+  versions:
+    description: Display version information of currently installed Yarn, Node.js, and its dependencies
+  bin:
+    description: Displays the location of the yarn bin folder
+    args: any
+  check:
+    description: Verify that versions of the package dependencies in the current project's package.json match those in yarn's lock file
+    flags:
+      --integrity: {description: "Verifies that versions and hashed values of the package contents match"}
+      --verify-tree: {description: "Recursively verifies the dependency tree of the installed modules"}
+  create:
+    description: Creates new projects from any create-* starter kits
+    args: any
+  dedupe:
+    description: Deduplicates dependencies by checking all packages that meet the requirements
+  exec:
+    description: Executing a shell command with locally installed executables in PATH
+    args: any
+  node:
+    description: Runs node with the same version that would be used by yarn
+    args: any
+  dlx:
+    description: Run a package in a temporary, ephemeral environment
+    args: any

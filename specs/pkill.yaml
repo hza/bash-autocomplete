@@ -1,0 +1,27 @@
+description: Signal processes by name
+flags:
+  -f: {description: "Match against the full command line"}
+  -l: {description: "List signal names"}
+  -n: {description: "Select the most recently started process"}
+  -o: {description: "Select the oldest (least recently started) process"}
+  -P:
+    value: any
+    description: "Only match processes whose parent process ID is listed"
+  -u:
+    value:
+      exec: "dscl . -list /Users 2>/dev/null | grep -v '^_'"
+    description: "Only match processes whose real user ID is listed"
+  -x: {description: "Require an exact match of the process name"}
+  -signal:
+    value: any
+    description: "Signal to send (e.g. -KILL, -TERM)"
+  -HUP: {description: "Send SIGHUP"}
+  -INT: {description: "Send SIGINT"}
+  -KILL: {description: "Send SIGKILL"}
+  -TERM: {description: "Send SIGTERM"}
+  -STOP: {description: "Send SIGSTOP"}
+  -CONT: {description: "Send SIGCONT"}
+  -USR1: {description: "Send SIGUSR1"}
+  -USR2: {description: "Send SIGUSR2"}
+args:
+  exec: "ps -eo comm | tail -n +2 | sort -u"
