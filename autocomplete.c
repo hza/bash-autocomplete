@@ -787,10 +787,15 @@ static int valid_name(const char *s) {
     return !*p && *s && s[0] != '.' && s[0] != '-';
 }
 
+/* After specs were added or removed: the shell must re-register names. */
+static void reload_hint(void) {
+    printf("\nRun 'eval \"$(autocomplete bash)\"' (or open a new shell) to use it now.\n\n");
+}
+
 /* `autocomplete alias --rm NAME...`: remove alias symlinks (never real specs). */
 static int alias_rm(const char *dir, int argc, char **argv) {
     char path[PATH_MAX], target[PATH_MAX];
-    int i, rc = 0;
+    int i, rc = 0, removed = 0;
     for (i = 0; i < argc; i++) {
         if (!valid_name(argv[i])) {
             fprintf(stderr, "%s: not a command name\n", argv[i]);
@@ -806,8 +811,10 @@ static int alias_rm(const char *dir, int argc, char **argv) {
             rc = 1;
         } else {
             printf("removed %s\n", path);
+            removed++;
         }
     }
+    if (removed) reload_hint();
     return rc;
 }
 
@@ -909,8 +916,7 @@ static int alias_cmds(int argc, char **argv) {
             made++;
         }
     }
-    if (made)
-        printf("\nRun 'eval \"$(autocomplete bash)\"' (or open a new shell) to use it now.\n\n");
+    if (made) reload_hint();
     return rc;
 }
 
@@ -918,11 +924,12 @@ static int alias_cmds(int argc, char **argv) {
  * from the man page. */
 static int man_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX];
-    int i, force = 0, rc = 0;
+    int i, force = 0, rc = 0, made = 0;
     if (!getenv("HOME")) {
         fprintf(stderr, "man: HOME is not set\n");
         return 1;
     }
+    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
     mkdirs(dir);
     for (i = 0; i < argc; i++)
         if (!strcmp(argv[i], "--force")) force = 1;
@@ -954,9 +961,11 @@ static int man_cmds(int argc, char **argv) {
             yaml_write(f, n);
             fclose(f);
             puts(path);
+            made++;
         }
         yaml_free(n);
     }
+    if (made) reload_hint();
     return rc;
 }
 
