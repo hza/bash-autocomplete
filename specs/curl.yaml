@@ -340,3 +340,9 @@ flags:
   "--write-out": {description: "Output FORMAT after completion", value: any, show: always}
   "--xattr": {description: "Store metadata in extended file attributes"}
 args: any
+examples:
+  - "curl https://example.com"
+  - "curl -O https://example.com/file.zip"
+  - "curl -fsSL -o out.html https://example.com"
+  - "curl -X POST -H 'Content-Type: application/json' -d '{\"a\":1}' https://example.com/api"
+  - "curl -u user:pass https://example.com"

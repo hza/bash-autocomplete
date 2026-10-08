@@ -557,9 +557,32 @@ static int dwidth(const char *s) {
     return w;
 }
 
+/* On an empty word, the spec's "examples" (command lines) are listed as
+ * display-only "👀 exampleN" entries, description = the line. They share
+ * "👀 example", so when nothing else is listed a "…" entry (first byte
+ * differs) is added to keep bash from inserting that prefix. */
+static const ynode *g_examples;
+
+static void add_examples(void) {
+    const ynode *e;
+    int n = 0, others = g_ncands;
+    char name[64];
+    if (*g_cur || !g_examples || g_examples->type != Y_ARR) return;
+    g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
+    g_noesc = 1;
+    for (e = g_examples->child; e; e = e->next)
+        if (e->type == Y_STR) {
+            snprintf(name, sizeof name, "👀\xc2\xa0" "example\xc2\xa0" "%d", ++n); /* U+00A0: see collapse_vars */
+            emit_desc(name, 0, e->str);
+        }
+    if (n && !others) emit_desc("…", 0, "type an argument");
+    g_noesc = 0;
+}
+
 static void flush(void) {
     int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
     collapse_vars();
+    add_examples();
     collapse_flags();
     merge_pairs();
     group_flags();
@@ -1071,6 +1094,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     emit_commands(yaml_get(c, "commands"));
+    g_examples = yaml_get(c, "examples");
     v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
