@@ -1,8 +1,9 @@
-# bash 3.2 for MacOS autocomplete
+# autocomplete: fast tab completion for macOS bash 3.2
 
-**Fast tab completion for the stock macOS bash 3.2 (`/bin/bash`), written in C.** Completes
-docker, git, kubectl, make, mvn, npm and more, with no Homebrew bash, no `bash-completion`
-package and no shell scripts.
+**Fast tab completion for the stock macOS bash 3.2 (`/bin/bash`), written in C.** A
+lightweight alternative to bash-completion that completes docker, git, kubectl, make, mvn,
+npm and more, with no Homebrew bash, no `bash-completion` package, no switch to zsh and no
+shell scripts.
 
 macOS still ships bash 3.2 from 2007, and most modern completion tools have dropped support
 for it. This project was built specifically for that bash. All completion logic runs in a
@@ -47,7 +48,7 @@ autocomplete works with the bash already on your Mac:
   - npm: `package.json` scripts and dependencies
   - mvn: profiles and modules from `pom.xml`, plugin goals for plugins the project uses
   - make: Makefile targets and variables, with descriptions from `## text` or the comment
-    above each target (honours `make -C dir` and `make -f file`)
+    above each target (honors `make -C dir` and `make -f file`)
   - killall: your running process names
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
@@ -62,12 +63,12 @@ autocomplete works with the bash already on your Mac:
 ## Requirements
 
 - macOS with the Xcode Command Line Tools (`xcode-select --install`) for `cc` and `make`.
-- bash 3.2 or newer.
+- bash 3.2 (the macOS `/bin/bash`) or any newer bash.
 
 ## Installation
 
 ```sh
-git clone <repo-url> autocomplete
+git clone https://github.com/hza/bash-autocomplete.git autocomplete
 cd autocomplete
 make install
 ```
@@ -167,3 +168,7 @@ make clean
 
 The code is plain C with no dependencies: `autocomplete.c` (engine), `yaml.c` (YAML
 reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
