@@ -13,13 +13,14 @@ commands:
   man:
     description: "Write a spec for a command from its man page"
     flags:
-      -f: {description: "Overwrite an existing spec"}
+      --force: {description: "Replace an existing CMD spec"}
     args: {exec: "compgen -c | sort -u"}
   alias:
     description: "Complete NAME like CMD (CMD NAME..., symlinks its spec)"
     flags:
-      -f: {description: "Overwrite an existing spec"}
+      --force: {description: "Replace an existing NAME spec"}
       --rm:
         description: "Remove aliases (NAME...)"
-        value: {exec: "cd ~/.config/autocomplete 2>/dev/null && for f in *.yaml; do [ -L \"$f\" ] && echo \"${f%.yaml}\"; done"}
+        value: {exec: "autocomplete alias --list | cut -d' ' -f1"}
+      --list: {description: "List aliases (NAME -> CMD)"}
     args: {exec: "autocomplete list"}

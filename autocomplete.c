@@ -811,20 +811,57 @@ static int alias_rm(const char *dir, int argc, char **argv) {
     return rc;
 }
 
-/* `autocomplete alias [-f] CMD NAME...`: symlink
+static int cmp_str(const void *a, const void *b) {
+    return strcmp(*(char *const *)a, *(char *const *)b);
+}
+
+/* `autocomplete alias --list`: print "NAME -> CMD" for each alias symlink,
+ * CMD being the target's file name without .yaml/.yml. */
+static int alias_list(const char *dir) {
+    char path[PATH_MAX], target[PATH_MAX], *names[4096], *base, *dot;
+    struct dirent *e;
+    size_t i, n = 0;
+    ssize_t len;
+    DIR *d = opendir(dir);
+    if (!d) return 0;
+    while ((e = readdir(d)) && n < sizeof names / sizeof *names) {
+        dot = strrchr(e->d_name, '.');
+        if (!dot || (strcmp(dot, ".yaml") && strcmp(dot, ".yml"))) continue;
+        snprintf(path, sizeof path, "%s/%s", dir, e->d_name);
+        if (readlink(path, target, 1) >= 0) names[n++] = strdup(e->d_name);
+    }
+    closedir(d);
+    qsort(names, n, sizeof *names, cmp_str);
+    for (i = 0; i < n; i++) {
+        snprintf(path, sizeof path, "%s/%s", dir, names[i]);
+        len = readlink(path, target, sizeof target - 1);
+        target[len < 0 ? 0 : len] = 0;
+        base = strrchr(target, '/');
+        base = base ? base + 1 : target;
+        if ((dot = strrchr(base, '.'))) *dot = 0;
+        *strrchr(names[i], '.') = 0;
+        printf("%s -> %s\n", names[i], base);
+        free(names[i]);
+    }
+    return 0;
+}
+
+/* `autocomplete alias [--force] CMD NAME...`: symlink
  * ~/.config/autocomplete/NAME.yaml to CMD's spec for each NAME. */
 static int alias_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX], target[PATH_MAX], abs[PATH_MAX];
     const char *cmd = NULL;
     int i, force = 0, rc = 0, n = 0, made = 0;
     int rm = argc >= 1 && !strcmp(argv[0], "--rm");
-    for (i = 0; i < argc && !rm; i++)
-        if (!strcmp(argv[i], "-f")) force = 1;
+    int list = argc == 1 && !strcmp(argv[0], "--list");
+    for (i = 0; i < argc && !rm && !list; i++)
+        if (!strcmp(argv[i], "--force")) force = 1;
         else if (!cmd) cmd = argv[i];
         else n++;
-    if (rm ? argc < 2 : !n) {
-        fprintf(stderr, "usage: autocomplete alias [-f] CMD NAME...\n"
-                        "       autocomplete alias --rm NAME...\n");
+    if (!list && (rm ? argc < 2 : !n)) {
+        fprintf(stderr, "usage: autocomplete alias [--force] CMD NAME...\n"
+                        "       autocomplete alias --rm NAME...\n"
+                        "       autocomplete alias --list\n");
         return 1;
     }
     if (!getenv("HOME")) {
@@ -832,6 +869,7 @@ static int alias_cmds(int argc, char **argv) {
         return 1;
     }
     snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
+    if (list) return alias_list(dir);
     if (rm) return alias_rm(dir, argc - 1, argv + 1);
     if (!valid_name(cmd)) {
         fprintf(stderr, "%s: not a command name\n", cmd);
@@ -843,7 +881,7 @@ static int alias_cmds(int argc, char **argv) {
     }
     mkdirs(dir);
     for (i = 0; i < argc; i++) {
-        if (!strcmp(argv[i], "-f") || argv[i] == cmd) continue;
+        if (!strcmp(argv[i], "--force") || argv[i] == cmd) continue;
         if (!valid_name(argv[i])) {
             fprintf(stderr, "%s: not a command name\n", argv[i]);
             rc = 1;
@@ -857,7 +895,7 @@ static int alias_cmds(int argc, char **argv) {
         }
         if (access(path, F_OK) == 0 || readlink(path, target, 1) >= 0) {
             if (!force) {
-                fprintf(stderr, "%s: exists (use -f to overwrite)\n", path);
+                fprintf(stderr, "%s: exists (use --force to overwrite)\n", path);
                 rc = 1;
                 continue;
             }
@@ -876,7 +914,7 @@ static int alias_cmds(int argc, char **argv) {
     return rc;
 }
 
-/* `autocomplete man [-f] CMD...`: write ~/.config/autocomplete/CMD.yaml
+/* `autocomplete man [--force] CMD...`: write ~/.config/autocomplete/CMD.yaml
  * from the man page. */
 static int man_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX];
@@ -887,11 +925,11 @@ static int man_cmds(int argc, char **argv) {
     }
     mkdirs(dir);
     for (i = 0; i < argc; i++)
-        if (!strcmp(argv[i], "-f")) force = 1;
+        if (!strcmp(argv[i], "--force")) force = 1;
     for (i = 0; i < argc; i++) {
         ynode *n;
         FILE *f;
-        if (!strcmp(argv[i], "-f")) continue;
+        if (!strcmp(argv[i], "--force")) continue;
         if (!valid_name(argv[i])) {
             fprintf(stderr, "%s: not a command name\n", argv[i]);
             rc = 1;
@@ -899,7 +937,7 @@ static int man_cmds(int argc, char **argv) {
         }
         snprintf(path, sizeof path, "%s/%s.yaml", dir, argv[i]);
         if (!force && access(path, F_OK) == 0) {
-            fprintf(stderr, "%s: exists (use -f to overwrite)\n", path);
+            fprintf(stderr, "%s: exists (use --force to overwrite)\n", path);
             rc = 1;
             continue;
         }
@@ -1027,9 +1065,10 @@ int main(int argc, char **argv) {
             "       autocomplete list              list available specs\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
-            "       autocomplete man [-f] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
-            "       autocomplete alias [-f] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
+            "       autocomplete man [--force] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
+            "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
+            "       autocomplete alias --list          list aliases (NAME -> CMD)\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
 }

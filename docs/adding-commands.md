@@ -37,10 +37,11 @@ If you have `alias dk=docker`, give `dk` the docker completions with:
 autocomplete alias docker dk   # ~/.config/autocomplete/dk.yaml -> docker's spec
 ```
 
-Then re-run the `eval` step. `-f` replaces an existing `dk` spec. Since it's a symlink, edits
+Then re-run the `eval` step. `--force` replaces an existing `dk` spec. Since it's a symlink, edits
 to the docker spec apply to `dk` too.
 
-To remove it: `autocomplete alias --rm dk` (TAB after `--rm` lists your aliases). Only
+`autocomplete alias --list` shows your aliases (`dk -> docker`). To remove one:
+`autocomplete alias --rm dk` (TAB after `--rm` lists your aliases). Only
 symlinks are removed, never real specs.
 
 See [Writing specs](writing-specs.md) for the full format: all value types, supported YAML

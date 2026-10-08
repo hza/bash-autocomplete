@@ -132,9 +132,10 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete list` | List commands that have a spec. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
-| `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
-| `autocomplete alias [-f] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
+| `autocomplete man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
+| `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
+| `autocomplete alias --list` | List aliases as `NAME -> CMD`. |
 
 ## FAQ
 
@@ -225,10 +226,11 @@ If you have `alias dk=docker`, give `dk` the docker completions with:
 autocomplete alias docker dk   # ~/.config/autocomplete/dk.yaml -> docker's spec
 ```
 
-Then re-run the `eval` step. `-f` replaces an existing `dk` spec. Since it's a symlink, edits
+Then re-run the `eval` step. `--force` replaces an existing `dk` spec. Since it's a symlink, edits
 to the docker spec apply to `dk` too.
 
-To remove it: `autocomplete alias --rm dk` (TAB after `--rm` lists your aliases). Only
+`autocomplete alias --list` shows your aliases (`dk -> docker`). To remove one:
+`autocomplete alias --rm dk` (TAB after `--rm` lists your aliases). Only
 symlinks are removed, never real specs.
 
 See [Writing specs](writing-specs.md) for the full format: all value types, supported YAML
@@ -406,7 +408,7 @@ descriptions, so you don't have to write a spec by hand.
 
 ```sh
 autocomplete man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
-autocomplete man -f ps         # overwrite an existing file
+autocomplete man --force ps         # overwrite an existing file
 ```
 
 The result is an ordinary spec. Open it and fix anything the parser got wrong, or add
@@ -419,7 +421,7 @@ live values (see [Writing specs](writing-specs.md)). For example, change `-p`'s 
 ```
 
 Open a new terminal (or run `eval "$(autocomplete bash)"` again) so the new command is
-registered. After a system update changes a man page, run `autocomplete man -f CMD` to
+registered. After a system update changes a man page, run `autocomplete man --force CMD` to
 regenerate the spec (this overwrites your edits).
 
 ## What gets extracted

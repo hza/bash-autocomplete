@@ -6,7 +6,7 @@ descriptions, so you don't have to write a spec by hand.
 
 ```sh
 autocomplete man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
-autocomplete man -f ps         # overwrite an existing file
+autocomplete man --force ps         # overwrite an existing file
 ```
 
 The result is an ordinary spec. Open it and fix anything the parser got wrong, or add
@@ -19,7 +19,7 @@ live values (see [Writing specs](writing-specs.md)). For example, change `-p`'s 
 ```
 
 Open a new terminal (or run `eval "$(autocomplete bash)"` again) so the new command is
-registered. After a system update changes a man page, run `autocomplete man -f CMD` to
+registered. After a system update changes a man page, run `autocomplete man --force CMD` to
 regenerate the spec (this overwrites your edits).
 
 ## What gets extracted
