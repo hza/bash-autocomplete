@@ -1,0 +1,71 @@
+description: "Visual Studio Code"
+flags:
+  "-d": {description: "Compare two files with each other", value: file}
+  "--diff": {description: "Compare two files with each other", value: file}
+  "-m": {description: "Three-way merge: path1 path2 base result", value: file}
+  "--merge": {description: "Three-way merge: path1 path2 base result", value: file}
+  "-a": {description: "Add folder(s) to the last active window", value: dir}
+  "--add": {description: "Add folder(s) to the last active window", value: dir}
+  "--remove": {description: "Remove folder(s) from the last active window", value: dir}
+  "-g": {description: "Open a file at the path on the specified line and character position", value: file}
+  "--goto": {description: "Open a file at the path on the specified line and character position", value: file}
+  "-n": {description: "Force to open a new window"}
+  "--new-window": {description: "Force to open a new window"}
+  "-r": {description: "Force to open a file or folder in an already opened window"}
+  "--reuse-window": {description: "Force to open a file or folder in an already opened window"}
+  "--agents": {description: "Opens the agents window"}
+  "-w": {description: "Wait for the files to be closed before returning"}
+  "--wait": {description: "Wait for the files to be closed before returning"}
+  "--locale": {description: "The locale to use (e.g. en-US or zh-TW)", value: any}
+  "--user-data-dir": {description: "Specifies the directory that user data is kept in", value: dir}
+  "--profile": {description: "Opens the provided folder or workspace with the given profile and...", value: any}
+  "-h": {description: "Print usage"}
+  "--help": {description: "Print usage"}
+  "--extensions-dir": {description: "Set the root path for extensions", value: dir}
+  "--list-extensions": {description: "List the installed extensions"}
+  "--show-versions": {description: "Show versions of installed extensions, when using --list-extensions"}
+  "--category": {description: "Filters installed extensions by provided category, when using...", value: any}
+  "--install-extension":
+    description: "Installs or updates an extension"
+    value: ["file", {"exec": "ls ~/.vscode/extensions 2>/dev/null | grep -v '^extensions.json$' | sed 's/-[0-9].*//' | sort -u"}]
+  "--pre-release": {description: "Installs the pre-release version of the extension, when using..."}
+  "--uninstall-extension":
+    description: "Uninstalls an extension"
+    value: {"exec": "ls ~/.vscode/extensions 2>/dev/null | grep -v '^extensions.json$' | sed 's/-[0-9].*//' | sort -u"}
+  "--update-extensions": {description: "Update the installed extensions"}
+  "--enable-proposed-api":
+    description: "Enables proposed API features for extensions"
+    value: {"exec": "ls ~/.vscode/extensions 2>/dev/null | grep -v '^extensions.json$' | sed 's/-[0-9].*//' | sort -u"}
+  "--add-mcp": {description: "Add an MCP server definition (JSON) to the user profile", value: any}
+  "-v": {description: "Print version"}
+  "--version": {description: "Print version"}
+  "--verbose": {description: "Print verbose output (implies --wait)"}
+  "--log":
+    description: "Log level to use"
+    value: {"exec": "printf '%s\\n' critical error warn info debug trace off"}
+  "-s": {description: "Print process usage and diagnostics information"}
+  "--status": {description: "Print process usage and diagnostics information"}
+  "--prof-startup": {description: "Run CPU profiler during startup"}
+  "--disable-extensions": {description: "Disable all installed extensions"}
+  "--disable-extension":
+    description: "Disable the provided extension"
+    value: {"exec": "ls ~/.vscode/extensions 2>/dev/null | grep -v '^extensions.json$' | sed 's/-[0-9].*//' | sort -u"}
+  "--sync":
+    description: "Turn sync on or off"
+    value: {"exec": "printf '%s\\n' on off"}
+  "--inspect-extensions": {description: "Allow debugging and profiling of extensions", value: any}
+  "--inspect-brk-extensions": {description: "Allow debugging and profiling of extensions with the extension...", value: any}
+  "--disable-lcd-text": {description: "Disable LCD font rendering"}
+  "--disable-gpu": {description: "Disable GPU hardware acceleration"}
+  "--disable-chromium-sandbox": {description: "Use this option only when there is requirement to launch the..."}
+  "--locate-shell-integration-path":
+    description: "Print the path to a terminal shell integration script"
+    value: {"exec": "printf '%s\\n' bash pwsh zsh fish"}
+  "--telemetry": {description: "Shows all telemetry events which VS code collects"}
+  "--transient": {description: "Run with temporary data and extension directories, as if launched..."}
+args: ["file", "dir"]
+commands:
+  chat: {"description": "Run a prompt in a chat session in the current directory", "args": "any"}
+  serve-web: {"description": "Run a server that displays the editor UI in browsers"}
+  agent: {"description": "Start and interact with AI agent hosts"}
+  tunnel: {"description": "Make this machine accessible from vscode.dev"}

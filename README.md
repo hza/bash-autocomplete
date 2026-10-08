@@ -42,8 +42,9 @@ autocomplete works with the bash already on your Mac:
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
-  **tmux**, **kill**, **pkill**, **killall**, macOS **open**, **launchctl**, **defaults**,
-  **diskutil**, and `autocomplete` itself.
+  **tmux**, **kill**, **pkill**, **killall**, **jq**, **curl**, **wget**, **code** (VS Code),
+  macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
+  **pbpaste**, **sips**, **screencapture**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
   that command's own completion (`sudo git chec<TAB>` → `checkout`).
 - Live values from your environment:
@@ -54,7 +55,10 @@ autocomplete works with the bash already on your Mac:
   - mvn: profiles and modules from `pom.xml`, plugin goals for plugins the project uses
   - make: Makefile targets and variables, with descriptions from `## text` or the comment
     above each target (honors `make -C dir` and `make -f file`)
-  - killall, pkill: your running process names; kill: PIDs with process names
+  - killall, pkill: your running process names; kill, `caffeinate -w`: PIDs with process names
+  - say: voices with language and sample text (`say -v Ed<TAB>`), audio devices
+  - code: installed extensions for `--uninstall-extension`/`--disable-extension`
+  - sips: property keys with types for `-g`/`-s`; screencapture: app bundle ids for `-B`
   - ssh, scp: hosts from `~/.ssh/config` and `known_hosts` (`scp gr<TAB>` → `grafana:`)
   - brew: installed formulae and services
   - gh: pull requests, issues, workflow runs, gists, labels, releases, repos

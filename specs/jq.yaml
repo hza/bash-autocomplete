@@ -1,0 +1,46 @@
+description: "Command-line JSON processor"
+flags:
+  -n: {description: "Use null as the single input value"}
+  --null-input: {description: "Use null as the single input value"}
+  -R: {description: "Read each line as a string, not JSON"}
+  --raw-input: {description: "Read each line as a string, not JSON"}
+  -s: {description: "Read all inputs into one array"}
+  --slurp: {description: "Read all inputs into one array"}
+  -c: {description: "Compact output"}
+  --compact-output: {description: "Compact output"}
+  -r: {description: "Output raw strings, no quotes"}
+  --raw-output: {description: "Output raw strings, no quotes"}
+  --raw-output0: {description: "Raw output, NUL after each output"}
+  -j: {description: "Raw output without newlines"}
+  --join-output: {description: "Raw output without newlines"}
+  -a: {description: "ASCII-only output"}
+  --ascii-output: {description: "ASCII-only output"}
+  -S: {description: "Sort object keys"}
+  --sort-keys: {description: "Sort object keys"}
+  -C: {description: "Colorize output"}
+  --color-output: {description: "Colorize output"}
+  -M: {description: "Disable colored output"}
+  --monochrome-output: {description: "Disable colored output"}
+  --tab: {description: "Indent with tabs"}
+  --indent: {value: any, description: "Indent with n spaces (max 7)"}
+  --unbuffered: {description: "Flush output after each output"}
+  --stream: {description: "Parse input in streaming fashion"}
+  --stream-errors: {description: "Stream and report parse errors as arrays"}
+  --seq: {description: "Use application/json-seq"}
+  -f: {value: file, description: "Load filter from file"}
+  --from-file: {value: file, description: "Load filter from file"}
+  -L: {value: dir, description: "Search modules in directory"}
+  --arg: {value: any, description: "Set $name to string: name value"}
+  --argjson: {value: any, description: "Set $name to JSON: name value"}
+  --slurpfile: {value: any, description: "Set $name to JSON array from file: name file"}
+  --rawfile: {value: any, description: "Set $name to file contents: name file"}
+  --args: {description: "Remaining arguments are string values"}
+  --jsonargs: {description: "Remaining arguments are JSON values"}
+  -e: {description: "Exit status from last output"}
+  --exit-status: {description: "Exit status from last output"}
+  -V: {description: "Show the version"}
+  --version: {description: "Show the version"}
+  --build-configuration: {description: "Show build configuration"}
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+args: file

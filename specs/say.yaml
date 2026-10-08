@@ -1,0 +1,33 @@
+description: "Convert text to audible speech"
+flags:
+  -v:
+    value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
+    description: "Voice to use"
+  --voice:
+    value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
+    description: "Voice to use"
+  -r: {value: any, description: "Speech rate in words per minute"}
+  --rate: {value: any, description: "Speech rate in words per minute"}
+  -f: {value: file, description: "Read text from file ('-' for stdin)"}
+  --input-file: {value: file, description: "Read text from file ('-' for stdin)"}
+  -o: {value: file, description: "Write audio to file instead of speaking"}
+  --output-file: {value: file, description: "Write audio to file instead of speaking"}
+  -n: {value: any, description: "Send audio to a network service (name:port)"}
+  --network-send: {value: any, description: "Send audio to a network service (name:port)"}
+  -a:
+    value: {exec: "say -a '?' | sed -E 's/^ *([0-9]+) +(.*)$/\\1\t\\2/'"}
+    description: "Audio device to use"
+  --audio-device:
+    value: {exec: "say -a '?' | sed -E 's/^ *([0-9]+) +(.*)$/\\1\t\\2/'"}
+    description: "Audio device to use"
+  -i: {description: "Highlight words as they are spoken"}
+  --interactive: {description: "Highlight words as they are spoken"}
+  --progress: {description: "Show a progress meter"}
+  --file-format:
+    value: {exec: "say --file-format=? 2>&1 | sed -E 's/^([^ ]+) +(.*)$/\\1\t\\2/'"}
+    description: "Audio file format"
+  --data-format: {value: any, description: "Audio data format"}
+  --channels: {value: any, description: "Number of channels"}
+  --bit-rate: {value: any, description: "Bit rate for compressed formats"}
+  --quality: {value: any, description: "Converter quality level (0-127)"}
+args: any
