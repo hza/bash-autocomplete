@@ -403,7 +403,7 @@ static void collapse_flags(void) {
     }
     if (nlong) {
         snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
-        snprintf(text, sizeof text, "%s👀\u00a0--", g_cur);
+        snprintf(text, sizeof text, "%s👀   --", g_cur);
         emit_desc(text, 0, desc);
     }
     g_show = SHOW_DEFAULT;

@@ -11,10 +11,13 @@ descends into subcommands named on the line, and adds `show: always` to the
 matching flags. The file is edited in place line by line, so hand-written
 formatting is kept. Only adds; rerunning gives no diff.
 
-A spec without a top-level `examples:` also gets one from page CMD.md
+A spec without a top-level `examples:`, whose TAB would otherwise list
+nothing (no `commands`, `args` empty or `any`), also gets one from page CMD.md
 (common/ preferred over osx/): each example's command line, with `{{…}}`
 placeholders unwrapped (`[-L|--location]` and `GET|PUT|…` keep the first
-choice), and its description (first sentence, backticks dropped). Existing
+choice), and its description (first sentence, backticks dropped). Alias
+pages (only "tldr OTHER" examples) are followed to OTHER's page, and its
+command words are replaced by CMD. Existing
 examples are never touched, so they can be edited by hand.
 """
 import os
@@ -236,8 +239,21 @@ def main(argv):
                     lines += ls
         want = targets(spec, used_flags(spec, cmd, lines))
         new, changed = edit(text, want)
-        page = page_text(zpath, cmd)
-        new, added = add_examples(new, examples(page) if page else [])
+        exs, seen, name, target = [], set(), cmd, cmd
+        while name and name not in seen:  # alias pages: "tldr npm exec" -> npm-exec.md
+            seen.add(name)
+            target = name
+            page = page_text(zpath, name)
+            exs = examples(page) if page else []
+            alias = [c for c, _ in exs if c.startswith("tldr ")]
+            name = alias[0][5:].strip().replace(" ", "-") if alias and len(alias) == len(exs) else None
+        exs = [(c, d) for c, d in exs if not c.startswith("tldr ")]
+        if target != cmd:  # "npm x pkg" on npx's behalf -> "npx pkg"
+            tw = target.split("-")
+            exs = [(" ".join([cmd] + c.split(" ")[len(tw):]) if c.split(" ")[0] == tw[0] else c, d) for c, d in exs]
+        if spec.get("commands") or spec.get("args") not in (None, "", "any"):
+            exs = []  # TAB already lists subcommands or values: no room for examples
+        new, added = add_examples(new, exs)
         changed = changed or added
         if changed:
             open(f, "w").write(new)

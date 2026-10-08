@@ -7,3 +7,8 @@ flags:
   -Prefer:
     value: {exec: "printf '%s\\n' txt rtf ps"}
     description: "Data type to look for first"
+examples:
+  - command: "pbpaste > path/to/file"
+    description: "Write the contents of the clipboard to a file"
+  - command: "pbpaste | grep search_string"
+    description: "Use the contents of the clipboard as input to a command"

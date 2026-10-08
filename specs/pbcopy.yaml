@@ -4,3 +4,8 @@ flags:
   -pboard:
     value: {exec: "printf '%s\\n' general ruler find font"}
     description: "Pasteboard to use"
+examples:
+  - command: "pbcopy < path/to/file"
+    description: "Place the contents of a specific file in the clipboard"
+  - command: "find . -type t -name \"*.png\" | pbcopy"
+    description: "Place the results of a specific command in the clipboard"
