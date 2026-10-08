@@ -26,8 +26,8 @@ macOS still ships bash 3.2 as `/bin/bash`, and the usual completion tools don't 
   every completion script at shell startup, which makes each new terminal noticeably slower
   to open.
 
-autocomplete works with the bash you already have. Shell startup only defines one small
-function, and nothing is loaded until you press TAB.
+autocomplete works with the bash you already have. Shell startup only runs one `complete`
+line, and nothing is loaded until you press TAB.
 
 ## Features
 

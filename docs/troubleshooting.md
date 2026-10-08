@@ -2,7 +2,7 @@
 
 | Problem | What to check |
 |---|---|
-| Nothing happens on TAB | `complete -p docker` should print `complete -o nospace -F _autocomplete docker`. If not, the `eval` line didn't run; open a new terminal or check your profile. |
+| Nothing happens on TAB | `complete -p docker` should print `complete -o nospace -C '/path/to/autocomplete _complete' docker`. If not, the `eval` line didn't run; open a new terminal or check your profile. |
 | A new spec isn't picked up | Re-run `eval "$(autocomplete bash)"`; bash only registers commands at startup. |
 | A spec seems to be ignored | `autocomplete check path/to/spec.yaml` shows errors with line numbers. `AUTOCOMPLETE_DEBUG=1` prints errors while completing. |
 | No containers / images suggested | The Docker daemon must be running. |

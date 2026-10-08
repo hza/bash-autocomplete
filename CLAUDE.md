@@ -35,8 +35,8 @@ Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 +
 
 ## Verify after changes
 - `make` — zero warnings.
-- Engine directly: `./autocomplete _complete "docker run --network " "$COMP_WORDBREAKS_VALUE"` (default wordbreaks `"'@><=;|&(:` if 2nd arg omitted). One candidate per line.
-- Through bash 3.2: `/bin/bash --norc -c 'eval "$(./autocomplete bash)"; COMP_LINE="git sw"; COMP_POINT=6; _autocomplete; printf "<%s>\n" "${COMPREPLY[@]}"'`.
+- Engine directly: `COMP_LINE="docker run --network " ./autocomplete _complete` (`COMP_POINT` optional, in characters; wordbreaks from env `COMP_WORDBREAKS` if exported, else default `"'@><=;|&(:`). One candidate per line.
+- Through bash 3.2: registration is `complete -o nospace -C '<bin> _complete' names...` (no shell function; bash passes `COMP_LINE`/`COMP_POINT` via env, not `COMP_WORDBREAKS`), so it can only be exercised in a pty (see below).
 - Parser: `./autocomplete check FILE` prints parsed tree as JSON; compare with PyYAML (available): `json.loads(check_output(['./autocomplete','check',f])) == yaml.safe_load(open(f))`. Do this for every spec and any parser change.
 - Before refactors, snapshot `_complete` outputs for a case list and diff after. git cases need a throwaway repo (put it in the scratchpad).
 - Test install/uninstall only with `PREFIX=<scratch> PROFILE=<scratch file>`; never touch the real `~/.bash_profile` or `/usr/local`.

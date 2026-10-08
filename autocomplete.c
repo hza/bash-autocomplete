@@ -736,8 +736,21 @@ static void each_spec(void (*fn)(const char *)) {
 }
 
 static int g_ncomplete;
+static const char *g_self;
 static void print_complete(const char *name) {
-    printf("%s %s", g_ncomplete++ ? "" : "complete -o nospace -F _autocomplete", name);
+    const char *p;
+    if (!g_ncomplete++) {
+        /* -C string is eval'd by bash: backslash-escape the path inside it,
+           then single-quote the whole string for the `complete` line */
+        fputs("complete -o nospace -C '", stdout);
+        for (p = g_self; *p; p++) {
+            if (!isalnum((unsigned char)*p) && !strchr("/._-+,", *p)) putchar('\\');
+            if (*p == '\'') fputs("'\\''", stdout);
+            else putchar(*p);
+        }
+        fputs(" _complete'", stdout);
+    }
+    printf(" %s", name);
 }
 static void print_name(const char *name) { puts(name); }
 
@@ -877,17 +890,32 @@ static int man_cmds(int argc, char **argv) {
 }
 
 static void print_bash(const char *self) {
-    printf(
-        "_autocomplete() {\n"
-        "  local line=\"${COMP_LINE:0:${COMP_POINT}}\" l\n"
-        "  COMPREPLY=()\n"
-        "  while IFS= read -r l; do\n"
-        "    COMPREPLY[${#COMPREPLY[@]}]=\"$l\"\n"
-        "  done < <(\"%s\" _complete \"$line\" \"$COMP_WORDBREAKS\" 2>/dev/null)\n"
-        "}\n",
-        self);
+    g_self = self;
     each_spec(print_complete);
     if (g_ncomplete) putchar('\n');
+}
+
+/* `complete -C` passes the line in $COMP_LINE, the cursor (in characters) in
+   $COMP_POINT; COMP_WORDBREAKS isn't exported, so it is used only if the user
+   exported it. */
+static int complete_env(void) {
+    const char *line = getenv("COMP_LINE"), *pt = getenv("COMP_POINT");
+    const char *wb = getenv("COMP_WORDBREAKS");
+    char *buf;
+    size_t i = 0;
+    long n;
+    int rc;
+    if (!line) return 1;
+    buf = strdup(line);
+    if (pt) {
+        for (n = atol(pt); n > 0 && buf[i]; n--)
+            for (i++; (buf[i] & 0xC0) == 0x80; i++) {}
+        buf[i] = 0;
+    }
+    rc = do_complete(buf, wb ? wb : "\"'@><=;|&(:");
+    flush();
+    free(buf);
+    return rc;
 }
 
 /* Print a parsed spec as JSON (for `autocomplete check`). */
@@ -937,11 +965,7 @@ int main(int argc, char **argv) {
         print_bash(strchr(argv[0], '/') && realpath(argv[0], abs) ? abs : argv[0]);
         return 0;
     }
-    if (argc >= 3 && !strcmp(argv[1], "_complete")) {
-        int rc = do_complete(argv[2], argc >= 4 ? argv[3] : "\"'@><=;|&(:");
-        flush();
-        return rc;
-    }
+    if (argc >= 2 && !strcmp(argv[1], "_complete")) return complete_env();
     if (argc >= 3 && !strcmp(argv[1], "check")) {
         char err[256];
         ynode *n = yaml_load(argv[2], err, sizeof err);

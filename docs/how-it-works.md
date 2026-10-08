@@ -1,8 +1,9 @@
 # How it works
 
-`autocomplete bash` prints a small shell function and registers it for every command that
-has a spec. When you press TAB, the function passes the line up to the cursor to
-`autocomplete _complete`. The binary splits the line into words and walks the spec. It
+`autocomplete bash` prints one `complete -C` line that registers `autocomplete _complete`
+for every command that has a spec; no shell function is defined. When you press TAB, bash
+runs `autocomplete _complete` with the line and cursor position in `COMP_LINE` and
+`COMP_POINT`. The binary splits the line into words and walks the spec. It
 then prints the matching suggestions, already escaped for the shell and trimmed the way
 bash expects.
 
