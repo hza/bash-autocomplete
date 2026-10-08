@@ -287,7 +287,7 @@ static void collapse_long(void) {
 /* A flag list taller than the terminal is grouped by the next letter after
  * the typed word: "--content-disposition" and "--content-on-error" fall
  * into one "--c" entry (no space, description: the member names, those
- * sharing a first word shown once as "word-*"), so typing the letter lists
+ * sharing a first word shown once as "word-🧩"), so typing the letter lists
  * that group. Then the smallest groups are expanded back while the list
  * still fits, so a group of two only stays folded when space is short. */
 static int term_rows(void) {
@@ -318,7 +318,7 @@ static char *group_names(const int *gid, int g) {
         if (gid[a] != g) continue;
         while (*ma == '-') ma++;
         w = strcspn(ma, "-");
-        /* names sharing a first word: "sasl-authzid sasl-ir" -> "sasl-*" */
+        /* names sharing a first word: "sasl-authzid sasl-ir" -> "sasl-🧩" */
         if (ma[w])
             for (b = 0; b < g_ncands; b++) {
                 if (gid[b] != g) continue;
@@ -331,7 +331,7 @@ static char *group_names(const int *gid, int g) {
         if (same >= 2 && !first) continue;
         if (have < sizeof names - 1)
             have += (size_t)snprintf(names + have, sizeof names - have, "%s%.*s%s", have ? " " : "",
-                                     same >= 2 ? (int)w + 1 : (int)strlen(ma), ma, same >= 2 ? "*" : "");
+                                     same >= 2 ? (int)w + 1 : (int)strlen(ma), ma, same >= 2 ? "🧩" : "");
     }
     return strdup(names);
 }
