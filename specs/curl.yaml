@@ -26,7 +26,7 @@ flags:
   "--cacert": {description: "CA certificate to verify peer against", value: file}
   "--capath": {description: "CA directory to verify peer against", value: dir}
   "-E": {description: "Client certificate file and password", value: file, show: default}
-  "--cert": {description: "Client certificate file and password", value: file, show: default}
+  "--cert": {description: "Client certificate file and password", value: file, show: always}
   "--cert-status": {description: "Verify server cert status OCSP-staple"}
   "--cert-type":
     description: "Certificate type (DER/PEM/ENG/P12)"
@@ -70,19 +70,19 @@ flags:
   "--doh-insecure": {description: "Allow insecure DoH server connections"}
   "--doh-url": {description: "Resolve hostnames over DoH", value: any}
   "-D": {description: "Write the received headers to <filename>", value: file, show: default}
-  "--dump-header": {description: "Write the received headers to <filename>", value: file, show: default}
+  "--dump-header": {description: "Write the received headers to <filename>", value: file, show: always}
   "--egd-file": {description: "EGD socket path for random data", value: file}
   "--engine": {description: "Crypto engine to use", value: any}
   "--etag-compare": {description: "Load ETag from file", value: file}
   "--etag-save": {description: "Parse incoming ETag and save to a file", value: file}
   "--expect100-timeout": {description: "How long to wait for 100-continue", value: any}
   "-f": {description: "Fail fast with no output on HTTP errors"}
-  "--fail": {description: "Fail fast with no output on HTTP errors"}
+  "--fail": {description: "Fail fast with no output on HTTP errors", show: always}
   "--fail-early": {description: "Fail on first transfer error"}
   "--fail-with-body": {description: "Fail on HTTP errors but save the body"}
   "--false-start": {description: "Enable TLS False Start"}
   "-F": {description: "Specify multipart MIME data", value: any}
-  "--form": {description: "Specify multipart MIME data", value: any}
+  "--form": {description: "Specify multipart MIME data", value: any, show: always}
   "--form-escape": {description: "Escape form fields using backslash"}
   "--form-string": {description: "Specify multipart MIME data", value: any}
   "--ftp-account": {description: "Account data string", value: any}
@@ -105,7 +105,7 @@ flags:
   "--haproxy-clientip": {description: "Set address in HAProxy PROXY", value: any}
   "--haproxy-protocol": {description: "Send HAProxy PROXY protocol v1 header"}
   "-I": {description: "Show document info only"}
-  "--head": {description: "Show document info only"}
+  "--head": {description: "Show document info only", show: always}
   "-H": {description: "Pass custom header(s) to server", value: any, show: always}
   "--header": {description: "Pass custom header(s) to server", value: any, show: always}
   "-h": {description: "Get help for commands", value: any}
@@ -123,7 +123,7 @@ flags:
   "--http3-only": {description: "Use HTTP v3 only"}
   "--ignore-content-length": {description: "Ignore the size of the remote resource"}
   "-i": {description: "Include response headers in output"}
-  "--include": {description: "Include response headers in output"}
+  "--include": {description: "Include response headers in output", show: always}
   "-k": {description: "Allow insecure server connections", show: always}
   "--insecure": {description: "Allow insecure server connections", show: always}
   "--interface": {description: "Use network INTERFACE (or address)", value: any}
@@ -181,7 +181,7 @@ flags:
   "--ntlm-wb": {description: "HTTP NTLM authentication with winbind"}
   "--oauth2-bearer": {description: "OAuth 2 Bearer Token", value: any}
   "-o": {description: "Write to file instead of stdout", value: file}
-  "--output": {description: "Write to file instead of stdout", value: file}
+  "--output": {description: "Write to file instead of stdout", value: file, show: always}
   "--output-dir": {description: "Directory to save files in", value: dir}
   "-Z": {description: "Perform transfers in parallel"}
   "--parallel": {description: "Perform transfers in parallel"}
@@ -241,7 +241,7 @@ flags:
   "-e": {description: "Referrer URL", value: any}
   "--referer": {description: "Referrer URL", value: any}
   "-J": {description: "Use the header-provided filename"}
-  "--remote-header-name": {description: "Use the header-provided filename"}
+  "--remote-header-name": {description: "Use the header-provided filename", show: always}
   "-O": {description: "Write output to file named as remote file", show: always}
   "--remote-name": {description: "Write output to file named as remote file", show: always}
   "--remote-name-all": {description: "Use the remote filename for all URLs"}
@@ -267,9 +267,9 @@ flags:
   "--sasl-ir": {description: "Initial response in SASL authentication"}
   "--service-name": {description: "SPNEGO service name", value: any}
   "-S": {description: "Show error even when -s is used"}
-  "--show-error": {description: "Show error even when -s is used"}
+  "--show-error": {description: "Show error even when -s is used", show: always}
   "-s": {description: "Silent mode"}
-  "--silent": {description: "Silent mode"}
+  "--silent": {description: "Silent mode", show: always}
   "--socks4": {description: "SOCKS4 proxy on given host + port", value: any}
   "--socks4a": {description: "SOCKS4a proxy on given host + port", value: any}
   "--socks5": {description: "SOCKS5 proxy on given host + port", value: any}
@@ -322,7 +322,7 @@ flags:
   "--trace-time": {description: "Add time stamps to trace/verbose output"}
   "--unix-socket": {description: "Connect through this Unix domain socket", value: file}
   "-T": {description: "Transfer local FILE to destination", value: file}
-  "--upload-file": {description: "Transfer local FILE to destination", value: file}
+  "--upload-file": {description: "Transfer local FILE to destination", value: file, show: always}
   "--url": {description: "URL to work with", value: any}
   "--url-query": {description: "Add a URL query part", value: any}
   "-B": {description: "Use ASCII/text transfer"}
@@ -337,6 +337,6 @@ flags:
   "-V": {description: "Show version number and quit"}
   "--version": {description: "Show version number and quit"}
   "-w": {description: "Output FORMAT after completion", value: any}
-  "--write-out": {description: "Output FORMAT after completion", value: any}
+  "--write-out": {description: "Output FORMAT after completion", value: any, show: always}
   "--xattr": {description: "Store metadata in extended file attributes"}
 args: any

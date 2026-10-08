@@ -25,9 +25,9 @@ flags:
   "-d": {description: "Print lots of debugging information"}
   "--debug": {description: "Print lots of debugging information"}
   "-q": {description: "Quiet (no output)"}
-  "--quiet": {description: "Quiet (no output)"}
+  "--quiet": {description: "Quiet (no output)", show: always}
   "-v": {description: "Be verbose (this is the default)"}
-  "--verbose": {description: "Be verbose (this is the default)"}
+  "--verbose": {description: "Be verbose (this is the default)", show: always}
   "-nv": {description: "Turn off verboseness, without being quiet"}
   "--no-verbose": {description: "Turn off verboseness, without being quiet"}
   "--report-speed":
@@ -60,11 +60,11 @@ flags:
     value: {"exec": "printf '%s\\n' bar dot bar:force bar:force:noscroll"}
   "--show-progress": {description: "Display the progress bar in any verbosity mode"}
   "-N": {description: "Don't re-retrieve files unless newer than local"}
-  "--timestamping": {description: "Don't re-retrieve files unless newer than local"}
+  "--timestamping": {description: "Don't re-retrieve files unless newer than local", show: always}
   "--no-if-modified-since": {description: "Don't use conditional if-modified-since get requests in..."}
   "--no-use-server-timestamps": {description: "Don't set the local file's timestamp by the one on the server"}
   "-S": {description: "Print server response"}
-  "--server-response": {description: "Print server response"}
+  "--server-response": {description: "Print server response", show: always}
   "--spider": {description: "Don't download anything"}
   "-T": {description: "Set all timeout values to SECONDS", value: any}
   "--timeout": {description: "Set all timeout values to SECONDS", value: any}
@@ -126,7 +126,7 @@ flags:
   "--referer": {description: "Include 'Referer: URL' header in HTTP request", value: any}
   "--save-headers": {description: "Save the HTTP headers to file"}
   "-U": {description: "Identify as AGENT instead of Wget/VERSION", value: any}
-  "--user-agent": {description: "Identify as AGENT instead of Wget/VERSION", value: any}
+  "--user-agent": {description: "Identify as AGENT instead of Wget/VERSION", value: any, show: always}
   "--no-http-keep-alive": {description: "Disable HTTP keep-alive (persistent connections)"}
   "--no-cookies": {description: "Don't use cookies"}
   "--load-cookies": {description: "Load cookies from FILE before session", value: file}
@@ -180,9 +180,9 @@ flags:
   "--no-warc-keep-log": {description: "Do not store the log file in a WARC record"}
   "--warc-tempdir": {description: "Location for temporary files created by the WARC writer", value: dir}
   "-r": {description: "Specify recursive download"}
-  "--recursive": {description: "Specify recursive download"}
+  "--recursive": {description: "Specify recursive download", show: always}
   "-l": {description: "Maximum recursion depth (inf or 0 for infinite)", value: any}
-  "--level": {description: "Maximum recursion depth (inf or 0 for infinite)", value: any}
+  "--level": {description: "Maximum recursion depth (inf or 0 for infinite)", value: any, show: always}
   "--delete-after": {description: "Delete files locally after downloading them"}
   "-k": {description: "Make links in downloaded HTML or CSS point to local files"}
   "--convert-links": {description: "Make links in downloaded HTML or CSS point to local files", show: always}
@@ -191,9 +191,9 @@ flags:
   "-K": {description: "Before converting file X, back up as X.orig"}
   "--backup-converted": {description: "Before converting file X, back up as X.orig"}
   "-m": {description: "Shortcut for -N -r -l inf --no-remove-listing"}
-  "--mirror": {description: "Shortcut for -N -r -l inf --no-remove-listing"}
+  "--mirror": {description: "Shortcut for -N -r -l inf --no-remove-listing", show: always}
   "-p": {description: "Get all images, etc. needed to display HTML page"}
-  "--page-requisites": {description: "Get all images, etc. needed to display HTML page"}
+  "--page-requisites": {description: "Get all images, etc. needed to display HTML page", show: always}
   "--strict-comments": {description: "Turn on strict (SGML) handling of HTML comments"}
   "-A": {description: "Comma-separated list of accepted extensions", value: any}
   "--accept": {description: "Comma-separated list of accepted extensions", value: any}

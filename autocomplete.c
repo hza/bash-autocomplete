@@ -279,7 +279,7 @@ static void collapse_vars(void) {
  *   letters, then other symbols), description "(1) desc (2) desc"; long
  *   ones into "<word>👀" ("N more: names" when more than 5);
  * - on a bare "-", the long "--x" flags (unless "show: always") when there
- *   are 15 or more, into "-👀" ("N long options: type -- to list"), so
+ *   are 15 or more, into "-👀--" ("N long options: type -- to list"), so
  *   the short flags stand out. Collapsed long flags go there too.
  * Nothing is folded when nothing else would be listed. "👀" sorts after
  * ASCII, so they are listed last. Never inserted: other candidates remain
@@ -403,7 +403,7 @@ static void collapse_flags(void) {
     }
     if (nlong) {
         snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
-        snprintf(text, sizeof text, "%s👀", g_cur);
+        snprintf(text, sizeof text, "%s👀\u00a0--", g_cur);
         emit_desc(text, 0, desc);
     }
     g_show = SHOW_DEFAULT;
