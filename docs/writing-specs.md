@@ -58,6 +58,8 @@ Flags on the top-level spec are offered after any subcommand too. A flag name en
 
 On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, only the short ones are listed and the long ones are folded into one last entry, `-👀  -- 256 long options: type -- to list`. Type `--<TAB>` to list them.
 
+When the flag list is taller than the terminal, flags are grouped by their next letter: `--content-disposition` and `--content-on-error` fall into one `--c  -- connect-timeout content-disposition content-on-error …` entry. Type `--c<TAB>` (no space is added) to list that group; a big group is split again by the following letter. In the name list, names sharing a first word are shown once: `sasl-authzid sasl-ir` → `sasl-*`. The smallest groups are then shown in full again while the list still fits, so `node --<TAB>` lists its two `--no-` flags directly.
+
 ```yaml
 flags:
   --rm: {description: Remove the container when it exits}   # takes no value

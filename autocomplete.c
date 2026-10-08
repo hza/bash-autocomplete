@@ -284,6 +284,99 @@ static void collapse_long(void) {
     emit_desc("-👀", 0, desc);
 }
 
+/* A flag list taller than the terminal is grouped by the next letter after
+ * the typed word: "--content-disposition" and "--content-on-error" fall
+ * into one "--c" entry (no space, description: the member names, those
+ * sharing a first word shown once as "word-*"), so typing the letter lists
+ * that group. Then the smallest groups are expanded back while the list
+ * still fits, so a group of two only stays folded when space is short. */
+static int term_rows(void) {
+    struct winsize ws;
+    int fd = open("/dev/tty", O_RDONLY), h = 0;
+    if (fd >= 0) {
+        if (ioctl(fd, TIOCGWINSZ, &ws) == 0) h = ws.ws_row;
+        close(fd);
+    }
+    if (h <= 0 && getenv("LINES")) h = atoi(getenv("LINES"));
+    return h > 5 ? h : 24;
+}
+
+static size_t group_len(const char *t, size_t n) {
+    const char *p = t + n;
+    while (*p == '-') p++;
+    return (size_t)(p - t) + (*p != 0);
+}
+
+static char *group_names(const int *gid, int g) {
+    char names[1024] = "";
+    size_t have = 0;
+    int a, b;
+    for (a = 0; a < g_ncands; a++) {
+        const char *ma = g_cands[a].text, *mb;
+        size_t w;
+        int same = 0, first = 1;
+        if (gid[a] != g) continue;
+        while (*ma == '-') ma++;
+        w = strcspn(ma, "-");
+        /* names sharing a first word: "sasl-authzid sasl-ir" -> "sasl-*" */
+        if (ma[w])
+            for (b = 0; b < g_ncands; b++) {
+                if (gid[b] != g) continue;
+                for (mb = g_cands[b].text; *mb == '-'; mb++) {}
+                if (!strncmp(mb, ma, w + 1)) {
+                    same++;
+                    if (b < a) first = 0;
+                }
+            }
+        if (same >= 2 && !first) continue;
+        if (have < sizeof names - 1)
+            have += (size_t)snprintf(names + have, sizeof names - have, "%s%.*s%s", have ? " " : "",
+                                     same >= 2 ? (int)w + 1 : (int)strlen(ma), ma, same >= 2 ? "*" : "");
+    }
+    return strdup(names);
+}
+
+static void group_flags(void) {
+    static cand out[MAXCANDS];
+    static int gid[MAXCANDS], head[MAXCANDS], size[MAXCANDS];
+    size_t n = strlen(g_cur), len;
+    int i, j, k = 0, ng = 0, lines, limit = term_rows() - 2;
+    if (g_cur[0] != '-' || g_ncands <= limit) return;
+    for (i = 0; i < g_ncands; i++) {
+        gid[i] = -1;
+        if (strncmp(g_cands[i].text, g_cur, n)) continue;
+        len = group_len(g_cands[i].text, n);
+        for (j = 0; j < ng; j++)
+            if (group_len(g_cands[head[j]].text, n) == len && !strncmp(g_cands[head[j]].text, g_cands[i].text, len))
+                break;
+        if (j == ng) { head[ng] = i; size[ng++] = 0; }
+        gid[i] = j;
+        size[j]++;
+    }
+    lines = g_ncands;
+    for (j = 0; j < ng; j++)
+        if (size[j] > 1) lines -= size[j] - 1;
+    for (;;) { /* expand the smallest folded group that still fits */
+        int best = -1;
+        for (j = 0; j < ng; j++)
+            if (size[j] > 1 && lines + size[j] - 1 <= limit && (best < 0 || size[j] < size[best])) best = j;
+        if (best < 0) break;
+        lines += size[best] - 1;
+        size[best] = 1;
+    }
+    for (i = 0; i < g_ncands; i++) {
+        j = gid[i];
+        if (j < 0 || size[j] == 1) { out[k++] = g_cands[i]; continue; }
+        if (head[j] != i) continue;
+        out[k] = g_cands[i];
+        out[k].text = strndup(g_cands[i].text, group_len(g_cands[i].text, n));
+        out[k].space = 0;
+        out[k++].desc = group_names(gid, j);
+    }
+    memcpy(g_cands, out, (size_t)k * sizeof *out);
+    g_ncands = k;
+}
+
 /* Terminal columns of a UTF-8 string: continuation bytes take none and
  * 4-byte sequences (emoji) take two. */
 static int dwidth(const char *s) {
@@ -299,6 +392,7 @@ static void flush(void) {
     int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
     collapse_vars();
     collapse_long();
+    group_flags();
     for (i = 0; i < g_ncands; i++) {
         int len = dwidth(g_cands[i].text);
         const char *k = g_cands[i].kind;
