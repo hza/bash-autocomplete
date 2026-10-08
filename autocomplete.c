@@ -557,25 +557,34 @@ static int dwidth(const char *s) {
     return w;
 }
 
-/* On an empty word, the spec's "examples" (command lines) are listed as
- * display-only "👀 exampleN" entries, description = the line. They share
+/* On an empty word, the spec's "examples" ({command, description?}) are
+ * listed as display-only "👀 example N" entries, described by
+ * "command   📚 description". They share
  * "👀 example", so when nothing else is listed a "…" entry (first byte
  * differs) is added to keep bash from inserting that prefix. */
 static const ynode *g_examples;
+static const char *g_examples_name, *g_examples_title; /* "…  -- name: spec description" */
+static const char *spec_desc(const ynode *spec);
 
 static void add_examples(void) {
     const ynode *e;
     int n = 0, others = g_ncands;
-    char name[64];
+    char name[64], desc[1024];
     if (*g_cur || !g_examples || g_examples->type != Y_ARR) return;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
     g_noesc = 1;
-    for (e = g_examples->child; e; e = e->next)
-        if (e->type == Y_STR) {
-            snprintf(name, sizeof name, "👀\xc2\xa0" "example\xc2\xa0" "%d", ++n); /* U+00A0: see collapse_vars */
-            emit_desc(name, 0, e->str);
-        }
-    if (n && !others) emit_desc("…", 0, "type an argument");
+    for (e = g_examples->child; e; e = e->next) {
+        const ynode *cmd = yaml_get(e, "command");
+        const char *d = spec_desc(e);
+        if (!cmd || cmd->type != Y_STR) continue;
+        snprintf(name, sizeof name, "👀\xc2\xa0" "example\xc2\xa0" "%d", ++n); /* U+00A0: see collapse_vars */
+        if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
+        emit_desc(name, 0, d ? desc : cmd->str);
+    }
+    if (n && !others) {
+        snprintf(desc, sizeof desc, "%s: %s", g_examples_name, g_examples_title ? g_examples_title : "type an argument");
+        emit_desc("…", 0, desc);
+    }
     g_noesc = 0;
 }
 
@@ -1013,14 +1022,15 @@ static int do_complete(const char *line, const char *wbreaks) {
     size_t start[MAXW];
     int n = split(line, w, start), i;
     const ynode *root, *c, *parent = NULL, *v = NULL;
-    const char *cur, *slash;
+    const char *cur, *slash, *cname;
 
     g_wbreaks = wbreaks;
     g_raw = line + start[n - 1];
     cur = g_cur = w[n - 1];
 
     slash = strrchr(w[0], '/');
-    if (!(root = c = load_spec(slash ? slash + 1 : w[0]))) {
+    cname = slash ? slash + 1 : w[0];
+    if (!(root = c = load_spec(cname))) {
         if (n > 1) { g_kind = "file"; complete_files(0); } /* sudo cmd-without-spec */
         return 0;
     }
@@ -1040,7 +1050,7 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; continue; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; continue; }
         if (is_str(yaml_get(c, "args"), "@command")) {
             if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
             /* the rest of the line is a command line of its own */
@@ -1095,6 +1105,8 @@ static int do_complete(const char *line, const char *wbreaks) {
 
     emit_commands(yaml_get(c, "commands"));
     g_examples = yaml_get(c, "examples");
+    g_examples_title = spec_desc(c);
+    g_examples_name = cname;
     v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);

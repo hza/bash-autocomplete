@@ -10,6 +10,12 @@ flags from every example command line (`[-L|--location]` and bare `--key`),
 descends into subcommands named on the line, and adds `show: always` to the
 matching flags. The file is edited in place line by line, so hand-written
 formatting is kept. Only adds; rerunning gives no diff.
+
+A spec without a top-level `examples:` also gets one from page CMD.md
+(common/ preferred over osx/): each example's command line, with `{{…}}`
+placeholders unwrapped (`[-L|--location]` and `GET|PUT|…` keep the first
+choice), and its description (first sentence, backticks dropped). Existing
+examples are never touched, so they can be edited by hand.
 """
 import os
 import re
@@ -34,6 +40,48 @@ def pages(zpath):
         if m:
             out.setdefault(m.group(2), []).append(z.read(name).decode("utf-8", "replace"))
     return out
+
+
+def page_text(zpath, cmd):
+    """Text of page CMD.md, common/ before osx/, or None."""
+    z = zipfile.ZipFile(zpath)
+    for plat in ("common", "osx"):
+        for name in z.namelist():
+            if re.match(r"(?:pages[^/]*/)?%s/%s\.md$" % (plat, re.escape(cmd)), name):
+                return z.read(name).decode("utf-8", "replace")
+    return None
+
+
+def placeholder(m):
+    """{{[-L|--location]}} -> -L, {{GET|PUT|...}} -> GET, {{x}} -> x"""
+    t = m.group(1)
+    if t.startswith("[") and t.endswith("]"):
+        t = t[1:-1]
+    return t.split("|")[0] if "|" in t else t
+
+
+def examples(text):
+    """[(command, description)] of a tldr page."""
+    out = []
+    for m in re.finditer(r"^- (.+?)\n\n`([^`]+)`\s*$", text, re.M):
+        desc = m.group(1).strip().rstrip(":").replace("`", "")
+        desc = re.split(r"(?<=[^.])\.\s", desc)[0].rstrip(".")
+        out.append((re.sub(r"\{\{(.*?)\}\}", placeholder, m.group(2)), desc))
+    return out
+
+
+def yq(s):
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def add_examples(text, exs):
+    """Append an examples: block unless the spec has one."""
+    if not exs or re.search(r"^examples\s*:", text, re.M):
+        return text, False
+    block = ["examples:"]
+    for c, d in exs:
+        block += ["  - command: " + yq(c), "    description: " + yq(d)]
+    return text.rstrip("\n") + "\n" + "\n".join(block) + "\n", True
 
 
 def example_lines(text):
@@ -188,9 +236,12 @@ def main(argv):
                     lines += ls
         want = targets(spec, used_flags(spec, cmd, lines))
         new, changed = edit(text, want)
+        page = page_text(zpath, cmd)
+        new, added = add_examples(new, examples(page) if page else [])
+        changed = changed or added
         if changed:
             open(f, "w").write(new)
-        print(f"{f}: {len(want)} common flags{' (updated)' if changed else ''}", file=sys.stderr)
+        print(f"{f}: {len(want)} common flags{', examples added' if added else ''}{' (updated)' if changed else ''}", file=sys.stderr)
 
 
 if __name__ == "__main__":

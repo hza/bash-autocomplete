@@ -178,7 +178,12 @@ static int key_colon(const char *s) {
     int i;
     if (*s == '{' || *s == '[') return -1;
     for (i = 0; s[i]; i++) {
-        if (q) { if (s[i] == q) q = 0; continue; }
+        if (q) {
+            if (q == '"' && s[i] == '\\' && s[i + 1]) i++;             /* "\"" */
+            else if (q == '\'' && s[i] == q && s[i + 1] == '\'') i++;  /* 'it''s' */
+            else if (s[i] == q) q = 0;
+            continue;
+        }
         if ((s[i] == '"' || s[i] == '\'') && i == 0) { q = s[i]; continue; }
         if (s[i] == ':' && (s[i + 1] == 0 || s[i + 1] == ' ')) return i;
     }
@@ -267,7 +272,12 @@ static void strip_comment(char *s) {
     char q = 0;
     int i;
     for (i = 0; s[i]; i++) {
-        if (q) { if (s[i] == q) q = 0; continue; }
+        if (q) {
+            if (q == '"' && s[i] == '\\' && s[i + 1]) i++;             /* "\"" */
+            else if (q == '\'' && s[i] == q && s[i + 1] == '\'') i++;  /* 'it''s' */
+            else if (s[i] == q) q = 0;
+            continue;
+        }
         if (s[i] == '"' || s[i] == '\'') {
             /* quotes only open at the start of a value ("key: '..'", "- '..'",
              * flow items); inside a plain scalar like don't they are literal */
