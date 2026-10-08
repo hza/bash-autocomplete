@@ -1,13 +1,13 @@
 description: The Missing Package Manager for macOS
 flags:
-  -v: {description: "Be verbose"}
-  --verbose: {description: "Be verbose"}
+  -v: {description: "Be verbose", show: always}
+  --verbose: {description: "Be verbose", show: always}
   -d: {description: "Display any debugging information"}
   --debug: {description: "Display any debugging information"}
-  -q: {description: "Make some output more quiet"}
-  --quiet: {description: "Make some output more quiet"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  -q: {description: "Make some output more quiet", show: always}
+  --quiet: {description: "Make some output more quiet", show: always}
+  -h: {description: "Show help", show: always}
+  --help: {description: "Show help", show: always}
 commands:
   install:
     description: Install a formula or cask
@@ -18,11 +18,11 @@ commands:
       --fetch-HEAD: {description: "Fetch the upstream repository to detect if the HEAD installation is outdated"}
       --ignore-dependencies: {description: "Skip installing any dependencies"}
       --only-dependencies: {description: "Install dependencies but not the formula itself"}
-      -s: {description: "Compile from source even if a bottle is provided"}
-      --build-from-source: {description: "Compile from source even if a bottle is provided"}
+      -s: {description: "Compile from source even if a bottle is provided", show: always}
+      --build-from-source: {description: "Compile from source even if a bottle is provided", show: always}
       --force-bottle: {description: "Install from a bottle if it exists for the current version"}
-      -n: {description: "Dry run, show what would be installed"}
-      --dry-run: {description: "Dry run, show what would be installed"}
+      -n: {description: "Dry run, show what would be installed", show: always}
+      --dry-run: {description: "Dry run, show what would be installed", show: always}
       -f: {description: "Install without checking for previously installed versions"}
       --force: {description: "Install without checking for previously installed versions"}
     args:
@@ -45,8 +45,8 @@ commands:
       --cask: {description: "Treat as a cask"}
       --formula: {description: "Treat as a formula"}
       --greedy: {description: "Also upgrade casks with auto_updates or version :latest"}
-      -n: {description: "Dry run, show what would be upgraded"}
-      --dry-run: {description: "Dry run, show what would be upgraded"}
+      -n: {description: "Dry run, show what would be upgraded", show: always}
+      --dry-run: {description: "Dry run, show what would be upgraded", show: always}
       -f: {description: "Force upgrade even if up-to-date"}
       --force: {description: "Force upgrade even if up-to-date"}
     args:
@@ -62,9 +62,9 @@ commands:
     description: Search for formulae and casks
     aliases: [se]
     flags:
-      --formula: {description: "Search only formulae"}
-      --cask: {description: "Search only casks"}
-      --desc: {description: "Search in descriptions as well as names"}
+      --formula: {description: "Search only formulae", show: always}
+      --cask: {description: "Search only casks", show: always}
+      --desc: {description: "Search in descriptions as well as names", show: always}
     args:
       exec: "brew formulae 2>/dev/null"
   info:
@@ -73,8 +73,8 @@ commands:
     flags:
       --cask: {description: "Treat as a cask"}
       --formula: {description: "Treat as a formula"}
-      --json: {description: "Print a JSON representation"}
-      --installed: {description: "Print JSON of formulae that are currently installed"}
+      --json: {description: "Print a JSON representation", show: always}
+      --installed: {description: "Print JSON of formulae that are currently installed", show: always}
       --all: {description: "Print JSON of all available formulae"}
     args:
       exec: "brew list --formula 2>/dev/null"
@@ -92,8 +92,8 @@ commands:
   outdated:
     description: List installed casks and formulae that have an updated version available
     flags:
-      --cask: {description: "List only outdated casks"}
-      --formula: {description: "List only outdated formulae"}
+      --cask: {description: "List only outdated casks", show: always}
+      --formula: {description: "List only outdated formulae", show: always}
       --json: {description: "Print a JSON representation"}
       --fetch-HEAD: {description: "Fetch upstream repository to detect if HEAD is outdated"}
       --greedy: {description: "Include outdated casks with auto_updates or version :latest"}
@@ -106,8 +106,8 @@ commands:
   cleanup:
     description: Remove stale lock files and outdated downloads
     flags:
-      -n: {description: "Dry run, show what would be removed"}
-      --dry-run: {description: "Dry run, show what would be removed"}
+      -n: {description: "Dry run, show what would be removed", show: always}
+      --dry-run: {description: "Dry run, show what would be removed", show: always}
       -s: {description: "Remove all cached downloads, including recent ones"}
       --prune: {value: any, description: "Remove all cache files older than specified days"}
     args:
@@ -136,7 +136,7 @@ commands:
     description: Manage background services with macOS launchctl
     flags:
       --file: {value: file, description: "Use the plist file to start the service"}
-      --all: {description: "Run subcommand on all services"}
+      --all: {description: "Run subcommand on all services", show: always}
     commands:
       list:
         description: List all managed services
@@ -207,8 +207,8 @@ commands:
   leaves:
     description: List installed formulae that are not dependencies of another installed formula
     flags:
-      --installed-on-request: {description: "Only list leaves that were manually installed"}
-      --installed-as-dependency: {description: "Only list leaves that were installed as dependencies"}
+      --installed-on-request: {description: "Only list leaves that were manually installed", show: always}
+      --installed-as-dependency: {description: "Only list leaves that were installed as dependencies", show: always}
   uses:
     description: Show formulae and casks that specify a formula as a dependency
     flags:

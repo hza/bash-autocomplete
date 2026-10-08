@@ -1,8 +1,8 @@
 flags:
-  -e: {value: any, description: evaluate a script}
-  --eval: {value: any, description: evaluate a script}
-  -p: {value: any, description: evaluate a script and print the result}
-  --print: {value: any, description: evaluate a script and print the result}
+  -e: {value: any, description: evaluate a script, show: always}
+  --eval: {value: any, description: evaluate a script, show: always}
+  -p: {value: any, description: evaluate a script and print the result, show: always}
+  --print: {value: any, description: evaluate a script and print the result, show: always}
   -c: {description: syntax-check the script without running it}
   --check: {description: syntax-check the script without running it}
   -i: {description: always enter the REPL}
@@ -21,7 +21,7 @@ flags:
     value: {exec: "printf '%s\\n' spec tap dot junit lcov"}
     description: test reporter
   --experimental-test-coverage: {description: collect test coverage}
-  --watch: {description: restart when files change}
+  --watch: {description: restart when files change, show: always}
   --watch-path: {value: file, description: watch this path for changes}
   --env-file: {value: file, description: load environment variables from a file}
   --env-file-if-exists: {value: file, description: load environment variables from a file if it exists}
@@ -29,7 +29,7 @@ flags:
     value: {exec: "printf '%s\\n' module commonjs module-typescript commonjs-typescript"}
     description: module type for string input
   --inspect: {description: enable the inspector}
-  --inspect-brk: {description: enable the inspector and break at start}
+  --inspect-brk: {description: enable the inspector and break at start, show: always}
   --inspect-wait: {description: enable the inspector and wait for a debugger}
   --enable-source-maps: {description: use source maps in stack traces}
   --no-warnings: {description: silence all process warnings}

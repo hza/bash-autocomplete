@@ -2,15 +2,15 @@ description: "Capture images or video of the screen"
 flags:
   -c: {description: "Capture to the clipboard"}
   -b: {description: "Capture the Touch Bar"}
-  -C: {description: "Capture the cursor as well"}
+  -C: {description: "Capture the cursor as well", show: always}
   -d: {description: "Display errors graphically"}
-  -i: {description: "Interactive: select area or window"}
+  -i: {description: "Interactive: select area or window", show: always}
   -m: {description: "Only capture the main monitor"}
   -D: {value: any, description: "Display to capture (1 = main)"}
   -o: {description: "Window mode: no window shadow"}
   -p: {description: "Use default capture settings"}
   -M: {description: "Send capture to a new Mail message"}
-  -P: {description: "Open capture in Preview / QuickTime Player"}
+  -P: {description: "Open capture in Preview / QuickTime Player", show: always}
   -B:
     value: {exec: "for a in /Applications/*.app /System/Applications/*.app /System/Applications/Utilities/*.app; do i=$(defaults read \"$a/Contents/Info\" CFBundleIdentifier 2>/dev/null) && printf '%s\\t%s\\n' \"$i\" \"$(basename \"$a\" .app)\"; done"}
     description: "Open capture in app with bundle id"
@@ -22,7 +22,7 @@ flags:
   -t:
     value: {exec: "printf '%s\\n' png jpg pdf tiff heic gif bmp"}
     description: "Image format (default png)"
-  -T: {value: any, description: "Delay in seconds"}
+  -T: {value: any, description: "Delay in seconds", show: always}
   -w: {description: "Only allow window selection"}
   -W: {description: "Start in window selection mode"}
   -x: {description: "Do not play sounds"}
@@ -30,7 +30,7 @@ flags:
   -r: {description: "Do not add dpi metadata"}
   -l: {value: any, description: "Capture window with this id"}
   -R: {value: any, description: "Capture rect x,y,w,h"}
-  -v: {description: "Record video"}
+  -v: {description: "Record video", show: always}
   -V: {value: any, description: "Limit video to seconds"}
   -g: {description: "Record audio from default input"}
   -G: {value: any, description: "Record audio from device id"}

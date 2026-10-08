@@ -39,7 +39,7 @@ commands:
   kill-session:
     description: Kill a session
     flags:
-      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session"}
+      -t: {value: {exec: "tmux list-sessions -F '#{session_name}\\t#{session_windows} windows' 2>/dev/null"}, description: "Target session", show: always}
       -a: {description: "Kill all sessions except the current one"}
       -C: {description: "Clear the alert flags for the target session"}
   list-sessions:

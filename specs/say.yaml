@@ -4,14 +4,15 @@ flags:
     value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
     description: "Voice to use"
   --voice:
+    show: always
     value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
     description: "Voice to use"
   -r: {value: any, description: "Speech rate in words per minute"}
-  --rate: {value: any, description: "Speech rate in words per minute"}
+  --rate: {value: any, description: "Speech rate in words per minute", show: always}
   -f: {value: file, description: "Read text from file ('-' for stdin)"}
-  --input-file: {value: file, description: "Read text from file ('-' for stdin)"}
+  --input-file: {value: file, description: "Read text from file ('-' for stdin)", show: always}
   -o: {value: file, description: "Write audio to file instead of speaking"}
-  --output-file: {value: file, description: "Write audio to file instead of speaking"}
+  --output-file: {value: file, description: "Write audio to file instead of speaking", show: always}
   -n: {value: any, description: "Send audio to a network service (name:port)"}
   --network-send: {value: any, description: "Send audio to a network service (name:port)"}
   -a:

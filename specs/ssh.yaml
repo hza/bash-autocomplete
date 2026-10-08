@@ -1,13 +1,13 @@
 description: OpenSSH remote login client
 flags:
-  -p: {value: any, description: "Port to connect to on the remote host"}
-  -i: {value: file, description: "Identity file (private key)"}
-  -L: {value: any, description: "Local port forwarding (local:host:hostport)"}
+  -p: {value: any, description: "Port to connect to on the remote host", show: always}
+  -i: {value: file, description: "Identity file (private key)", show: always}
+  -L: {value: any, description: "Local port forwarding (local:host:hostport)", show: always}
   -R: {value: any, description: "Remote port forwarding (remote:host:hostport)"}
-  -D: {value: any, description: "Dynamic application-level port forwarding"}
+  -D: {value: any, description: "Dynamic application-level port forwarding", show: always}
   -l: {value: any, description: "Login name on the remote machine"}
   -o: {value: any, description: "Option in ssh_config format"}
-  -N: {description: "Do not execute a remote command"}
+  -N: {description: "Do not execute a remote command", show: always}
   -f: {description: "Go to background just before command execution"}
   '-4': {description: "Force IPv4 connections only"}
   '-6': {description: "Force IPv6 connections only"}
@@ -17,10 +17,10 @@ flags:
   -v: {description: "Verbose mode (repeat for more verbosity)"}
   -q: {description: "Quiet mode"}
   -C: {description: "Request compression of all data"}
-  -t: {description: "Force pseudo-terminal allocation"}
-  -T: {description: "Disable pseudo-terminal allocation"}
+  -t: {description: "Force pseudo-terminal allocation", show: always}
+  -T: {description: "Disable pseudo-terminal allocation", show: always}
   -W: {value: any, description: "Forward stdin/stdout to host:port"}
-  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)"}
+  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)", show: always}
   -E: {value: file, description: "Append debug logs to log_file"}
   -F: {value: file, description: "Specify config file"}
   -b: {value: any, description: "Bind address"}

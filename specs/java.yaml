@@ -1,8 +1,8 @@
 flags:
   -cp: {value: file, description: class path (dirs and jars separated by colons)}
-  -classpath: {value: file, description: class path (dirs and jars separated by colons)}
+  -classpath: {value: file, description: class path (dirs and jars separated by colons), show: always}
   --class-path: {value: file, description: class path (dirs and jars separated by colons)}
-  -jar: {value: file, description: run the main class of a jar file}
+  -jar: {value: file, description: run the main class of a jar file, show: always}
   -m: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
   --module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
   -p: {value: file, description: module path}
@@ -15,7 +15,7 @@ flags:
   --describe-module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
   --dry-run: {description: load the main class without running main}
   --validate-modules: {description: validate all modules and exit}
-  -version: {description: print the version to stderr and exit}
+  -version: {description: print the version to stderr and exit, show: always}
   --version: {description: print the version to stdout and exit}
   -showversion: {description: print the version to stderr and continue}
   --show-version: {description: print the version to stdout and continue}

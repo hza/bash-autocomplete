@@ -16,6 +16,7 @@ flags:
     value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
     description: "Delete property"
   --deleteProperty:
+    show: always
     value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
     description: "Delete property"
   -X: {value: any, description: "Extract profile tag: tag tagFile"}
@@ -34,10 +35,10 @@ flags:
   -E: {value: file, description: "Embed ICC profile if image has none"}
   --embedProfileIfNone: {value: file, description: "Embed ICC profile if image has none"}
   -m: {value: file, description: "Color match to ICC profile"}
-  --matchTo: {value: file, description: "Color match to ICC profile"}
+  --matchTo: {value: file, description: "Color match to ICC profile", show: always}
   -M: {value: file, description: "Color match to profile with intent"}
   --matchToWithIntent: {value: file, description: "Color match to profile with intent"}
-  --deleteColorManagementProperties: {description: "Remove color management properties"}
+  --deleteColorManagementProperties: {description: "Remove color management properties", show: always}
   -r:
     value: {exec: "printf '%s\\n' 90 180 270"}
     description: "Rotate clockwise by degrees"
@@ -57,16 +58,16 @@ flags:
   --padToHeightWidth: {value: any, description: "Pad to pixelsH pixelsW"}
   --padColor: {value: any, description: "Pad color (hex)"}
   -z: {value: any, description: "Resample to pixelsH pixelsW"}
-  --resampleHeightWidth: {value: any, description: "Resample to pixelsH pixelsW"}
-  --resampleWidth: {value: any, description: "Resample to width, keeping aspect"}
+  --resampleHeightWidth: {value: any, description: "Resample to pixelsH pixelsW", show: always}
+  --resampleWidth: {value: any, description: "Resample to width, keeping aspect", show: always}
   --resampleHeight: {value: any, description: "Resample to height, keeping aspect"}
   -Z: {value: any, description: "Resample so the longest side fits pixels"}
-  --resampleHeightWidthMax: {value: any, description: "Resample so the longest side fits pixels"}
+  --resampleHeightWidthMax: {value: any, description: "Resample so the longest side fits pixels", show: always}
   -i: {description: "Add a Finder icon to the file"}
   --addIcon: {description: "Add a Finder icon to the file"}
   --optimizeColorForSharing: {description: "Optimize color for sharing"}
   -o: {value: file, description: "Output file or directory"}
-  --out: {value: file, description: "Output file or directory"}
+  --out: {value: file, description: "Output file or directory", show: always}
   -j: {value: file, description: "Run JavaScript file"}
   --js: {value: file, description: "Run JavaScript file"}
   --debug: {description: "Enable debugging output"}

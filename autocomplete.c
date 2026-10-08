@@ -168,10 +168,13 @@ typedef struct {
     int space;        /* finished word: append a space */
     const char *desc; /* optional description (spec "description") */
     const char *kind; /* source, e.g. "target"; tagged when kinds mix */
+    int show;         /* flag "show": SHOW_DEFAULT, SHOW_ALWAYS (never folded), SHOW_COLLAPSED (only in 👀) */
 } cand;
 static cand g_cands[MAXCANDS];
 static int g_ncands;
 static const char *g_kind; /* kind given to candidates emitted now */
+enum { SHOW_DEFAULT, SHOW_ALWAYS, SHOW_COLLAPSED };
+static int g_show;         /* "show" given to candidates emitted now */
 
 /* Escape for bash and queue, trimmed to bash's current word. Duplicates
  * (union values can overlap) are dropped, keeping the first description. */
@@ -210,6 +213,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
         g_cands[g_ncands].text = strdup(p);
         g_cands[g_ncands].space = space;
         g_cands[g_ncands].kind = g_kind;
+        g_cands[g_ncands].show = g_show;
         g_cands[g_ncands++].desc = desc ? strdup(desc) : NULL;
     }
 }
@@ -263,25 +267,159 @@ static void collapse_vars(void) {
     emit_desc("🔧 variables", 0, strdup(names));
 }
 
-/* On a bare "-", long "--x" flags are folded into one display-only
- * "-👀" entry (description: how many) so the short flags stand out;
- * typing "--" lists them. "👀" sorts after ASCII, so it is listed last.
- * Fewer than 15 long flags are listed as is.
- * Never inserted: the short flags remain and share only "-" with it. */
-static void collapse_long(void) {
-    char desc[64];
+/* Flags are folded into display-only "<word>👀" entries:
+ * - "show: collapsed" flags always: short ones into "<word>👀<letters>",
+ *   one entry per kind of letter ("-👀 0123" for digits, "-👀 MP" for
+ *   letters, then other symbols), description "(1) desc (2) desc"; long
+ *   ones into "<word>👀" ("N more: names" when more than 5);
+ * - on a bare "-", the long "--x" flags (unless "show: always") when there
+ *   are 15 or more, into "-👀" ("N long options: type -- to list"), so
+ *   the short flags stand out. Collapsed long flags go there too.
+ * Nothing is folded when nothing else would be listed. "👀" sorts after
+ * ASCII, so they are listed last. Never inserted: other candidates remain
+ * and share only the typed word with them. */
+static int is_long_fold(const cand *c, int longs) {
+    return longs && c->show != SHOW_ALWAYS && !strncmp(c->text, "--", 2);
+}
+
+static int cmp_cand(const void *a, const void *b) {
+    return strcmp(((const cand *)a)->text, ((const cand *)b)->text);
+}
+
+/* 0 digit, 1 upper, 2 lower, 3 other short flag, 4 long flag */
+static int coll_class(const cand *c) {
+    unsigned char ch = (unsigned char)c->text[1];
+    if (ch == '-') return 4;
+    return isdigit(ch) ? 0 : isupper(ch) ? 1 : islower(ch) ? 2 : 3;
+}
+
+static int dwidth(const char *s);
+
+/* Emit "<word>👀<letters>" for short collapsed flags coll[0..k) of class
+ * cl, starting a new entry whenever the description would pass `room`. */
+static void emit_short_coll(const cand *coll, int k, int cl, int room) {
+    char desc[1024], text[256], item[512];
+    size_t have = 0, nt = 0;
+    int i;
+    for (i = 0; i <= k; i++) {
+        size_t il = 0;
+        if (i < k) {
+            if (coll_class(&coll[i]) != cl) continue;
+            il = (size_t)snprintf(item, sizeof item, "(%s) %s", coll[i].text + 1, coll[i].desc ? coll[i].desc : "");
+        }
+        if (have && (i == k || (int)(have + 1 + il) > room)) {
+            emit_desc(text, 0, desc);
+            have = 0;
+        }
+        if (i == k) break;
+        if (!have) {
+            nt = (size_t)snprintf(text, sizeof text, "%s👀\u00a0", g_cur);
+            desc[0] = 0;
+        }
+        if (nt + strlen(coll[i].text + 1) < sizeof text)
+            nt += (size_t)snprintf(text + nt, sizeof text - nt, "%s", coll[i].text + 1);
+        if (have < sizeof desc - 1)
+            have += (size_t)snprintf(desc + have, sizeof desc - have, "%s%s", have ? " " : "", item);
+    }
+}
+
+static void collapse_flags(void) {
+    static cand coll[MAXCANDS];
+    char desc[1024], text[256];
     const char *kind = NULL;
-    int i, j, hidden = 0;
-    if (strcmp(g_cur, "-")) return;
-    for (i = 0; i < g_ncands; i++)
-        if (!strncmp(g_cands[i].text, "--", 2)) { hidden++; kind = g_cands[i].kind; }
-    if (hidden < 15 || hidden == g_ncands) return;
-    for (i = j = 0; i < g_ncands; i++)
-        if (strncmp(g_cands[i].text, "--", 2)) g_cands[j++] = g_cands[i];
+    int i, j, k = 0, cl, nlong = 0, ncoll = 0, longs = 0;
+    if (g_cur[0] != '-') return;
+    if (!strcmp(g_cur, "-")) {
+        for (i = 0; i < g_ncands; i++)
+            if (is_long_fold(&g_cands[i], 1)) longs++;
+        longs = longs >= 15;
+    }
+    for (i = 0; i < g_ncands; i++) {
+        if (is_long_fold(&g_cands[i], longs)) nlong++;
+        else if (g_cands[i].show == SHOW_COLLAPSED) ncoll++;
+        else continue;
+        kind = g_cands[i].kind;
+    }
+    if (!nlong && !ncoll) return;
+    if (nlong + ncoll == g_ncands) return;
+    for (i = j = 0; i < g_ncands; i++) {
+        if (is_long_fold(&g_cands[i], longs)) continue;
+        if (g_cands[i].show == SHOW_COLLAPSED) coll[k++] = g_cands[i];
+        else g_cands[j++] = g_cands[i];
+    }
     g_ncands = j;
+    qsort(coll, (size_t)k, sizeof *coll, cmp_cand); /* "-👀 123" */
     g_kind = kind;
-    snprintf(desc, sizeof desc, "%d long options: type -- to list", hidden);
-    emit_desc("-👀", 0, desc);
+    g_show = SHOW_ALWAYS;
+    { /* name column: widest remaining name (see flush) */
+        int w = 12;
+        for (i = 0; i < g_ncands; i++)
+            if (dwidth(g_cands[i].text) > w) w = dwidth(g_cands[i].text);
+        for (cl = 0; cl < 4; cl++) emit_short_coll(coll, k, cl, term_width() - w - 8);
+    }
+    {
+        size_t have = 0, nt;
+        int n = 0;
+        desc[0] = 0;
+        nt = (size_t)snprintf(text, sizeof text, "%s👀", g_cur);
+        for (i = 0; i < k; i++)
+            if (coll_class(&coll[i]) == 4) n++;
+        for (i = 0; n && i < k; i++) {
+            const char *nm = coll[i].text + 2;
+            if (coll_class(&coll[i]) != 4 || have >= sizeof desc - 1) continue;
+            if (n > 5) /* "131 more: a b c" */
+                have += (size_t)snprintf(desc + have, sizeof desc - have, "%s%s", have ? " " : "", nm);
+            else
+                have += (size_t)snprintf(desc + have, sizeof desc - have, "%s(%s) %s", have ? " " : "", nm,
+                                         coll[i].desc ? coll[i].desc : "");
+        }
+        if (nlong && nt < sizeof text - 3) strcat(text, "\u00a0+"); /* no-break space: a plain one is shown escaped */
+        if (n > 5) {
+            char many[1100];
+            snprintf(many, sizeof many, "%d more: %s", n, desc);
+            emit_desc(text, 0, many);
+        } else if (n)
+            emit_desc(text, 0, desc);
+    }
+    if (nlong) {
+        snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
+        snprintf(text, sizeof text, "%s👀", g_cur);
+        emit_desc(text, 0, desc);
+    }
+    g_show = SHOW_DEFAULT;
+}
+
+/* A short flag listed next to a long one with the same description is
+ * shown only as a hint on the long one: "--data  -- HTTP POST data (-d)".
+ * Each long flag takes at most one short. */
+static void merge_pairs(void) {
+    static char paired[MAXCANDS];
+    int i, j, k;
+    if (g_cur[0] != '-') return;
+    memset(paired, 0, (size_t)g_ncands);
+    for (i = k = 0; i < g_ncands; i++) {
+        cand *c = &g_cands[i];
+        int hit = -1;
+        if (c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "👀"))
+            for (j = 0; j < g_ncands; j++)
+                if (!paired[j] && g_cands[j].text && !strncmp(g_cands[j].text, "--", 2) && g_cands[j].desc &&
+                    !strcmp(g_cands[j].desc, c->desc)) {
+                    hit = j;
+                    break;
+                }
+        if (hit < 0) continue;
+        {
+            char *d = malloc(strlen(c->desc) + strlen(c->text) + 4);
+            if (!d) continue;
+            sprintf(d, "%s (%s)", c->desc, c->text);
+            paired[hit] = 1;
+            g_cands[hit].desc = d;
+            c->text = NULL; /* dropped below */
+        }
+    }
+    for (i = k = 0; i < g_ncands; i++)
+        if (g_cands[i].text) g_cands[k++] = g_cands[i];
+    g_ncands = k;
 }
 
 /* A flag list taller than the terminal is grouped by the next letter after
@@ -344,7 +482,7 @@ static void group_flags(void) {
     if (g_cur[0] != '-' || g_ncands <= limit) return;
     for (i = 0; i < g_ncands; i++) {
         gid[i] = -1;
-        if (strncmp(g_cands[i].text, g_cur, n)) continue;
+        if (strncmp(g_cands[i].text, g_cur, n) || g_cands[i].show == SHOW_ALWAYS) continue;
         len = group_len(g_cands[i].text, n);
         for (j = 0; j < ng; j++)
             if (group_len(g_cands[head[j]].text, n) == len && !strncmp(g_cands[head[j]].text, g_cands[i].text, len))
@@ -369,7 +507,17 @@ static void group_flags(void) {
         if (j < 0 || size[j] == 1) { out[k++] = g_cands[i]; continue; }
         if (head[j] != i) continue;
         out[k] = g_cands[i];
-        out[k].text = strndup(g_cands[i].text, group_len(g_cands[i].text, n));
+        { /* the entry is the members' common prefix: "--no-" for "--no-x --no-y" */
+            size_t lcp = strlen(g_cands[i].text);
+            int b;
+            for (b = i + 1; b < g_ncands; b++)
+                if (gid[b] == j) {
+                    size_t c = 0;
+                    while (c < lcp && g_cands[b].text[c] == g_cands[i].text[c]) c++;
+                    lcp = c;
+                }
+            out[k].text = strndup(g_cands[i].text, lcp);
+        }
         out[k].space = 0;
         out[k++].desc = group_names(gid, j);
     }
@@ -391,7 +539,8 @@ static int dwidth(const char *s) {
 static void flush(void) {
     int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
     collapse_vars();
-    collapse_long();
+    collapse_flags();
+    merge_pairs();
     group_flags();
     for (i = 0; i < g_ncands; i++) {
         int len = dwidth(g_cands[i].text);
@@ -846,8 +995,13 @@ static int do_complete(const char *line, const char *wbreaks) {
          * its value attached, so no space */
         const ynode *f, *s = c;
         for (;;) {
-            for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next)
+            for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
+                g_show = is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
+                         : is_str(yaml_get(f, "show"), "collapsed") ? SHOW_COLLAPSED
+                                                                    : SHOW_DEFAULT;
                 emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
+            }
+            g_show = SHOW_DEFAULT;
             if (s == root) break;
             s = root;
         }

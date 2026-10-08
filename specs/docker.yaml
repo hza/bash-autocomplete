@@ -1,15 +1,15 @@
 flags:
   --config: {value: dir, description: "Location of client config files"}
-  -c: {value: any, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")"}
+  -c: {value: any, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")", show: always}
   --context: {value: any, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")"}
   -D: {description: "Enable debug mode"}
   --debug: {description: "Enable debug mode"}
   -H: {value: any, description: "Daemon socket to connect to"}
   --host: {value: any, description: "Daemon socket to connect to"}
-  -l: {value: any, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")"}
+  -l: {value: any, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")", show: always}
   --log-level: {value: any, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")"}
-  --help: {description: "Print usage"}
-  -v: {description: "Print version information and quit"}
+  --help: {description: "Print usage", show: always}
+  -v: {description: "Print version information and quit", show: always}
   --version: {description: "Print version information and quit"}
 commands:
   run:
@@ -116,15 +116,15 @@ commands:
   build:
     description: Build an image from a Dockerfile
     flags:
-      -t: {value: any, description: "Image identifier (format: \"[registry/]repository[:tag]\")"}
-      --tag: {value: any, description: "Image identifier (format: \"[registry/]repository[:tag]\")"}
-      -f: {value: file, description: "Name of the Dockerfile"}
-      --file: {value: file, description: "Name of the Dockerfile"}
-      --build-arg: {value: any, description: "Set build-time variables"}
-      --target: {value: any, description: "Set the target build stage to build"}
-      --no-cache: {description: "Do not use cache when building the image"}
+      -t: {value: any, description: "Image identifier (format: \"[registry/]repository[:tag]\")", show: always}
+      --tag: {value: any, description: "Image identifier (format: \"[registry/]repository[:tag]\")", show: always}
+      -f: {value: file, description: "Name of the Dockerfile", show: always}
+      --file: {value: file, description: "Name of the Dockerfile", show: always}
+      --build-arg: {value: any, description: "Set build-time variables", show: always}
+      --target: {value: any, description: "Set the target build stage to build", show: always}
+      --no-cache: {description: "Do not use cache when building the image", show: always}
       --pull: {description: "Always attempt to pull all referenced images"}
-      --platform: {value: any, description: "Set target platform for build"}
+      --platform: {value: any, description: "Set target platform for build", show: always}
       -q: {description: "Suppress the build output and print image ID on success"}
       --quiet: {description: "Suppress the build output and print image ID on success"}
       --progress: {value: any, description: "Set type of progress output (\"auto\", \"none\", \"plain\", \"quiet\", \"rawjson\", \"tty\"). Use plain to show container output"}
@@ -161,8 +161,8 @@ commands:
   rm:
     description: Remove one or more containers
     flags:
-      -f: {description: "Force the removal of a running container (uses SIGKILL)"}
-      --force: {description: "Force the removal of a running container (uses SIGKILL)"}
+      -f: {description: "Force the removal of a running container (uses SIGKILL)", show: always}
+      --force: {description: "Force the removal of a running container (uses SIGKILL)", show: always}
       -v: {description: "Remove anonymous volumes associated with the container"}
       --volumes: {description: "Remove anonymous volumes associated with the container"}
       -l: {description: "Remove the specified link"}
@@ -194,8 +194,8 @@ commands:
   inspect:
     description: Return low-level information on Docker objects
     flags:
-      -f: {value: any, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
-      --format: {value: any, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+      -f: {value: any, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
+      --format: {value: any, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
       -s: {description: "Display total file sizes if the type is container"}
       --size: {description: "Display total file sizes if the type is container"}
       --type: {value: any, description: "Only inspect objects of the given type"}
@@ -289,10 +289,10 @@ commands:
   login:
     description: Authenticate to a registry
     flags:
-      -u: {value: any, description: Username}
-      --username: {value: any, description: Username}
-      -p: {value: any, description: "Password or Personal Access Token (PAT), or \"-\" to read from stdin"}
-      --password: {value: any, description: "Password or Personal Access Token (PAT), or \"-\" to read from stdin"}
+      -u: {value: any, description: Username, show: always}
+      --username: {value: any, description: Username, show: always}
+      -p: {value: any, description: "Password or Personal Access Token (PAT), or \"-\" to read from stdin", show: always}
+      --password: {value: any, description: "Password or Personal Access Token (PAT), or \"-\" to read from stdin", show: always}
       --password-stdin: {description: "Take the Password or Personal Access Token (PAT) from stdin"}
     args: any
   logout:
@@ -319,8 +319,8 @@ commands:
       create:
         description: Create a network
         flags:
-          -d: {value: any, description: "Driver to manage the Network"}
-          --driver: {value: any, description: "Driver to manage the Network"}
+          -d: {value: any, description: "Driver to manage the Network", show: always}
+          --driver: {value: any, description: "Driver to manage the Network", show: always}
           --subnet: {value: any, description: "Subnet in CIDR format that represents a network segment"}
           --gateway: {value: any, description: "IPv4 or IPv6 Gateway for the master subnet"}
           --internal: {description: "Restrict external access to the network"}
@@ -367,9 +367,9 @@ commands:
         flags:
           -d: {value: any, description: "Specify volume driver name"}
           --driver: {value: any, description: "Specify volume driver name"}
-          --label: {value: any, description: "Set metadata for a volume"}
-          -o: {value: any, description: "Set driver specific options"}
-          --opt: {value: any, description: "Set driver specific options"}
+          --label: {value: any, description: "Set metadata for a volume", show: always}
+          -o: {value: any, description: "Set driver specific options", show: always}
+          --opt: {value: any, description: "Set driver specific options", show: always}
         args: any
       rm:
         description: Remove one or more volumes
@@ -401,42 +401,42 @@ commands:
       prune:
         description: Remove unused data
         flags:
-          -a: {description: "Remove all unused images not just dangling ones"}
-          --all: {description: "Remove all unused images not just dangling ones"}
+          -a: {description: "Remove all unused images not just dangling ones", show: always}
+          --all: {description: "Remove all unused images not just dangling ones", show: always}
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
-          --volumes: {description: "Prune anonymous volumes"}
-          --filter: {value: any, description: "Provide filter values (e.g. \"label=<key>=<value>\")"}
+          --volumes: {description: "Prune anonymous volumes", show: always}
+          --filter: {value: any, description: "Provide filter values (e.g. \"label=<key>=<value>\")", show: always}
       events:
         description: Get real time events from the server
   compose:
     description: Define and run multi-container applications
     flags:
-      -f: {value: file, description: "Compose configuration files"}
-      --file: {value: file, description: "Compose configuration files"}
-      -p: {value: any, description: "Project name"}
-      --project-name: {value: any, description: "Project name"}
+      -f: {value: file, description: "Compose configuration files", show: always}
+      --file: {value: file, description: "Compose configuration files", show: always}
+      -p: {value: any, description: "Project name", show: always}
+      --project-name: {value: any, description: "Project name", show: always}
       --profile: {value: any, description: "Specify a profile to enable"}
       --env-file: {value: file, description: "Specify an alternate environment file"}
     commands:
       up:
         description: Create and start containers
         flags:
-          -d: {description: "Detached mode: Run containers in the background"}
-          --detach: {description: "Detached mode: Run containers in the background"}
-          --build: {description: "Build images before starting containers"}
+          -d: {description: "Detached mode: Run containers in the background", show: always}
+          --detach: {description: "Detached mode: Run containers in the background", show: always}
+          --build: {description: "Build images before starting containers", show: always}
           --force-recreate: {description: "Recreate containers even if their configuration and image haven't changed"}
           --no-deps: {description: "Don't start linked services"}
-          --remove-orphans: {description: "Remove containers for services not defined in the Compose file"}
+          --remove-orphans: {description: "Remove containers for services not defined in the Compose file", show: always}
           --wait: {description: "Wait for services to be running|healthy. Implies detached mode"}
         args: any
       down:
         description: Stop and remove containers, networks
         flags:
-          -v: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers"}
-          --volumes: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers"}
-          --remove-orphans: {description: "Remove containers for services not defined in the Compose file"}
-          --rmi: {value: any, description: "Remove images used by services. \"local\" remove only images that don't have a custom tag (\"local\"|\"all\")"}
+          -v: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
+          --volumes: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
+          --remove-orphans: {description: "Remove containers for services not defined in the Compose file", show: always}
+          --rmi: {value: any, description: "Remove images used by services. \"local\" remove only images that don't have a custom tag (\"local\"|\"all\")", show: always}
       ps:
         description: List containers
         flags:
@@ -451,14 +451,14 @@ commands:
       logs:
         description: View output from containers
         flags:
-          -f: {description: "Follow log output"}
-          --follow: {description: "Follow log output"}
-          -n: {value: any, description: "Number of lines to show from the end of the logs for each container"}
-          --tail: {value: any, description: "Number of lines to show from the end of the logs for each container"}
-          -t: {description: "Show timestamps"}
-          --timestamps: {description: "Show timestamps"}
-          --since: {value: any, description: "Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"}
-          --until: {value: any, description: "Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"}
+          -f: {description: "Follow log output", show: always}
+          --follow: {description: "Follow log output", show: always}
+          -n: {value: any, description: "Number of lines to show from the end of the logs for each container", show: always}
+          --tail: {value: any, description: "Number of lines to show from the end of the logs for each container", show: always}
+          -t: {description: "Show timestamps", show: always}
+          --timestamps: {description: "Show timestamps", show: always}
+          --since: {value: any, description: "Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)", show: always}
+          --until: {value: any, description: "Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)", show: always}
         args: any
       build:
         description: Build or rebuild services

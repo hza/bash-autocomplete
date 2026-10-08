@@ -1,17 +1,17 @@
 description: Secure copy (remote file copy)
 flags:
-  -P: {value: any, description: "Port to connect to on the remote host"}
-  -i: {value: file, description: "Identity file (private key)"}
-  -r: {description: "Recursively copy entire directories"}
+  -P: {value: any, description: "Port to connect to on the remote host", show: always}
+  -i: {value: file, description: "Identity file (private key)", show: always}
+  -r: {description: "Recursively copy entire directories", show: always}
   -p: {description: "Preserve modification times, access times, and modes"}
   -q: {description: "Quiet mode"}
   -C: {description: "Enable compression"}
-  '-3': {description: "Copy through the local host (three-party copy)"}
+  '-3': {description: "Copy through the local host (three-party copy)", show: always}
   '-4': {description: "Force IPv4 connections only"}
   '-6': {description: "Force IPv6 connections only"}
   -o: {value: any, description: "Option in ssh_config format"}
   -F: {value: file, description: "Specify ssh config file"}
-  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)"}
+  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)", show: always}
   -l: {value: any, description: "Bandwidth limit in Kbit/s"}
   -v: {description: "Verbose mode"}
   --help: {description: "Show help"}

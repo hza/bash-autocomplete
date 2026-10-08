@@ -12,8 +12,8 @@ flags:
   -c: {description: "Warn if checksums don't match"}
   --lax-checksums: {description: "Warn if checksums don't match"}
   --color: {value: {exec: "printf 'auto\\nalways\\nnever\\n'"}, description: "Output color mode"}
-  -D: {value: any, description: "Define a user property"}
-  --define: {value: any, description: "Define a user property"}
+  -D: {value: any, description: "Define a user property", show: always}
+  --define: {value: any, description: "Define a user property", show: always}
   -DskipTests: {description: "Compile tests but don't run them"}
   '-Dmaven.test.skip=true': {description: "Skip compiling and running tests"}
   -DskipITs: {description: "Skip integration tests (failsafe)"}
@@ -73,10 +73,10 @@ flags:
   --no-transfer-progress: {description: "Do not display transfer progress"}
   -o: {description: "Work offline"}
   --offline: {description: "Work offline"}
-  -P: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate"}
-  --activate-profiles: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate"}
-  -pl: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build"}
-  --projects: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build"}
+  -P: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate", show: always}
+  --activate-profiles: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate", show: always}
+  -pl: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build", show: always}
+  --projects: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build", show: always}
   -q: {description: "Quiet output, only show errors"}
   --quiet: {description: "Quiet output, only show errors"}
   -rf: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
@@ -87,8 +87,8 @@ flags:
   --toolchains: {value: file, description: "Alternate user toolchains file"}
   -T: {value: any, description: "Thread count, e.g. 4 or 1C"}
   --threads: {value: any, description: "Thread count, e.g. 4 or 1C"}
-  -U: {description: "Force update of missing releases and snapshots"}
-  --update-snapshots: {description: "Force update of missing releases and snapshots"}
+  -U: {description: "Force update of missing releases and snapshots", show: always}
+  --update-snapshots: {description: "Force update of missing releases and snapshots", show: always}
   -v: {description: "Display version information"}
   --version: {description: "Display version information"}
   -V: {description: "Display version information and continue the build"}

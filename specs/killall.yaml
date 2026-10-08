@@ -4,7 +4,7 @@ flags:
   -e: {description: "Use effective UID for -u matching"}
   -help: {description: "Show usage and exit"}
   -I: {description: "Confirm before signalling each process"}
-  -l: {description: "List signal names and exit"}
+  -l: {description: "List signal names and exit", show: always}
   -m: {description: "Match procname as a regular expression"}
   -v: {description: "Be verbose"}
   -s: {description: "Like -v, but send no signal"}
@@ -28,5 +28,5 @@ flags:
   -CONT: {description: "Send SIGCONT"}
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
-  '-9': {description: "Send SIGKILL"}
+  '-9': {description: "Send SIGKILL", show: always}
 args: {exec: "ps -co comm= -U \"$(id -u)\" | grep -v '^[-<]' | sort -u"}

@@ -53,12 +53,15 @@ Each flag is a map with two optional keys, usually written on one line:
 |---|---|
 | `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
 | `description` | One-line summary shown next to the flag when several flags match |
+| `show` | `always`: a frequently used flag, never folded into a group or into `👀` (see below); `tools/gen_tldr.py` sets it for bundled specs from [tldr](https://tldr.sh) examples. `collapsed`: a rarely used flag, left out of the list and only named in a `👀` entry that ends with the collapsed short flags' letters: separate entries for digits, upper-case, lower-case and other symbols, split further so each line fits the terminal width: curl's `-0 -1 -2 -3` show as `-👀 0123  -- (0) Use HTTP 1.0 (1) TLSv1.0 or greater (2) SSLv2 (3) SSLv3`, `-M -P` as `-👀 MP`. Collapsed long flags share one `--👀  -- 128 more: …` entry; still listed when nothing else matches. Leave it out for the default |
+
+When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (-d)`. Give a short/long pair the same description to get this.
 
 Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it. Quote such keys in YAML.
 
 On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, only the short ones are listed and the long ones are folded into one last entry, `-👀  -- 256 long options: type -- to list`. Type `--<TAB>` to list them.
 
-When the flag list is taller than the terminal, flags are grouped by their next letter: `--content-disposition` and `--content-on-error` fall into one `--c  -- connect-timeout content-disposition content-on-error …` entry. Type `--c<TAB>` (no space is added) to list that group; a big group is split again by the following letter. In the name list, names sharing a first word are shown once: `sasl-authzid sasl-ir` → `sasl-🧩`. The smallest groups are then shown in full again while the list still fits, so `node --<TAB>` lists its two `--no-` flags directly.
+When the flag list is taller than the terminal, flags are grouped by their next letter: `--content-disposition` and `--content-on-error` fall into one `--c  -- connect-timeout content-disposition content-on-error …` entry. Type `--c<TAB>` (no space is added) to list that group; a big group is split again by the following letter. If all flags in a group share a longer prefix, the entry is that prefix: `--no-  -- no-🧩`. In the name list, names sharing a first word are shown once: `sasl-authzid sasl-ir` → `sasl-🧩`. The smallest groups are then shown in full again while the list still fits, so `node --<TAB>` lists its two `--no-` flags directly.
 
 ```yaml
 flags:

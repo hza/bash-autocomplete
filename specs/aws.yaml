@@ -4,10 +4,10 @@ flags:
   --endpoint-url: {value: any, description: "Override command's default URL with the given URL"}
   --no-verify-ssl: {description: "By default, the AWS CLI uses SSL when communicating with AWS services. For each SSL connection, the AWS CLI will verify SSL certificates"}
   --no-paginate: {description: "Disable automatic pagination"}
-  --output: {value: {exec: "printf 'json\\ntext\\ntable\\nyaml\\nyaml-stream\\n'"}, description: "The formatting style for command output"}
-  --query: {value: any, description: "A JMESPath query to use in filtering the response data"}
-  --profile: {value: {exec: "aws configure list-profiles 2>/dev/null"}, description: "Use a specific profile from your credential file"}
-  --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The region to use"}
+  --output: {value: {exec: "printf 'json\\ntext\\ntable\\nyaml\\nyaml-stream\\n'"}, description: "The formatting style for command output", show: always}
+  --query: {value: any, description: "A JMESPath query to use in filtering the response data", show: always}
+  --profile: {value: {exec: "aws configure list-profiles 2>/dev/null"}, description: "Use a specific profile from your credential file", show: always}
+  --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The region to use", show: always}
   -v: {description: "Display the version of this tool"}
   --version: {description: "Display the version of this tool"}
   --color: {value: any, description: "Turn on/off color output (on, off, auto)"}
@@ -17,7 +17,7 @@ flags:
   --cli-connect-timeout: {value: any, description: "The maximum socket connect time in seconds"}
   --cli-binary-format: {value: any, description: "The formatting style to be used for binary blobs"}
   --no-cli-pager: {description: "Disable cli pager for output"}
-  --cli-auto-prompt: {description: "Automatically prompt for CLI input parameters"}
+  --cli-auto-prompt: {description: "Automatically prompt for CLI input parameters", show: always}
   --no-cli-auto-prompt: {description: "Disable automatically prompt for CLI input parameters"}
 commands:
   s3:

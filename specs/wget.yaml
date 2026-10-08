@@ -23,8 +23,8 @@ flags:
   "--report-speed":
     description: "Output bandwidth as TYPE. TYPE can be bits"
     value: {"exec": "printf '%s\\n' bits"}
-  "-i": {description: "Download URLs found in local or external FILE", value: file}
-  "--input-file": {description: "Download URLs found in local or external FILE", value: file}
+  "-i": {description: "Download URLs found in local or external FILE", value: file, show: always}
+  "--input-file": {description: "Download URLs found in local or external FILE", value: file, show: always}
   "-F": {description: "Treat input file as HTML"}
   "--force-html": {description: "Treat input file as HTML"}
   "-B": {description: "Resolves HTML input-file links (-i -F) relative to URL", value: any}
@@ -32,18 +32,18 @@ flags:
   "--config": {description: "Specify config file to use", value: file}
   "--no-config": {description: "Do not read any config file"}
   "--rejected-log": {description: "Log reasons for URL rejection to FILE", value: file}
-  "-t": {description: "Set number of retries to NUMBER (0 unlimits)", value: any}
-  "--tries": {description: "Set number of retries to NUMBER (0 unlimits)", value: any}
+  "-t": {description: "Set number of retries to NUMBER (0 unlimits)", value: any, show: always}
+  "--tries": {description: "Set number of retries to NUMBER (0 unlimits)", value: any, show: always}
   "--retry-connrefused": {description: "Retry even if connection is refused"}
   "--retry-on-host-error": {description: "Consider host errors as non-fatal, transient errors"}
   "--retry-on-http-error": {description: "Comma-separated list of HTTP errors to retry", value: any}
-  "-O": {description: "Write documents to FILE", value: file}
-  "--output-document": {description: "Write documents to FILE", value: file}
+  "-O": {description: "Write documents to FILE", value: file, show: always}
+  "--output-document": {description: "Write documents to FILE", value: file, show: always}
   "-nc": {description: "Skip downloads that would download to existing files (overwriting"}
   "--no-clobber": {description: "Skip downloads that would download to existing files (overwriting"}
   "--no-netrc": {description: "Don't try to obtain credentials from .netrc"}
-  "-c": {description: "Resume getting a partially-downloaded file"}
-  "--continue": {description: "Resume getting a partially-downloaded file"}
+  "-c": {description: "Resume getting a partially-downloaded file", show: always}
+  "--continue": {description: "Resume getting a partially-downloaded file", show: always}
   "--start-pos": {description: "Start downloading from zero-based position OFFSET", value: any}
   "--progress":
     description: "Select progress gauge type"
@@ -69,7 +69,7 @@ flags:
   "-Q": {description: "Set retrieval quota to NUMBER", value: any}
   "--quota": {description: "Set retrieval quota to NUMBER", value: any}
   "--bind-address": {description: "Bind to ADDRESS (hostname or IP) on local host", value: any}
-  "--limit-rate": {description: "Limit download rate to RATE", value: any}
+  "--limit-rate": {description: "Limit download rate to RATE", value: any, show: always}
   "--no-dns-cache": {description: "Disable caching DNS lookups"}
   "--restrict-file-names":
     description: "Restrict chars in file names to ones OS allows"
@@ -82,8 +82,8 @@ flags:
   "--prefer-family":
     description: "Connect first to addresses of specified family, one of IPv6, IPv4,..."
     value: {"exec": "printf '%s\\n' IPv6 IPv4 none"}
-  "--user": {description: "Set both ftp and http user to USER", value: any}
-  "--password": {description: "Set both ftp and http password to PASS", value: any}
+  "--user": {description: "Set both ftp and http user to USER", value: any, show: always}
+  "--password": {description: "Set both ftp and http password to PASS", value: any, show: always}
   "--ask-password": {description: "Prompt for passwords"}
   "--use-askpass": {description: "Specify credential handler for requesting username and password", value: any}
   "--no-iri": {description: "Turn off IRI support"}
@@ -98,8 +98,8 @@ flags:
   "-nH": {description: "Don't create host directories"}
   "--no-host-directories": {description: "Don't create host directories"}
   "--protocol-directories": {description: "Use protocol name in directories"}
-  "-P": {description: "Save files to PREFIX/", value: dir}
-  "--directory-prefix": {description: "Save files to PREFIX/", value: dir}
+  "-P": {description: "Save files to PREFIX/", value: dir, show: always}
+  "--directory-prefix": {description: "Save files to PREFIX/", value: dir, show: always}
   "--cut-dirs": {description: "Ignore NUMBER remote directory components", value: any}
   "--http-user": {description: "Set http user to USER", value: any}
   "--http-password": {description: "Set http password to PASS", value: any}
@@ -175,7 +175,7 @@ flags:
   "--level": {description: "Maximum recursion depth (inf or 0 for infinite)", value: any}
   "--delete-after": {description: "Delete files locally after downloading them"}
   "-k": {description: "Make links in downloaded HTML or CSS point to local files"}
-  "--convert-links": {description: "Make links in downloaded HTML or CSS point to local files"}
+  "--convert-links": {description: "Make links in downloaded HTML or CSS point to local files", show: always}
   "--convert-file-only": {description: "Convert the file part of the URLs only (usually known as the basename)"}
   "--backups": {description: "Before writing file X, rotate up to N backup files", value: any}
   "-K": {description: "Before converting file X, back up as X.orig"}

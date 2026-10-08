@@ -1,6 +1,7 @@
 description: "Open files, directories, or URLs"
 flags:
   -a:
+    show: always
     value:
       exec: "ls /Applications /System/Applications /System/Applications/Utilities 2>/dev/null | grep '\\.app$' | sed 's/\\.app$//'"
     description: "Open with application"
@@ -9,12 +10,13 @@ flags:
   -f: {description: "Read from stdin and open with TextEdit"}
   -F: {description: "Open fresh (without state restoration)"}
   -W: {description: "Wait for application to exit"}
-  -R: {description: "Reveal in Finder"}
-  -n: {description: "Open new instance even if already running"}
+  -R: {description: "Reveal in Finder", show: always}
+  -n: {description: "Open new instance even if already running", show: always}
   -g: {description: "Do not bring application to foreground"}
   -j: {description: "Launch hidden"}
   -h: {description: "Search headers for the given string"}
   -b:
+    show: always
     value: {exec: "for a in /Applications/*.app /System/Applications/*.app /System/Applications/Utilities/*.app; do i=$(defaults read \"$a/Contents/Info\" CFBundleIdentifier 2>/dev/null) && printf '%s\\t%s\\n' \"$i\" \"$(basename \"$a\" .app)\"; done"}
     description: "Open with bundle identifier"
   -s:

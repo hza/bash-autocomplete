@@ -1,23 +1,23 @@
 flags:
-  -f: {value: file, description: "Read FILE as a makefile"}
-  --file: {value: file, description: "Read FILE as a makefile"}
+  -f: {value: file, description: "Read FILE as a makefile", show: always}
+  --file: {value: file, description: "Read FILE as a makefile", show: always}
   --makefile: {value: file, description: "Read FILE as a makefile"}
-  -C: {value: dir, description: "Change to DIRECTORY before doing anything"}
-  --directory: {value: dir, description: "Change to DIRECTORY before doing anything"}
-  -j: {value: any, description: "Allow N jobs at once; infinite jobs with no arg"}
-  --jobs: {value: any, description: "Allow N jobs at once; infinite jobs with no arg"}
+  -C: {value: dir, description: "Change to DIRECTORY before doing anything", show: always}
+  --directory: {value: dir, description: "Change to DIRECTORY before doing anything", show: always}
+  -j: {value: any, description: "Allow N jobs at once; infinite jobs with no arg", show: always}
+  --jobs: {value: any, description: "Allow N jobs at once; infinite jobs with no arg", show: always}
   -k: {description: "Keep going when some targets can't be made"}
   --keep-going: {description: "Keep going when some targets can't be made"}
   -n: {description: "Don't actually run any commands; just print them"}
   --dry-run: {description: "Don't actually run any commands; just print them"}
-  -B: {description: "Unconditionally make all targets"}
-  --always-make: {description: "Unconditionally make all targets"}
+  -B: {description: "Unconditionally make all targets", show: always}
+  --always-make: {description: "Unconditionally make all targets", show: always}
   -s: {description: "Don't echo commands"}
   --silent: {description: "Don't echo commands"}
   -i: {description: "Ignore errors from commands"}
   --ignore-errors: {description: "Ignore errors from commands"}
-  -e: {description: "Environment variables override makefiles"}
-  --environment-overrides: {description: "Environment variables override makefiles"}
+  -e: {description: "Environment variables override makefiles", show: always}
+  --environment-overrides: {description: "Environment variables override makefiles", show: always}
   -p: {description: "Print make's internal database"}
   --print-data-base: {description: "Print make's internal database"}
   -q: {description: "Run no commands; exit status says if up to date"}

@@ -4,15 +4,15 @@ flags:
     value:
       exec: "kill -l 2>/dev/null | tr ' ' '\\n' | grep -v '^$'"
     description: "Signal name to send"
-  -l: {description: "List signal names"}
-  '-9': {description: "Send SIGKILL (forceful termination)"}
+  -l: {description: "List signal names", show: always}
+  '-9': {description: "Send SIGKILL (forceful termination)", show: always}
   '-15': {description: "Send SIGTERM (default)"}
-  -HUP: {description: "Send SIGHUP"}
-  -INT: {description: "Send SIGINT"}
+  -HUP: {description: "Send SIGHUP", show: always}
+  -INT: {description: "Send SIGINT", show: always}
   -QUIT: {description: "Send SIGQUIT"}
-  -KILL: {description: "Send SIGKILL"}
+  -KILL: {description: "Send SIGKILL", show: always}
   -TERM: {description: "Send SIGTERM"}
-  -STOP: {description: "Send SIGSTOP"}
+  -STOP: {description: "Send SIGSTOP", show: always}
   -CONT: {description: "Send SIGCONT"}
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}

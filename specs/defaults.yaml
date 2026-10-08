@@ -11,7 +11,7 @@ commands:
   read:
     description: Read the specified default(s) from the defaults system
     flags:
-      -app: {value: any, description: "Application name"}
+      -app: {value: any, description: "Application name", show: always}
       -globalDomain: {description: "Use global domain"}
       -g: {description: "Use global domain"}
       -host: {value: any, description: "Hostname"}
@@ -32,7 +32,7 @@ commands:
       -data: {description: "Write a data value"}
       -int: {description: "Write an integer value"}
       -integer: {description: "Write an integer value"}
-      -float: {description: "Write a float value"}
+      -float: {description: "Write a float value", show: always}
       -bool: {description: "Write a boolean value"}
       -boolean: {description: "Write a boolean value"}
       -date: {description: "Write a date value"}

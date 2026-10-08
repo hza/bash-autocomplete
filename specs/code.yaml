@@ -1,7 +1,7 @@
 description: "Visual Studio Code"
 flags:
-  "-d": {description: "Compare two files with each other", value: file}
-  "--diff": {description: "Compare two files with each other", value: file}
+  "-d": {description: "Compare two files with each other", value: file, show: always}
+  "--diff": {description: "Compare two files with each other", value: file, show: always}
   "-m": {description: "Three-way merge: path1 path2 base result", value: file}
   "--merge": {description: "Three-way merge: path1 path2 base result", value: file}
   "-a": {description: "Add folder(s) to the last active window", value: dir}
@@ -9,8 +9,8 @@ flags:
   "--remove": {description: "Remove folder(s) from the last active window", value: dir}
   "-g": {description: "Open a file at the path on the specified line and character position", value: file}
   "--goto": {description: "Open a file at the path on the specified line and character position", value: file}
-  "-n": {description: "Force to open a new window"}
-  "--new-window": {description: "Force to open a new window"}
+  "-n": {description: "Force to open a new window", show: always}
+  "--new-window": {description: "Force to open a new window", show: always}
   "-r": {description: "Force to open a file or folder in an already opened window"}
   "--reuse-window": {description: "Force to open a file or folder in an already opened window"}
   "--agents": {description: "Opens the agents window"}
@@ -22,8 +22,8 @@ flags:
   "-h": {description: "Print usage"}
   "--help": {description: "Print usage"}
   "--extensions-dir": {description: "Set the root path for extensions", value: dir}
-  "--list-extensions": {description: "List the installed extensions"}
-  "--show-versions": {description: "Show versions of installed extensions, when using --list-extensions"}
+  "--list-extensions": {description: "List the installed extensions", show: always}
+  "--show-versions": {description: "Show versions of installed extensions, when using --list-extensions", show: always}
   "--category": {description: "Filters installed extensions by provided category, when using...", value: any}
   "--install-extension":
     description: "Installs or updates an extension"
@@ -43,8 +43,8 @@ flags:
   "--log":
     description: "Log level to use"
     value: {"exec": "printf '%s\\n' critical error warn info debug trace off"}
-  "-s": {description: "Print process usage and diagnostics information"}
-  "--status": {description: "Print process usage and diagnostics information"}
+  "-s": {description: "Print process usage and diagnostics information", show: always}
+  "--status": {description: "Print process usage and diagnostics information", show: always}
   "--prof-startup": {description: "Run CPU profiler during startup"}
   "--disable-extensions": {description: "Disable all installed extensions"}
   "--disable-extension":

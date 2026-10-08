@@ -1,34 +1,44 @@
 description: Node.js package manager
 flags:
   -w:
+    show: always
     value:
       exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
     description: Run in workspace
   --workspace:
+    show: always
     value:
       exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
     description: Run in workspace
   --workspaces:
+    show: always
     description: Run in all workspaces
   --prefix:
+    show: always
     value: dir
     description: Directory to operate in
   --registry:
+    show: always
     value: any
     description: Registry URL
   --loglevel:
+    show: always
     value:
       exec: printf 'silent\nerror\nwarn\nnotice\nhttp\ninfo\nverbose\nsilly\n'
     description: Log level
   --silent:
     description: No output
   --verbose:
+    show: always
     description: Verbose output
   --json:
+    show: always
     description: Output JSON
   -h:
+    show: always
     description: Show help
   --help:
+    show: always
     description: Show help
   -v:
     description: Show npm version
@@ -75,16 +85,21 @@ commands:
     description: Run a security audit
     flags:
       --audit-level:
+        show: always
         value:
           exec: printf 'info\nlow\nmoderate\nhigh\ncritical\n'
         description: Minimum level to fail
       --dry-run:
+        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
       -f:
+        show: always
         description: Removes various protections against unfortunate side effects, common...
       --force:
+        show: always
         description: Removes various protections against unfortunate side effects, common...
       --package-lock-only:
+        show: always
         description: If set to true, the current operation will only use the package-lock.json,...
       --no-package-lock:
         description: 'Disable: if set to false, then ignore package-lock.json files when installing'
@@ -133,6 +148,7 @@ commands:
         description: Delete cache data
         flags:
           --force:
+            show: always
             description: Force fetches and overrides
       ls:
         description: List cache entries
@@ -153,6 +169,7 @@ commands:
       --global-style:
         description: Only install direct dependencies in the top level node_modules, but hoist on...
       --omit:
+        show: always
         value:
           exec: printf 'dev\noptional\npeer\n'
         description: Dependency type to skip
@@ -165,6 +182,7 @@ commands:
       --foreground-scripts:
         description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
       --ignore-scripts:
+        show: always
         description: Do not run lifecycle scripts
       --allow-directory:
         value:
@@ -327,14 +345,17 @@ commands:
     description: The registry diff command
     flags:
       --diff:
+        show: always
         value: any
         description: Define arguments to compare in npm diff
       --diff-name-only:
+        show: always
         description: Prints only filenames when using npm diff
       --diff-unified:
         value: any
         description: The number of lines of context to print in npm diff
       --diff-ignore-all-space:
+        show: always
         description: Ignore whitespace when comparing lines in npm diff
       --diff-no-prefix:
         description: Do not show any source or destination prefix in npm diff output
@@ -455,10 +476,12 @@ commands:
       --no-package-lock:
         description: 'Disable: if set to false, then ignore package-lock.json files when installing'
       --omit:
+        show: always
         value:
           exec: printf '%s\n' dev optional peer
         description: Dependency types to omit from the installation tree on disk
       --include:
+        show: always
         value:
           exec: printf '%s\n' prod dev optional peer
         description: Option that allows for defining which types of dependencies to install
@@ -535,14 +558,17 @@ commands:
       --init-private:
         description: The value npm init should use by default for the package's private flag
       -y:
+        show: always
         description: Use defaults
       --yes:
+        show: always
         description: Use defaults
       -f:
         description: Removes various protections against unfortunate side effects, common...
       --force:
         description: Removes various protections against unfortunate side effects, common...
       --scope:
+        show: always
         value: any
         description: Scope
       --no-workspaces-update:
@@ -983,9 +1009,11 @@ commands:
     description: Log in to a registry
     flags:
       --scope:
+        show: always
         value: any
         description: Associate an operation with a scope for a scoped registry
       --auth-type:
+        show: always
         value:
           exec: printf '%s\n' legacy web
         description: What authentication strategy to use with login
@@ -993,6 +1021,7 @@ commands:
     description: Log out of a registry
     flags:
       --scope:
+        show: always
         value: any
         description: Associate an operation with a scope for a scoped registry
   ls:
@@ -1057,8 +1086,10 @@ commands:
     description: Check for outdated packages
     flags:
       -a:
+        show: always
         description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        show: always
         description: Show all, not just direct deps
       -l:
         description: Show extended information in ls, search, and help-search
@@ -1100,6 +1131,7 @@ commands:
     description: Create a tarball
     flags:
       --dry-run:
+        show: always
         description: Show what would happen, change nothing
       --pack-destination:
         value: dir
@@ -1107,6 +1139,7 @@ commands:
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
       --ignore-scripts:
+        show: always
         description: If true, npm does not run scripts specified in package.json files
     args: any
   ping:
@@ -1134,8 +1167,10 @@ commands:
     description: Show prefix
     flags:
       -g:
+        show: always
         description: Operate on global packages
       --global:
+        show: always
         description: Operates in "global" mode, so that packages are installed into the prefix...
   profile:
     description: Change settings on your registry profile
@@ -1164,6 +1199,7 @@ commands:
           exec: printf '%s\n' prod dev optional peer
         description: Option that allows for defining which types of dependencies to install
       --dry-run:
+        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
       --foreground-scripts:
         description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
@@ -1178,15 +1214,19 @@ commands:
     description: Publish a package
     flags:
       --tag:
+        show: always
         value: any
         description: Dist tag
       --access:
+        show: always
         value:
           exec: printf 'public\nrestricted\n'
         description: Access level
       --dry-run:
+        show: always
         description: Show what would happen, change nothing
       --otp:
+        show: always
         value: any
         description: One-time password
       --include-workspace-root:
@@ -1256,6 +1296,7 @@ commands:
       --no-browser:
         description: 'Disable: the browser that is called by npm commands to open websites'
       --browser:
+        show: always
         value: file
         description: The browser that is called by npm commands to open websites
       --include-workspace-root:
@@ -1274,8 +1315,10 @@ commands:
     description: Show node_modules dir
     flags:
       -g:
+        show: always
         description: Operate on global packages
       --global:
+        show: always
         description: Operates in "global" mode, so that packages are installed into the prefix...
   run:
     description: Run a package.json script
@@ -1300,10 +1343,12 @@ commands:
     description: Generate a Software Bill of Materials (SBOM)
     flags:
       --omit:
+        show: always
         value:
           exec: printf '%s\n' dev optional peer
         description: Dependency types to omit from the installation tree on disk
       --package-lock-only:
+        show: always
         description: If set to true, the current operation will only use the package-lock.json,...
       --sbom-format:
         value:
@@ -1376,6 +1421,7 @@ commands:
       --no-unicode:
         description: 'Disable: when set to true, npm uses unicode characters in the tree output'
       --otp:
+        show: always
         value: any
         description: This is a one-time password from a two-factor authenticator
     args: any
@@ -1523,10 +1569,13 @@ commands:
     description: Remove a package from the registry
     flags:
       --dry-run:
+        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
       -f:
+        show: always
         description: Removes various protections against unfortunate side effects, common...
       --force:
+        show: always
         description: Removes various protections against unfortunate side effects, common...
     args: any
   unstar:
@@ -1535,6 +1584,7 @@ commands:
       --no-unicode:
         description: 'Disable: when set to true, npm uses unicode characters in the tree output'
       --otp:
+        show: always
         value: any
         description: This is a one-time password from a two-factor authenticator
     args: any
@@ -1628,6 +1678,7 @@ commands:
       --no-commit-hooks:
         description: 'Disable: run git commit hooks when using the npm version command'
       --no-git-tag-version:
+        show: always
         description: Don't commit or tag
       --preid:
         value: any

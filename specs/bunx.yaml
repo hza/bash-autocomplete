@@ -1,7 +1,7 @@
 flags:
-  --bun: {description: force the Bun runtime instead of Node.js}
-  -p: {value: any, description: package to install before running}
-  --package: {value: any, description: package to install before running}
+  --bun: {description: force the Bun runtime instead of Node.js, show: always}
+  -p: {value: any, description: package to install before running, show: always}
+  --package: {value: any, description: package to install before running, show: always}
   --no-install: {description: do not install missing packages}
   --verbose: {description: verbose output}
   --silent: {description: no output}

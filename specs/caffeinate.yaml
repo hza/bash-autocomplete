@@ -1,14 +1,16 @@
 description: "Prevent the system from sleeping"
 flags:
-  -d: {description: "Prevent the display from sleeping"}
-  -i: {description: "Prevent the system from idle sleeping"}
-  -m: {description: "Prevent the disk from idle sleeping"}
+  -d: {description: "Prevent the display from sleeping", show: always}
+  -i: {description: "Prevent the system from idle sleeping", show: always}
+  -m: {description: "Prevent the disk from idle sleeping", show: always}
   -s: {description: "Prevent the system from sleeping (AC power only)"}
-  -u: {description: "Declare that the user is active"}
+  -u: {description: "Declare that the user is active", show: always}
   -t:
+    show: always
     value: any
     description: "Timeout in seconds"
   -w:
+    show: always
     value: {exec: "ps -U \"$(id -u)\" -o pid=,comm= | sed -E 's|^ *([0-9]+) +(.*/)?(.*)$|\\1\t\\3|'"}
     description: "Wait for the process with this pid to exit"
 args: "@command"

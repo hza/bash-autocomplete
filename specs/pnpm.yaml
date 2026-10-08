@@ -7,6 +7,7 @@ flags:
   -r: {description: "Run in every package found in subdirectories"}
   --recursive: {description: "Run in every package found in subdirectories"}
   --filter:
+    show: always
     value: {exec: "pnpm ls -r --depth -1 --json 2>/dev/null | node -e 'let s=\"\";process.stdin.on(\"data\",d=>s+=d).on(\"end\",()=>{try{for(const p of JSON.parse(s))if(p.name)console.log(p.name)}catch(e){}})'"}
     description: "Filtering allows you to restrict commands to specific subsets of packages"
   -C:
@@ -25,16 +26,16 @@ commands:
   add:
     description: Install a package
     flags:
-      -D: {description: "Save to devDependencies"}
-      --save-dev: {description: "Save to devDependencies"}
+      -D: {description: "Save to devDependencies", show: always}
+      --save-dev: {description: "Save to devDependencies", show: always}
       -P: {description: "Save to peerDependencies"}
       --save-peer: {description: "Save to peerDependencies"}
       -O: {description: "Save to optionalDependencies"}
       --save-optional: {description: "Save to optionalDependencies"}
       -E: {description: "Install exact version"}
       --save-exact: {description: "Install exact version"}
-      -g: {description: "Install globally"}
-      --global: {description: "Install globally"}
+      -g: {description: "Install globally", show: always}
+      --global: {description: "Install globally", show: always}
       --workspace: {description: "Only adds the new dependency if it can be found in the workspace"}
       --ignore-workspace-root-check: {description: "Allow to install a dependency in the workspace root"}
     args: any
@@ -161,11 +162,11 @@ commands:
   audit:
     description: Check for known security issues with the installed packages
     flags:
-      --audit-level: {value: any, description: "Only print advisories with severity greater than or equal to one of the following: low|moderate|high|critical"}
+      --audit-level: {value: any, description: "Only print advisories with severity greater than or equal to one of the following: low|moderate|high|critical", show: always}
       --fix: {description: "Automatically install the recommended updates for vulnerable dependencies"}
-      --json: {description: "Output audit report in JSON format"}
-      --dev: {description: "Only audit dev dependencies"}
-      --prod: {description: "Only audit prod dependencies"}
+      --json: {description: "Output audit report in JSON format", show: always}
+      --dev: {description: "Only audit dev dependencies", show: always}
+      --prod: {description: "Only audit prod dependencies", show: always}
   list:
     description: Print all the versions of packages that are installed
     aliases: [ls]
@@ -183,14 +184,14 @@ commands:
   outdated:
     description: Check for outdated packages
     flags:
-      -r: {description: "Check packages outdated in every package found in subdirectories"}
-      --recursive: {description: "Check packages outdated in every package found in subdirectories"}
+      -r: {description: "Check packages outdated in every package found in subdirectories", show: always}
+      --recursive: {description: "Check packages outdated in every package found in subdirectories", show: always}
       --json: {description: "Show information in JSON format"}
-      -g: {description: "Check packages outdated in the global install prefix"}
-      --global: {description: "Check packages outdated in the global install prefix"}
-      --format: {value: any, description: "Output format: list|table|json"}
-      --compatible: {description: "Print only versions that satisfy specs in package.json"}
-      --long: {description: "By default, details about the outdated packages (such as a link to the repo) are not displayed. To display the details, pass this flag."}
+      -g: {description: "Check packages outdated in the global install prefix", show: always}
+      --global: {description: "Check packages outdated in the global install prefix", show: always}
+      --format: {value: any, description: "Output format: list|table|json", show: always}
+      --compatible: {description: "Print only versions that satisfy specs in package.json", show: always}
+      --long: {description: "By default, details about the outdated packages (such as a link to the repo) are not displayed. To display the details, pass this flag.", show: always}
     args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
   why:
     description: Show all packages that depend on the specified package

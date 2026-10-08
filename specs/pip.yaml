@@ -10,33 +10,33 @@ flags:
   --python: {value: any, description: "Run pip with the specified Python interpreter"}
   -q: {description: "Give less output"}
   --quiet: {description: "Give less output"}
-  -v: {description: "Give more output"}
-  --verbose: {description: "Give more output"}
+  -v: {description: "Give more output", show: always}
+  --verbose: {description: "Give more output", show: always}
 commands:
   install:
     description: Install packages
     flags:
-      -r: {value: file, description: "Install from the given requirements file"}
-      --requirement: {value: file, description: "Install from the given requirements file"}
+      -r: {value: file, description: "Install from the given requirements file", show: always}
+      --requirement: {value: file, description: "Install from the given requirements file", show: always}
       -c: {value: file, description: "Constrain versions using the given constraints file"}
       --constraint: {value: file, description: "Constrain versions using the given constraints file"}
       --no-deps: {description: "Don't install package dependencies"}
       --pre: {description: "Include pre-release and development versions"}
-      -e: {value: dir, description: "Install a project in editable mode"}
-      --editable: {value: dir, description: "Install a project in editable mode"}
+      -e: {value: dir, description: "Install a project in editable mode", show: always}
+      --editable: {value: dir, description: "Install a project in editable mode", show: always}
       -t: {value: dir, description: "Install packages into <dir>"}
       --target: {value: dir, description: "Install packages into <dir>"}
       -d: {value: dir, description: "Download packages into <dir>"}
       --download: {value: dir, description: "Download packages into <dir>"}
-      -U: {description: "Upgrade all packages to the newest available version"}
-      --upgrade: {description: "Upgrade all packages to the newest available version"}
+      -U: {description: "Upgrade all packages to the newest available version", show: always}
+      --upgrade: {description: "Upgrade all packages to the newest available version", show: always}
       --upgrade-strategy: {value: any, description: "Determines how dependency upgrading should be handled"}
       --force-reinstall: {description: "Reinstall all packages even if they are already up-to-date"}
       -I: {description: "Ignore the installed packages, overwriting them"}
       --ignore-installed: {description: "Ignore the installed packages, overwriting them"}
       --no-index: {description: "Ignore package index"}
-      -f: {value: any, description: "Look for archives in this directory or on this HTML page"}
-      --find-links: {value: any, description: "Look for archives in this directory or on this HTML page"}
+      -f: {value: any, description: "Look for archives in this directory or on this HTML page", show: always}
+      --find-links: {value: any, description: "Look for archives in this directory or on this HTML page", show: always}
       -i: {value: any, description: "Base URL of the Python Package Index"}
       --index-url: {value: any, description: "Base URL of the Python Package Index"}
       --extra-index-url: {value: any, description: "Extra URLs of package indexes"}
@@ -52,10 +52,10 @@ commands:
     description: Uninstall packages
     aliases: [remove]
     flags:
-      -r: {value: file, description: "Uninstall all the packages listed in the given requirements file"}
-      --requirement: {value: file, description: "Uninstall all the packages listed in the given requirements file"}
-      -y: {description: "Don't ask for confirmation of uninstall deletions"}
-      --yes: {description: "Don't ask for confirmation of uninstall deletions"}
+      -r: {value: file, description: "Uninstall all the packages listed in the given requirements file", show: always}
+      --requirement: {value: file, description: "Uninstall all the packages listed in the given requirements file", show: always}
+      -y: {description: "Don't ask for confirmation of uninstall deletions", show: always}
+      --yes: {description: "Don't ask for confirmation of uninstall deletions", show: always}
       -q: {description: "Give less output"}
       -v: {description: "Give more output"}
       --help: {description: "Show help"}
@@ -64,16 +64,16 @@ commands:
   list:
     description: List installed packages
     flags:
-      --outdated: {description: "List outdated packages"}
-      --uptodate: {description: "List up-to-date packages"}
+      --outdated: {description: "List outdated packages", show: always}
+      --uptodate: {description: "List up-to-date packages", show: always}
       --editable: {description: "List editable projects"}
       --local: {description: "If in a virtualenv, do not list globally-installed packages"}
-      --user: {description: "Only output packages installed in user-site"}
+      --user: {description: "Only output packages installed in user-site", show: always}
       --path: {value: any, description: "Restrict to the specified installation path"}
       --pre: {description: "Include pre-release and development versions"}
-      --format: {value: any, description: "Select the output format (columns, freeze, json)"}
-      --not-required: {description: "List packages that are not dependencies of installed packages"}
-      --exclude-editable: {description: "Exclude editable package from output"}
+      --format: {value: any, description: "Select the output format (columns, freeze, json)", show: always}
+      --not-required: {description: "List packages that are not dependencies of installed packages", show: always}
+      --exclude-editable: {description: "Exclude editable package from output", show: always}
       --include-editable: {description: "Include editable package from output"}
       --exclude: {value: any, description: "Exclude specified package from the output"}
       -q: {description: "Give less output"}
@@ -82,10 +82,10 @@ commands:
   show:
     description: Show information about installed packages
     flags:
-      -f: {description: "Show the full list of installed files for each package"}
-      --files: {description: "Show the full list of installed files for each package"}
+      -f: {description: "Show the full list of installed files for each package", show: always}
+      --files: {description: "Show the full list of installed files for each package", show: always}
       -q: {description: "Give less output"}
-      -v: {description: "Give more output"}
+      -v: {description: "Give more output", show: always}
       --help: {description: "Show help"}
     args:
       exec: "{ pip3 list --format=freeze || pip list --format=freeze; } 2>/dev/null | cut -d= -f1"
@@ -94,8 +94,8 @@ commands:
     flags:
       -r: {value: file, description: "Use the order in the given requirements file"}
       --requirement: {value: file, description: "Use the order in the given requirements file"}
-      --local: {description: "If in a virtualenv, do not report globally-installed packages"}
-      --user: {description: "Only output packages installed in user-site"}
+      --local: {description: "If in a virtualenv, do not report globally-installed packages", show: always}
+      --user: {description: "Only output packages installed in user-site", show: always}
       --exclude-editable: {description: "Exclude editable package from output"}
       --exclude: {value: any, description: "Exclude specified package from the output"}
       --help: {description: "Show help"}
@@ -106,8 +106,8 @@ commands:
   search:
     description: Search PyPI for packages
     flags:
-      -i: {value: any, description: "Base URL of the Python Package Index"}
-      --index: {value: any, description: "Base URL of the Python Package Index"}
+      -i: {value: any, description: "Base URL of the Python Package Index", show: always}
+      --index: {value: any, description: "Base URL of the Python Package Index", show: always}
       --help: {description: "Show help"}
   download:
     description: Download packages
@@ -118,35 +118,35 @@ commands:
       --constraint: {value: file, description: "Constrain versions using the given constraints file"}
       --no-deps: {description: "Don't install package dependencies"}
       --pre: {description: "Include pre-release and development versions"}
-      -d: {value: dir, description: "Download packages into <dir>"}
-      --dest: {value: dir, description: "Download packages into <dir>"}
+      -d: {value: dir, description: "Download packages into <dir>", show: always}
+      --dest: {value: dir, description: "Download packages into <dir>", show: always}
       --no-index: {description: "Ignore package index"}
       -f: {value: any, description: "Look for archives in this directory or on this HTML page"}
       --find-links: {value: any, description: "Look for archives in this directory or on this HTML page"}
-      -i: {value: any, description: "Base URL of the Python Package Index"}
-      --index-url: {value: any, description: "Base URL of the Python Package Index"}
+      -i: {value: any, description: "Base URL of the Python Package Index", show: always}
+      --index-url: {value: any, description: "Base URL of the Python Package Index", show: always}
       --help: {description: "Show help"}
   wheel:
     description: Build wheels from your requirements
     flags:
-      -r: {value: file, description: "Install from the given requirements file"}
-      --requirement: {value: file, description: "Install from the given requirements file"}
-      -w: {value: dir, description: "Build wheels into <dir>"}
-      --wheel-dir: {value: dir, description: "Build wheels into <dir>"}
-      --no-deps: {description: "Don't install package dependencies"}
+      -r: {value: file, description: "Install from the given requirements file", show: always}
+      --requirement: {value: file, description: "Install from the given requirements file", show: always}
+      -w: {value: dir, description: "Build wheels into <dir>", show: always}
+      --wheel-dir: {value: dir, description: "Build wheels into <dir>", show: always}
+      --no-deps: {description: "Don't install package dependencies", show: always}
       --help: {description: "Show help"}
   hash:
     description: Compute hashes of package archives
     flags:
-      -a: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512"}
-      --algorithm: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512"}
+      -a: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512", show: always}
+      --algorithm: {value: any, description: "The hash algorithm to use: one of sha256, sha384, sha512", show: always}
       --help: {description: "Show help"}
     args: file
   config:
     description: Manage local and global configuration
     flags:
       --help: {description: "Show help"}
-      --editor: {value: any, description: "Editor to use to edit the file"}
+      --editor: {value: any, description: "Editor to use to edit the file", show: always}
       --global: {description: "Use the system-wide configuration file only"}
       --user: {description: "Use the user configuration file only"}
       --site: {description: "Use the current environment configuration file only"}

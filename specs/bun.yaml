@@ -1,33 +1,33 @@
 flags:
-  --watch: {description: restart on file change}
+  --watch: {description: restart on file change, show: always}
   --hot: {description: reload in place on file change}
   --no-clear-screen: {description: keep the screen on reload}
   --smol: {description: use less memory}
-  -r: {value: file, description: module to preload}
+  -r: {value: file, description: module to preload, show: always}
   --preload: {value: file, description: module to preload}
   --inspect: {description: activate the debugger}
   --inspect-wait: {description: activate the debugger and wait for a connection}
   --inspect-brk: {description: activate the debugger and break on the first line}
   --env-file: {value: file, description: load environment variables from a file}
-  --cwd: {value: dir, description: run in this directory}
-  -c: {value: file, description: path to bunfig.toml}
-  --config: {value: file, description: path to bunfig.toml}
+  --cwd: {value: dir, description: run in this directory, show: always}
+  -c: {value: file, description: path to bunfig.toml, show: always}
+  --config: {value: file, description: path to bunfig.toml, show: always}
   --install:
     value: {exec: "printf '%s\\n' auto fallback force"}
     description: auto-install mode
-  --no-install: {description: disable auto-install}
+  --no-install: {description: disable auto-install, show: always}
   --port: {value: any, description: default port for Bun.serve}
-  -e: {value: any, description: evaluate a script}
+  -e: {value: any, description: evaluate a script, show: always}
   --eval: {value: any, description: evaluate a script}
-  -p: {value: any, description: evaluate a script and print the result}
+  -p: {value: any, description: evaluate a script and print the result, show: always}
   --print: {value: any, description: evaluate a script and print the result}
   -b: {description: force the Bun runtime instead of Node.js}
   --bun: {description: force the Bun runtime instead of Node.js}
   -v: {description: print the version}
   --version: {description: print the version}
   --revision: {description: print the version with the commit}
-  -h: {description: print help}
-  --help: {description: print help}
+  -h: {description: print help, show: always}
+  --help: {description: print help, show: always}
 args:
   - exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   - file
@@ -60,7 +60,7 @@ commands:
       --only: {description: run only tests marked only}
       --todo: {description: include tests marked todo}
       --bail: {value: any, description: stop after this many failures}
-      --coverage: {description: collect coverage}
+      --coverage: {description: collect coverage, show: always}
       --coverage-reporter:
         value: {exec: "printf '%s\\n' text lcov"}
         description: coverage format
@@ -84,7 +84,7 @@ commands:
         description: only tests affected by changes since this git ref
       --shard: {value: any, description: run one shard such as 1/3}
       --pass-with-no-tests: {description: succeed when no tests are found}
-      --watch: {description: rerun on file change}
+      --watch: {description: rerun on file change, show: always}
     args: file
   x:
     description: run a package binary and install it if needed (bunx)
@@ -154,11 +154,11 @@ commands:
   update:
     description: update outdated dependencies
     flags:
-      -i: {description: choose updates interactively}
-      --interactive: {description: choose updates interactively}
-      --latest: {description: update to the latest version ignoring ranges}
-      -r: {description: update in all workspaces}
-      --recursive: {description: update in all workspaces}
+      -i: {description: choose updates interactively, show: always}
+      --interactive: {description: choose updates interactively, show: always}
+      --latest: {description: update to the latest version ignoring ranges, show: always}
+      -r: {description: update in all workspaces, show: always}
+      --recursive: {description: update in all workspaces, show: always}
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   outdated:
@@ -182,16 +182,17 @@ commands:
   publish:
     description: publish a package to the npm registry
     flags:
-      --dry-run: {description: do not publish}
+      --dry-run: {description: do not publish, show: always}
       --access:
+        show: always
         value: {exec: "printf '%s\\n' public restricted"}
         description: package access level
-      --tag: {value: any, description: dist-tag to publish under}
-      --otp: {value: any, description: one-time password}
+      --tag: {value: any, description: dist-tag to publish under, show: always}
+      --otp: {value: any, description: one-time password, show: always}
   patch:
     description: prepare a package for patching
     flags:
-      --commit: {description: write the patch file}
+      --commit: {description: write the patch file, show: always}
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   pm:
@@ -224,7 +225,7 @@ commands:
       trust:
         description: run scripts of untrusted dependencies and trust them
         flags:
-          --all: {description: trust all untrusted dependencies}
+          --all: {description: trust all untrusted dependencies, show: always}
         args:
           exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
       default-trusted: {description: print the default trusted list}
@@ -232,15 +233,17 @@ commands:
     description: bundle TypeScript and JavaScript
     flags:
       --production: {description: set NODE_ENV=production and minify}
-      --compile: {description: build a standalone executable}
+      --compile: {description: build a standalone executable, show: always}
       --bytecode: {description: use a bytecode cache}
-      --watch: {description: rebuild on file change}
+      --watch: {description: rebuild on file change, show: always}
       --target:
+        show: always
         value: {exec: "printf '%s\\n' browser bun node"}
         description: runtime the bundle targets
-      --outdir: {value: dir, description: output directory}
-      --outfile: {value: file, description: output file}
+      --outdir: {value: dir, description: output directory, show: always}
+      --outfile: {value: file, description: output file, show: always}
       --sourcemap:
+        show: always
         value: {exec: "printf '%s\\n' linked inline external none"}
         description: source map mode
       --format:
@@ -248,13 +251,13 @@ commands:
         description: module format
       --root: {value: dir, description: root of multiple entry points}
       --splitting: {description: enable code splitting}
-      -e: {value: any, description: module to keep external}
-      --external: {value: any, description: module to keep external}
+      -e: {value: any, description: module to keep external, show: always}
+      --external: {value: any, description: module to keep external, show: always}
       --packages:
         value: {exec: "printf '%s\\n' bundle external"}
         description: bundle or externalize dependencies
       --public-path: {value: any, description: prefix for import paths}
-      --minify: {description: enable all minification}
+      --minify: {description: enable all minification, show: always}
       --minify-syntax: {description: minify syntax}
       --minify-whitespace: {description: minify whitespace}
       --minify-identifiers: {description: minify identifiers}
@@ -267,10 +270,10 @@ commands:
   init:
     description: start an empty project
     flags:
-      -y: {description: accept all defaults}
-      --yes: {description: accept all defaults}
-      --react: {description: React template}
-      --minimal: {description: only type definitions}
+      -y: {description: accept all defaults, show: always}
+      --yes: {description: accept all defaults, show: always}
+      --react: {description: React template, show: always}
+      --minimal: {description: only type definitions, show: always}
   create:
     aliases: [c]
     description: create a project from a template
@@ -278,8 +281,8 @@ commands:
   upgrade:
     description: upgrade Bun
     flags:
-      --canary: {description: upgrade to the canary build}
-      --stable: {description: upgrade to the latest stable build}
+      --canary: {description: upgrade to the canary build, show: always}
+      --stable: {description: upgrade to the latest stable build, show: always}
   feedback:
     description: send feedback to the Bun team
     args: file

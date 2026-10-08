@@ -14,9 +14,9 @@ commands:
     flags:
       -n: {value: any, description: "Namespace scope for this request"}
       --namespace: {value: any, description: "Namespace scope for this request"}
-      -f: {value: file, description: "Specify values in a YAML file or a URL"}
-      --values: {value: file, description: "Specify values in a YAML file or a URL"}
-      --set: {value: any, description: "Set values on the command line"}
+      -f: {value: file, description: "Specify values in a YAML file or a URL", show: always}
+      --values: {value: file, description: "Specify values in a YAML file or a URL", show: always}
+      --set: {value: any, description: "Set values on the command line", show: always}
       --set-string: {value: any, description: "Set STRING values on the command line"}
       --set-file: {value: any, description: "Set values from respective files specified via the command line"}
       --set-json: {value: any, description: "Set JSON values on the command line"}
@@ -25,10 +25,10 @@ commands:
       --wait-for-jobs: {description: "If set and --wait enabled, will wait until all Jobs have been completed before marking the release as successful"}
       --timeout: {value: any, description: "Time to wait for any individual Kubernetes operation"}
       --create-namespace: {description: "Create the release namespace if not present"}
-      --dry-run: {value: any, description: "Simulate an install"}
+      --dry-run: {value: any, description: "Simulate an install", show: always}
       --debug: {description: "Enable verbose output"}
-      -g: {description: "Generate the name (and omit the NAME parameter)"}
-      --generate-name: {description: "Generate the name (and omit the NAME parameter)"}
+      -g: {description: "Generate the name (and omit the NAME parameter)", show: always}
+      --generate-name: {description: "Generate the name (and omit the NAME parameter)", show: always}
       --render-subchart-notes: {description: "If set, render subchart notes along with the parent"}
       --dependency-update: {description: "Update dependencies if they are missing before installing the chart"}
       --version: {value: any, description: "Specify a version constraint for the chart version to use"}

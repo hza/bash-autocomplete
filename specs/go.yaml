@@ -1,14 +1,14 @@
 description: Go programming language toolchain
 flags:
-  --help: {description: "Show help"}
+  --help: {description: "Show help", show: always}
 commands:
   build:
     description: Compile packages and dependencies
     flags:
-      -o: {value: any, description: "Output file or directory"}
+      -o: {value: any, description: "Output file or directory", show: always}
       -v: {description: "Print the names of packages as they are compiled"}
       --verbose: {description: "Print the names of packages as they are compiled"}
-      -race: {description: "Enable data race detection"}
+      -race: {description: "Enable data race detection", show: always}
       -n: {description: "Print the commands but do not run them"}
       -x: {description: "Print the commands"}
       -a: {description: "Force rebuilding of packages that are already up-to-date"}
@@ -36,15 +36,15 @@ commands:
   test:
     description: Test packages
     flags:
-      -v: {description: "Verbose output"}
+      -v: {description: "Verbose output", show: always}
       -run: {value: {exec: "grep -ho '^func \\(Test\\|Benchmark\\|Example\\|Fuzz\\)[A-Za-z0-9_]*' *_test.go 2>/dev/null | cut -c6- | sort -u"}, description: "Run only those tests matching the regular expression"}
-      -bench: {value: {exec: "grep -ho '^func \\(Test\\|Benchmark\\|Example\\|Fuzz\\)[A-Za-z0-9_]*' *_test.go 2>/dev/null | cut -c6- | sort -u"}, description: "Run only those benchmarks matching the regular expression"}
+      -bench: {value: {exec: "grep -ho '^func \\(Test\\|Benchmark\\|Example\\|Fuzz\\)[A-Za-z0-9_]*' *_test.go 2>/dev/null | cut -c6- | sort -u"}, description: "Run only those benchmarks matching the regular expression", show: always}
       -benchmem: {description: "Print memory allocation statistics for benchmarks"}
-      -benchtime: {value: any, description: "Run each benchmark for duration d"}
+      -benchtime: {value: any, description: "Run each benchmark for duration d", show: always}
       -count: {value: any, description: "Run each test and benchmark n times"}
       -timeout: {value: any, description: "Panic test binary after duration d"}
       -race: {description: "Enable data race detection"}
-      -cover: {description: "Enable coverage analysis"}
+      -cover: {description: "Enable coverage analysis", show: always}
       -coverprofile: {value: file, description: "Write a coverage profile to the file"}
       -covermode: {value: any, description: "Set the mode for coverage analysis"}
       -cpu: {value: any, description: "Specify a list of GOMAXPROCS values"}
@@ -71,37 +71,37 @@ commands:
   get:
     description: Add dependencies to current module and install them
     flags:
-      -u: {description: "Update modules providing dependencies"}
+      -u: {description: "Update modules providing dependencies", show: always}
       -d: {description: "Download the source code needed to build the named packages and dependencies"}
       -v: {description: "Enable verbose progress and debug output"}
       -insecure: {description: "Permit fetching from insecure origins"}
-      -t: {description: "Consider modules needed to build tests of packages named on the command line"}
+      -t: {description: "Consider modules needed to build tests of packages named on the command line", show: always}
   clean:
     description: Remove object files and cached files
     flags:
-      -cache: {description: "Remove the entire go build cache"}
-      -testcache: {description: "Remove all test results in the go build cache"}
-      -modcache: {description: "Remove the entire module download cache"}
+      -cache: {description: "Remove the entire go build cache", show: always}
+      -testcache: {description: "Remove all test results in the go build cache", show: always}
+      -modcache: {description: "Remove the entire module download cache", show: always}
       -fuzzcache: {description: "Remove files stored in the Go build cache for fuzz testing"}
-      -n: {description: "Print the remove commands but not run them"}
+      -n: {description: "Print the remove commands but not run them", show: always}
       -x: {description: "Print remove commands as they are executed"}
       -i: {description: "Remove the corresponding installed archive or binary"}
       -r: {description: "Apply the clean command recursively"}
   doc:
     description: Show documentation for package or symbol
     flags:
-      -all: {description: "Show all the documentation for the package"}
+      -all: {description: "Show all the documentation for the package", show: always}
       -c: {description: "Respect case when matching symbols"}
       -cmd: {description: "Treat a command (package main) like a regular package"}
       -short: {description: "One-line representation for each symbol"}
-      -src: {description: "Show the full source code for the symbol"}
+      -src: {description: "Show the full source code for the symbol", show: always}
       -u: {description: "Show documentation for unexported as well as exported symbols"}
   env:
     description: Print Go environment information
     flags:
       -json: {description: "Print the environment in JSON format"}
-      -u: {description: "Unsets the default setting for the named environment variables"}
-      -w: {description: "Changes the default settings of the named environment variables"}
+      -u: {description: "Unsets the default setting for the named environment variables", show: always}
+      -w: {description: "Changes the default settings of the named environment variables", show: always}
     args:
       exec: "go env 2>/dev/null | cut -d= -f1"
   fix:
@@ -109,8 +109,8 @@ commands:
   fmt:
     description: Gofmt (reformat) package sources
     flags:
-      -n: {description: "Print the commands but do not run them"}
-      -x: {description: "Print commands as they are executed"}
+      -n: {description: "Print the commands but do not run them", show: always}
+      -x: {description: "Print commands as they are executed", show: always}
       -mod: {value: any, description: "Module download mode to use"}
   generate:
     description: Generate Go files by processing source
@@ -122,10 +122,10 @@ commands:
   list:
     description: List packages or modules
     flags:
-      -json: {description: "Print the package data in JSON format"}
-      -m: {description: "List modules instead of packages"}
+      -json: {description: "Print the package data in JSON format", show: always}
+      -m: {description: "List modules instead of packages", show: always}
       -versions: {description: "List all known versions of a module"}
-      -u: {description: "Add information about available upgrades"}
+      -u: {description: "Add information about available upgrades", show: always}
       -mod: {value: any, description: "Module download mode to use"}
       -f: {value: any, description: "Specify an alternate format for the list"}
       -e: {description: "Change the handling of erroneous packages"}
@@ -197,7 +197,7 @@ commands:
   tool:
     description: Run specified go tool
     flags:
-      -n: {description: "Print the command that would be executed"}
+      -n: {description: "Print the command that would be executed", show: always}
   version:
     description: Print Go version
     flags:
