@@ -1,6 +1,6 @@
 # autocomplete — agent notes
 
-Carapace-like bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. Not a git repo.
+Bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. Not a git repo.
 
 ## Docs policy
 - This file is for agents only: constraints, verification steps, gotchas. Keep it terse.

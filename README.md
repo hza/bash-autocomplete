@@ -1,10 +1,13 @@
-# autocomplete
+# bash 3.2 for MacOS autocomplete
 
-Fast, dependency-free command-line completion for the **bash 3.2 that ships with macOS**,
-inspired by [carapace](https://github.com/carapace-sh/carapace).
+**Fast tab completion for the stock macOS bash 3.2 (`/bin/bash`), written in C.** Completes
+docker, git, kubectl, make, mvn, npm and more, with no Homebrew bash, no `bash-completion`
+package and no shell scripts.
 
-Completions are described in small YAML files, so adding a new command doesn't need a
-rebuild. The engine is a single C binary with no runtime dependencies.
+macOS still ships bash 3.2 from 2007, and most modern completion tools have dropped support
+for it. This project was built specifically for that bash. All completion logic runs in a
+single compiled C binary, so pressing TAB doesn't run any shell code. Completion is
+instant and new terminals open as fast as before.
 
 ```console
 $ docker run --network <TAB>
@@ -15,37 +18,46 @@ $ make in<TAB>
 $ make install
 ```
 
-## Why
+## Why another bash completion tool?
 
-macOS still ships bash 3.2 as `/bin/bash`, and the usual completion tools don't fit it well:
+If you use bash on a Mac, you've probably found that completion tools don't support it:
 
-- **carapace** generates a bash script that relies on bash 4 features (`mapfile`,
-  `compopt`, negative array indexes). On bash 3.2 it doesn't work.
-- **bash-completion 2.x** requires bash 4.2+.
-- **bash-completion 1.3**, the last version for bash 3.2, is old and unmaintained. It loads
-  every completion script at shell startup, which makes each new terminal noticeably slower
-  to open.
+- **bash-completion 2.x** requires bash 4.2 or newer.
+- **bash-completion 1.3**, the last version that runs on bash 3.2, is unmaintained. It
+  loads every completion script at shell startup, which makes each new terminal slow to open.
+- The usual workaround is to `brew install bash` and change your login shell.
 
-autocomplete works with the bash you already have. Shell startup only runs one `complete`
-line, and nothing is loaded until you press TAB.
+autocomplete works with the bash already on your Mac:
+
+- **Built for macOS bash 3.2.** Tested against Apple's `/bin/bash` and Apple clang.
+- **Fast because it's all C.** Bash registers the binary with `complete -C`, so every TAB
+  calls the binary directly. No bash functions, no `sed`/`awk` pipelines, no subshells.
+- **Fast shell startup.** The init line registers commands and loads nothing else. Specs
+  are read only when you press TAB.
+- **No dependencies.** One binary, plain C, builds with the Xcode Command Line Tools.
 
 ## Features
 
-- Works with stock macOS `/bin/bash` 3.2, with no Homebrew bash or `bash-completion` needed.
-- Bundled completions for **docker**, **git**, **killall**, **kubectl**, **make**, **mvn**, **npm** and `autocomplete` itself.
-- Live values: running containers, images, networks and volumes for docker; branches,
-  tags, remotes, stashes and changed files for git; namespaces, contexts, pods, nodes and
-  resource types for kubectl; your running process names for killall; package.json scripts and dependencies for npm; profiles and modules from pom.xml for mvn; Makefile targets for make, with
-  descriptions taken from `## text` or the comment above each target
-  (honours `make -C dir` and `make -f file`).
-- Shows a short description next to each subcommand and flag when several match
+- Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **npm**,
+  **killall** and `autocomplete` itself.
+- Live values from your environment:
+  - docker: running containers, images, networks, volumes
+  - git: branches, tags, remotes, stashes, changed files
+  - kubectl: namespaces, contexts, pods, nodes, resource types
+  - npm: `package.json` scripts and dependencies
+  - mvn: profiles and modules from `pom.xml`, plugin goals for plugins the project uses
+  - make: Makefile targets and variables, with descriptions from `## text` or the comment
+    above each target (honours `make -C dir` and `make -f file`)
+  - killall: your running process names
+- Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
-- New commands are plain YAML files, so there's nothing to compile
-  ([how to add one](docs/adding-commands.md)).
-- System commands like `ps`, `ls` or `tar` can get flag completion generated from their
-  man pages ([details](docs/man-pages.md)).
-- Very large specs (over 100 KB) are compiled to a cache, so a TAB doesn't re-read the YAML each time.
+- Add a command by writing a small YAML file, with no rebuild
+  ([how](docs/adding-commands.md)).
+- Generate flag completion for system commands like `ps`, `ls` or `tar` from their man
+  pages ([details](docs/man-pages.md)).
+- Complete shell aliases like the command they wrap (`autocomplete alias k=kubectl`).
+- Very large specs (over 100 KB) are compiled to a cache, so TAB doesn't re-parse YAML.
 
 ## Requirements
 
@@ -65,16 +77,19 @@ make install
 - installs the binary to `/usr/local/bin/autocomplete`,
 - installs the bundled specs to `/usr/local/share/autocomplete/`,
 - precompiles any spec over 100 KB into the cache,
-- adds `eval "$(autocomplete bash)"` to `~/.bash_profile`, unless it's already there.
+- adds `eval "$(autocomplete bash)"` to `~/.bashrc`, unless it's already there.
 
-Open a new terminal (or run `source ~/.bash_profile`) and press TAB after `docker`, `git`
-or `make`.
+Open a new terminal (or run `source ~/.bashrc`) and press TAB after `docker`, `git` or `make`.
+
+> macOS Terminal starts login shells, which read `~/.bash_profile`, not `~/.bashrc`. If
+> your `~/.bash_profile` doesn't source `~/.bashrc`, install with
+> `make install PROFILE=$HOME/.bash_profile`.
 
 Options:
 
 ```sh
 make install PREFIX=$HOME/.local          # install without sudo (put ~/.local/bin on PATH first)
-make install PROFILE=$HOME/.bashrc        # use a different startup file
+make install PROFILE=$HOME/.bash_profile  # use a different startup file
 ```
 
 If `/usr/local` isn't writable, use `sudo make install`. In that case the cache isn't built
@@ -110,6 +125,28 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
 | `autocomplete alias [-f] NAME=CMD...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
+
+## FAQ
+
+### How do I get tab completion for git and docker in macOS bash?
+
+Install autocomplete (`make install`) and open a new terminal. You don't need Homebrew
+bash, `bash-completion` or zsh.
+
+### Do I need to upgrade bash or switch to zsh?
+
+No. autocomplete is designed for the bash 3.2 that macOS ships as `/bin/bash`.
+
+### Why is it faster than bash-completion?
+
+bash-completion is written in bash and sources its scripts into every shell.
+autocomplete keeps all logic in a compiled C binary that runs only when you press TAB.
+Shell startup does nothing beyond one `complete` registration.
+
+### Can I add completion for my own command?
+
+Yes. Write `~/.config/autocomplete/<command>.yaml` describing subcommands, flags and
+values. See [Adding your own commands](docs/adding-commands.md).
 
 ## Documentation
 

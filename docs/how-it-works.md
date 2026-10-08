@@ -7,9 +7,9 @@ runs `autocomplete _complete` with the line and cursor position in `COMP_LINE` a
 then prints the matching suggestions, already escaped for the shell and trimmed the way
 bash expects.
 
-bash 3.2 lacks `compopt` and `mapfile`, which carapace's script relies on. Instead, the
-function reads suggestions with a plain `while read` loop. Commands are registered with
-`complete -o nospace`, and the binary adds the trailing space itself to finished words.
+bash 3.2 lacks `compopt` and `mapfile`, so nothing here relies on them. Commands are
+registered with `complete -o nospace`, and the binary adds the trailing space itself to
+finished words.
 
 Descriptions use the way bash handles several matches: it inserts only their common
 prefix and lists the rest. When more than one command matches, the binary returns each

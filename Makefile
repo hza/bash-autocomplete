@@ -1,6 +1,6 @@
 PREFIX ?= /usr/local
 CFLAGS ?= -O2 -Wall -Wextra
-PROFILE ?= $(HOME)/.bash_profile
+PROFILE ?= $(HOME)/.bashrc
 INIT = eval "$$(autocomplete bash)"
 
 autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the autocomplete binary
