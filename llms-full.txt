@@ -299,7 +299,7 @@ commands:
 
 ## Spec format
 
-A spec has five optional keys, and `commands` nests the same structure for subcommands:
+A spec has these optional keys, and `commands` nests the same structure for subcommands:
 
 | Key | Meaning |
 |---|---|
@@ -309,6 +309,7 @@ A spec has five optional keys, and `commands` nests the same structure for subco
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (i, add)`); an alias is offered as a candidate only once typed in full |
 | `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
+| `groups` | Map of short-flag letters → `{description?}`, grouping rarely used short flags by meaning. Each key lists the letters of `-x` flags of this spec (or the top-level one) that are hidden from the list and shown together in one entry: `"Up": {description: proxy}` gives `-👀 Up  -- proxy: (U) Proxy user and password (p) HTTP proxy tunnel (using CONNECT)`. Top-level groups apply at every depth. `autocomplete check` reports letters with no matching flag |
 
 Each flag is a map with two optional keys, usually written on one line:
 
@@ -316,7 +317,7 @@ Each flag is a map with two optional keys, usually written on one line:
 |---|---|
 | `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
 | `description` | One-line summary shown next to the flag when several flags match |
-| `show` | `always`: a frequently used flag, never folded into a group or into `👀` (see below); `tools/gen_tldr.py` sets it for bundled specs from [tldr](https://tldr.sh) examples. `collapsed`: a rarely used flag, left out of the list and only named in a `👀` entry that ends with the collapsed short flags' letters: separate entries for digits, upper-case, lower-case and other symbols, split further so each line fits the terminal width: curl's `-0 -1 -2 -3` show as `-👀 0123  -- (0) Use HTTP 1.0 (1) TLSv1.0 or greater (2) SSLv2 (3) SSLv3`, `-M -P` as `-👀 MP`. Collapsed long flags share one `--👀  -- 128 more: …` entry; still listed when nothing else matches. Leave it out for the default |
+| `show` | `always`: a frequently used flag, never folded into a group or into `-👀` (see below); `tools/gen_tldr.py` sets it for bundled specs from [tldr](https://tldr.sh) examples. `collapsed` (short flags only): a rarely used flag, left out of the list and only named in a `👀` entry; still listed when nothing else matches. `default` (or leaving it out): the normal behaviour; write it explicitly to keep `tools/gen_tldr.py` from marking the flag `always` |
 
 When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (-d)`. Give a short/long pair the same description to get this.
 

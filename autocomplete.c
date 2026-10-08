@@ -169,12 +169,16 @@ typedef struct {
     const char *desc; /* optional description (spec "description") */
     const char *kind; /* source, e.g. "target"; tagged when kinds mix */
     int show;         /* flag "show": SHOW_DEFAULT, SHOW_ALWAYS (never folded), SHOW_COLLAPSED (only in 👀) */
+    const char *group; /* key in "groups" ("Up"): collapsed together */
+    const char *gdesc; /* that group's description */
 } cand;
 static cand g_cands[MAXCANDS];
 static int g_ncands;
 static const char *g_kind; /* kind given to candidates emitted now */
 enum { SHOW_DEFAULT, SHOW_ALWAYS, SHOW_COLLAPSED };
 static int g_show;         /* "show" given to candidates emitted now */
+static int g_noesc;        /* display-only candidates: no shell escaping */
+static const char *g_group, *g_gdesc; /* group (and its description) given to candidates emitted now */
 
 /* Escape for bash and queue, trimmed to bash's current word. Duplicates
  * (union values can overlap) are dropped, keeping the first description. */
@@ -184,7 +188,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
     const char *p;
     if (strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
     for (p = cand; *p && n < sizeof esc - 3; p++) {
-        if (strchr(" \t\\'\"()<>&;|*?[]$`!#{}~", *p)) esc[n++] = '\\';
+        if (!g_noesc && strchr(" \t\\'\"()<>&;|*?[]$`!#{}~", *p)) esc[n++] = '\\';
         esc[n++] = *p;
     }
     esc[n] = 0;
@@ -214,6 +218,8 @@ static void emit_desc(const char *cand, int space, const char *desc) {
         g_cands[g_ncands].space = space;
         g_cands[g_ncands].kind = g_kind;
         g_cands[g_ncands].show = g_show;
+        g_cands[g_ncands].group = g_group;
+        g_cands[g_ncands].gdesc = g_gdesc;
         g_cands[g_ncands++].desc = desc ? strdup(desc) : NULL;
     }
 }
@@ -295,17 +301,44 @@ static int coll_class(const cand *c) {
 
 static int dwidth(const char *s);
 
-/* Emit "<word>👀<letters>" for short collapsed flags coll[0..k) of class
- * cl, starting a new entry whenever the description would pass `room`. */
-static void emit_short_coll(const cand *coll, int k, int cl, int room) {
+/* Letter of short flag candidate c; its text is shell-escaped ("-\\#"). */
+static char flag_char(const cand *c) { return c->text[c->text[1] == '\\' ? 2 : 1]; }
+
+/* Is c in the entry for group grp (NULL: ungrouped flags of class cl)? */
+static int coll_member(const cand *c, const char *grp, int cl) {
+    if (grp) return c->group && !strcmp(c->group, grp);
+    return !c->group && coll_class(c) == cl;
+}
+
+/* Emit "<word>👀 <letters>" for the short collapsed flags of group grp
+ * (or, ungrouped, of class cl), starting a new entry whenever the
+ * description would pass `room`. */
+static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, int room) {
     char desc[1024], text[256], item[512];
     size_t have = 0, nt = 0;
     int i;
+    if (grp) { /* letters and descriptions in the order of the key */
+        const char *p;
+        const char *gd = NULL;
+        nt = (size_t)snprintf(text, sizeof text, "%s👀 ", g_cur);
+        desc[0] = 0;
+        for (p = grp; *p; p++)
+            for (i = 0; i < k; i++) {
+                if (!coll_member(&coll[i], grp, cl) || flag_char(&coll[i]) != *p) continue;
+                if (!gd && (gd = coll[i].gdesc)) have = (size_t)snprintf(desc, sizeof desc, "%s:", gd);
+                if (nt < sizeof text - 1) text[nt++] = *p, text[nt] = 0;
+                if (have < sizeof desc - 1)
+                    have += (size_t)snprintf(desc + have, sizeof desc - have, "%s(%c) %s", have ? " " : "", *p,
+                                             coll[i].desc ? coll[i].desc : "");
+            }
+        if (have) emit_desc(text, 0, desc);
+        return;
+    }
     for (i = 0; i <= k; i++) {
         size_t il = 0;
         if (i < k) {
-            if (coll_class(&coll[i]) != cl) continue;
-            il = (size_t)snprintf(item, sizeof item, "(%s) %s", coll[i].text + 1, coll[i].desc ? coll[i].desc : "");
+            if (!coll_member(&coll[i], grp, cl)) continue;
+            il = (size_t)snprintf(item, sizeof item, "(%c) %s", flag_char(&coll[i]), coll[i].desc ? coll[i].desc : "");
         }
         if (have && (i == k || (int)(have + 1 + il) > room)) {
             emit_desc(text, 0, desc);
@@ -316,12 +349,15 @@ static void emit_short_coll(const cand *coll, int k, int cl, int room) {
             nt = (size_t)snprintf(text, sizeof text, "%s👀\u00a0", g_cur);
             desc[0] = 0;
         }
-        if (nt + strlen(coll[i].text + 1) < sizeof text)
-            nt += (size_t)snprintf(text + nt, sizeof text - nt, "%s", coll[i].text + 1);
+        if (nt < sizeof text - 1) text[nt++] = flag_char(&coll[i]), text[nt] = 0;
         if (have < sizeof desc - 1)
             have += (size_t)snprintf(desc + have, sizeof desc - have, "%s%s", have ? " " : "", item);
     }
 }
+
+/* "show: collapsed" hides short flags only; long ones are listed (and
+ * grouped by letter) as usual, except in the "-👀" long-options fold. */
+static int is_coll(const cand *c) { return c->show == SHOW_COLLAPSED && c->text[1] != '-'; }
 
 static void collapse_flags(void) {
     static cand coll[MAXCANDS];
@@ -336,7 +372,7 @@ static void collapse_flags(void) {
     }
     for (i = 0; i < g_ncands; i++) {
         if (is_long_fold(&g_cands[i], longs)) nlong++;
-        else if (g_cands[i].show == SHOW_COLLAPSED) ncoll++;
+        else if (is_coll(&g_cands[i])) ncoll++;
         else continue;
         kind = g_cands[i].kind;
     }
@@ -344,42 +380,26 @@ static void collapse_flags(void) {
     if (nlong + ncoll == g_ncands) return;
     for (i = j = 0; i < g_ncands; i++) {
         if (is_long_fold(&g_cands[i], longs)) continue;
-        if (g_cands[i].show == SHOW_COLLAPSED) coll[k++] = g_cands[i];
+        if (is_coll(&g_cands[i])) coll[k++] = g_cands[i];
         else g_cands[j++] = g_cands[i];
     }
     g_ncands = j;
     qsort(coll, (size_t)k, sizeof *coll, cmp_cand); /* "-👀 123" */
     g_kind = kind;
     g_show = SHOW_ALWAYS;
+    g_noesc = 1; /* never inserted: show "-👀 Z#N", not "Z\\#N" */
     { /* name column: widest remaining name (see flush) */
         int w = 12;
         for (i = 0; i < g_ncands; i++)
             if (dwidth(g_cands[i].text) > w) w = dwidth(g_cands[i].text);
-        for (cl = 0; cl < 4; cl++) emit_short_coll(coll, k, cl, term_width() - w - 8);
+        for (cl = 0; cl < 4; cl++) emit_short_coll(coll, k, NULL, cl, term_width() - w - 8);
     }
-    {
-        size_t have = 0, nt;
-        int n = 0;
-        desc[0] = 0;
-        nt = (size_t)snprintf(text, sizeof text, "%s👀", g_cur);
-        for (i = 0; i < k; i++)
-            if (coll_class(&coll[i]) == 4) n++;
-        for (i = 0; n && i < k; i++) {
-            const char *nm = coll[i].text + 2;
-            if (coll_class(&coll[i]) != 4 || have >= sizeof desc - 1) continue;
-            if (n > 5) /* "131 more: a b c" */
-                have += (size_t)snprintf(desc + have, sizeof desc - have, "%s%s", have ? " " : "", nm);
-            else
-                have += (size_t)snprintf(desc + have, sizeof desc - have, "%s(%s) %s", have ? " " : "", nm,
-                                         coll[i].desc ? coll[i].desc : "");
-        }
-        if (nlong && nt < sizeof text - 3) strcat(text, "\u00a0+"); /* no-break space: a plain one is shown escaped */
-        if (n > 5) {
-            char many[1100];
-            snprintf(many, sizeof many, "%d more: %s", n, desc);
-            emit_desc(text, 0, many);
-        } else if (n)
-            emit_desc(text, 0, desc);
+    for (i = 0; i < k; i++) { /* groups, each once */
+        const char *g = coll[i].group;
+        if (!g) continue;
+        for (j = 0; j < i && !(coll[j].group && !strcmp(coll[j].group, g)); j++) {}
+        if (j < i) continue;
+        emit_short_coll(coll, k, g, 0, 0);
     }
     if (nlong) {
         snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
@@ -387,6 +407,7 @@ static void collapse_flags(void) {
         emit_desc(text, 0, desc);
     }
     g_show = SHOW_DEFAULT;
+    g_noesc = 0;
 }
 
 /* A short flag listed next to a long one with the same description is
@@ -764,6 +785,42 @@ static const char *spec_desc(const ynode *spec) {
     return d && d->type == Y_STR ? d->str : NULL;
 }
 
+/* "groups: {"Up": {description?}}": the group (own level first, then
+ * root) whose key holds the letter of short flag "-ch". Its flags are
+ * collapsed into one "-👀 Up" entry. */
+static const ynode *find_group(const ynode *c, const ynode *root, char ch) {
+    const ynode *s = c, *g;
+    for (;;) {
+        for (g = yaml_get(s, "groups") ? yaml_get(s, "groups")->child : NULL; g; g = g->next)
+            if (g->key && strchr(g->key, ch)) return g;
+        if (s == root) return NULL;
+        s = root;
+    }
+}
+
+/* `check`: warn about "groups" letters without a "-x" flag (own or root). */
+static int check_groups(const ynode *n, const ynode *root, const char *path) {
+    const ynode *g, *c;
+    const char *p;
+    int bad = 0;
+    for (g = yaml_get(n, "groups") ? yaml_get(n, "groups")->child : NULL; g; g = g->next)
+        for (p = g->key; p && *p; p++) {
+            char flag[3] = {'-', *p, 0};
+            const ynode *own = yaml_get(n, "flags"), *top = yaml_get(root, "flags");
+            if (!yaml_get(own, flag) && !yaml_get(top, flag)) {
+                fprintf(stderr, "%s: groups \"%s\": no flag %s\n", path, g->key, flag);
+                bad = 1;
+            }
+        }
+    for (c = yaml_get(n, "commands") ? yaml_get(n, "commands")->child : NULL; c; c = c->next) {
+        char sub[512];
+        snprintf(sub, sizeof sub, "%s %s", path, c->key);
+        bad |= check_groups(c, root, sub);
+    }
+    return bad;
+}
+
+
 /* "when: {file, contains?}": true if `file` (relative to cwd) exists and,
  * when given, contains the `contains` string. No "when" = always true. */
 static int when_ok(const ynode *spec) {
@@ -996,12 +1053,17 @@ static int do_complete(const char *line, const char *wbreaks) {
         const ynode *f, *s = c;
         for (;;) {
             for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
-                g_show = is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
+                const ynode *gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
+                g_group = gr ? gr->key : NULL;
+                g_gdesc = gr ? spec_desc(gr) : NULL;
+                g_show = g_group                                    ? SHOW_COLLAPSED
+                         : is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
                          : is_str(yaml_get(f, "show"), "collapsed") ? SHOW_COLLAPSED
                                                                     : SHOW_DEFAULT;
                 emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
             }
             g_show = SHOW_DEFAULT;
+            g_group = g_gdesc = NULL;
             if (s == root) break;
             s = root;
         }
@@ -1363,7 +1425,7 @@ int main(int argc, char **argv) {
         }
         dump(n, 0);
         putchar('\n');
-        return 0;
+        return check_groups(n, n, argv[2]);
     }
     if (argc >= 2 && !strcmp(argv[1], "cache")) {
         int i;
