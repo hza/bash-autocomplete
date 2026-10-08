@@ -1,0 +1,33 @@
+bash-3.2$ wget -
+--continue          -- Resume getting a partially-downloaded file (🔥 -c)                      
+--convert-links     -- Make links in downloaded HTML or CSS point to local files (🔥 -k)       
+--directory-prefix  -- Save files to PREFIX/ 🔥 -P                                           
+--input-file        -- Download URLs found in local or external FILE 🔥 -i                   
+--limit-rate        -- Limit download rate to RATE                                             
+--output-document   -- Write documents to FILE 🔥 -O                                         
+--tries             -- Set number of retries to NUMBER (0 unlimits) 🔥 -t                    
+--user              -- Set both ftp and http user to USER                                      
+-N                  -- Don't re-retrieve files unless newer than local                         
+-S                  -- Print server response                                                   
+-U                  -- Identify as AGENT instead of Wget/VERSION                               
+-l                  -- Maximum recursion depth (inf or 0 for infinite)                         
+-m                  -- Shortcut for -N -r -l inf --no-remove-listing                           
+-nH                 -- Don't create host directories                                           
+-nc                 -- Skip downloads that would download to existing files (overwriting       
+-nd                 -- Don't create directories                                                
+-np                 -- Don't ascend to the parent directory                                    
+-nv                 -- Turn off verboseness, without being quiet                               
+-p                  -- Get all images, etc. needed to display HTML page                        
+-q                  -- Quiet (no output)                                                       
+-r                  -- Specify recursive download                                              
+-v                  -- Be verbose (this is the default)                                        
+-👀                 -- 145 long options: type -- to list                                     
+-👀 46              -- IP version: (4) Connect only to IPv4 addresses (6) Connect only to IPv6 addresses
+-👀 AR              -- accept/reject files: (A) Comma-separated list of accepted extensions (R) Comma-separated list of rejected extensions
+-👀 DHL             -- hosts and links: (D) Comma-separated list of accepted domains (H) Go to foreign hosts when recursive (L) Follow relative links only
+-👀 FB              -- HTML input: (F) Treat input file as HTML (B) Resolves HTML input-file links (-i -F) relative to URL
+-👀 IX              -- include/exclude dirs: (I) List of allowed directories (X) List of excluded directories
+-👀 TwQ             -- limits: (T) Set all timeout values to SECONDS (w) Wait SECONDS between retrievals (applies if more then 1 URL is to (Q) Set retrieval quota to NUMBER
+-👀 Vhe             -- info/config: (V) Display the version of Wget and exit (h) Print this help (e) Execute a `.wgetrc'-style command
+-👀 oadb            -- log: (o) Log messages to FILE (a) Append messages to FILE (d) Print lots of debugging information (b) Go to background after startup
+-👀 xEK             -- files: (x) Force creation of directories (E) Save HTML/CSS documents with proper extensions (K) Before converting file X, back up as X.orig

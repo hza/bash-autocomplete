@@ -1,4 +1,14 @@
 description: "Non-interactive network downloader"
+groups:
+  "Vhe": {description: "info/config"}
+  "oadb": {description: "log"}
+  "FB": {description: "HTML input"}
+  "TwQ": {description: "limits"}
+  "46": {description: "IP version"}
+  "xEK": {description: "files"}
+  "AR": {description: "accept/reject files"}
+  "IX": {description: "include/exclude dirs"}
+  "DHL": {description: "hosts and links"}
 flags:
   "-V": {description: "Display the version of Wget and exit"}
   "--version": {description: "Display the version of Wget and exit"}
@@ -83,7 +93,7 @@ flags:
     description: "Connect first to addresses of specified family, one of IPv6, IPv4,..."
     value: {"exec": "printf '%s\\n' IPv6 IPv4 none"}
   "--user": {description: "Set both ftp and http user to USER", value: any, show: always}
-  "--password": {description: "Set both ftp and http password to PASS", value: any, show: always}
+  "--password": {description: "Set both ftp and http password to PASS", value: any, show: default}
   "--ask-password": {description: "Prompt for passwords"}
   "--use-askpass": {description: "Specify credential handler for requesting username and password", value: any}
   "--no-iri": {description: "Turn off IRI support"}

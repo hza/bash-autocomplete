@@ -56,7 +56,7 @@ Each flag is a map with two optional keys, usually written on one line:
 | `description` | One-line summary shown next to the flag when several flags match |
 | `show` | `always`: a frequently used flag, never folded into a group or into `-👀` (see below); `tools/gen_tldr.py` sets it for bundled specs from [tldr](https://tldr.sh) examples. `collapsed` (short flags only): a rarely used flag, left out of the list and only named in a `👀` entry; still listed when nothing else matches. `default` (or leaving it out): the normal behaviour; write it explicitly to keep `tools/gen_tldr.py` from marking the flag `always` |
 
-When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (-d)`. Give a short/long pair the same description to get this.
+When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (🔥 -d)`. Give a short/long pair the same description to get this.
 
 Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it. Quote such keys in YAML.
 

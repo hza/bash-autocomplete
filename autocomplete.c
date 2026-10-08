@@ -411,7 +411,7 @@ static void collapse_flags(void) {
 }
 
 /* A short flag listed next to a long one with the same description is
- * shown only as a hint on the long one: "--data  -- HTTP POST data (-d)".
+ * shown only as a hint on the long one: "--data  -- HTTP POST data (🔥 -d)".
  * Each long flag takes at most one short. */
 static void merge_pairs(void) {
     static char paired[MAXCANDS];
@@ -430,9 +430,9 @@ static void merge_pairs(void) {
                 }
         if (hit < 0) continue;
         {
-            char *d = malloc(strlen(c->desc) + strlen(c->text) + 4);
+            char *d = malloc(strlen(c->desc) + strlen(c->text) + 8);
             if (!d) continue;
-            sprintf(d, "%s (%s)", c->desc, c->text);
+            sprintf(d, "%s (🔥 %s)", c->desc, c->text);
             paired[hit] = 1;
             g_cands[hit].desc = d;
             c->text = NULL; /* dropped below */
