@@ -1,0 +1,26 @@
+# autocomplete (bash-autocomplete)
+
+> Fast tab completion for the stock macOS bash 3.2 (`/bin/bash`), written in C. A lightweight alternative to bash-completion: no Homebrew bash, no bash-completion package, no zsh, no shell scripts. Bundled completions for docker, git, kubectl, make, mvn, npm and killall; new commands are added with small YAML spec files.
+
+Key facts:
+
+- Registered with `complete -o nospace -C 'autocomplete _complete'`; every TAB runs the C binary directly. Shell startup loads nothing else.
+- Install: `git clone https://github.com/hza/bash-autocomplete.git autocomplete && cd autocomplete && make install`, then open a new terminal. Init line: `eval "$(autocomplete bash)"`.
+- In bash 3.2, `source <(autocomplete bash)` silently does nothing; use `eval "$(autocomplete bash)"`.
+- Specs are YAML files named after the command, looked up in `$AUTOCOMPLETE_SPECS`, `~/.config/autocomplete`, then the bundled specs directory.
+- License: MIT.
+
+## Docs
+
+- [README](https://github.com/hza/bash-autocomplete/blob/main/README.md): overview, features, install, commands, FAQ
+- [Adding your own commands](https://github.com/hza/bash-autocomplete/blob/main/docs/adding-commands.md): quick start for writing a spec
+- [Writing specs](https://github.com/hza/bash-autocomplete/blob/main/docs/writing-specs.md): full spec format, value types, supported YAML, lookup order
+- [Completions from man pages](https://github.com/hza/bash-autocomplete/blob/main/docs/man-pages.md): `autocomplete man CMD`
+- [Troubleshooting](https://github.com/hza/bash-autocomplete/blob/main/docs/troubleshooting.md): common problems and fixes
+
+## Optional
+
+- [How it works](https://github.com/hza/bash-autocomplete/blob/main/docs/how-it-works.md): what happens when you press TAB
+- [Cache](https://github.com/hza/bash-autocomplete/blob/main/docs/cache.md): how large specs are precompiled
+- [Bundled specs](https://github.com/hza/bash-autocomplete/tree/main/specs): example YAML specs
+- [Full documentation in one file](https://github.com/hza/bash-autocomplete/blob/main/llms-full.txt)
