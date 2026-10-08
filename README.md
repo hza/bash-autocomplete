@@ -109,6 +109,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
+| `autocomplete alias [-f] NAME=CMD...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 
 ## Documentation
 

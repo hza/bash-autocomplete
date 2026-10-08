@@ -15,3 +15,8 @@ commands:
     flags:
       -f: {description: "Overwrite an existing spec"}
     args: {exec: "compgen -c | sort -u"}
+  alias:
+    description: "Complete an alias like a command (NAME=CMD, symlinks its spec)"
+    flags:
+      -f: {description: "Overwrite an existing spec"}
+    args: {exec: "autocomplete list | sed 's/$/=/'", nospace: true}
