@@ -1,0 +1,34 @@
+flags:
+  -m:
+    value: {exec: "python3 -c \"import pkgutil,sys;print('\\n'.join(sorted(set(sys.builtin_module_names)|{m.name for m in pkgutil.iter_modules()}|{'http.server','json.tool','pip','venv','unittest','pdb','cProfile','timeit','zipfile','tarfile','py_compile','compileall','site','sysconfig','calendar','base64','webbrowser','pydoc','ensurepip','trace','tabnanny','uuid'})))\""}
+    description: run a library module as a script
+  -c: {value: any, description: run a program passed as a string}
+  -b: {description: warn on str(bytes) and bytes/str comparison}
+  -bb: {description: error on str(bytes) and bytes/str comparison}
+  -B: {description: do not write .pyc files}
+  -d: {description: parser debugging output}
+  -E: {description: ignore PYTHON* environment variables}
+  -h: {description: print help and exit}
+  --help: {description: print help and exit}
+  -i: {description: inspect interactively after running the script}
+  -I: {description: isolate from the user environment}
+  -O: {description: remove asserts and __debug__ code}
+  -OO: {description: like -O and also remove docstrings}
+  -q: {description: no version banner on interactive startup}
+  -s: {description: do not add the user site directory to sys.path}
+  -S: {description: do not import site on startup}
+  -u: {description: unbuffered stdout and stderr}
+  -v: {description: trace import statements}
+  -V: {description: print the version and exit}
+  --version: {description: print the version and exit}
+  -W:
+    value: {exec: "printf '%s\\n' default error ignore always module once"}
+    description: warning control (action:message:category:module:lineno)
+  -x: {description: skip the first line of the source}
+  -X:
+    value: {exec: "printf '%s\\n' dev utf8 importtime faulthandler tracemalloc showrefcount frozen_modules=off warn_default_encoding"}
+    description: implementation-specific option
+  --check-hash-based-pycs:
+    value: {exec: "printf '%s\\n' default always never"}
+    description: control validation of hash-based .pyc files
+args: file

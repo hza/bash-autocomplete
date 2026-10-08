@@ -1,0 +1,20 @@
+flags:
+  --package: {value: any, description: package to install before running}
+  -p: {value: any, description: package to install before running}
+  -c: {value: any, description: shell command to run}
+  --call: {value: any, description: shell command to run}
+  -y: {description: install without asking}
+  --yes: {description: install without asking}
+  --no: {description: refuse to install missing packages}
+  -w:
+    value:
+      exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
+    description: run in this workspace
+  --workspace:
+    value:
+      exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
+    description: run in this workspace
+  --workspaces: {description: run in all workspaces}
+  --include-workspace-root: {description: also run in the root project}
+args:
+  exec: d=$PWD; while :; do [ -d "$d/node_modules/.bin" ] && ls "$d/node_modules/.bin"; [ "$d" = / ] && break; d=$(dirname "$d"); done

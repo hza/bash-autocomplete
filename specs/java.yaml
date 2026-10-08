@@ -1,0 +1,40 @@
+flags:
+  -cp: {value: file, description: class path (dirs and jars separated by colons)}
+  -classpath: {value: file, description: class path (dirs and jars separated by colons)}
+  --class-path: {value: file, description: class path (dirs and jars separated by colons)}
+  -jar: {value: file, description: run the main class of a jar file}
+  -m: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
+  --module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
+  -p: {value: file, description: module path}
+  --module-path: {value: file, description: module path}
+  --upgrade-module-path: {value: file, description: module path that replaces upgradeable modules}
+  --add-modules: {value: {exec: "java --list-modules | sed 's/@.*//'; printf '%s\n' ALL-DEFAULT ALL-SYSTEM ALL-MODULE-PATH"}, description: extra root modules to resolve}
+  --enable-native-access: {value: any, description: modules allowed to do restricted native operations}
+  --list-modules: {description: list observable modules and exit}
+  -d: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
+  --describe-module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
+  --dry-run: {description: load the main class without running main}
+  --validate-modules: {description: validate all modules and exit}
+  -version: {description: print the version to stderr and exit}
+  --version: {description: print the version to stdout and exit}
+  -showversion: {description: print the version to stderr and continue}
+  --show-version: {description: print the version to stdout and continue}
+  --show-module-resolution: {description: show module resolution during startup}
+  -verbose:class: {description: log class loading}
+  -verbose:module: {description: log module resolution}
+  -verbose:gc: {description: log garbage collection}
+  -verbose:jni: {description: log JNI calls}
+  -ea: {description: enable assertions}
+  -da: {description: disable assertions}
+  -esa: {description: enable system assertions}
+  -dsa: {description: disable system assertions}
+  -agentlib:jdwp=: {description: load the debugger agent with these options}
+  --enable-preview: {description: allow preview language features}
+  --source: {value: {exec: "printf '%s\\n' 25 21 17 11 8"}, description: Java version of a source-file program}
+  -XX:+UseG1GC: {description: use the G1 garbage collector}
+  -XX:+UseZGC: {description: use the Z garbage collector}
+  -XX:+HeapDumpOnOutOfMemoryError: {description: dump the heap on OutOfMemoryError}
+  -X: {description: print help on extra options}
+  --help: {description: print help}
+  --help-extra: {description: print help on extra options}
+args: file

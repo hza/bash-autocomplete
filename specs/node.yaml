@@ -1,0 +1,65 @@
+flags:
+  -e: {value: any, description: evaluate a script}
+  --eval: {value: any, description: evaluate a script}
+  -p: {value: any, description: evaluate a script and print the result}
+  --print: {value: any, description: evaluate a script and print the result}
+  -c: {description: syntax-check the script without running it}
+  --check: {description: syntax-check the script without running it}
+  -i: {description: always enter the REPL}
+  --interactive: {description: always enter the REPL}
+  -r: {value: any, description: CommonJS module to preload}
+  --require: {value: any, description: CommonJS module to preload}
+  --import: {value: any, description: ES module to preload}
+  --run:
+    value:
+      exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
+    description: run a package.json script
+  --test: {description: run tests with the built-in test runner}
+  --test-name-pattern: {value: any, description: run only tests whose name matches}
+  --test-only: {description: run only tests marked only}
+  --test-reporter:
+    value: {exec: "printf '%s\\n' spec tap dot junit lcov"}
+    description: test reporter
+  --experimental-test-coverage: {description: collect test coverage}
+  --watch: {description: restart when files change}
+  --watch-path: {value: file, description: watch this path for changes}
+  --env-file: {value: file, description: load environment variables from a file}
+  --env-file-if-exists: {value: file, description: load environment variables from a file if it exists}
+  --input-type:
+    value: {exec: "printf '%s\\n' module commonjs module-typescript commonjs-typescript"}
+    description: module type for string input
+  --inspect: {description: enable the inspector}
+  --inspect-brk: {description: enable the inspector and break at start}
+  --inspect-wait: {description: enable the inspector and wait for a debugger}
+  --enable-source-maps: {description: use source maps in stack traces}
+  --no-warnings: {description: silence all process warnings}
+  --no-deprecation: {description: silence deprecation warnings}
+  --trace-warnings: {description: show stack traces for warnings}
+  --trace-deprecation: {description: show stack traces for deprecations}
+  --trace-uncaught: {description: show stack traces for uncaught throws}
+  --unhandled-rejections:
+    value: {exec: "printf '%s\\n' throw strict warn none warn-with-error-code"}
+    description: how to handle unhandled promise rejections
+  --max-old-space-size: {value: any, description: max old-generation heap size in MB}
+  --stack-size: {value: any, description: max stack size in KB}
+  --expose-gc: {description: expose the gc function}
+  --cpu-prof: {description: write a V8 CPU profile on exit}
+  --heap-prof: {description: write a V8 heap profile on exit}
+  --prof: {description: write V8 profiler output}
+  --permission: {description: enable the permission system}
+  --allow-fs-read: {value: file, description: allow reading these paths}
+  --allow-fs-write: {value: file, description: allow writing these paths}
+  --allow-child-process: {description: allow child processes}
+  --allow-worker: {description: allow worker threads}
+  --experimental-strip-types: {description: run TypeScript by stripping types}
+  --experimental-transform-types: {description: run TypeScript with type transforms}
+  --conditions: {value: any, description: extra conditions for exports resolution}
+  --preserve-symlinks: {description: keep symlinks when resolving modules}
+  --title: {value: any, description: process title}
+  -v: {description: print the version}
+  --version: {description: print the version}
+  -h: {description: print the options}
+  --help: {description: print the options}
+  --v8-options: {description: print the V8 options}
+  --completion-bash: {description: print a bash completion script}
+args: file

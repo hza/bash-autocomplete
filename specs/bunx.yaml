@@ -1,0 +1,9 @@
+flags:
+  --bun: {description: force the Bun runtime instead of Node.js}
+  -p: {value: any, description: package to install before running}
+  --package: {value: any, description: package to install before running}
+  --no-install: {description: do not install missing packages}
+  --verbose: {description: verbose output}
+  --silent: {description: no output}
+args:
+  exec: d=$PWD; while :; do [ -d "$d/node_modules/.bin" ] && ls "$d/node_modules/.bin"; [ "$d" = / ] && break; d=$(dirname "$d"); done

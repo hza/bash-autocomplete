@@ -39,10 +39,11 @@ autocomplete works with the bash already on your Mac:
 
 ## Features
 
-- Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **npm**,
-  **yarn**, **pnpm**, **pip**, **go**, **cargo**, **gradle**, **brew**, **gh**, **ssh**,
-  **scp**, **terraform**, **helm**, **aws**, **tmux**, **kill**, **pkill**, **killall**,
-  macOS **open**, **launchctl**, **defaults**, **diskutil**, and `autocomplete` itself.
+- Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**,
+  **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
+  **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
+  **tmux**, **kill**, **pkill**, **killall**, macOS **open**, **launchctl**, **defaults**,
+  **diskutil**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
   that command's own completion (`sudo git chec<TAB>` → `checkout`).
 - Live values from your environment:
@@ -60,6 +61,10 @@ autocomplete works with the bash already on your Mac:
   - yarn, pnpm: `package.json` scripts, dependencies and workspace packages
   - pip: installed packages; go: packages and test names; cargo: bins, examples, tests
   - terraform: resources from state, `*.tfvars`; helm: releases, repo charts, namespaces
+  - node: `package.json` scripts for `--run`, test reporters; npx, bunx: binaries in `node_modules/.bin`
+  - bun: scripts, dependencies (`remove`, `why`, `update`), `node_modules/.bin` for `bun x`
+  - python: module names for `-m` (`python3 -m http<TAB>` → `http.server`)
+  - java: module names (`-m`, `--add-modules`), jars and class paths
   - aws: profiles, regions, S3 buckets; tmux: sessions and buffers
   - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
