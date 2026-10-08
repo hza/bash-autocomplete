@@ -263,6 +263,27 @@ static void collapse_vars(void) {
     emit_desc("🔧 variables", 0, strdup(names));
 }
 
+/* On a bare "-", long "--x" flags are folded into one display-only
+ * "-👀" entry (description: how many) so the short flags stand out;
+ * typing "--" lists them. "👀" sorts after ASCII, so it is listed last.
+ * Fewer than 15 long flags are listed as is.
+ * Never inserted: the short flags remain and share only "-" with it. */
+static void collapse_long(void) {
+    char desc[64];
+    const char *kind = NULL;
+    int i, j, hidden = 0;
+    if (strcmp(g_cur, "-")) return;
+    for (i = 0; i < g_ncands; i++)
+        if (!strncmp(g_cands[i].text, "--", 2)) { hidden++; kind = g_cands[i].kind; }
+    if (hidden < 15 || hidden == g_ncands) return;
+    for (i = j = 0; i < g_ncands; i++)
+        if (strncmp(g_cands[i].text, "--", 2)) g_cands[j++] = g_cands[i];
+    g_ncands = j;
+    g_kind = kind;
+    snprintf(desc, sizeof desc, "%d long options: type -- to list", hidden);
+    emit_desc("-👀", 0, desc);
+}
+
 /* Terminal columns of a UTF-8 string: continuation bytes take none and
  * 4-byte sequences (emoji) take two. */
 static int dwidth(const char *s) {
@@ -277,6 +298,7 @@ static int dwidth(const char *s) {
 static void flush(void) {
     int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
     collapse_vars();
+    collapse_long();
     for (i = 0; i < g_ncands; i++) {
         int len = dwidth(g_cands[i].text);
         const char *k = g_cands[i].kind;
