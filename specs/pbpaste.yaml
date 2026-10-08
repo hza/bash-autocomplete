@@ -5,10 +5,14 @@ flags:
     value: {exec: "printf '%s\\n' general ruler find font"}
     description: "Pasteboard to use"
   -Prefer:
-    value: {exec: "printf '%s\\n' txt rtf ps"}
+    value: {exec: "printf '%s\\n' txt rtf ps public.html"}
     description: "Data type to look for first"
 examples:
-  - command: "pbpaste > path/to/file"
-    description: "Write the contents of the clipboard to a file"
-  - command: "pbpaste | grep search_string"
-    description: "Use the contents of the clipboard as input to a command"
+  - command: "pbpaste > notes.txt"
+    description: "save the clipboard to a file"
+  - command: "pbpaste | jq ."
+    description: "pretty-print copied JSON"
+  - command: "pbpaste | sort -u | pbcopy"
+    description: "dedupe clipboard lines in place"
+  - command: "pbpaste -Prefer public.html > page.html"
+    description: "paste copied rich text as HTML"
