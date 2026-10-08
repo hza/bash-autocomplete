@@ -6,7 +6,7 @@ INIT = eval "$$(autocomplete bash)"
 autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the autocomplete binary
 	$(CC) $(CFLAGS) -o $@ autocomplete.c yaml.c manparse.c
 
-install: autocomplete  ## Install binary and specs, set up ~/.bash_profile
+install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 	install -d $(PREFIX)/bin $(PREFIX)/share/autocomplete
 	install -m 755 autocomplete $(PREFIX)/bin/autocomplete
 	install -m 644 specs/*.yaml $(PREFIX)/share/autocomplete/
@@ -18,6 +18,20 @@ install: autocomplete  ## Install binary and specs, set up ~/.bash_profile
 		if [ -s $(PROFILE) ] && [ -n "$$(tail -c 1 $(PROFILE))" ]; then echo >> $(PROFILE); fi; \
 		echo '$(INIT)' >> $(PROFILE); \
 		echo '$(PROFILE): added $(INIT)'; \
+	fi
+	@# login shells (Terminal.app) read the first of these and never ~/.bashrc
+	@if [ "$(PROFILE)" = "$(HOME)/.bashrc" ]; then \
+		login=$(HOME)/.bash_profile; \
+		for f in $(HOME)/.bash_profile $(HOME)/.bash_login $(HOME)/.profile; do \
+			[ -e "$$f" ] && { login=$$f; break; }; \
+		done; \
+		if ! grep -qF '.bashrc' "$$login" 2>/dev/null; then \
+			echo; \
+			echo "Warning: $$login does not load ~/.bashrc, so new Terminal.app"; \
+			echo "windows and tabs (login shells) won't get completion. Add this line to it:"; \
+			echo; \
+			echo '    [ -f ~/.bashrc ] && . ~/.bashrc'; \
+		fi; \
 	fi
 	@bin=autocomplete; \
 	[ "$$(command -v autocomplete)" = "$(PREFIX)/bin/autocomplete" ] || bin=$(PREFIX)/bin/autocomplete; \

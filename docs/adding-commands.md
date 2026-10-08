@@ -34,7 +34,7 @@ Later edits to the file take effect on the next TAB; only adding a *new* command
 If you have `alias dk=docker`, give `dk` the docker completions with:
 
 ```sh
-autocomplete alias dk=docker   # ~/.config/autocomplete/dk.yaml -> docker's spec
+autocomplete alias docker dk   # ~/.config/autocomplete/dk.yaml -> docker's spec
 ```
 
 Then re-run the `eval` step. `-f` replaces an existing `dk` spec. Since it's a symlink, edits

@@ -12,10 +12,10 @@ Bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. 
 - `yaml.c`/`yaml.h` — own YAML-subset parser → `ynode` tree (`Y_NULL/BOOL/STR/ARR/OBJ`). No numbers: non-null/bool scalars are strings. No anchors, tags, `|`/`>` scalars. Tabs in indent = error.
 - `manparse.c`/`.h` — `man_spec(cmd)`: `MANWIDTH=1000 man -P cat | col -bx` → spec tree. Option entries = lines at the most common indent of entry-shaped lines; value from entry arg or SYNOPSIS `[-x arg]`. Heuristic; curl examples leak a few bogus flags.
 - `autocomplete man [-f] CMD` writes `~/.config/autocomplete/CMD.yaml` from `man_spec` via `yaml_write` (single-quotes anything ambiguous; `-1`-style keys must be quoted or PyYAML reads ints). No live man fallback: completion always comes from YAML.
-- `autocomplete alias [-f] NAME=CMD` symlinks `~/.config/autocomplete/NAME.yaml` to the realpath of CMD's spec (no alias concept in the engine; NAME is just another spec).
+- `autocomplete alias [-f] CMD NAME...` symlinks `~/.config/autocomplete/NAME.yaml` to the realpath of CMD's spec (no alias concept in the engine; NAME is just another spec).
 - Cache: only specs > `CACHE_MIN` (100 KB) get a `.cache` (`load_spec`, `autocomplete cache`); smaller ones are parsed from YAML every TAB.
 - `specs/*.yaml` — bundled specs (docker, make, git, kubectl, killall, mvn, npm, autocomplete). Filename = command name.
-- `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
+- `Makefile` — `make`, `make install` (also appends `eval "$(autocomplete bash)"` to `$(PROFILE)` once, adding a newline first if missing), warns (no edit) when PROFILE is `~/.bashrc` and the login file (first of `.bash_profile`/`.bash_login`/`.profile`) has no `.bashrc` mention, `make uninstall` (removes only bundled specs + exact init line), `clean`. `PREFIX`, `PROFILE` overridable.
 - `llms.txt` (hand-written index, absolute GitHub URLs) and `llms-full.txt` (generated: `make llms-full.txt` concatenates README + docs). Rerun after any README/docs change; update `llms.txt` when docs pages are added/renamed.
 - `tools/gen_npm.py` — regenerates `specs/npm.yaml` from the installed npm (`npm <cmd> --help` + npm's `docs/content/using-npm/config.md`): `python3 tools/gen_npm.py specs/npm.yaml`. Merges into the existing spec: hand-written root flags, command descriptions/`args`, flag values/descriptions win. Skips npm's typo aliases (`TYPOS`). Don't hand-edit generated flag lists in npm.yaml; change the generator or the hand-written parts and rerun (must be idempotent: rerun → no diff).
 
@@ -40,7 +40,7 @@ Bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. 
 - Through bash 3.2: registration is `complete -o nospace -C '<bin> _complete' names...` (no shell function; bash passes `COMP_LINE`/`COMP_POINT` via env, not `COMP_WORDBREAKS`), so it can only be exercised in a pty (see below).
 - Parser: `./autocomplete check FILE` prints parsed tree as JSON; compare with PyYAML (available): `json.loads(check_output(['./autocomplete','check',f])) == yaml.safe_load(open(f))`. Do this for every spec and any parser change.
 - Before refactors, snapshot `_complete` outputs for a case list and diff after. git cases need a throwaway repo (put it in the scratchpad).
-- Test install/uninstall only with `PREFIX=<scratch> PROFILE=<scratch file>`; never touch the real `~/.bash_profile` or `/usr/local`.
+- Test install/uninstall only with `PREFIX=<scratch> PROFILE=<scratch file>` (or `HOME=<scratch>`: the login-file check reads `$HOME`); never touch the real `~/.bash_profile` or `/usr/local`.
 - Docker values need a running daemon; empty output without one is expected, not a bug.
 
 - Interactive display (what the user actually sees on TAB/listing) can only be checked in a pty: fork `/bin/bash --rcfile <rc> -i` via Python `pty`, set a window size with `TIOCSWINSZ` (size 0x0 suppresses listings), send text + `\t`, then `\x1b?` (possible-completions) to get the list. A second `\t` in the harness didn't trigger the list.

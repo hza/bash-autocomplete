@@ -57,7 +57,7 @@ autocomplete works with the bash already on your Mac:
   ([how](docs/adding-commands.md)).
 - Generate flag completion for system commands like `ps`, `ls` or `tar` from their man
   pages ([details](docs/man-pages.md)).
-- Complete shell aliases like the command they wrap (`autocomplete alias k=kubectl`).
+- Complete shell aliases like the command they wrap (`autocomplete alias kubectl k`).
 - Very large specs (over 100 KB) are compiled to a cache, so TAB doesn't re-parse YAML.
 
 ## Requirements
@@ -82,9 +82,9 @@ make install
 
 Open a new terminal (or run `source ~/.bashrc`) and press TAB after `docker`, `git` or `make`.
 
-> macOS Terminal starts login shells, which read `~/.bash_profile`, not `~/.bashrc`. If
-> your `~/.bash_profile` doesn't source `~/.bashrc`, install with
-> `make install PROFILE=$HOME/.bash_profile`.
+> macOS Terminal starts login shells, which read `~/.bash_profile`, not `~/.bashrc`.
+> `make install` warns if your `~/.bash_profile` doesn't load `~/.bashrc`; add
+> `[ -f ~/.bashrc ] && . ~/.bashrc` to it.
 
 Options:
 
@@ -125,7 +125,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
-| `autocomplete alias [-f] NAME=CMD...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
+| `autocomplete alias [-f] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 
 ## FAQ
 
