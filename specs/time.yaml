@@ -1,0 +1,4 @@
+flags:
+  -l: {description: print rusage details}
+  -p: {description: POSIX output format}
+args: "@command"

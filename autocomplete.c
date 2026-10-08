@@ -561,6 +561,30 @@ static const ynode *find_command(const ynode *cmds, const char *name) {
     return NULL;
 }
 
+static int is_str(const ynode *v, const char *s) { return v && v->type == Y_STR && !strcmp(v->str, s); }
+
+/* Executables on $PATH (a word with '/' completes as a path). */
+static void complete_commands(void) {
+    char *path, *dir, *save;
+    if (strchr(g_cur, '/')) { g_kind = "file"; complete_files(0); return; }
+    if (!getenv("PATH") || !(path = strdup(getenv("PATH")))) return;
+    g_kind = "command";
+    for (dir = strtok_r(path, ":", &save); dir; dir = strtok_r(NULL, ":", &save)) {
+        DIR *d = opendir(*dir ? dir : ".");
+        struct dirent *e;
+        char full[4096];
+        struct stat st;
+        if (!d) continue;
+        while ((e = readdir(d))) {
+            if (e->d_name[0] == '.' || strncmp(e->d_name, g_cur, strlen(g_cur))) continue;
+            snprintf(full, sizeof full, "%s/%s", dir, e->d_name);
+            if (!stat(full, &st) && !S_ISDIR(st.st_mode) && !access(full, X_OK)) emit(e->d_name, 1);
+        }
+        closedir(d);
+    }
+    free(path);
+}
+
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
@@ -577,6 +601,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         else if (!strcmp(v->str, "@make-targets")) { g_kind = "target"; complete_make_targets(); }
         else if (!strcmp(v->str, "@make-variables")) { g_kind = "var"; complete_make_variables(); }
         else if (!strcmp(v->str, "@subcommands")) emit_commands(yaml_get(parent, "commands"));
+        else if (!strcmp(v->str, "@command")) complete_commands();
         break;
     case Y_OBJ: {
         const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace");
@@ -607,9 +632,9 @@ static int takes_value(const ynode *v) { return v && v->type != Y_NULL; }
 #define MAXW 256
 
 /* Split a command line like bash would (roughly). Returns word count; the
- * last word is the one being completed (may be empty). raw_start receives
- * the offset of the last word in the line. */
-static int split(const char *line, char **words, size_t *raw_start) {
+ * last word is the one being completed (may be empty). start[i] receives
+ * the offset of word i in the line. */
+static int split(const char *line, char **words, size_t *start) {
     int n = 0;
     const char *p = line;
     char buf[4096];
@@ -617,7 +642,7 @@ static int split(const char *line, char **words, size_t *raw_start) {
     for (;;) {
         char q = 0;
         while (*p == ' ' || *p == '\t') p++;
-        *raw_start = (size_t)(p - line);
+        start[n] = (size_t)(p - line);
         b = 0;
         if (!*p) { words[n++] = strdup(""); break; }
         while (*p && (q || (*p != ' ' && *p != '\t'))) {
@@ -640,17 +665,20 @@ static int split(const char *line, char **words, size_t *raw_start) {
 
 static int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
-    size_t raw;
-    int n = split(line, w, &raw), i;
+    size_t start[MAXW];
+    int n = split(line, w, start), i;
     const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash;
 
     g_wbreaks = wbreaks;
-    g_raw = line + raw;
+    g_raw = line + start[n - 1];
     cur = g_cur = w[n - 1];
 
     slash = strrchr(w[0], '/');
-    if (!(root = c = load_spec(slash ? slash + 1 : w[0]))) return 0;
+    if (!(root = c = load_spec(slash ? slash + 1 : w[0]))) {
+        if (n > 1) { g_kind = "file"; complete_files(0); } /* sudo cmd-without-spec */
+        return 0;
+    }
 
     /* walk the already-typed words */
     for (i = 1; i < n - 1; i++) {
@@ -667,7 +695,13 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; continue; }
+        if (is_str(yaml_get(c, "args"), "@command")) {
+            if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
+            /* the rest of the line is a command line of its own */
+            g_nseen = 0;
+            return do_complete(line + start[i], wbreaks);
+        }
     }
 
     /* value for previous flag? */
@@ -707,7 +741,7 @@ static int do_complete(const char *line, const char *wbreaks) {
     emit_commands(yaml_get(c, "commands"));
     v = yaml_get(c, "args");
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
-    complete_value(v, v && v->type == Y_STR && !strcmp(v->str, "@subcommands") && parent ? parent : c);
+    complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
     return 0;
 }
 

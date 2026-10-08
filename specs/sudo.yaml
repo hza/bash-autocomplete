@@ -1,0 +1,14 @@
+flags:
+  -u: {value: {exec: "cut -d: -f1 /etc/passwd | grep -v '^#'"}, description: run as this user}
+  -g: {value: {exec: "cut -d: -f1 /etc/group | grep -v '^#'"}, description: run with this primary group}
+  -E: {description: preserve the environment}
+  -H: {description: set HOME to the HOME of the target user}
+  -i: {description: run the login shell of the target user}
+  -s: {description: run a shell}
+  -k: {description: invalidate cached credentials}
+  -K: {description: remove cached credentials}
+  -l: {description: list allowed commands}
+  -n: {description: fail instead of asking for a password}
+  -v: {description: refresh cached credentials}
+  -b: {description: run in the background}
+args: "@command"

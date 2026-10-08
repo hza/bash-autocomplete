@@ -43,6 +43,8 @@ autocomplete works with the bash already on your Mac:
   **yarn**, **pnpm**, **pip**, **go**, **cargo**, **gradle**, **brew**, **gh**, **ssh**,
   **scp**, **terraform**, **helm**, **aws**, **tmux**, **kill**, **pkill**, **killall**,
   macOS **open**, **launchctl**, **defaults**, **diskutil**, and `autocomplete` itself.
+- Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
+  that command's own completion (`sudo git chec<TAB>` → `checkout`).
 - Live values from your environment:
   - docker: running containers, images, networks, volumes
   - git: branches, tags, remotes, stashes, changed files

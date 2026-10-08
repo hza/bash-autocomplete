@@ -1,0 +1,15 @@
+flags:
+  '-0': {description: input items are NUL-separated}
+  -E: {value: any, description: stop at this end-of-file string}
+  -I: {value: any, description: replace this string in the command with each input line}
+  -J: {value: any, description: replace this string with all input items}
+  -L: {value: any, description: lines per command}
+  -n: {value: any, description: arguments per command}
+  -P: {value: any, description: max parallel processes}
+  -s: {value: any, description: max command line bytes}
+  -o: {description: reopen stdin as /dev/tty for the command}
+  -p: {description: prompt before each command}
+  -r: {description: do not run the command on empty input}
+  -t: {description: echo each command before running it}
+  -x: {description: exit if the command line is too long}
+args: "@command"

@@ -75,6 +75,7 @@ A value can be:
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
+| `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`). Use it as `args` |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |
 | `"@make-variables"` | `NAME=` for each upper-case variable (`A-Z`, `0-9`, `_`) the Makefile assigns, for overrides like `make CC=clang` |
 | a list `[a, b]` | everything from each item, combined |
