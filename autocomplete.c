@@ -787,24 +787,52 @@ static int valid_name(const char *s) {
     return !*p && *s && s[0] != '.' && s[0] != '-';
 }
 
+/* `autocomplete alias --rm NAME...`: remove alias symlinks (never real specs). */
+static int alias_rm(const char *dir, int argc, char **argv) {
+    char path[PATH_MAX], target[PATH_MAX];
+    int i, rc = 0;
+    for (i = 0; i < argc; i++) {
+        if (!valid_name(argv[i])) {
+            fprintf(stderr, "%s: not a command name\n", argv[i]);
+            rc = 1;
+            continue;
+        }
+        snprintf(path, sizeof path, "%s/%s.yaml", dir, argv[i]);
+        if (readlink(path, target, 1) < 0) {
+            fprintf(stderr, "%s: not an alias\n", argv[i]);
+            rc = 1;
+        } else if (unlink(path)) {
+            perror(path);
+            rc = 1;
+        } else {
+            printf("removed %s\n", path);
+        }
+    }
+    return rc;
+}
+
 /* `autocomplete alias [-f] CMD NAME...`: symlink
  * ~/.config/autocomplete/NAME.yaml to CMD's spec for each NAME. */
 static int alias_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX], target[PATH_MAX], abs[PATH_MAX];
     const char *cmd = NULL;
     int i, force = 0, rc = 0, n = 0, made = 0;
-    for (i = 0; i < argc; i++)
+    int rm = argc >= 1 && !strcmp(argv[0], "--rm");
+    for (i = 0; i < argc && !rm; i++)
         if (!strcmp(argv[i], "-f")) force = 1;
         else if (!cmd) cmd = argv[i];
         else n++;
-    if (!n) {
-        fprintf(stderr, "usage: autocomplete alias [-f] CMD NAME...\n");
+    if (rm ? argc < 2 : !n) {
+        fprintf(stderr, "usage: autocomplete alias [-f] CMD NAME...\n"
+                        "       autocomplete alias --rm NAME...\n");
         return 1;
     }
     if (!getenv("HOME")) {
         fprintf(stderr, "alias: HOME is not set\n");
         return 1;
     }
+    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
+    if (rm) return alias_rm(dir, argc - 1, argv + 1);
     if (!valid_name(cmd)) {
         fprintf(stderr, "%s: not a command name\n", cmd);
         return 1;
@@ -813,7 +841,6 @@ static int alias_cmds(int argc, char **argv) {
         fprintf(stderr, "%s: no such spec\n", cmd);
         return 1;
     }
-    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
     mkdirs(dir);
     for (i = 0; i < argc; i++) {
         if (!strcmp(argv[i], "-f") || argv[i] == cmd) continue;
@@ -858,7 +885,6 @@ static int man_cmds(int argc, char **argv) {
         fprintf(stderr, "man: HOME is not set\n");
         return 1;
     }
-    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
     mkdirs(dir);
     for (i = 0; i < argc; i++)
         if (!strcmp(argv[i], "-f")) force = 1;
@@ -1003,6 +1029,7 @@ int main(int argc, char **argv) {
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete man [-f] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
             "       autocomplete alias [-f] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
+            "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
 }

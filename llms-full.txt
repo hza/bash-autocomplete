@@ -134,6 +134,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete man [-f] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
 | `autocomplete alias [-f] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
+| `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 
 ## FAQ
 
@@ -226,6 +227,9 @@ autocomplete alias docker dk   # ~/.config/autocomplete/dk.yaml -> docker's spec
 
 Then re-run the `eval` step. `-f` replaces an existing `dk` spec. Since it's a symlink, edits
 to the docker spec apply to `dk` too.
+
+To remove it: `autocomplete alias --rm dk` (TAB after `--rm` lists your aliases). Only
+symlinks are removed, never real specs.
 
 See [Writing specs](writing-specs.md) for the full format: all value types, supported YAML
 and where specs are looked up.
