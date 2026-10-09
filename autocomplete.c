@@ -681,8 +681,10 @@ static void emit_cmd_output(const char *shell, const char *suffix, int space, ch
         /* "name<TAB>description" */
         if ((desc = strchr(line, '\t'))) *desc++ = 0;
         if (!*line) continue;
-        /* tree: fold "a/b" into "a/" past the typed prefix, like paths */
-        if (tree && !strncmp(line, g_cur, clen) && (slash = strchr(line + clen, tree))) {
+        /* tree: fold "a/b" into "a/" past the typed prefix, like paths. Display-only
+         * names (with U+00A0, e.g. duti's "ts2: uti") are never folded. */
+        if (tree && !strncmp(line, g_cur, clen) && !strstr(line, "\xc2\xa0") &&
+            (slash = strchr(line + clen, tree))) {
             slash[1] = 0;
             emit(line, 0);
             continue;
@@ -1006,6 +1008,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
         g_kind = NULL;
         g_nofilter = fl && fl->type == Y_BOOL && !fl->b;
+        setenv("AUTOCOMPLETE_CUR", g_cur, 1); /* the word being completed, unescaped */
         emit_cmd_output(shell, sx && sx->type == Y_STR ? sx->str : NULL,
                         !(ns && ns->type == Y_BOOL && ns->b),
                         tr && tr->type == Y_BOOL && tr->b ? '/' : tr && tr->type == Y_STR ? tr->str[0] : 0);
@@ -1065,7 +1068,7 @@ static int split(const char *line, char **words, size_t *start) {
 static int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
     size_t start[MAXW];
-    int n = split(line, w, start), i;
+    int n = split(line, w, start), i, lvl = 0;
     const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash, *cname;
 
@@ -1080,7 +1083,7 @@ static int do_complete(const char *line, const char *wbreaks) {
         return 0;
     }
 
-    /* walk the already-typed words */
+    /* walk the already-typed words; lvl = index of the current command word */
     for (i = 1; i < n - 1; i++) {
         const ynode *s;
         if (!strcmp(w[i], "--")) continue;
@@ -1095,7 +1098,7 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; continue; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; lvl = i; continue; }
         if (is_str(yaml_get(c, "args"), "@command")) {
             if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
             /* the rest of the line is a command line of its own */
@@ -1158,7 +1161,8 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     emit_commands(yaml_get(c, "commands"));
-    g_examples = yaml_get(c, "examples");
+    /* examples only right after the command word ("duti <TAB>"), not deeper in the line */
+    g_examples = n - 1 == lvl + 1 ? yaml_get(c, "examples") : NULL;
     g_examples_title = spec_desc(c);
     g_examples_name = cname;
     v = yaml_get(c, "args");

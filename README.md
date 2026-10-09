@@ -62,7 +62,7 @@ autocomplete works with the bash already on your Mac:
   - say: voices with language and sample text (`say -v Ed<TAB>`), audio devices
   - code: installed extensions for `--uninstall-extension`/`--disable-extension`
   - sips: property keys with types for `-g`/`-s`; screencapture: app bundle ids for `-B`
-  - duti: extensions with their UTI and current app for `-x`; app bundle ids for `-s`, then every UTI known to the system as `UTI -- .ext → current app` (typing an extension finds its UTIs: `duti -s com.apple.Preview md<TAB>`) (★ = declared by the app, ✔ = currently opens with it), read live from LaunchServices via `osascript`
+  - duti: extensions with their UTI and current app for `-x`; app bundle ids for `-s` (also by app name: `duti -s Preview<TAB>` → `com.apple.Preview`), then every UTI known to the system as `UTI -- .ext → current app` (typing an extension finds its UTIs: `duti -s com.apple.Preview md<TAB>`; when several match they are listed as `ts1: …`, `ts2: …` and `ts2<TAB>` picks the second; the same works for `-d`/`-l`: `duti -d md<TAB>` → `duti -d net.daringfireball.markdown`) (★ = declared by the app, ✔ = currently opens with it), read live from LaunchServices via `osascript`
     (`duti -s com.apple.Preview com.ad<TAB>` → `com.adobe.pdf`), then the role
   - dutix: app names, extensions (with UTI and current app), UTIs and URL schemes, also
     inside comma lists (`--extensions txt,m<TAB>`)

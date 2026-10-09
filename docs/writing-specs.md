@@ -142,6 +142,8 @@ Notes:
   `$AUTOCOMPLETE_SPEC_DIR`, the directory of the spec being used (symlinks resolved), e.g.
   `exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" apps'`. If you copy such a spec
   into `~/.config/autocomplete`, copy its script too.
+- `exec` commands also get `$AUTOCOMPLETE_CUR`: the word being completed, with shell escapes
+  removed (`Visual\ Stu` → `Visual Stu`). Use it with `filter: false` to match by your own rules.
 - Values starting with `@` must be quoted.
 
 ## Supported YAML
