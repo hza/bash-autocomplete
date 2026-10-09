@@ -83,6 +83,7 @@ A value can be:
 | `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`) |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
+| &nbsp;&nbsp;`tree: true` | show `a/b` names as `a/` until you type past the `/`, like paths (e.g. `origin/` for remote branches) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`). Use it as `args` |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |

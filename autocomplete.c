@@ -645,17 +645,24 @@ static void flush(void) {
     }
 }
 
-static void emit_cmd_output(const char *shell, const char *suffix, int space) {
+static void emit_cmd_output(const char *shell, const char *suffix, int space, int tree) {
     char line[1024];
+    size_t clen = strlen(g_cur);
     FILE *f = popen(shell, "r");
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
-        char *desc;
+        char *desc, *slash;
         line[strcspn(line, "\r\n")] = 0;
         if (!*line || strstr(line, "<none>")) continue;
         /* "name<TAB>description" */
         if ((desc = strchr(line, '\t'))) *desc++ = 0;
         if (!*line) continue;
+        /* tree: fold "a/b" into "a/" past the typed prefix, like paths */
+        if (tree && !strncmp(line, g_cur, clen) && (slash = strchr(line + clen, '/'))) {
+            slash[1] = 0;
+            emit(line, 0);
+            continue;
+        }
         if (suffix) {
             char buf[1100];
             snprintf(buf, sizeof buf, "%s%s", line, suffix);
@@ -968,13 +975,14 @@ static void complete_value(const ynode *v, const ynode *parent) {
         else if (!strcmp(v->str, "@command")) complete_commands();
         break;
     case Y_OBJ: {
-        const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace");
+        const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace"),
+                    *tr = yaml_get(v, "tree");
         char shell[4096];
         if (!ex || ex->type != Y_STR) break;
         snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
         g_kind = NULL;
         emit_cmd_output(shell, sx && sx->type == Y_STR ? sx->str : NULL,
-                        !(ns && ns->type == Y_BOOL && ns->b));
+                        !(ns && ns->type == Y_BOOL && ns->b), tr && tr->type == Y_BOOL && tr->b);
         break;
     }
     default: break;

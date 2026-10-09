@@ -38,8 +38,8 @@ commands:
       --staged: {description: "Restore the index", show: always}
       -W: {description: "Restore the working tree", show: always}
       --worktree: {description: "Restore the working tree", show: always}
-      -s: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags"}, description: "Which tree-ish to checkout from", show: always}
-      --source: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags"}, description: "Which tree-ish to checkout from", show: always}
+      -s: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Which tree-ish to checkout from", show: always}
+      --source: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Which tree-ish to checkout from", show: always}
       -p: {description: "Select hunks interactively", show: always}
       --patch: {description: "Select hunks interactively", show: always}
       --help: {description: "Show the manual page"}
@@ -97,6 +97,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+        tree: true
       - exec: git diff --name-only --relative
   commit:
     description: Record changes to the repository
@@ -145,6 +146,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+        tree: true
       - file
   show:
     description: Show various types of objects
@@ -157,6 +159,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      tree: true
   branch:
     description: List, create, or delete branches
     aliases: [br]
@@ -175,8 +178,8 @@ commands:
       --copy: {description: "Copy a branch and its reflog"}
       -v: {description: "Show hash and subject, give twice for upstream branch"}
       -vv: {description: "Show hash, subject and upstream branch for each branch"}
-      -u: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes"}, description: "Change the upstream info"}
-      --set-upstream-to: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes"}, description: "Change the upstream info"}
+      -u: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes", tree: true}, description: "Change the upstream info"}
+      --set-upstream-to: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes", tree: true}, description: "Change the upstream info"}
       --unset-upstream: {description: "Unset the upstream info"}
       --show-current: {description: "Show current branch name", show: always}
       --merged: {description: "Print only branches that are merged"}
@@ -201,6 +204,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+        tree: true
       - exec: git diff --name-only --relative
   switch:
     description: Switch branches
@@ -220,6 +224,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes
+      tree: true
   merge:
     description: Join two or more development histories together
     flags:
@@ -235,6 +240,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      tree: true
   rebase:
     description: Reapply commits on top of another base tip
     aliases: [re]
@@ -244,12 +250,13 @@ commands:
       --continue: {description: Continue, show: always}
       --abort: {description: "Abort and check out the original branch", show: always}
       --skip: {description: "Skip current patch and continue", show: always}
-      --onto: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags"}, description: "Rebase onto given branch instead of upstream", show: always}
+      --onto: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Rebase onto given branch instead of upstream", show: always}
       --autosquash: {description: "Move commits that begin with squash!/fixup! under -i"}
       --autostash: {description: "Automatically stash/stash pop before and after"}
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      tree: true
   cherry-pick:
     description: Apply the changes introduced by some existing commits
     aliases: [cp]
@@ -263,6 +270,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+      tree: true
   reset:
     description: Reset current HEAD to the specified state
     flags:
@@ -275,6 +283,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+        tree: true
       - exec: git diff --cached --name-only --relative
   revert:
     description: Revert some existing commits
