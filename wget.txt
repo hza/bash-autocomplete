@@ -1,0 +1,12 @@
+bash-3.2$ wget <TAB>
+… examples:              -- wget: Non-interactive network downloader                        
+👀 --header              -- wget --header='Authorization: Bearer $TOKEN' https://api.example.org/export   📚 send a header
+👀 --limit-rate --tries  -- wget --limit-rate=500k --tries=3 https://example.org/big.iso   📚 throttle and retry
+👀 --method              -- wget --method=DELETE -O - https://httpbin.org/delete   📚 any other method: PUT, PATCH, DELETE
+👀 --post-data           -- wget --post-data='name=foo&id=42' -O - https://api.example.org/items   📚 send a POST request and print the response
+👀 --post-file           -- wget --post-file=photo.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post   📚 upload a file as the request body (no multipart)
+👀 -O                    -- wget -O latest.tgz https://example.org/download?v=latest   📚 save under another name
+👀 -c                    -- wget -c https://example.org/big.iso   📚 resume a download    
+👀 -i -P                 -- wget -i urls.txt -P downloads/   📚 download a list of URLs into a dir
+👀 -q -O -               -- wget -q -O - https://example.org   📚 print to stdout       
+👀 -r -np -k             -- wget -r -np -k https://example.org/docs/   📚 mirror a docs folder for offline use
