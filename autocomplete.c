@@ -168,7 +168,7 @@ typedef struct {
     int space;        /* finished word: append a space */
     const char *desc; /* optional description (spec "description") */
     const char *kind; /* source, e.g. "target"; tagged when kinds mix */
-    int show;         /* flag "show": SHOW_DEFAULT, SHOW_ALWAYS (never folded), SHOW_COLLAPSED (only in 👀) */
+    int show;         /* flag "show": SHOW_DEFAULT, SHOW_ALWAYS (never folded), SHOW_COLLAPSED (only in 📌) */
     const char *group; /* key in "groups" ("Up"): collapsed together */
     const char *gdesc; /* that group's description */
 } cand;
@@ -273,15 +273,15 @@ static void collapse_vars(void) {
     emit_desc("🔧 variables", 0, strdup(names));
 }
 
-/* Flags are folded into display-only "<word>👀" entries:
- * - "show: collapsed" flags always: short ones into "<word>👀<letters>",
- *   one entry per kind of letter ("-👀 0123" for digits, "-👀 MP" for
+/* Flags are folded into display-only "<word>📌" entries:
+ * - "show: collapsed" flags always: short ones into "<word>📌<letters>",
+ *   one entry per kind of letter ("-📌 0123" for digits, "-📌 MP" for
  *   letters, then other symbols), description "(1) desc (2) desc"; long
- *   ones into "<word>👀" ("N more: names" when more than 5);
+ *   ones into "<word>📌" ("N more: names" when more than 5);
  * - on a bare "-", the long "--x" flags (unless "show: always") when there
- *   are 15 or more, into "-👀 --" ("N long options: type -- to list"), so
+ *   are 15 or more, into "-📌 --" ("N long options: type -- to list"), so
  *   the short flags stand out. Collapsed long flags go there too.
- * Nothing is folded when nothing else would be listed. "👀" sorts after
+ * Nothing is folded when nothing else would be listed. "📌" sorts after
  * ASCII, so they are listed last. Never inserted: other candidates remain
  * and share only the typed word with them. */
 static int is_long_fold(const cand *c, int longs) {
@@ -310,7 +310,7 @@ static int coll_member(const cand *c, const char *grp, int cl) {
     return !c->group && coll_class(c) == cl;
 }
 
-/* Emit "<word>👀 <letters>" for the short collapsed flags of group grp
+/* Emit "<word>📌 <letters>" for the short collapsed flags of group grp
  * (or, ungrouped, of class cl), starting a new entry whenever the
  * description would pass `room`. */
 static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, int room) {
@@ -320,7 +320,7 @@ static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, in
     if (grp) { /* letters and descriptions in the order of the key */
         const char *p;
         const char *gd = NULL;
-        nt = (size_t)snprintf(text, sizeof text, "%s👀 ", g_cur);
+        nt = (size_t)snprintf(text, sizeof text, "%s📌 ", g_cur);
         desc[0] = 0;
         for (p = grp; *p; p++)
             for (i = 0; i < k; i++) {
@@ -346,7 +346,7 @@ static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, in
         }
         if (i == k) break;
         if (!have) {
-            nt = (size_t)snprintf(text, sizeof text, "%s👀\u00a0", g_cur);
+            nt = (size_t)snprintf(text, sizeof text, "%s📌\u00a0", g_cur);
             desc[0] = 0;
         }
         if (nt < sizeof text - 1) text[nt++] = flag_char(&coll[i]), text[nt] = 0;
@@ -356,7 +356,7 @@ static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, in
 }
 
 /* "show: collapsed" hides short flags only; long ones are listed (and
- * grouped by letter) as usual, except in the "-👀" long-options fold. */
+ * grouped by letter) as usual, except in the "-📌" long-options fold. */
 static int is_coll(const cand *c) { return c->show == SHOW_COLLAPSED && c->text[1] != '-'; }
 
 static void collapse_flags(void) {
@@ -384,10 +384,10 @@ static void collapse_flags(void) {
         else g_cands[j++] = g_cands[i];
     }
     g_ncands = j;
-    qsort(coll, (size_t)k, sizeof *coll, cmp_cand); /* "-👀 123" */
+    qsort(coll, (size_t)k, sizeof *coll, cmp_cand); /* "-📌 123" */
     g_kind = kind;
     g_show = SHOW_ALWAYS;
-    g_noesc = 1; /* never inserted: show "-👀 Z#N", not "Z\\#N" */
+    g_noesc = 1; /* never inserted: show "-📌 Z#N", not "Z\\#N" */
     { /* name column: widest remaining name (see flush) */
         int w = 12;
         for (i = 0; i < g_ncands; i++)
@@ -403,7 +403,7 @@ static void collapse_flags(void) {
     }
     if (nlong) {
         snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
-        snprintf(text, sizeof text, "%s👀 --", g_cur);
+        snprintf(text, sizeof text, "%s📌 --", g_cur);
         emit_desc(text, 0, desc);
     }
     g_show = SHOW_DEFAULT;
@@ -421,7 +421,7 @@ static void merge_pairs(void) {
     for (i = k = 0; i < g_ncands; i++) {
         cand *c = &g_cands[i];
         int hit = -1;
-        if (c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "👀"))
+        if (c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "📌"))
             for (j = 0; j < g_ncands; j++)
                 if (!paired[j] && g_cands[j].text && !strncmp(g_cands[j].text, "--", 2) && g_cands[j].desc &&
                     !strcmp(g_cands[j].desc, c->desc)) {
@@ -829,7 +829,7 @@ static const char *spec_desc(const ynode *spec) {
 
 /* "groups: {"Up": {description?}}": the group (own level first, then
  * root) whose key holds the letter of short flag "-ch". Its flags are
- * collapsed into one "-👀 Up" entry. */
+ * collapsed into one "-📌 Up" entry. */
 static const ynode *find_group(const ynode *c, const ynode *root, char ch) {
     const ynode *s = c, *g;
     for (;;) {
