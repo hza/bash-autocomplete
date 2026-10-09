@@ -10,11 +10,14 @@ commands:
   cache:
     description: "Precompile big specs (> 100 KB) into the cache"
     args: {exec: "autocomplete list"}
-  man:
-    description: "Write a spec for a command from its man page"
-    flags:
-      --force: {description: "Replace an existing CMD spec"}
-    args: {exec: "compgen -c | sort -u"}
+  from:
+    description: "Generate a spec from another source"
+    commands:
+      man:
+        description: "Write a spec for a command from its man page"
+        flags:
+          --force: {description: "Replace an existing CMD spec"}
+        args: {exec: "compgen -c | sort -u"}
   alias:
     description: "Complete NAME like CMD (CMD NAME..., symlinks its spec)"
     flags:
