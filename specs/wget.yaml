@@ -224,6 +224,12 @@ examples:
   - key: '--post-data'
     command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
     description: "send a POST request and print the response"
+  - key: '--post-file'
+    command: "wget --post-file=photo.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post"
+    description: "upload a file as the request body (no multipart)"
+  - key: '--method'
+    command: "wget --method=DELETE -O - https://httpbin.org/delete"
+    description: "any other method: PUT, PATCH, DELETE"
   - key: '-O'
     command: "wget -O latest.tgz https://example.org/download?v=latest"
     description: "save under another name"
