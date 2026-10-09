@@ -145,6 +145,8 @@ static ynode *load_spec(const char *name) {
 static const char *g_cur;   /* current word, unescaped (for filtering) */
 static const char *g_raw;   /* current word as typed (for wordbreak trimming) */
 static const char *g_wbreaks;
+static char *g_qpre;        /* inside an open quote: text after the quote up to the
+                             * last space; candidates become g_qpre + word, unescaped */
 
 /* flag values seen on the line, e.g. make -C dir */
 #define MAXSEEN 64
@@ -187,6 +189,14 @@ static void emit_desc(const char *cand, int space, const char *desc) {
     size_t n = 0;
     const char *p;
     if (strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
+    if (g_qpre) {
+        /* bash replaces everything after the open quote; no escaping. No
+         * space: readline closes the quote after a single match */
+        snprintf(esc, sizeof esc, "%s%s", g_qpre, cand);
+        space = 0;
+        p = esc;
+        goto queue;
+    }
     for (p = cand; *p && n < sizeof esc - 3; p++) {
         if (!g_noesc && strchr(" \t\\'\"()<>&;|*?[]$`!#{}~", *p)) esc[n++] = '\\';
         esc[n++] = *p;
@@ -205,6 +215,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
             if (strncmp(esc, g_raw, k) == 0) p = esc + k;
         }
     }
+queue:
     {
         int i;
         for (i = 0; i < g_ncands; i++)
@@ -1086,13 +1097,22 @@ static int do_complete(const char *line, const char *wbreaks) {
     }
 
     /* --flag=value: '=' is a wordbreak, so complete only the part after it */
-    if (cur[0] == '-' && cur[1] == '-' && strchr(cur, '=')) {
-        char name[256];
+    /* -Dx=value: a key ending in '=' ("-Dx=") may have its own value */
+    if (cur[0] == '-' && strchr(cur, '=')) {
+        char name[256], namq[257];
         const char *eq = strchr(cur, '='), *req = strchr(g_raw, '=');
         snprintf(name, sizeof name, "%.*s", (int)(eq - cur), cur);
-        if (find_flag(c, name, &v) || find_flag(root, name, &v)) {
+        snprintf(namq, sizeof namq, "%s=", name);
+        if (find_flag(c, namq, &v) || find_flag(root, namq, &v) ||
+            (cur[1] == '-' && (find_flag(c, name, &v) || find_flag(root, name, &v)))) {
             g_cur = eq + 1;
             if (req) g_raw = req + 1;
+            /* -Dx='a b c: an unclosed quote holds several words; complete the last */
+            if (req && (req[1] == '\'' || req[1] == '"') && !strchr(req + 2, req[1])) {
+                const char *in = req + 2, *sp = strrchr(in, ' ');
+                g_qpre = strndup(in, sp ? (size_t)(sp - in) + 1 : 0);
+                g_cur = sp ? sp + 1 : in;
+            }
             complete_value(v, c);
         }
         return 0;

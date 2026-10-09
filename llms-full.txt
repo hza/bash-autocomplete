@@ -328,7 +328,7 @@ Each flag is a map with two optional keys, usually written on one line:
 
 When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (🔥 -d)`. Give a short/long pair the same description to get this.
 
-Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it. Quote such keys in YAML.
+Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it; give it a `value` to complete that value too (mvn's `-Dspring-boot.run.profiles=` lists `application-<profile>.*` files). Inside an open quote (`-Dx='-Xmx1g -X`) the last space-separated word is completed, so a quoted value can hold several. Quote such keys in YAML.
 
 On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, only the short ones are listed and the long ones are folded into one last entry, `-📌 --  -- 256 long options: type -- to list`. Type `--<TAB>` to list them.
 
