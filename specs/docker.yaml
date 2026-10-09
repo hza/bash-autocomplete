@@ -52,6 +52,7 @@ commands:
       --volumes-from: {value: {exec: "docker ps -a --format '{{.Names}}'"}, description: "Mount volumes from the specified container(s)"}
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   exec:
     description: Execute a command in a running container
     flags:
@@ -109,10 +110,12 @@ commands:
       --quiet: {description: "Suppress verbose output"}
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   push:
     description: Upload an image to a registry
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   build:
     description: Build an image from a Dockerfile
     flags:
@@ -177,6 +180,7 @@ commands:
       --no-prune: {description: "Do not delete untagged parents"}
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   logs:
     description: Fetch the logs of a container
     flags:
@@ -226,6 +230,7 @@ commands:
     description: Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   top:
     description: Display the running processes of a container
     args:
@@ -279,6 +284,7 @@ commands:
       --output: {value: file, description: "Write to a file, instead of STDOUT"}
     args:
       exec: docker images --format '{{.Repository}}:{{.Tag}}'
+      tree: true
   load:
     description: Load an image from a tar archive or STDIN
     flags:
@@ -348,6 +354,93 @@ commands:
       prune:
         description: Remove all unused networks
         flags:
+          -f: {description: "Do not prompt for confirmation"}
+          --force: {description: "Do not prompt for confirmation"}
+          --filter: {value: any, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+  image:
+    description: Manage images
+    commands:
+      ls:
+        description: List images
+        aliases: [list]
+        flags:
+          -a: {description: "Show all images"}
+          --all: {description: "Show all images"}
+          -q: {description: "Only show image IDs"}
+          --quiet: {description: "Only show image IDs"}
+          -f: {value: any, description: "Filter output based on conditions provided"}
+          --filter: {value: any, description: "Filter output based on conditions provided"}
+          --format: {value: any, description: "Format output using a custom template"}
+          --digests: {description: "Show digests"}
+          --no-trunc: {description: "Don't truncate output"}
+      rm:
+        description: Remove one or more images
+        aliases: [remove]
+        flags:
+          -f: {description: "Force removal of the image"}
+          --force: {description: "Force removal of the image"}
+          --no-prune: {description: "Do not delete untagged parents"}
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      inspect:
+        description: Display detailed information on one or more images
+        flags:
+          -f: {value: any, description: "Format output using a custom template"}
+          --format: {value: any, description: "Format output using a custom template"}
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      history:
+        description: Show the history of an image
+        flags:
+          -q: {description: "Only show image IDs"}
+          --quiet: {description: "Only show image IDs"}
+          --no-trunc: {description: "Don't truncate output"}
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      pull:
+        description: Download an image from a registry
+        flags:
+          -a: {description: "Download all tagged images in the repository"}
+          --all-tags: {description: "Download all tagged images in the repository"}
+          --platform: {value: any, description: "Set platform if server is multi-platform capable"}
+          -q: {description: "Suppress verbose output"}
+          --quiet: {description: "Suppress verbose output"}
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      push:
+        description: Upload an image to a registry
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      tag:
+        description: Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      save:
+        description: Save one or more images to a tar archive
+        flags:
+          -o: {value: file, description: "Write to a file, instead of STDOUT"}
+          --output: {value: file, description: "Write to a file, instead of STDOUT"}
+        args:
+          exec: docker images --format '{{.Repository}}:{{.Tag}}'
+          tree: true
+      load:
+        description: Load an image from a tar archive or STDIN
+        flags:
+          -i: {value: file, description: "Read from tar archive file, instead of STDIN"}
+          --input: {value: file, description: "Read from tar archive file, instead of STDIN"}
+          -q: {description: "Suppress the load output"}
+          --quiet: {description: "Suppress the load output"}
+      prune:
+        description: Remove unused images
+        flags:
+          -a: {description: "Remove all unused images, not just dangling ones"}
+          --all: {description: "Remove all unused images, not just dangling ones"}
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --filter: {value: any, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
