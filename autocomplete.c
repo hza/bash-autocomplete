@@ -190,6 +190,12 @@ static void emit_desc(const char *cand, int space, const char *desc) {
     const char *p;
     if (strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
     if (g_qpre) {
+        /* skip words already inside the quote */
+        const char *w = g_qpre;
+        size_t cl = strlen(cand);
+        while ((w = strstr(w, cand)))
+            if ((w == g_qpre || w[-1] == ' ') && w[cl] == ' ') return;
+            else w++;
         /* bash replaces everything after the open quote; no escaping. No
          * space: readline closes the quote after a single match */
         snprintf(esc, sizeof esc, "%s%s", g_qpre, cand);
