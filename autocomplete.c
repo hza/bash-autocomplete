@@ -279,7 +279,7 @@ static void collapse_vars(void) {
  *   letters, then other symbols), description "(1) desc (2) desc"; long
  *   ones into "<word>👀" ("N more: names" when more than 5);
  * - on a bare "-", the long "--x" flags (unless "show: always") when there
- *   are 15 or more, into "-👀--" ("N long options: type -- to list"), so
+ *   are 15 or more, into "-👀 --" ("N long options: type -- to list"), so
  *   the short flags stand out. Collapsed long flags go there too.
  * Nothing is folded when nothing else would be listed. "👀" sorts after
  * ASCII, so they are listed last. Never inserted: other candidates remain
@@ -403,7 +403,7 @@ static void collapse_flags(void) {
     }
     if (nlong) {
         snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
-        snprintf(text, sizeof text, "%s👀   --", g_cur);
+        snprintf(text, sizeof text, "%s👀 --", g_cur);
         emit_desc(text, 0, desc);
     }
     g_show = SHOW_DEFAULT;
@@ -591,7 +591,7 @@ static void add_examples(void) {
     }
     if (n && !others) {
         snprintf(desc, sizeof desc, "%s: %s", g_examples_name, g_examples_title ? g_examples_title : "type an argument");
-        snprintf(name, sizeof name, "…\xc2\xa0%s", g_examples_name); /* U+00A0 */
+        snprintf(name, sizeof name, "……\xc2\xa0%s", g_examples_name); /* U+00A0 */
         emit_desc(name, 0, desc);
     }
     g_noesc = 0;
@@ -635,12 +635,13 @@ static void flush(void) {
         else
             n = snprintf(buf, sizeof buf, "%s", g_cands[i].text);
         if (n >= (int)sizeof buf) n = (int)sizeof buf - 1;
-        if (n > cols - 2) { /* avoid wrapping; don't split a UTF-8 sequence */
-            n = cols - 2;
-            while (n > 0 && (buf[n] & 0xC0) == 0x80) n--;
+        buf[n] = 0;
+        while (dwidth(buf) > cols - 2) { /* avoid wrapping; don't split a UTF-8 sequence */
+            while (n > 0 && (buf[--n] & 0xC0) == 0x80) {}
             buf[n] = 0;
         }
-        printf("%-*s\n", line, buf);
+        /* pad by display width: readline lays out columns by it, not bytes */
+        printf("%s%*s\n", buf, line > dwidth(buf) ? line - dwidth(buf) : 0, "");
     }
 }
 

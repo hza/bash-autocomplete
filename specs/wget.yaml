@@ -1,4 +1,4 @@
-description: "Non-interactive network downloader"
+description: "The non-interactive network downloader."
 groups:
   "Vhe": {description: "info/config"}
   "oadb": {description: "log"}
