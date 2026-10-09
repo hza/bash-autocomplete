@@ -84,6 +84,8 @@ A value can be:
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | &nbsp;&nbsp;`tree: true` | show `a/b` names as `a/` until you type past the `/`, like paths (e.g. `origin/` for remote branches) |
+| &nbsp;&nbsp;`tree: "."` | the same, folding at another separator character (e.g. `com.` for UTIs in duti) |
+| &nbsp;&nbsp;`filter: false` | show every line the command prints, even ones not starting with the typed word (the command filters itself, e.g. duti turns `md` into `net.daringfireball.markdown`) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`). Use it as `args` |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |
@@ -136,6 +138,10 @@ Notes:
   test: app  ## Run the test suite
   ```
 - `exec` commands run in the current directory, and their errors are discarded.
+- For anything longer than a one-liner, put a script next to the spec and run it via
+  `$AUTOCOMPLETE_SPEC_DIR`, the directory of the spec being used (symlinks resolved), e.g.
+  `exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" apps'`. If you copy such a spec
+  into `~/.config/autocomplete`, copy its script too.
 - Values starting with `@` must be quoted.
 
 ## Supported YAML

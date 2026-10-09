@@ -1,0 +1,45 @@
+description: "Set default apps for file types and URL schemes (lists take ~0.5 s)"
+flags:
+  -s:
+    value: {exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" apps'}
+    description: "Set handler: -s bundle_id {uti | url_scheme} [role]"
+  -d:
+    value: {exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" utis', tree: "."}
+    description: "Print the default application for a UTI"
+  -l:
+    value: {exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" utis', tree: "."}
+    description: "List all applications that handle a UTI"
+  -x: {value: {exec: 'osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" exts'}, description: "Print the default application for a file extension"}
+  -h: {description: "Show usage"}
+  -v: {description: "Verbose output"}
+  -V: {description: "Print version"}
+# Positionals after `-s bundle_id`: UTIs and URL schemes (see duti.js), then the role.
+args:
+  exec: 'set -f; set -- ${COMP_LINE%"${COMP_LINE##*[ ]}"}; b=; n=0; for w; do if [ -n "$b" ]; then n=$((n+1)); elif [ "$p" = -s ]; then b=$w; fi; p=$w; done; [ -n "$b" ] || exit 0; if [ $n = 1 ]; then printf ''all\tall roles\nviewer\tview only\neditor\tview and edit\nshell\texecute\nnone\tno role\n''; exit 0; fi; [ $n = 0 ] || exit 0; osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" args "$b" "${COMP_LINE##*[ ]}"'
+  tree: "."
+  filter: false
+examples:
+  - key: 'set handler'
+    command: "duti -s com.apple.Preview com.adobe.pdf all"
+    description: "open PDFs with Preview"
+  - key: 'url scheme'
+    command: "duti -s com.google.Chrome https"
+    description: "make Chrome the default browser for https links"
+  - key: 'text files'
+    command: "duti -s com.microsoft.VSCode public.plain-text all"
+    description: "open plain text files with VS Code"
+  - key: 'markdown'
+    command: "duti -s com.microsoft.VSCode net.daringfireball.markdown all"
+    description: "open .md files with VS Code (use 📎 mdls to get the UTI)"
+  - key: 'mail'
+    command: "duti -s com.apple.mail mailto"
+    description: "handle mailto: links with Mail"
+  - key: 'by extension'
+    command: "duti -x md"
+    description: "show which app opens .md files"
+  - key: 'default for UTI'
+    command: "duti -d com.adobe.pdf"
+    description: "print the default app for PDFs"
+  - key: 'all handlers'
+    command: "duti -l public.html"
+    description: "list every app that can open HTML"

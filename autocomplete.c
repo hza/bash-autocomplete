@@ -127,6 +127,11 @@ static ynode *load_spec(const char *name) {
     int big;
     ynode *n;
     if (!find_spec(name, path, sizeof path)) return NULL;
+    /* exec commands find helper files next to the (symlink-resolved) spec */
+    if (realpath(path, bin)) {
+        *strrchr(bin, '/') = 0;
+        setenv("AUTOCOMPLETE_SPEC_DIR", bin, 1);
+    }
     big = stat(path, &ys) == 0 && ys.st_size > CACHE_MIN;
     if (big && cache_path(name, bin, sizeof bin, 0) && stat(bin, &bs) == 0 &&
         (MTIME(bs).tv_sec > MTIME(ys).tv_sec ||
@@ -180,6 +185,7 @@ static const char *g_kind; /* kind given to candidates emitted now */
 enum { SHOW_DEFAULT, SHOW_ALWAYS, SHOW_COLLAPSED };
 static int g_show;         /* "show" given to candidates emitted now */
 static int g_noesc;        /* display-only candidates: no shell escaping */
+static int g_nofilter;     /* exec `filter: false`: the command already matched g_cur */
 static const char *g_group, *g_gdesc; /* group (and its description) given to candidates emitted now */
 
 /* Escape for bash and queue, trimmed to bash's current word. Duplicates
@@ -188,7 +194,7 @@ static void emit_desc(const char *cand, int space, const char *desc) {
     char esc[4096];
     size_t n = 0;
     const char *p;
-    if (strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
+    if (!g_nofilter && strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
     if (g_qpre) {
         /* skip words already inside the quote */
         const char *w = g_qpre;
@@ -662,7 +668,8 @@ static void flush(void) {
     }
 }
 
-static void emit_cmd_output(const char *shell, const char *suffix, int space, int tree) {
+/* tree: separator char to fold lines at (0 = no folding) */
+static void emit_cmd_output(const char *shell, const char *suffix, int space, char tree) {
     char line[1024];
     size_t clen = strlen(g_cur);
     FILE *f = popen(shell, "r");
@@ -675,7 +682,7 @@ static void emit_cmd_output(const char *shell, const char *suffix, int space, in
         if ((desc = strchr(line, '\t'))) *desc++ = 0;
         if (!*line) continue;
         /* tree: fold "a/b" into "a/" past the typed prefix, like paths */
-        if (tree && !strncmp(line, g_cur, clen) && (slash = strchr(line + clen, '/'))) {
+        if (tree && !strncmp(line, g_cur, clen) && (slash = strchr(line + clen, tree))) {
             slash[1] = 0;
             emit(line, 0);
             continue;
@@ -993,13 +1000,16 @@ static void complete_value(const ynode *v, const ynode *parent) {
         break;
     case Y_OBJ: {
         const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace"),
-                    *tr = yaml_get(v, "tree");
+                    *tr = yaml_get(v, "tree"), *fl = yaml_get(v, "filter");
         char shell[4096];
         if (!ex || ex->type != Y_STR) break;
         snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
         g_kind = NULL;
+        g_nofilter = fl && fl->type == Y_BOOL && !fl->b;
         emit_cmd_output(shell, sx && sx->type == Y_STR ? sx->str : NULL,
-                        !(ns && ns->type == Y_BOOL && ns->b), tr && tr->type == Y_BOOL && tr->b);
+                        !(ns && ns->type == Y_BOOL && ns->b),
+                        tr && tr->type == Y_BOOL && tr->b ? '/' : tr && tr->type == Y_STR ? tr->str[0] : 0);
+        g_nofilter = 0;
         break;
     }
     default: break;

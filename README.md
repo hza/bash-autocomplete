@@ -47,7 +47,7 @@ autocomplete works with the bash already on your Mac:
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
   **tmux**, **kill**, **pkill**, **killall**, **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
-  **pbpaste**, **sips**, **screencapture**, and `autocomplete` itself.
+  **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
   that command's own completion (`sudo git chec<TAB>` → `checkout`).
 - Live values from your environment:
@@ -62,6 +62,11 @@ autocomplete works with the bash already on your Mac:
   - say: voices with language and sample text (`say -v Ed<TAB>`), audio devices
   - code: installed extensions for `--uninstall-extension`/`--disable-extension`
   - sips: property keys with types for `-g`/`-s`; screencapture: app bundle ids for `-B`
+  - duti: extensions with their UTI and current app for `-x`; app bundle ids for `-s`, then every UTI known to the system as `UTI -- .ext → current app` (typing an extension finds its UTIs: `duti -s com.apple.Preview md<TAB>`) (★ = declared by the app, ✔ = currently opens with it), read live from LaunchServices via `osascript`
+    (`duti -s com.apple.Preview com.ad<TAB>` → `com.adobe.pdf`), then the role
+  - dutix: app names, extensions (with UTI and current app), UTIs and URL schemes, also
+    inside comma lists (`--extensions txt,m<TAB>`)
+  - mdls: Spotlight attribute names with descriptions for `-name`
   - ssh, scp: hosts from `~/.ssh/config` and `known_hosts` (`scp gr<TAB>` → `grafana:`)
   - brew: installed formulae and services
   - gh: pull requests, issues, workflow runs, gists, labels, releases, repos

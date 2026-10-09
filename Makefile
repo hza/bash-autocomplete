@@ -9,7 +9,7 @@ autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the a
 install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 	install -d $(PREFIX)/bin $(PREFIX)/share/autocomplete
 	install -m 755 autocomplete $(PREFIX)/bin/autocomplete
-	install -m 644 specs/*.yaml $(PREFIX)/share/autocomplete/
+	install -m 644 specs/*.yaml specs/*.js $(PREFIX)/share/autocomplete/
 	@# skip under sudo: a root-owned ~/.cache would block later rebuilds
 	@[ "$$(id -u)" = 0 ] || $(PREFIX)/bin/autocomplete cache
 	@if grep -qF 'autocomplete bash' $(PROFILE) 2>/dev/null; then \
@@ -53,7 +53,7 @@ install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 uninstall:  ## Remove everything install added
 	rm -f $(addprefix $${XDG_CACHE_HOME:-$(HOME)/.cache}/autocomplete/,$(patsubst specs/%.yaml,%.cache,$(wildcard specs/*.yaml)))
 	rm -f $(PREFIX)/bin/autocomplete
-	rm -f $(addprefix $(PREFIX)/share/autocomplete/,$(notdir $(wildcard specs/*.yaml)))
+	rm -f $(addprefix $(PREFIX)/share/autocomplete/,$(notdir $(wildcard specs/*.yaml specs/*.js)))
 	rmdir $(PREFIX)/share/autocomplete 2>/dev/null || true
 	@if grep -qxF '$(INIT)' $(PROFILE) 2>/dev/null; then \
 		sed -i '' '/^eval "\$$(autocomplete bash)"$$/d' $(PROFILE); \
