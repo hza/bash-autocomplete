@@ -343,7 +343,7 @@ args: any
 examples:
   - key: '-sS'
     command: "curl -sS https://api.github.com/zen"
-    description: "quiet GET, errors still shown"
+    description: "quiet GET (s), errors still shown (S)"
   - key: '-L -o'
     command: "curl -L -o page.html https://example.org"
     description: "follow redirects, save to file"
@@ -352,10 +352,16 @@ examples:
     description: "headers only (HEAD)"
   - key: '-fsSL'
     command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
-    description: "download script, fail on HTTP errors"
-  - key: '-X --json'
-    command: "curl -X POST --json '{\"id\":1}' https://httpbin.org/post"
-    description: "POST JSON"
+    description: "fail on HTTP errors (-f -S)"
+  - key: '--json'
+    command: "curl --json '{\"id\":1}' https://httpbin.org/post"
+    description: "POST JSON (sets Content-Type and Accept)"
+  - key: '-d'
+    command: "curl -d 'name=ann&age=30' https://httpbin.org/post"
+    description: "POST form fields (-d implies POST, urlencoded)"
+  - key: '-X'
+    command: "curl -X DELETE https://httpbin.org/delete"
+    description: "any other method: PUT, PATCH, DELETE"
   - key: '-F'
     command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
     description: "upload a file (multipart)"
@@ -364,10 +370,10 @@ examples:
     description: "send a header"
   - key: '-C - -O'
     command: "curl -C - -O https://example.org/big.iso"
-    description: "resume a download"
+    description: "resume a download. (-C -) - continue where it stopped."
   - key: '--cacert --cert --key'
     command: "curl --cacert ca.pem --cert me.pem --key me.key https://internal.example"
     description: "client certificate"
   - key: '-s -o -w'
     command: "curl -s -o /dev/null -w '%{http_code} %{time_total}s' https://example.org"
-    description: "status code and timing"
+    description: "print only status and time, e.g. 200 0.42s (-w output format)"
