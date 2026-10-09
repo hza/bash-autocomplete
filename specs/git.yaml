@@ -30,6 +30,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git ls-files -m -o --exclude-standard
+        tree: true
       - file
   restore:
     description: Restore working tree files
@@ -45,7 +46,9 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       - exec: git diff --name-only --relative
+        tree: true
       - exec: git diff --cached --name-only --relative
+        tree: true
   rm:
     description: Remove files from the working tree and from the index
     flags:
@@ -58,6 +61,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git ls-files
+      tree: true
   mv:
     description: Move or rename a file, a directory, or a symlink
     flags:
@@ -99,6 +103,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
         tree: true
       - exec: git diff --name-only --relative
+        tree: true
   commit:
     description: Record changes to the repository
     flags:
@@ -123,6 +128,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git ls-files -m
+      tree: true
   log:
     description: Show commit logs
     flags:
@@ -187,6 +193,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads
+      tree: true
   checkout:
     description: Switch branches or restore working tree files
     aliases: [co]
@@ -206,6 +213,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
         tree: true
       - exec: git diff --name-only --relative
+        tree: true
   switch:
     description: Switch branches
     flags:
@@ -285,6 +293,7 @@ commands:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
         tree: true
       - exec: git diff --cached --name-only --relative
+        tree: true
   revert:
     description: Revert some existing commits
     flags:
@@ -296,6 +305,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
+      tree: true
   tag:
     description: Create, list, delete or verify a tag object signed with GPG
     flags:
@@ -340,6 +350,7 @@ commands:
     args:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads
+        tree: true
   push:
     description: Update remote refs along with associated objects
     aliases: [pu]
@@ -359,6 +370,7 @@ commands:
     args:
       - exec: git remote
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
+        tree: true
   remote:
     description: Manage set of tracked repositories
     flags:
@@ -513,6 +525,7 @@ commands:
       --help: {description: "Show the manual page"}
     args:
       exec: git ls-files
+      tree: true
   clean:
     description: Remove untracked files from the working tree
     flags:

@@ -26,10 +26,10 @@ commands:
           --assignee: {value: any, description: "Filter by assignee"}
           -A: {value: any, description: "Filter by author"}
           --author: {value: any, description: "Filter by author"}
-          -B: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by base branch"}
-          --base: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by base branch"}
-          -H: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by head branch"}
-          --head: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Filter by head branch"}
+          -B: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "Filter by base branch"}
+          --base: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "Filter by base branch"}
+          -H: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "Filter by head branch"}
+          --head: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "Filter by head branch"}
           -l: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Filter by label"}
           --label: {value: {exec: "gh label list --limit 200 --json name,description --jq '.[] | \"\\(.name)\\t\\(.description)\"' 2>/dev/null"}, description: "Filter by label"}
           -L: {value: any, description: "Maximum number of results"}
@@ -525,7 +525,7 @@ commands:
         description: View the summary of a workflow
         flags:
           -r: {value: any, description: "The branch or tag name which contains the version of the workflow file", show: always}
-          --ref: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "The branch or tag name which contains the version of the workflow file", show: always}
+          --ref: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "The branch or tag name which contains the version of the workflow file", show: always}
           -w: {description: "Open workflow in the browser", show: always}
           --web: {description: "Open workflow in the browser", show: always}
           -y: {description: "View the workflow yaml file", show: always}
@@ -650,7 +650,7 @@ commands:
           --notes-file: {value: file, description: "Read release notes from file"}
           --notes-start-tag: {value: {exec: "git tag --sort=-creatordate 2>/dev/null"}, description: "Tag to use as the starting point for generating release notes"}
           --generate-notes: {description: "Automatically generate title and notes for the release"}
-          --target: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null"}, description: "Target branch or full commit SHA"}
+          --target: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags 2>/dev/null", tree: true}, description: "Target branch or full commit SHA"}
           --discussion-category: {value: any, description: "Start a discussion in the specified category when publishing a release"}
         args: {exec: "git tag --sort=-creatordate 2>/dev/null"}
       delete:

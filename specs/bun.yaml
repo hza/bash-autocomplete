@@ -80,7 +80,7 @@ commands:
       --parallel: {value: any, description: run files in this many worker processes}
       --isolate: {description: fresh global object per file}
       --changed:
-        value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags"}
+        value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/tags", tree: true}
         description: only tests affected by changes since this git ref
       --shard: {value: any, description: run one shard such as 1/3}
       --pass-with-no-tests: {description: succeed when no tests are found}

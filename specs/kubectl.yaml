@@ -113,20 +113,22 @@ commands:
       --address: {value: any, description: "Addresses to listen on", show: always}
     args:
       exec: kubectl get pods,services -o name
+      tree: true
   scale:
     description: Set a new size for a deployment, replica set, or stateful set
     flags:
       --replicas: {value: any, description: "The new desired number of replicas", show: always}
     args:
       exec: kubectl get deployments,statefulsets,replicasets -o name
+      tree: true
   rollout:
     description: Manage the rollout of a resource
     commands:
-      status: {description: "Show the status of the rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
-      restart: {description: "Restart a resource", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
-      undo: {description: "Undo a previous rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
-      history: {description: "View rollout history", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name"}}
-      pause: {description: "Mark the provided resource as paused", args: {exec: "kubectl get deployments -o name"}}
+      status: {description: "Show the status of the rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name", tree: true}}
+      restart: {description: "Restart a resource", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name", tree: true}}
+      undo: {description: "Undo a previous rollout", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name", tree: true}}
+      history: {description: "View rollout history", args: {exec: "kubectl get deployments,daemonsets,statefulsets -o name", tree: true}}
+      pause: {description: "Mark the provided resource as paused", args: {exec: "kubectl get deployments -o name", tree: true}}
       resume: {description: "Resume a paused resource", args: {exec: "kubectl get deployments -o name"}}
   top:
     description: Display resource (CPU/memory) usage
@@ -172,6 +174,7 @@ commands:
       --name: {value: any, description: "The name for the newly created object", show: always}
     args:
       exec: kubectl get deployments,pods,services,replicasets -o name
+      tree: true
   cordon:
     description: Mark node as unschedulable
     args: {exec: "kubectl get nodes -o name | sed 's|^node/||'"}

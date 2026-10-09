@@ -43,7 +43,7 @@ commands:
       --devel: {description: "Use development versions, too"}
       --replace: {description: "Re-use the given name, even if that name is already used"}
       --help: {description: "Show help"}
-    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   uninstall:
     description: Uninstall a release
     aliases: [delete]
@@ -98,7 +98,7 @@ commands:
       --reset-values: {description: "When upgrading, reset the values to the ones built into the chart"}
       --reuse-values: {description: "When upgrading, reuse the last release's values and merge in any overrides from the command line via --set and -f"}
       --help: {description: "Show help"}
-    args: [{exec: "helm list --short 2>/dev/null"}, {exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+    args: [{exec: "helm list --short 2>/dev/null"}, {exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   rollback:
     description: Roll back a release to a previous revision
     flags:
@@ -245,7 +245,7 @@ commands:
       --validate: {description: "Validate your manifests against the Kubernetes cluster you are currently pointing at"}
       --debug: {description: "Enable verbose output"}
       --help: {description: "Show help"}
-    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   package:
     description: Package a chart directory into a chart archive
     flags:
@@ -292,7 +292,7 @@ commands:
       --version: {value: any, description: "Specify a version constraint for the chart version to use"}
       --debug: {description: "Enable verbose output"}
       --help: {description: "Show help"}
-    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+    args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   repo:
     description: Add, list, remove, update, and index chart repositories
     commands:
@@ -366,14 +366,14 @@ commands:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
           --help: {description: "Show help"}
-        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       chart:
         description: Show the chart's definition
         flags:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
           --help: {description: "Show help"}
-        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       crds:
         description: Show the chart's CRDs
         flags:
@@ -386,7 +386,7 @@ commands:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
           --help: {description: "Show help"}
-        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       values:
         description: Show the chart's values
         flags:
@@ -394,7 +394,7 @@ commands:
           --devel: {description: "Use development versions, too"}
           --jsonpath: {value: any, description: "Supply a JSONPath expression to filter the output"}
           --help: {description: "Show help"}
-        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'"}, file]
+        args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   create:
     description: Create a new chart with the given name
     flags:
