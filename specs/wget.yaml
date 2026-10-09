@@ -221,9 +221,9 @@ flags:
   "--no-parent": {description: "Don't ascend to the parent directory"}
 args: any
 examples:
-  - key: 'url'
-    command: "wget https://example.org/archive.tar.gz"
-    description: "download a file"
+  - key: '--post-data'
+    command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
+    description: "send a POST request and print the response"
   - key: '-O'
     command: "wget -O latest.tgz https://example.org/download?v=latest"
     description: "save under another name"
