@@ -77,7 +77,7 @@ autocomplete works with the bash already on your Mac:
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Usage examples for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
-  common recipes (`👀 -X  -- curl -X DELETE https://httpbin.org/delete   📚 any other
+  common recipes (`📌 -X  -- curl -X DELETE https://httpbin.org/delete   📚 any other
   method: PUT, PATCH, DELETE`) instead of nothing.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - Add a command by writing a small YAML file, with no rebuild
