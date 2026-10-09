@@ -560,10 +560,10 @@ static int dwidth(const char *s) {
 /* On an empty word, the spec's "examples" ({key, command, description?})
  * are listed as display-only "👀 key" entries (spaces in key become
  * U+00A0), described by "command   📚 description". They share
- * "👀 ", so when nothing else is listed a "…" entry (first byte
+ * "👀 ", so when nothing else is listed a "… examples:" entry (first byte
  * differs) is added to keep bash from inserting that prefix. */
 static const ynode *g_examples;
-static const char *g_examples_name, *g_examples_title; /* "…  -- name: spec description" */
+static const char *g_examples_name, *g_examples_title; /* "… examples:  -- name: spec description" */
 static const char *spec_desc(const ynode *spec);
 
 static void add_examples(void) {
@@ -591,7 +591,7 @@ static void add_examples(void) {
     }
     if (n && !others) {
         snprintf(desc, sizeof desc, "%s: %s", g_examples_name, g_examples_title ? g_examples_title : "type an argument");
-        emit_desc("…", 0, desc);
+        emit_desc("…\xc2\xa0" "examples:", 0, desc); /* U+00A0 */
     }
     g_noesc = 0;
 }
