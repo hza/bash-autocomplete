@@ -557,10 +557,10 @@ static int dwidth(const char *s) {
     return w;
 }
 
-/* On an empty word, the spec's "examples" ({command, description?}) are
- * listed as display-only "👀 example N" entries, described by
- * "command   📚 description". They share
- * "👀 example", so when nothing else is listed a "…" entry (first byte
+/* On an empty word, the spec's "examples" ({key, command, description?})
+ * are listed as display-only "👀 key" entries (spaces in key become
+ * U+00A0), described by "command   📚 description". They share
+ * "👀 ", so when nothing else is listed a "…" entry (first byte
  * differs) is added to keep bash from inserting that prefix. */
 static const ynode *g_examples;
 static const char *g_examples_name, *g_examples_title; /* "…  -- name: spec description" */
@@ -569,15 +569,23 @@ static const char *spec_desc(const ynode *spec);
 static void add_examples(void) {
     const ynode *e;
     int n = 0, others = g_ncands;
-    char name[64], desc[1024];
+    char name[256], desc[1024];
     if (*g_cur || !g_examples || g_examples->type != Y_ARR) return;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
     g_noesc = 1;
     for (e = g_examples->child; e; e = e->next) {
         const ynode *cmd = yaml_get(e, "command");
-        const char *d = spec_desc(e);
-        if (!cmd || cmd->type != Y_STR) continue;
-        snprintf(name, sizeof name, "👀\xc2\xa0" "example\xc2\xa0" "%d", ++n); /* U+00A0: see collapse_vars */
+        const ynode *key = yaml_get(e, "key");
+        const char *d = spec_desc(e), *k;
+        size_t len = strlen("👀\xc2\xa0");
+        if (!cmd || cmd->type != Y_STR || !key || key->type != Y_STR) continue;
+        memcpy(name, "👀\xc2\xa0", len); /* U+00A0: see collapse_vars */
+        for (k = key->str; *k && len < sizeof name - 3; k++) {
+            if (*k == ' ') { name[len++] = '\xc2'; name[len++] = '\xa0'; }
+            else name[len++] = *k;
+        }
+        name[len] = 0;
+        n++;
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);
     }

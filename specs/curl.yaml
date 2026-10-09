@@ -341,23 +341,33 @@ flags:
   "--xattr": {description: "Store metadata in extended file attributes"}
 args: any
 examples:
-  - command: "curl -sS https://api.github.com/zen"
+  - key: '-sS'
+    command: "curl -sS https://api.github.com/zen"
     description: "quiet GET, errors still shown"
-  - command: "curl -L -o page.html https://example.org"
+  - key: '-L -o'
+    command: "curl -L -o page.html https://example.org"
     description: "follow redirects, save to file"
-  - command: "curl -I https://example.org"
+  - key: '-I'
+    command: "curl -I https://example.org"
     description: "headers only (HEAD)"
-  - command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
+  - key: '-fsSL'
+    command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
     description: "download script, fail on HTTP errors"
-  - command: "curl -X POST --json '{\"id\":1}' https://httpbin.org/post"
+  - key: '-X --json'
+    command: "curl -X POST --json '{\"id\":1}' https://httpbin.org/post"
     description: "POST JSON"
-  - command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
+  - key: '-F'
+    command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
     description: "upload a file (multipart)"
-  - command: "curl -H 'Authorization: Bearer $TOKEN' https://api.example.org/me"
+  - key: '-H'
+    command: "curl -H 'Authorization: Bearer $TOKEN' https://api.example.org/me"
     description: "send a header"
-  - command: "curl -C - -O https://example.org/big.iso"
+  - key: '-C - -O'
+    command: "curl -C - -O https://example.org/big.iso"
     description: "resume a download"
-  - command: "curl --cacert ca.pem --cert me.pem --key me.key https://internal.example"
+  - key: '--cacert --cert --key'
+    command: "curl --cacert ca.pem --cert me.pem --key me.key https://internal.example"
     description: "client certificate"
-  - command: "curl -s -o /dev/null -w '%{http_code} %{time_total}s' https://example.org"
+  - key: '-s -o -w'
+    command: "curl -s -o /dev/null -w '%{http_code} %{time_total}s' https://example.org"
     description: "status code and timing"
