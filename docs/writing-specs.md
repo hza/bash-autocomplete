@@ -118,14 +118,14 @@ Notes:
   Dockerfile  -- [target] Generate the Dockerfile
   DESTDIR=    -- [var]    Staging root · ?= /tmp/stage
   ```
-  On a bare `make <TAB>` the variables are folded into one display-only `🔧 vars`
+  On a bare `make <TAB>` the variables are folded into one display-only `📌 vars`
   line listing their names, so targets come first. It is never inserted; type a letter
   (`make C<TAB>`) to list matching variables with their values:
   ```
   $ make <TAB>
   all      -- Build everything
   build
-  🔧 vars  -- CC PREFIX X
+  📌 vars  -- CC PREFIX X
   $ make C<TAB>
   CC=      -- C compiler · ?= cc
   CFLAGS=  -- ?= -O2

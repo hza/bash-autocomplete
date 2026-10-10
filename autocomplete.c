@@ -268,7 +268,7 @@ static int term_width(void) {
  * differ before the padding starts, so descriptions never reach the command
  * line. A single match is always printed bare so it can be inserted. */
 /* On an empty word, make variables are folded into one display-only
- * "🔧 vars" entry (description: their names) so the list shows targets
+ * "📌 vars" entry (description: their names) so the list shows targets
  * first; typing a letter lists matching ones. It is never inserted: other
  * candidates remain and share no prefix with it. Kept unfolded when there
  * are no targets to show. */
@@ -293,7 +293,7 @@ static void collapse_vars(void) {
     g_ncands = j;
     g_kind = "target"; /* sits among targets: no [kind] tags */
     /* U+00A0 no-break space: a plain one would be shown escaped ("\ ") */
-    emit_desc("🔧 variables", 0, strdup(names));
+    emit_desc("📌 vars:", 0, strdup(names));
 }
 
 /* Flags are folded into display-only "<word>📌" entries:
