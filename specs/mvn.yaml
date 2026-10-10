@@ -17,8 +17,12 @@ flags:
   -DskipTests: {description: "Compile tests but don't run them"}
   '-Dmaven.test.skip=true': {description: "Skip compiling and running tests"}
   -DskipITs: {description: "Skip integration tests (failsafe)"}
-  '-Dtest=': {description: "Run only the given test class/method"}
-  '-Dit.test=': {description: "Run only the given integration test"}
+  '-Dtest=':
+    description: "Run only the given test class/method (Class, Class#method, comma list)"
+    value: {exec: 'sh "$AUTOCOMPLETE_SPEC_DIR/mvn.sh" unit', nospace: true}
+  '-Dit.test=':
+    description: "Run only the given integration test (Class, Class#method, comma list)"
+    value: {exec: 'sh "$AUTOCOMPLETE_SPEC_DIR/mvn.sh" it', nospace: true}
   '-DfailIfNoTests=false': {description: "Don't fail when -Dtest matches nothing"}
   '-Dsurefire.failIfNoSpecifiedTests=false': {description: "Don't fail when -Dtest matches nothing in a module"}
   '-Dmaven.javadoc.skip=true': {description: "Skip Javadoc generation"}
