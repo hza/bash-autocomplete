@@ -42,6 +42,7 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 |---|---|
 | `flags` | Map of flag name → flag (see below) |
 | `args` | What positional arguments complete to (a value) |
+| `positional` | List of values by position: the 1st positional argument completes to the 1st entry, the 2nd to the 2nd, and so on; past the end of the list, `args` applies. E.g. `git worktree add` uses `[dir, <branches>]` |
 | `commands` | Map of subcommand name → spec |
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (i, add)`); an alias is offered as a candidate only once typed in full |

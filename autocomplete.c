@@ -1068,7 +1068,7 @@ static int split(const char *line, char **words, size_t *start) {
 static int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
     size_t start[MAXW];
-    int n = split(line, w, start), i, lvl = 0;
+    int n = split(line, w, start), i, lvl = 0, npos = 0;
     const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash, *cname;
 
@@ -1098,13 +1098,14 @@ static int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; lvl = i; continue; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; lvl = i; npos = 0; continue; }
         if (is_str(yaml_get(c, "args"), "@command")) {
             if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
             /* the rest of the line is a command line of its own */
             g_nseen = 0;
             return do_complete(line + start[i], wbreaks);
         }
+        npos++;
     }
 
     /* value for previous flag? */
@@ -1166,6 +1167,12 @@ static int do_complete(const char *line, const char *wbreaks) {
     g_examples_title = spec_desc(c);
     g_examples_name = cname;
     v = yaml_get(c, "args");
+    /* "positional": the Nth positional word's value; past the list, "args" */
+    {
+        const ynode *p = yaml_get(c, "positional");
+        for (p = p && p->type == Y_ARR ? p->child : NULL, i = 0; p && i < npos; p = p->next) i++;
+        if (p) v = p;
+    }
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
     return 0;

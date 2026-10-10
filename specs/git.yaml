@@ -598,7 +598,10 @@ commands:
           -f: {description: "Checkout <branch> even if already checked out in other worktree"}
           --detach: {description: "Detach HEAD at named commit"}
           --help: {description: "Show the manual page"}
-        args: dir
+        positional:
+          - dir
+          - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
+            tree: true
       list:
         description: List worktrees
         flags:
