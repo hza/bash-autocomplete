@@ -316,7 +316,7 @@ int do_complete(const char *line, const char *wbreaks) {
         }
         if ((s = find_command(yaml_get(c, "commands"), w[i])) || (s = resolve_alias(c, w[i], 0))) { parent = c; c = s; cname = w[i]; lvl = i; npos = 0; continue; }
         if (is_str(yaml_get(c, "args"), "@command")) {
-            if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
+            if (strchr(w[i], '=') || !strcmp(w[i], "!")) continue; /* env NAME=value cmd, if ! cmd */
             /* the rest of the line is a command line of its own */
             g_nseen = 0;
             return do_complete(line + start[i], wbreaks);
@@ -389,6 +389,8 @@ int do_complete(const char *line, const char *wbreaks) {
         for (p = p && p->type == Y_ARR ? p->child : NULL, i = 0; p && i < npos; p = p->next) i++;
         if (p) v = p;
     }
+    /* "if <TAB>": the examples, not every $PATH executable; "if g<TAB>" completes commands */
+    if (g_examples && !*g_cur && is_str(v, "@command")) return 0;
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
     return 0;

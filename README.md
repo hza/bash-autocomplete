@@ -83,7 +83,7 @@ autocomplete works with the bash already on your Mac:
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Usage examples for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
   common recipes (`📌 -X  -- curl -X DELETE https://httpbin.org/delete   📚 any other
-  method: PUT, PATCH, DELETE`) instead of nothing.
+  method: PUT, PATCH, DELETE`) instead of nothing; `for`, `while`, `until`, `case` and `if <TAB>` show practical one-liners; `if git <TAB>` completes git.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - Add a command by writing a small YAML file, with no rebuild
   ([how](docs/adding-commands.md)).
