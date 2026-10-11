@@ -2,7 +2,7 @@
 
 | Problem | What to check |
 |---|---|
-| Nothing happens on TAB | `complete -p docker` should print `complete -o nospace -C '/path/to/autocomplete _complete' docker`. If not, the `eval` line didn't run; open a new terminal or check your profile. |
+| Nothing happens on TAB | `complete -p docker` should print `complete -o nospace -o bashdefault -C '/path/to/autocomplete _complete' docker`. If not, the `eval` line didn't run; open a new terminal or check your profile. |
 | Works in some terminals (e.g. inside `mc`) but not in new Terminal.app windows or tabs | Terminal.app starts login shells, which read `~/.bash_profile` and not `~/.bashrc` (where `make install` puts the `eval` line). Add `[ -f ~/.bashrc ] && . ~/.bashrc` to `~/.bash_profile` instead of copying the `eval` line there. |
 | A new spec isn't picked up | Re-run `eval "$(autocomplete bash)"`; bash only registers commands at startup. |
 | A spec seems to be ignored | `autocomplete check path/to/spec.yaml` shows errors with line numbers. `AUTOCOMPLETE_DEBUG=1` prints errors while completing. |

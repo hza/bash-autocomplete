@@ -37,7 +37,7 @@ static void print_complete(const char *name) {
     if (!g_ncomplete++) {
         /* -C string is eval'd by bash: backslash-escape the path inside it,
            then single-quote the whole string for the `complete` line */
-        fputs("complete -o nospace -C '", stdout);
+        fputs("complete -o nospace -o bashdefault -C '", stdout);
         for (p = g_self; *p; p++) {
             if (!isalnum((unsigned char)*p) && !strchr("/._-+,", *p)) putchar('\\');
             if (*p == '\'') fputs("'\\''", stdout);
@@ -329,7 +329,12 @@ static int complete_env(void) {
             for (i++; (buf[i] & 0xC0) == 0x80; i++) {}
         buf[i] = 0;
     }
-    rc = do_complete(buf, wb ? wb : "\"'@><=;|&(:");
+    if (!wb) wb = "\"'@><=;|&(:";
+    /* `$VAR` word: print nothing, bash's own variable completion takes over
+       (-o bashdefault) and sees unexported shell variables too */
+    for (i = strlen(buf); i > 0 && !isspace((unsigned char)buf[i - 1]) && !strchr(wb, buf[i - 1]); i--) {}
+    if (buf[i] == '$') { free(buf); return 0; }
+    rc = do_complete(buf, wb);
     flush();
     free(buf);
     return rc;
