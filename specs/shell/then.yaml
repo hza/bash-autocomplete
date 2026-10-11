@@ -1,0 +1,2 @@
+description: "Commands to run when the if/elif test succeeds (bash keyword)"
+args: "@command"

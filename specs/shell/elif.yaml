@@ -1,0 +1,2 @@
+description: "Another test when the previous if/elif failed (bash keyword)"
+args: "@command"
