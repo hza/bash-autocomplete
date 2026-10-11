@@ -1,0 +1,103 @@
+description: "Walk a file hierarchy and act on matching files"
+flags:
+  -name: {value: any, description: "Last path component matches a glob, e.g. '*.log'"}
+  -iname: {value: any, description: "Like -name, case insensitive"}
+  -path: {value: any, description: "Whole path matches a glob, e.g. '*/build/*'"}
+  -ipath: {value: any, description: "Like -path, case insensitive"}
+  -regex: {value: any, description: "Whole path matches a regular expression"}
+  -iregex: {value: any, description: "Like -regex, case insensitive"}
+  -type: {value: {exec: "printf '%s\\t%s\\n' f file d directory l symlink p fifo s socket b block c character"}, description: "File type: f file, d dir, l symlink, p fifo, s socket"}
+  -size: {value: any, description: "Size in 512-byte blocks, or with k/M/G suffix; +n more, -n less"}
+  -empty: {description: "Empty file or directory"}
+  -mtime: {value: any, description: "Modified n days ago (+n more, -n less; units s/m/h/d/w)"}
+  -mmin: {value: any, description: "Modified n minutes ago (+n more, -n less)"}
+  -atime: {value: any, description: "Accessed n days ago"}
+  -amin: {value: any, description: "Accessed n minutes ago"}
+  -ctime: {value: any, description: "Status changed n days ago"}
+  -cmin: {value: any, description: "Status changed n minutes ago"}
+  -Btime: {value: any, description: "Created n days ago"}
+  -Bmin: {value: any, description: "Created n minutes ago"}
+  -newer: {value: file, description: "Modified more recently than this file"}
+  -newermt: {value: any, description: "Modified after a date, e.g. '2024-01-31 12:00'"}
+  -samefile: {value: file, description: "Hard link to this file"}
+  -inum: {value: any, description: "Inode number n"}
+  -links: {value: any, description: "Has n hard links"}
+  -perm: {value: any, description: "Permission bits: exact 644, -mode all set, +mode any set"}
+  -user: {value: "@users", description: "Owned by this user"}
+  -group: {value: any, description: "Owned by this group"}
+  -nouser: {description: "Owner has no user entry"}
+  -nogroup: {description: "Group has no group entry"}
+  -fstype: {value: any, description: "On a file system of this type (apfs, nfs, local, rdonly)"}
+  -xattr: {description: "Has extended attributes"}
+  -xattrname: {value: any, description: "Has this extended attribute, e.g. com.apple.quarantine"}
+  -lname: {value: any, description: "Symlink target matches a glob"}
+  -maxdepth: {value: any, description: "Descend at most n levels"}
+  -mindepth: {value: any, description: "Skip tests at levels below n"}
+  -prune: {description: "Don't descend into the matched directory"}
+  -xdev: {description: "Stay on one file system"}
+  -depth: {description: "Depth-first: contents before the directory"}
+  -print: {description: "Print the path (default action)"}
+  -print0: {description: "Print the path NUL-terminated (for xargs -0)"}
+  -ls: {description: "Print ls -dgils style lines"}
+  -delete: {description: "Delete matches (implies -depth)"}
+  -exec: {value: "@command", description: 'Run a command; {} = path; end with \; or + (batch)'}
+  -execdir: {value: "@command", description: "Like -exec, run in the file's directory"}
+  -ok: {value: "@command", description: "Like -exec, ask first"}
+  -okdir: {value: "@command", description: "Like -execdir, ask first"}
+  -quit: {description: "Stop after the first match"}
+  -not: {description: "Negate the next expression (also !)"}
+  -and: {description: "AND (implied between expressions)"}
+  -or: {description: "OR"}
+  -true: {description: "Always true"}
+  -false: {description: "Always false"}
+  -E: {description: "Extended regular expressions for -regex"}
+  -L: {description: "Follow symbolic links"}
+  -H: {description: "Follow symlinks given on the command line only"}
+  -P: {description: "Never follow symbolic links (default)"}
+  -X: {description: "Warn about names unsafe for xargs"}
+  -d: {description: "Depth-first traversal (same as -depth)"}
+  -s: {description: "Traverse in lexicographical order"}
+  -x: {description: "Stay on one file system (same as -xdev)"}
+  -f: {value: dir, description: "Add a starting path (allows names starting with -)"}
+examples:
+  - command: "find . -name '*.log'"
+    description: "files by name pattern"
+  - command: "find . -iname '*readme*'"
+    description: "name match ignoring case"
+  - command: "find . -type d -name node_modules -prune"
+    description: "node_modules dirs without descending into them"
+  - command: "find . -type f -mmin -30"
+    description: "files modified in the last 30 minutes"
+  - command: "find . -type f -mtime +90"
+    description: "files not modified for 90 days"
+  - command: "find . -type f -size +100M"
+    description: "files larger than 100 MB"
+  - command: "find . -empty -type d -delete"
+    description: "remove empty directories"
+  - command: "find . -name .DS_Store -delete"
+    description: "remove Finder metadata files"
+  - command: "find . -type f -name '*.java' -exec grep -l TODO {} +"
+    description: "Java files containing TODO"
+  - command: "find . -type f -print0 | xargs -0 ls -lh"
+    description: "pass paths safely to xargs"
+  - command: "find . -maxdepth 1 -type l"
+    description: "symlinks in the current directory only"
+  - command: 'find . -type l ! -exec test -e {} \; -print'
+    description: "broken symlinks"
+  - command: "find . -newer package.json -type f"
+    description: "files changed after a reference file"
+  - command: "find . -type f -perm +111"
+    description: "executable files"
+  - command: "find . -user $USER -type f -name '*.tmp'"
+    description: "your temp files"
+  - command: "find . -path ./.git -prune -o -type f -print"
+    description: "all files, skipping .git"
+  - command: "find . -xattrname com.apple.quarantine"
+    description: "files with the download quarantine flag"
+  - command: "find ~ -xdev -type f -size +1G 2>/dev/null"
+    description: "huge files in home, one file system"
+  - command: 'find . -name ''*.orig'' -ok rm {} \;'
+    description: "delete merge leftovers, confirming each"
+  - command: "find . -type f -newermt '2024-01-01'"
+    description: "files modified since a date"
+args: dir
