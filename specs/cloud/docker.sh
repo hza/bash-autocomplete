@@ -1,5 +1,5 @@
 #!/bin/sh
-# docker value suggestions: sh docker.sh log-level|pull|filter|filter-label|container|image|network|volume|ps|images|stats|networks|volumes|compose-ps
+# docker value suggestions: sh docker.sh log-level|pull|filter|filter-label|container|image|network|volume|ps|images|stats|networks|volumes|ps-filter|compose-ps
 # Prints "key<TAB>value<TAB>description<TAB>[pin]" lines (spec: examples: true, typed as @key;
 # pin = most used, listed with 📌).
 row() { printf '%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4"; }
@@ -101,6 +101,18 @@ volumes)
     table
     row n '{{.Name}}' "names only" pin
     row d 'table {{.Name}}\t{{.Driver}}\t{{.Mountpoint}}' "name, driver, path" ;;
+ps-filter)
+    row r status=running "running containers" pin
+    row e status=exited "exited containers" pin
+    row c status=created "created, never started"
+    row p status=paused "paused containers"
+    row s status=restarting "restarting containers"
+    row d status=dead "dead containers"
+    row u health=unhealthy "failing healthcheck" pin
+    row h health=healthy "passing healthcheck"
+    row x exited=0 "exited with code 0 (use with -a)"
+    row f exited=1 "exited with code 1 (use with -a)"
+    row t is-task=true "swarm service tasks" ;;
 compose-ps)
     table
     row s '{{.Service}}' "service names"

@@ -79,8 +79,8 @@ commands:
       --all: {description: "Show all containers"}
       -q: {description: "Only display container IDs"}
       --quiet: {description: "Only display container IDs"}
-      -f: {value: any, description: "Filter output based on conditions provided"}
-      --filter: {value: any, description: "Filter output based on conditions provided"}
+      -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", examples: true}, description: "Filter output based on conditions provided"}
+      --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", examples: true}, description: "Filter output based on conditions provided"}
       --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
       -n: {value: any, description: "Show n last created containers (includes all states)"}
       --last: {value: any, description: "Show n last created containers (includes all states)"}
