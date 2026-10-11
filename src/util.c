@@ -47,6 +47,8 @@ int dwidth(const char *s) {
     int w = 0;
     for (; *s; s++) {
         unsigned char c = (unsigned char)*s;
+        if (c == 0xEF && !memcmp(s, "\xef\xb8\x8f", 3)) { s += 2; continue; } /* U+FE0F */
+        if (c == 0xE2 && !memcmp(s, "\xe2\x83\xa3", 3)) { s += 2; w++; continue; } /* U+20E3: keycap = 2 cols */
         if ((c & 0xC0) != 0x80) w += c >= 0xF0 ? 2 : 1;
     }
     return w;

@@ -395,37 +395,49 @@ static void group_flags(void) {
 }
 
 /* On an empty word, the spec's "examples" ({key, command, description?})
- * are listed as display-only "📌 key" entries (spaces in key become
- * U+00A0), described by "command   📚 description". They share
- * "📌 ", so when nothing else is listed a "… name" entry (first byte
- * differs) is added to keep bash from inserting that prefix. */
+ * are listed as display-only "1️⃣ key" entries (keycap number, zero-padded
+ * when there are 10 or more so bash's sort keeps them in order; spaces in
+ * key become U+00A0), described by "command   📚 description". Numbers
+ * differ in their first byte, so bash lists them; only a lone example
+ * gets a "… name" companion to keep bash from inserting it. */
 const ynode *g_examples;
 const char *g_examples_name, *g_examples_title; /* "… name  -- name: spec description" */
 
 static void add_examples(void) {
     const ynode *e;
-    int n = 0, others = g_ncands;
+    int n = 0, others = g_ncands, total = 0, w = 1;
     char name[256], desc[1024];
     if (*g_cur || !g_examples || g_examples->type != Y_ARR) return;
+    for (e = g_examples->child; e; e = e->next) total++;
+    for (; total >= 10; total /= 10) w++;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
     g_noesc = 1;
     for (e = g_examples->child; e; e = e->next) {
         const ynode *cmd = yaml_get(e, "command");
         const ynode *key = yaml_get(e, "key");
         const char *d = spec_desc(e), *k;
-        size_t len = strlen("📌\xc2\xa0");
+        char num[16];
+        size_t len = 0;
+        int i;
         if (!cmd || cmd->type != Y_STR || !key || key->type != Y_STR) continue;
-        memcpy(name, "📌\xc2\xa0", len); /* U+00A0: see collapse_vars */
+        n++;
+        snprintf(num, sizeof num, "%0*d", w, n);
+        for (i = 0; num[i]; i++) { /* digit U+FE0F U+20E3 = keycap */
+            name[len++] = num[i];
+            memcpy(name + len, "\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0", 8); /* keycaps overlap what follows */
+            len += 8;
+        }
+        memcpy(name + len, "\xc2\xa0", 2); /* U+00A0: see collapse_vars */
+        len += 2;
         for (k = key->str; *k && len < sizeof name - 3; k++) {
             if (*k == ' ') { name[len++] = '\xc2'; name[len++] = '\xa0'; }
             else name[len++] = *k;
         }
         name[len] = 0;
-        n++;
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);
     }
-    if (n && !others) {
+    if (n == 1 && !others) { /* a lone example would be inserted */
         snprintf(desc, sizeof desc, "%s: %s", g_examples_name, g_examples_title ? g_examples_title : "type an argument");
         snprintf(name, sizeof name, "……\xc2\xa0%s", g_examples_name); /* U+00A0 */
         emit_desc(name, 0, desc);

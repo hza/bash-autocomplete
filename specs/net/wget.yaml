@@ -225,8 +225,8 @@ examples:
     command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
     description: "send a POST request and print the response"
   - key: '--post-file'
-    command: "wget --post-file=photo.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post"
-    description: "upload a file as the request body (no multipart)"
+    command: "wget --post-file=1.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post"
+    description: "upload a file (no multipart)"
   - key: '--method'
     command: "wget --method=DELETE -O - https://httpbin.org/delete"
     description: "any other method: PUT, PATCH, DELETE"
@@ -248,6 +248,4 @@ examples:
   - key: '--limit-rate --tries'
     command: "wget --limit-rate=500k --tries=3 https://example.org/big.iso"
     description: "throttle and retry"
-  - key: '--header'
-    command: "wget --header='Authorization: Bearer $TOKEN' https://api.example.org/export"
-    description: "send a header"
+
