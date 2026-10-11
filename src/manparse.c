@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #define MAXLINES 20000
 #define MAXOPTS 8
@@ -86,17 +87,22 @@ static int parse_entry(const char *s, opt *opts, const char **desc) {
 }
 
 /* SYNOPSIS arguments: "[-O fmt | -o fmt] [-G gid[,gid...]]" -> O:fmt ... */
-static int synopsis_args(char **lines, int nl, opt *syn) {
+/* help: the "usage:" line and its indented continuation lines instead, and
+ * options without an argument too ("[--append]"; not "-abc" bundles). */
+static int synopsis_args(char **lines, int nl, opt *syn, int help) {
     int i, n = 0, in = 0;
     for (i = 0; i < nl && n < MAXSYN; i++) {
         const char *p;
-        if (!strncmp(lines[i], "SYNOPSIS", 8)) { in = 1; continue; }
-        if (!in) continue;
-        if (lines[i][0] && lines[i][0] != ' ') break;
+        if (!in && (help ? !strncasecmp(lines[i], "usage:", 6) : !strncmp(lines[i], "SYNOPSIS", 8))) {
+            in = 1;
+            if (!help) continue;
+        } else if (!in) continue;
+        else if (lines[i][0] && lines[i][0] != ' ') break;
         for (p = lines[i]; (p = strchr(p, '-')) && n < MAXSYN; p++) {
             const char *q = p;
             if (p == lines[i] || !(p[-1] == '[' || (p[-1] == ' ' && p - 1 > lines[i] && p[-2] == '|'))) continue;
-            if (parse_opt(&q, &syn[n]) && syn[n].arg[0] && syn[n].arg[0] != '-') n++;
+            if (!parse_opt(&q, &syn[n])) continue;
+            if (help ? syn[n].name[1] == '-' || !syn[n].name[2] : syn[n].arg[0] && syn[n].arg[0] != '-') n++;
         }
     }
     return n;
@@ -134,17 +140,48 @@ static ynode *add_flag(ynode *flags, const char *name, const char *arg, const ch
     return f;
 }
 
-ynode *man_spec(const char *cmd) {
-    char shell[512], buf[4096], *lines[MAXLINES], text[2048], desc[300];
+/* "Commands:" / "Available Commands:" sections of --help output: lines
+ * "  name   description" (one word, then 2+ spaces or the end of the line)
+ * until a blank or unindented line. */
+static void help_commands(char **lines, int nl, ynode *root) {
+    ynode *cmds = NULL, *c;
+    char name[64], low[128], desc[300];
+    int i, in = 0;
+    for (i = 0; i < nl; i++) {
+        const char *l = lines[i], *p, *d;
+        size_t len = strlen(l), k;
+        if (len && l[0] != ' ' && l[len - 1] == ':') {
+            for (k = 0; k < len && k < sizeof low - 1; k++) low[k] = (char)tolower((unsigned char)l[k]);
+            low[k] = 0;
+            in = strstr(low, "command") != NULL;
+            continue;
+        }
+        if (!in) continue;
+        if (!*l || l[0] != ' ') { in = 0; continue; }
+        for (p = l; *p == ' '; p++) {}
+        if (!isalnum((unsigned char)*p)) continue;
+        for (d = p; isalnum((unsigned char)*d) || strchr("-_:.", *d); d++) {}
+        if (*d && !(d[0] == ' ' && (d[1] == ' ' || !d[1]))) continue;
+        snprintf(name, sizeof name, "%.*s", (int)(d - p), p);
+        while (*d == ' ') d++;
+        if (!cmds) cmds = yaml_new(root, Y_OBJ, "commands", NULL);
+        if (yaml_get(cmds, name)) continue;
+        c = yaml_new(cmds, Y_OBJ, name, NULL);
+        sentence(d, desc, sizeof desc);
+        if (*desc) yaml_new(c, Y_STR, "description", desc);
+    }
+}
+
+/* Spec from the text `shell` prints: a man page (help = 0) or --help
+ * output (help = 1: no NAME/SYNOPSIS, "Commands:" sections). */
+static ynode *text_spec(const char *shell, int help) {
+    char buf[4096], *lines[MAXLINES], text[2048], desc[300];
     int nl = 0, i, j, ind = -1, counts[64] = {0}, nsyn;
     const char *p;
     opt opts[MAXOPTS], syn[MAXSYN];
     ynode *root, *flags;
     FILE *f;
 
-    for (p = cmd; *p; p++)
-        if (!isalnum((unsigned char)*p) && !strchr("._+-", *p)) return NULL;
-    snprintf(shell, sizeof shell, "MANWIDTH=1000 man -P cat '%s' 2>/dev/null | col -bx", cmd);
     if (!(f = popen(shell, "r"))) return NULL;
     while (nl < MAXLINES && fgets(buf, sizeof buf, f)) {
         size_t len = strcspn(buf, "\r\n");
@@ -158,26 +195,26 @@ ynode *man_spec(const char *cmd) {
     for (i = 0; i < nl; i++) {
         const char *d;
         int k = indent(lines[i]);
-        if (k > 0 && k < 64 && parse_entry(lines[i] + k, opts, &d)) counts[k]++;
+        if ((k > 0 || help) && k < 64 && parse_entry(lines[i] + k, opts, &d)) counts[k]++;
     }
-    for (i = 1; i < 64; i++)
+    for (i = help ? 0 : 1; i < 64; i++)
         if (counts[i] && (ind < 0 || counts[i] > counts[ind])) ind = i;
-    if (ind < 0) {
+    if (ind < 0 && !help) {
         for (i = 0; i < nl; i++) free(lines[i]);
         return NULL;
     }
 
     root = yaml_new(NULL, Y_OBJ, NULL, NULL);
-    for (i = 0; i < nl; i++)
+    for (i = 0; i < nl && !help; i++)
         if (!strcmp(lines[i], "NAME") && i + 1 < nl && (p = strstr(lines[i + 1], " - "))) {
             sentence(p + 3, desc, sizeof desc);
             yaml_new(root, Y_STR, "description", desc);
             break;
         }
     flags = yaml_new(root, Y_OBJ, "flags", NULL);
-    nsyn = synopsis_args(lines, nl, syn);
+    nsyn = synopsis_args(lines, nl, syn, help);
 
-    for (i = 0; i < nl; i++) {
+    for (i = 0; i < nl && ind >= 0; i++) {
         const char *d;
         int n, o;
         if (indent(lines[i]) != ind || !(n = parse_entry(lines[i] + ind, opts, &d))) continue;
@@ -187,7 +224,7 @@ ynode *man_spec(const char *cmd) {
             if (*text) strncat(text, " ", sizeof text - strlen(text) - 1);
             strncat(text, lines[j] + indent(lines[j]), sizeof text - strlen(text) - 1);
         }
-        sentence(text, desc, sizeof desc);
+        sentence(text[0] == ':' ? text + 1 + strspn(text + 1, " ") : text, desc, sizeof desc); /* python: "-b     : issue..." */
         for (o = 0; o < n; o++) {
             const char *arg = opts[o].arg;
             int s;
@@ -200,11 +237,57 @@ ynode *man_spec(const char *cmd) {
     /* SYNOPSIS-only options ("[-O fmt]" with no entry of its own) */
     for (i = 0; i < nsyn; i++) add_flag(flags, syn[i].name, syn[i].arg, NULL);
 
+    if (help) help_commands(lines, nl, root);
+    if (!flags->child) { /* no empty "flags: {}" */
+        ynode **pp = &root->child;
+        while (*pp != flags) pp = &(*pp)->next;
+        *pp = flags->next;
+        flags->next = NULL;
+        yaml_free(flags);
+        flags = NULL;
+    }
     for (i = 0; i < nl; i++) free(lines[i]);
-    if (!flags->child) {
+    if (!flags && !yaml_get(root, "commands")) {
         yaml_free(root);
         return NULL;
     }
-    yaml_new(root, Y_STR, "args", "file");
+    if (!yaml_get(root, "commands")) yaml_new(root, Y_STR, "args", "file");
+    return root;
+}
+
+static int plain_name(const char *cmd) {
+    const char *p;
+    for (p = cmd; *p; p++)
+        if (!isalnum((unsigned char)*p) && !strchr("._+-", *p)) return 0;
+    return *cmd != 0;
+}
+
+ynode *man_spec(const char *cmd) {
+    char shell[512];
+    if (!plain_name(cmd)) return NULL;
+    snprintf(shell, sizeof shell, "MANWIDTH=1000 man -P cat '%s' 2>/dev/null | col -bx", cmd);
+    return text_spec(shell, 0);
+}
+
+ynode *help_spec(const char *cmd) {
+    char shell[512];
+    if (!plain_name(cmd)) return NULL;
+    /* stdin from /dev/null: a command that ignores --help must not wait for input */
+    snprintf(shell, sizeof shell, "'%s' --help </dev/null 2>&1 | col -bx", cmd);
+    return text_spec(shell, 1);
+}
+
+ynode *cobra_spec(const char *cmd) {
+    char shell[512], line[1024], last[1024] = "";
+    ynode *root;
+    FILE *f;
+    if (!plain_name(cmd)) return NULL;
+    snprintf(shell, sizeof shell, "'%s' __complete '' </dev/null 2>/dev/null", cmd);
+    if (!(f = popen(shell, "r"))) return NULL;
+    while (fgets(line, sizeof line, f)) snprintf(last, sizeof last, "%s", line);
+    pclose(f);
+    if (last[0] != ':' || !isdigit((unsigned char)last[1])) return NULL;
+    root = yaml_new(NULL, Y_OBJ, NULL, NULL);
+    yaml_new(root, Y_STR, "bridge", "cobra");
     return root;
 }

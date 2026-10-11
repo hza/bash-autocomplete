@@ -11,6 +11,6 @@ flags:
     description: "Timeout in seconds"
   -w:
     show: always
-    value: {exec: "ps -U \"$(id -u)\" -o pid=,comm= | sed -E 's|^ *([0-9]+) +(.*/)?(.*)$|\\1\t\\3|'"}
+    value: "@pids"
     description: "Wait for the process with this pid to exit"
 args: "@command"

@@ -82,7 +82,7 @@ help:  ## List make targets
 clean:  ## Delete the built binary
 	rm -f autocomplete
 
-LLMS_DOCS = README.md docs/adding-commands.md docs/writing-specs.md docs/man-pages.md \
+LLMS_DOCS = README.md docs/adding-commands.md docs/writing-specs.md docs/generated-specs.md \
 	docs/troubleshooting.md docs/how-it-works.md docs/cache.md
 
 llms-full.txt: $(LLMS_DOCS)  ## Regenerate llms-full.txt from README and docs

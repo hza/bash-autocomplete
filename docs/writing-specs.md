@@ -47,6 +47,7 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (🔥 i, add)`); an alias is offered as a candidate only once typed in full |
 | `alias_exec` | Shell command printing user-defined aliases of this spec's subcommands, one `name expansion` line each (space or tab between), e.g. git's `git config --get-regexp '^alias\.' \| sed 's/^alias\.//'`. A plain rename (`re = rebase`) is shown in the target's description like a static alias (`rebase -- … (🔥 re)`); others are listed with `alias: <expansion>` as description; a name defined twice (git: global, then local) takes the last definition; after an alias the line completes as the subcommand it expands to (first non-flag word, alias chains followed). Shell aliases (`!...`) resolve only with a `: git <sub>` hint inside, e.g. `!f() { : git switch ; ... }; f` |
+| `bridge` | Top level only: `cobra` hands every completion to the program itself (`CMD __complete …`, Go programs built with cobra); the rest of the spec is ignored. Written by `autocomplete from cobra CMD` |
 | `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
 | `examples` | List of `{key, command, description?}` (any level; `key` is a short label, usually the example's flags), shown on TAB after an empty word as `📌 -sS  -- curl -sS https://api.github.com/zen   📚 quiet GET, errors still shown`. Write them yourself (don't copy text from other projects' docs: their licenses may require attribution); meant for commands whose TAB lists nothing else. Hints only: they can't be inserted; when they are the only entries, a `… curl  -- curl: <description>` line (the command name and the spec's `description`, or "type an argument") is added so bash lists them instead of inserting their common prefix |
 | `groups` | Map of short-flag letters → `{description?}`, grouping rarely used short flags by meaning. Each key lists the letters of `-x` flags of this spec (or the top-level one) that are hidden from the list and shown together in one entry: `"Up": {description: proxy}` gives `-📌 Up  -- proxy: (U) Proxy user and password (p) HTTP proxy tunnel (using CONNECT)`. Top-level groups apply at every depth. `autocomplete check` reports letters with no matching flag |
@@ -57,6 +58,7 @@ Each flag is a map with two optional keys, usually written on one line:
 |---|---|
 | `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
 | `description` | One-line summary shown next to the flag when several flags match |
+| `repeat` | `true`: the flag may be given several times (`ssh -v -v`). A flag without a `value` that is already on the line isn't offered again unless it has `repeat: true`; flags with a value are always offered |
 | `show` | `always`: a frequently used flag, never folded into a group or into `-📌` (see below). `collapsed` (short flags only): a rarely used flag, left out of the list and only named in a `📌` entry; still listed when nothing else matches. `default` (or leaving it out): the normal behaviour |
 
 When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (🔥 -d)`. Give a short/long pair the same description to get this.
@@ -81,12 +83,19 @@ A value can be:
 |---|---|
 | *(empty)*, `~`, `null` | nothing |
 | `any` | free text, no suggestions |
-| `file` / `dir` | paths / directories only |
+| `file` / `dir` | paths / directories only; a word like `~ro` lists `~root/`-style home directories |
+| `file: "*.json *.yaml"` | files matching one of the space-separated patterns, plus directories to descend into |
+| `"@hosts"` | host names from `~/.ssh/config` (`Host` lines without wildcards) and `~/.ssh/known_hosts` (not hashed entries or IP addresses) |
+| `"@users"` | login users (not the `_` system accounts), with their full names |
+| `"@pids"` | process IDs of your processes, with the program name |
+| `"@processes"` | names of your running programs |
+| `"@signals"` | signal names: `HUP`, `INT`, `KILL`, … |
 | `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`) |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | &nbsp;&nbsp;`tree: true` | show `a/b` names as `a/` until you type past the `/`, like paths (e.g. `origin/` for remote branches) |
 | &nbsp;&nbsp;`tree: "."` | the same, folding at another separator character (e.g. `com.` for UTIs in duti) |
+| &nbsp;&nbsp;`cache: 300` | reuse the output for that many seconds (per command, current directory and, if the command reads `$AUTOCOMPLETE_CUR`, typed word), for slow commands; kept in `~/.cache/autocomplete/exec/` |
 | &nbsp;&nbsp;`filter: false` | show every line the command prints, even ones not starting with the typed word (the command filters itself, e.g. duti turns `md` into `net.daringfireball.markdown`) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`), and so is `!` (`if ! git …`). Use it as `args`. If the spec has `examples`, an empty word shows them instead of every executable (`if <TAB>`) |

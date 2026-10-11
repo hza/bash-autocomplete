@@ -27,6 +27,13 @@ The cache starts to pay off only for very large specs, hence the 100 KB threshol
 
 So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
 
+## exec output
+
+An `exec` value with `cache: SECONDS` keeps its output in `~/.cache/autocomplete/exec/` and
+reuses it for that long. The entry is per command and current directory (and per typed word
+if the command reads `$AUTOCOMPLETE_CUR`). Delete the directory to refresh right away;
+`AUTOCOMPLETE_NOCACHE=1` turns it off.
+
 ## mvn test names
 
 `mvn test -Dtest=<TAB>` (and `-Dit.test=`) scans `src/test` for test classes and methods, which

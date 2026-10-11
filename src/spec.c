@@ -94,14 +94,24 @@ int find_spec(const char *name, char *path, size_t size) {
 
 /* Compiled specs live in $XDG_CACHE_HOME/autocomplete or ~/.cache/autocomplete
  * as <name>.cache; creates the directory when `create` is set. */
+int cache_dir(const char *sub, char *dir, size_t size) {
+    const char *xdg = getenv("XDG_CACHE_HOME"), *home = getenv("HOME");
+    if (getenv("AUTOCOMPLETE_NOCACHE")) return 0;
+    if (xdg && *xdg) snprintf(dir, size, "%s/autocomplete%s%s", xdg, *sub ? "/" : "", sub);
+    else if (home) snprintf(dir, size, "%s/.cache/autocomplete%s%s", home, *sub ? "/" : "", sub);
+    else return 0;
+    mkdirs(dir);
+    return 1;
+}
+
 static int cache_path(const char *name, char *path, size_t size, int create) {
     const char *xdg = getenv("XDG_CACHE_HOME"), *home = getenv("HOME");
     char dir[PATH_MAX];
+    if (create) return cache_dir("", dir, sizeof dir) && snprintf(path, size, "%s/%s.cache", dir, name) > 0;
     if (getenv("AUTOCOMPLETE_NOCACHE")) return 0;
     if (xdg && *xdg) snprintf(dir, sizeof dir, "%s/autocomplete", xdg);
     else if (home) snprintf(dir, sizeof dir, "%s/.cache/autocomplete", home);
     else return 0;
-    if (create) mkdirs(dir);
     snprintf(path, size, "%s/%s.cache", dir, name);
     return 1;
 }

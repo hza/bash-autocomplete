@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <unistd.h>
 #include "builtins.h"
 #include "complete.h"
 #include "output.h"
@@ -198,6 +201,35 @@ static const ynode *find_command(const ynode *cmds, const char *name) {
 
 static int is_str(const ynode *v, const char *s) { return v && v->type == Y_STR && !strcmp(v->str, s); }
 
+/* `cache: SECONDS` on an exec value: its output is kept in
+ * <cache dir>/exec/<hash> of (command, cwd, and the current word when the
+ * command reads $AUTOCOMPLETE_CUR). Fills shell with a command that prints
+ * the cached output, refreshing it when older than ttl. */
+static int exec_cached(const char *ex, long ttl, char *shell, size_t size) {
+    char dir[4096], cwd[4096] = "", path[4200];
+    unsigned long h = 2166136261UL;
+    const char *parts[3], *p;
+    struct stat st;
+    int i;
+    if (ttl <= 0 || !cache_dir("exec", dir, sizeof dir) || strchr(dir, '\'')) return 0;
+    if (!getcwd(cwd, sizeof cwd)) cwd[0] = 0;
+    parts[0] = ex;
+    parts[1] = cwd;
+    parts[2] = strstr(ex, "AUTOCOMPLETE_CUR") ? g_cur : "";
+    for (i = 0; i < 3; i++)
+        for (p = parts[i];; p++) {
+            h = ((h ^ (unsigned char)*p) * 16777619UL) & 0xffffffffUL;
+            if (!*p) break;
+        }
+    snprintf(path, sizeof path, "%s/%08lx", dir, h);
+    if (stat(path, &st) == 0 && time(NULL) - st.st_mtime < ttl)
+        snprintf(shell, size, "cat '%s'", path);
+    else
+        snprintf(shell, size, "{ { %s\n} 2>/dev/null > '%s.'$$ && mv -f '%s.'$$ '%s'; } && cat '%s'", ex, path, path,
+                 path, path);
+    return 1;
+}
+
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
@@ -209,8 +241,13 @@ static void complete_value(const ynode *v, const ynode *parent) {
         break;
     }
     case Y_STR:
-        if (!strcmp(v->str, "file")) { g_kind = "file"; complete_files(0); }
-        else if (!strcmp(v->str, "dir")) { g_kind = "dir"; complete_files(1); }
+        if (!strcmp(v->str, "file")) { g_kind = "file"; complete_paths(0, NULL); }
+        else if (!strcmp(v->str, "dir")) { g_kind = "dir"; complete_paths(1, NULL); }
+        else if (!strcmp(v->str, "@hosts")) complete_hosts();
+        else if (!strcmp(v->str, "@users")) complete_users();
+        else if (!strcmp(v->str, "@pids")) complete_pids();
+        else if (!strcmp(v->str, "@processes")) complete_processes();
+        else if (!strcmp(v->str, "@signals")) complete_signals();
         else if (!strcmp(v->str, "@make-targets")) { g_kind = "target"; complete_make_targets(); }
         else if (!strcmp(v->str, "@make-variables")) { g_kind = "var"; complete_make_variables(); }
         else if (!strcmp(v->str, "@subcommands")) emit_commands(parent);
@@ -218,10 +255,13 @@ static void complete_value(const ynode *v, const ynode *parent) {
         break;
     case Y_OBJ: {
         const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace"),
-                    *tr = yaml_get(v, "tree"), *fl = yaml_get(v, "filter");
-        char shell[4096];
+                    *tr = yaml_get(v, "tree"), *fl = yaml_get(v, "filter"), *gl = yaml_get(v, "file"),
+                    *ca = yaml_get(v, "cache");
+        char shell[8192];
+        if (gl && gl->type == Y_STR) { g_kind = "file"; complete_paths(0, gl->str); break; }
         if (!ex || ex->type != Y_STR) break;
-        snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
+        if (!(ca && ca->type == Y_STR && exec_cached(ex->str, atol(ca->str), shell, sizeof shell)))
+            snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
         g_kind = NULL;
         g_nofilter = fl && fl->type == Y_BOOL && !fl->b;
         setenv("AUTOCOMPLETE_CUR", g_cur, 1); /* the word being completed, unescaped */
@@ -295,7 +335,11 @@ int do_complete(const char *line, const char *wbreaks) {
     slash = strrchr(w[0], '/');
     cname = slash ? slash + 1 : w[0];
     if (!(root = c = load_spec(cname))) {
-        if (n > 1) { g_kind = "file"; complete_files(0); } /* sudo cmd-without-spec */
+        if (n > 1) { g_kind = "file"; complete_paths(0, NULL); } /* sudo cmd-without-spec */
+        return 0;
+    }
+    if (is_str(yaml_get(root, "bridge"), "cobra")) {
+        complete_cobra(w, n);
         return 0;
     }
 
@@ -360,7 +404,13 @@ int do_complete(const char *line, const char *wbreaks) {
         const ynode *f, *s = c;
         for (;;) {
             for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
-                const ynode *gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
+                const ynode *gr;
+                /* a switch already on the line isn't offered again, unless `repeat: true` */
+                if (!yaml_get(f, "value") && !(yaml_get(f, "repeat") && yaml_get(f, "repeat")->b)) {
+                    for (i = 1; i < n - 1 && strcmp(w[i], f->key); i++) {}
+                    if (i < n - 1) continue;
+                }
+                gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
                 g_group = gr ? gr->key : NULL;
                 g_gdesc = gr ? spec_desc(gr) : NULL;
                 g_show = g_group                                    ? SHOW_COLLAPSED

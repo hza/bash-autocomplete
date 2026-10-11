@@ -88,7 +88,9 @@ autocomplete works with the bash already on your Mac:
 - Add a command by writing a small YAML file, with no rebuild
   ([how](docs/adding-commands.md)).
 - Generate flag completion for system commands like `ps`, `ls` or `tar` from their man
-  pages ([details](docs/man-pages.md)).
+  pages, for other tools from their `--help` output, and delegate Go/cobra programs
+  (helm, gh, hugo) to their own live completion ([details](docs/generated-specs.md)).
+- Built-in completion for SSH hosts, users, PIDs, process names and signals; `~user/` paths.
 - Complete shell aliases like the command they wrap (`autocomplete alias kubectl k`).
 - Very large specs (over 100 KB) are compiled to a cache, so TAB doesn't re-parse YAML.
 
@@ -158,6 +160,8 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete from man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
+| `autocomplete from help [--force] CMD...` | Same, from `CMD --help` (flags and subcommands). |
+| `autocomplete from cobra [--force] CMD...` | Same, as a bridge to the program's own cobra completion (`bridge: cobra`). |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 | `autocomplete alias --list` | List aliases as `NAME -> CMD`. |
@@ -189,7 +193,7 @@ values. See [Adding your own commands](docs/adding-commands.md).
 - [Adding your own commands](docs/adding-commands.md): a quick start for new commands
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
-- [Completions from man pages](docs/man-pages.md): `autocomplete from man`
+- [Generating specs](docs/generated-specs.md): `autocomplete from man|help|cobra`
 - [Cache](docs/cache.md): how parsed specs are cached and how to reset it
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB

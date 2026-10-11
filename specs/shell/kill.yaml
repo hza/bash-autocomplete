@@ -1,8 +1,7 @@
 description: Send a signal to a process
 flags:
   -s:
-    value:
-      exec: "kill -l 2>/dev/null | tr ' ' '\\n' | grep -v '^$'"
+    value: "@signals"
     description: "Signal name to send"
   -l: {description: "List signal names", show: always}
   '-9': {description: "Send SIGKILL (forceful termination)", show: always}
@@ -16,5 +15,4 @@ flags:
   -CONT: {description: "Send SIGCONT"}
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
-args:
-  exec: "ps -xo pid=,comm= | awk '{p=$1; sub(/^ *[0-9]+ /, \"\"); sub(/.*\\//, \"\"); printf \"%s\\t%s\\n\", p, $0}'"
+args: "@pids"

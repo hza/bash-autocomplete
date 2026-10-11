@@ -11,7 +11,7 @@ flags:
   '-6': {description: "Force IPv6 connections only"}
   -o: {value: any, description: "Option in ssh_config format"}
   -F: {value: file, description: "Specify ssh config file"}
-  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)", show: always}
+  -J: {value: "@hosts", description: "Jump host(s) (proxy jump)", show: always}
   -l: {value: any, description: "Bandwidth limit in Kbit/s"}
   -v: {description: "Verbose mode"}
   --help: {description: "Show help"}

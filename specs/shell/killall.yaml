@@ -11,13 +11,13 @@ flags:
   -q: {description: "Suppress error if no processes match"}
   -z: {description: "Do not skip zombies"}
   -u:
-    value: {exec: "dscl . -list /Users | grep -v '^_'"}
+    value: "@users"
     description: "Only processes of USER"
   -t:
     value: {exec: "cd /dev && ls -d tty?*"}
     description: "Only processes on TTY"
   -c:
-    value: {exec: "ps -co comm= -U \"$(id -u)\" | grep -v '^[-<]' | sort -u"}
+    value: "@processes"
     description: "Only processes matching PROCNAME"
   -HUP: {description: "Send SIGHUP"}
   -INT: {description: "Send SIGINT"}
@@ -29,4 +29,4 @@ flags:
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
   '-9': {description: "Send SIGKILL", show: always}
-args: {exec: "ps -co comm= -U \"$(id -u)\" | grep -v '^[-<]' | sort -u"}
+args: "@processes"

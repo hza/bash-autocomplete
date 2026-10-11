@@ -96,7 +96,9 @@ autocomplete works with the bash already on your Mac:
 - Add a command by writing a small YAML file, with no rebuild
   ([how](docs/adding-commands.md)).
 - Generate flag completion for system commands like `ps`, `ls` or `tar` from their man
-  pages ([details](docs/man-pages.md)).
+  pages, for other tools from their `--help` output, and delegate Go/cobra programs
+  (helm, gh, hugo) to their own live completion ([details](docs/generated-specs.md)).
+- Built-in completion for SSH hosts, users, PIDs, process names and signals; `~user/` paths.
 - Complete shell aliases like the command they wrap (`autocomplete alias kubectl k`).
 - Very large specs (over 100 KB) are compiled to a cache, so TAB doesn't re-parse YAML.
 
@@ -166,6 +168,8 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete from man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
+| `autocomplete from help [--force] CMD...` | Same, from `CMD --help` (flags and subcommands). |
+| `autocomplete from cobra [--force] CMD...` | Same, as a bridge to the program's own cobra completion (`bridge: cobra`). |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 | `autocomplete alias --list` | List aliases as `NAME -> CMD`. |
@@ -197,7 +201,7 @@ values. See [Adding your own commands](docs/adding-commands.md).
 - [Adding your own commands](docs/adding-commands.md): a quick start for new commands
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
-- [Completions from man pages](docs/man-pages.md): `autocomplete from man`
+- [Generating specs](docs/generated-specs.md): `autocomplete from man|help|cobra`
 - [Cache](docs/cache.md): how parsed specs are cached and how to reset it
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB
@@ -324,6 +328,7 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (🔥 i, add)`); an alias is offered as a candidate only once typed in full |
 | `alias_exec` | Shell command printing user-defined aliases of this spec's subcommands, one `name expansion` line each (space or tab between), e.g. git's `git config --get-regexp '^alias\.' \| sed 's/^alias\.//'`. A plain rename (`re = rebase`) is shown in the target's description like a static alias (`rebase -- … (🔥 re)`); others are listed with `alias: <expansion>` as description; a name defined twice (git: global, then local) takes the last definition; after an alias the line completes as the subcommand it expands to (first non-flag word, alias chains followed). Shell aliases (`!...`) resolve only with a `: git <sub>` hint inside, e.g. `!f() { : git switch ; ... }; f` |
+| `bridge` | Top level only: `cobra` hands every completion to the program itself (`CMD __complete …`, Go programs built with cobra); the rest of the spec is ignored. Written by `autocomplete from cobra CMD` |
 | `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
 | `examples` | List of `{key, command, description?}` (any level; `key` is a short label, usually the example's flags), shown on TAB after an empty word as `📌 -sS  -- curl -sS https://api.github.com/zen   📚 quiet GET, errors still shown`. Write them yourself (don't copy text from other projects' docs: their licenses may require attribution); meant for commands whose TAB lists nothing else. Hints only: they can't be inserted; when they are the only entries, a `… curl  -- curl: <description>` line (the command name and the spec's `description`, or "type an argument") is added so bash lists them instead of inserting their common prefix |
 | `groups` | Map of short-flag letters → `{description?}`, grouping rarely used short flags by meaning. Each key lists the letters of `-x` flags of this spec (or the top-level one) that are hidden from the list and shown together in one entry: `"Up": {description: proxy}` gives `-📌 Up  -- proxy: (U) Proxy user and password (p) HTTP proxy tunnel (using CONNECT)`. Top-level groups apply at every depth. `autocomplete check` reports letters with no matching flag |
@@ -334,6 +339,7 @@ Each flag is a map with two optional keys, usually written on one line:
 |---|---|
 | `value` | What the flag's value completes to. Leave it out if the flag takes no value. |
 | `description` | One-line summary shown next to the flag when several flags match |
+| `repeat` | `true`: the flag may be given several times (`ssh -v -v`). A flag without a `value` that is already on the line isn't offered again unless it has `repeat: true`; flags with a value are always offered |
 | `show` | `always`: a frequently used flag, never folded into a group or into `-📌` (see below). `collapsed` (short flags only): a rarely used flag, left out of the list and only named in a `📌` entry; still listed when nothing else matches. `default` (or leaving it out): the normal behaviour |
 
 When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (🔥 -d)`. Give a short/long pair the same description to get this.
@@ -358,12 +364,19 @@ A value can be:
 |---|---|
 | *(empty)*, `~`, `null` | nothing |
 | `any` | free text, no suggestions |
-| `file` / `dir` | paths / directories only |
+| `file` / `dir` | paths / directories only; a word like `~ro` lists `~root/`-style home directories |
+| `file: "*.json *.yaml"` | files matching one of the space-separated patterns, plus directories to descend into |
+| `"@hosts"` | host names from `~/.ssh/config` (`Host` lines without wildcards) and `~/.ssh/known_hosts` (not hashed entries or IP addresses) |
+| `"@users"` | login users (not the `_` system accounts), with their full names |
+| `"@pids"` | process IDs of your processes, with the program name |
+| `"@processes"` | names of your running programs |
+| `"@signals"` | signal names: `HUP`, `INT`, `KILL`, … |
 | `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`) |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | &nbsp;&nbsp;`tree: true` | show `a/b` names as `a/` until you type past the `/`, like paths (e.g. `origin/` for remote branches) |
 | &nbsp;&nbsp;`tree: "."` | the same, folding at another separator character (e.g. `com.` for UTIs in duti) |
+| &nbsp;&nbsp;`cache: 300` | reuse the output for that many seconds (per command, current directory and, if the command reads `$AUTOCOMPLETE_CUR`, typed word), for slow commands; kept in `~/.cache/autocomplete/exec/` |
 | &nbsp;&nbsp;`filter: false` | show every line the command prints, even ones not starting with the typed word (the command filters itself, e.g. duti turns `md` into `net.daringfireball.markdown`) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`), and so is `!` (`if ! git …`). Use it as `args`. If the spec has `examples`, an empty word shows them instead of every executable (`if <TAB>`) |
@@ -460,9 +473,21 @@ The bundled [`specs/`](../specs) are grouped by topic (`vcs/`, `cloud/`, `lang/`
 
 ---
 
-<!-- docs/man-pages.md -->
+<!-- docs/generated-specs.md -->
 
-# Completions from man pages
+# Generating specs: man pages, --help, cobra
+
+Three commands write a spec for you into `~/.config/autocomplete/CMD.yaml`:
+
+| Command | Source |
+|---|---|
+| `autocomplete from man CMD...` | the man page (flags, descriptions, values) |
+| `autocomplete from help CMD...` | `CMD --help` output, for tools without a man page |
+| `autocomplete from cobra CMD...` | the program's own completion, for Go programs built with cobra (kubectl, helm, gh, hugo, ...) |
+
+All three take `--force` to overwrite an existing file.
+
+## From man pages
 
 Most system commands (`ps`, `ls`, `grep`, `tar`, `ssh`, ...) document their options in a
 man page. autocomplete can read the page and turn it into flag completion with
@@ -486,7 +511,7 @@ Open a new terminal (or run `eval "$(autocomplete bash)"` again) so the new comm
 registered. After a system update changes a man page, run `autocomplete from man --force CMD` to
 regenerate the spec (this overwrites your edits).
 
-## What gets extracted
+### What gets extracted
 
 - **Flags**: every option entry in the page, like `-a`, `--text`, or `-A num, --after-context=num`.
 - **Descriptions**: the first sentence of each option's text.
@@ -495,7 +520,7 @@ regenerate the spec (this overwrites your edits).
   directory completes directories, and any other value completes nothing.
 - **Arguments**: files.
 
-## Limits
+### Limits
 
 - Man pages are free text, so the result is a heuristic. Pages that show example command
   lines at the same indentation as the options (curl, for example) can produce a few extra
@@ -503,6 +528,44 @@ regenerate the spec (this overwrites your edits).
 - Combined short flags like `ls -la` are accepted, but TAB doesn't suggest more letters to
   add to them.
 - Values and subcommands are not inferred. Add them by hand to a generated spec.
+
+## From --help
+
+```sh
+autocomplete from help rsync node
+```
+
+Uses the same option parser as `from man`, on the output of `CMD --help`. On top of that it
+reads:
+
+- option lists starting at the left margin (python's `-b     : issue warnings…`);
+- the `usage:` line, so a tool whose help is only a synopsis (`[--append] [-e program]`)
+  still gets its flags;
+- `Commands:` / `Available Commands:` sections, which become subcommands with their
+  descriptions. Their own flags are not read: `from help` never runs `CMD SUB --help`,
+  since a subcommand that ignores `--help` would do real work.
+
+The command is run with `--help` and stdin from `/dev/null`; don't use it on programs that
+might act on an unknown flag.
+
+## From cobra
+
+```sh
+autocomplete from cobra helm
+```
+
+Programs built with Go's cobra library answer `CMD __complete WORDS…` with their own
+completions, including live values (helm releases, kube contexts, gh repositories). The
+generated spec is just
+
+```yaml
+bridge: cobra
+```
+
+and every TAB asks the program. File and directory answers, extension filters and
+"no space" hints are honoured. `from cobra` refuses programs that don't answer like cobra.
+A program with a bundled spec (kubectl, helm, docker) keeps using the spec unless you
+generate one: your `~/.config/autocomplete` file wins.
 
 ---
 
@@ -579,6 +642,13 @@ The cache starts to pay off only for very large specs, hence the 100 KB threshol
 | ~1 MB | ~17 ms | ~28 ms |
 
 So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
+
+## exec output
+
+An `exec` value with `cache: SECONDS` keeps its output in `~/.cache/autocomplete/exec/` and
+reuses it for that long. The entry is per command and current directory (and per typed word
+if the command reads `$AUTOCOMPLETE_CUR`). Delete the directory to refresh right away;
+`AUTOCOMPLETE_NOCACHE=1` turns it off.
 
 ## mvn test names
 

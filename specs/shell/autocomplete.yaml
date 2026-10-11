@@ -20,6 +20,16 @@ commands:
         flags:
           --force: {description: "Replace an existing CMD spec"}
         args: {exec: "compgen -c | sort -u"}
+      help:
+        description: "Write a spec for a command from its --help output"
+        flags:
+          --force: {description: "Replace an existing CMD spec"}
+        args: {exec: "compgen -c | sort -u"}
+      cobra:
+        description: "Write a spec that asks a cobra (Go) program for its own completions"
+        flags:
+          --force: {description: "Replace an existing CMD spec"}
+        args: {exec: "compgen -c | sort -u"}
   alias:
     description: "Complete NAME like CMD (CMD NAME..., symlinks its spec)"
     flags:

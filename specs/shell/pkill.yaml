@@ -8,8 +8,7 @@ flags:
     value: any
     description: "Only match processes whose parent process ID is listed"
   -u:
-    value:
-      exec: "dscl . -list /Users 2>/dev/null | grep -v '^_'"
+    value: "@users"
     description: "Only match processes whose real user ID is listed"
   -x: {description: "Require an exact match of the process name"}
   -signal:
@@ -23,5 +22,4 @@ flags:
   -CONT: {description: "Send SIGCONT"}
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
-args:
-  exec: "ps -eo comm | tail -n +2 | sort -u"
+args: "@processes"

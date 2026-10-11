@@ -14,13 +14,13 @@ flags:
   -A: {description: "Enable forwarding of the authentication agent connection"}
   -X: {description: "Enable X11 forwarding"}
   -x: {description: "Disable X11 forwarding"}
-  -v: {description: "Verbose mode (repeat for more verbosity)"}
+  -v: {description: "Verbose mode (repeat for more verbosity)", repeat: true}
   -q: {description: "Quiet mode"}
   -C: {description: "Request compression of all data"}
   -t: {description: "Force pseudo-terminal allocation", show: always}
   -T: {description: "Disable pseudo-terminal allocation", show: always}
   -W: {value: any, description: "Forward stdin/stdout to host:port"}
-  -J: {value: {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, description: "Jump host(s) (proxy jump)", show: always}
+  -J: {value: "@hosts", description: "Jump host(s) (proxy jump)", show: always}
   -E: {value: file, description: "Append debug logs to log_file"}
   -F: {value: file, description: "Specify config file"}
   -b: {value: any, description: "Bind address"}
@@ -33,4 +33,4 @@ flags:
   -S: {value: any, description: "Control socket for connection sharing"}
   -w: {value: any, description: "Tunnel device forwarding"}
   -Y: {description: "Enable trusted X11 forwarding"}
-args: [{exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null"}, {exec: "cut -d' ' -f1 ~/.ssh/known_hosts 2>/dev/null | tr ',' '\\n' | grep -v '^[[|]' | grep -v '^[0-9.:]*$' | sort -u"}]
+args: "@hosts"
