@@ -56,7 +56,9 @@ void emit_desc(const char *cand, int space, const char *desc) {
         goto queue;
     }
     for (p = cand; *p && n < sizeof esc - 3; p++) {
-        if (!g_noesc && strchr(" \t\\'\"()<>&;|*?[]$`!#{}~", *p)) esc[n++] = '\\';
+        /* leading ~ stays bare: it matches the typed word and keeps tilde expansion */
+        if (!g_noesc && strchr(" \t\\'\"()<>&;|*?[]$`!#{}~", *p) && !(*p == '~' && p == cand))
+            esc[n++] = '\\';
         esc[n++] = *p;
     }
     esc[n] = 0;
