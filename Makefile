@@ -79,12 +79,14 @@ cache: autocomplete  ## Precompile specs over 100 KB to ~/.cache/autocomplete (f
 help:  ## List make targets
 	@grep -E '^[a-zA-Z0-9_.-]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/' | awk -F'\t' '{printf "  %-16s %s\n", $$1, $$2}'
 
-DOCKER_IMAGE ?= autocomplete
+# Plain '=' so an exported BASH (path of the shell) can't override it; BASH=5.0 on the command line does
+BASH = 3.2
+DOCKER_IMAGE ?= autocomplete:bash$(BASH)
 
-docker-build:  ## Build the Linux test image (bash 3.2, Alpine)
-	docker build -t $(DOCKER_IMAGE) .
+docker-build:  ## Build the Linux test image (Alpine, bash 3.2; BASH=5.0 for another version)
+	docker build --build-arg BASH=$(BASH) -t $(DOCKER_IMAGE) .
 
-docker-run: docker-build  ## Rebuild and open an interactive bash 3.2 shell in Docker
+docker-run: docker-build  ## Rebuild and open an interactive bash shell in Docker (BASH=...)
 	docker run --rm -it $(DOCKER_IMAGE)
 
 clean:  ## Delete the built binary

@@ -50,7 +50,7 @@ Bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. 
 - Parser: `./autocomplete check FILE` prints parsed tree as JSON; compare with PyYAML (available): `json.loads(check_output(['./autocomplete','check',f])) == yaml.safe_load(open(f))`. Do this for every spec and any parser change.
 - Before refactors, snapshot `_complete` outputs for a case list and diff after. git cases need a throwaway repo (put it in the scratchpad).
 - Test install/uninstall only with `PREFIX=<scratch> PROFILE=<scratch file>` (or `HOME=<scratch>`: the login-file check reads `$HOME`); never touch the real `~/.bash_profile` or `/usr/local`.
-- Linux check: `make docker-build` (multi-stage `Dockerfile`: `base` = `bash:3.2` Alpine/musl + gcc, cached; `app` = build + install). Keep sources portable to glibc/musl (no BSD-only symbols like `sys_signame`). gcc's `-Wformat-truncation` is silenced only in the Dockerfile.
+- Linux check: `make docker-build` (multi-stage `Dockerfile`: `base` = `bash:${BASH}` (default 3.2; `make docker-build BASH=5.0`, image `autocomplete:bash<ver>`) Alpine/musl + gcc, cached; `app` = build + install). Keep sources portable to glibc/musl (no BSD-only symbols like `sys_signame`). gcc's `-Wformat-truncation` is silenced only in the Dockerfile.
 - Docker values need a running daemon; empty output without one is expected, not a bug.
 
 - Interactive display (what the user actually sees on TAB/listing) can only be checked in a pty: fork `/bin/bash --rcfile <rc> -i` via Python `pty`, set a window size with `TIOCSWINSZ` (size 0x0 suppresses listings), send text + `\t`, then `\x1b?` (possible-completions) to get the list. A second `\t` in the harness didn't trigger the list.
