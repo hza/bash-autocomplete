@@ -161,7 +161,7 @@ static void emit_commands(const ynode *spec) {
     for (i = 0; i < g_nal; i++) {
         char buf[1024];
         if (find_command(cmds, g_al_exp[i])) continue;
-        snprintf(buf, sizeof buf, "alias: %s", g_al_exp[i]);
+        snprintf(buf, sizeof buf, "🔥 alias: %s", g_al_exp[i]);
         emit_desc(g_al_name[i], 1, strdup(buf));
     }
     for (c = cmds ? cmds->child : NULL; c; c = c->next) {
