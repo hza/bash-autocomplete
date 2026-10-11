@@ -1,0 +1,17 @@
+description: Show manual pages
+flags:
+  -a: {description: "Show all matching pages, not just the first"}
+  -d: {description: "Print debugging information"}
+  -h: {description: "Print a short help message"}
+  -o: {description: "Force use of non-localized pages"}
+  -t: {description: "Format with groff for printing (to stdout)"}
+  -w: {description: "Print the path of the page instead of showing it"}
+  -f: {description: "Search page names (like whatis)"}
+  -k: {description: "Search names and descriptions (like apropos)"}
+  -M: {value: dir, description: "Use this manpath (colon list)"}
+  -P: {value: any, description: "Pager to use"}
+  -S: {value: any, description: "Sections to search (colon list)"}
+  -m: {value: any, description: "Pages for another architecture"}
+  -p: {value: any, description: "Preprocessors to run (e, p, r, t, v)"}
+args:
+  exec: "IFS=:; for d in ${MANPATH:-$(manpath 2>/dev/null)}; do for f in \"$d\"/man[1-9n]*/\"$AUTOCOMPLETE_CUR\"*; do [ -e \"$f\" ] && echo \"${f##*/}\"; done; done | sed -E 's/\\.gz$//; s/\\.[^.]*$//' | sort -u"
