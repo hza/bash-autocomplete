@@ -143,12 +143,30 @@ static FILE *open_makefile(void) {
     return f;
 }
 
+/* Track "define NAME ... endef" blocks (optionally "export"/"override"
+ * define, nestable): returns 1 for lines inside or delimiting one, whose
+ * text is a variable value, not rules or assignments. */
+static int in_define(const char *line, int *depth) {
+    const char *p = line;
+    for (;;) {
+        while (*p == ' ' || *p == '\t') p++;
+        if (!strncmp(p, "export ", 7)) p += 7;
+        else if (!strncmp(p, "override ", 9)) p += 9;
+        else break;
+    }
+    if (!strncmp(p, "define", 6) && (!p[6] || strchr(" \t\r\n", p[6]))) { ++*depth; return 1; }
+    if (*depth && !strncmp(p, "endef", 5) && (!p[5] || strchr(" \t\r\n", p[5]))) { --*depth; return 1; }
+    return *depth > 0;
+}
+
 void complete_make_targets(void) {
     char line[4096], comment[1024] = "";
+    int depth = 0;
     FILE *f = open_makefile();
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
         char *colon = strchr(line, ':'), *tok, *inline_doc, *desc;
+        if (in_define(line, &depth)) { comment[0] = 0; continue; }
         if (line[0] == '#') { /* collect the comment block above a target */
             char *t = comment_text(line);
             size_t have = strlen(comment);
@@ -183,10 +201,12 @@ static int upper_name(const char *s, const char *end) {
  * command-line overrides like "make CC=clang". Description as for targets. */
 void complete_make_variables(void) {
     char line[4096], comment[1024] = "";
+    int depth = 0;
     FILE *f = open_makefile();
     if (!f) return;
     while (fgets(line, sizeof line, f)) {
         char *p = line, *name, *end, *doc, *desc = NULL;
+        if (in_define(line, &depth)) { comment[0] = 0; continue; }
         if (line[0] == '#') {
             char *t = comment_text(line);
             size_t have = strlen(comment);
