@@ -112,13 +112,13 @@ static const char *value_kind(const char *arg) {
     return "any";
 }
 
-/* First sentence of text, at most ~90 chars, cut at a word boundary. */
+/* First sentence of text, at most ~256 chars, cut at a word boundary. */
 static void sentence(const char *text, char *out, size_t size) {
     size_t n = 0, cut = 0;
     const char *p;
     for (p = text; *p && n < size - 1; p++) {
         if (*p == '.' && (p[1] == ' ' || !p[1]) && !(p > text + 1 && p[-2] == 'e' && p[-1] == '.')) break;
-        if (n >= 90) { if (cut) n = cut; out[n] = 0; strcat(out, "..."); return; }
+        if (n >= 256) { if (cut) n = cut; out[n] = 0; strcat(out, "..."); return; }
         if (*p == ' ') cut = n;
         out[n++] = *p;
     }
@@ -135,7 +135,7 @@ static ynode *add_flag(ynode *flags, const char *name, const char *arg, const ch
 }
 
 ynode *man_spec(const char *cmd) {
-    char shell[512], buf[4096], *lines[MAXLINES], text[2048], desc[128];
+    char shell[512], buf[4096], *lines[MAXLINES], text[2048], desc[300];
     int nl = 0, i, j, ind = -1, counts[64] = {0}, nsyn;
     const char *p;
     opt opts[MAXOPTS], syn[MAXSYN];
