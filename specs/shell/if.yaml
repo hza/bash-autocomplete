@@ -15,3 +15,19 @@ examples:
     description: "only if a tool is installed"
   - command: 'if ping -c1 -t1 example.com >/dev/null; then echo up; else echo down; fi'
     description: "is a host up"
+  - command: 'if [ -z "$(git status --porcelain)" ]; then echo clean; else git status -s; fi'
+    description: "is the work tree clean"
+  - command: 'if [ "$(id -u)" -eq 0 ]; then echo root; else echo "user $(id -un)"; fi'
+    description: "running as root"
+  - command: 'if [ ! -d .venv ]; then python3 -m venv .venv; fi; . .venv/bin/activate'
+    description: "create a venv once, then activate"
+  - command: 'if lsof -iTCP:8080 -sTCP:LISTEN >/dev/null; then echo "port 8080 busy"; fi'
+    description: "is a port in use"
+  - command: 'if [ file1 -nt file2 ]; then cp file1 file2; fi'
+    description: "copy only if newer"
+  - command: 'if [[ $PWD == */src/* ]]; then cd "${PWD%%/src/*}"; fi'
+    description: "jump to the project root above src/"
+  - command: 'if ! git diff --cached --quiet; then git commit; else echo "nothing staged"; fi'
+    description: "commit only when something is staged"
+  - command: 'if [ $# -lt 1 ]; then echo "usage: $0 FILE" >&2; exit 1; fi'
+    description: "argument check (in a script)"

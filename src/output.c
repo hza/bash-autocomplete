@@ -407,7 +407,8 @@ static void group_flags(void) {
  * "@id" typed in full is replaced by the example's command after
  * "<name> "; bash keeps a leading "@" in the replaced text (readline
  * special prefix, verified in pty). Examples not starting with "<name> "
- * (pipelines) are only listed. */
+ * (pipelines) are only listed. When the empty word has other candidates
+ * (lsof: files), examples are listed only on "@". */
 const ynode *g_examples;
 const char *g_examples_name;
 
@@ -423,6 +424,7 @@ static void add_examples(void) {
     size_t nl;
     char name[128], desc[1024];
     if ((*g_cur && strcmp(g_cur, "@") && !want_id(g_cur)) || !g_examples || g_examples->type != Y_ARR) return;
+    if (!*g_cur && g_ncands) return; /* other candidates (lsof files): examples only on "@" */
     nl = strlen(g_examples_name);
     if (want_id(g_cur)) want = (int)(strchr(EXAMPLE_IDS, g_cur[1]) - EXAMPLE_IDS) + 1;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */

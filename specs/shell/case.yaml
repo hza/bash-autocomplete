@@ -11,3 +11,13 @@ examples:
     description: "unpack archives by type"
   - command: 'case "$(date +%u)" in 6|7) echo weekend;; *) echo workday;; esac'
     description: "by day of week"
+  - command: 'case "$f" in *.tar.gz|*.tgz) tar xzf "$f";; *.tar.bz2) tar xjf "$f";; *.zip) unzip "$f";; *.gz) gunzip "$f";; esac'
+    description: "extract any archive"
+  - command: 'read -p "Continue? [y/N] " a; case "$a" in [yY]*) echo go;; *) echo stop;; esac'
+    description: "yes/no prompt"
+  - command: 'case "$(uname -m)" in arm64) echo "Apple Silicon";; x86_64) echo Intel;; esac'
+    description: "CPU architecture"
+  - command: 'case "$SHELL" in */bash) echo bash;; */zsh) echo zsh;; *) echo other;; esac'
+    description: "which login shell"
+  - command: 'case "$1" in start|stop|restart) echo "$1 service";; *) echo "usage: $0 start|stop|restart" >&2;; esac'
+    description: "subcommand dispatch (in a script)"

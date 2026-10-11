@@ -13,3 +13,17 @@ examples:
     description: "wait for a server to come up"
   - command: 'while [ ! -f build/out.log ]; do sleep 1; done; tail -f build/out.log'
     description: "wait for a file to appear"
+  - command: 'while read -r line; do echo "${#line}: $line"; done < file.txt'
+    description: "read a file line by line"
+  - command: 'while IFS=, read -r name email; do echo "$name <$email>"; done < users.csv'
+    description: "split CSV columns"
+  - command: 'find . -name "*.log" -print0 | while IFS= read -r -d "" f; do gzip "$f"; done'
+    description: "handle any file name from find"
+  - command: 'while sleep 60; do df -h / | tail -1; done'
+    description: "print something every minute"
+  - command: 'while [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; do sleep 30; git fetch -q; done; say "new commits"'
+    description: "wait for new upstream commits"
+  - command: 'while kill -0 1234 2>/dev/null; do sleep 2; done; say done'
+    description: "wait for a process (pid) to exit"
+  - command: 'while getopts "vf:" o; do case $o in v) v=1;; f) file=$OPTARG;; esac; done'
+    description: "parse options (in a script)"

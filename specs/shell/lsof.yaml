@@ -1,0 +1,71 @@
+description: "List open files, sockets and the processes holding them"
+flags:
+  -i:
+    value: any
+    description: "Network files matching [46][proto][@host][:port], e.g. :8080, TCP@host"
+  -p:
+    value: "@pids"
+    description: "Processes with these PIDs (comma list, ^ excludes)"
+  -c:
+    value: "@processes"
+    description: "Processes whose command starts with this name"
+  -u:
+    value: "@users"
+    description: "Processes of these users (comma list, ^ excludes)"
+  -g: {value: any, description: "Processes of these process group IDs"}
+  +D: {value: dir, description: "Everything open under a directory tree (slow on big trees)"}
+  +d: {value: dir, description: "Files open directly in a directory (not recursive)"}
+  -d: {value: any, description: "File descriptors: cwd, txt, mem, 0-2, ..."}
+  -s: {value: any, description: "Show sizes; with -i: TCP state filter, e.g. TCP:LISTEN"}
+  -F: {value: any, description: "Machine-readable output fields, e.g. pcn"}
+  -r: {value: any, description: "Repeat every N seconds (default 15) until interrupted"}
+  +L: {value: any, description: "Files with fewer links than N; +L1 = deleted but still open"}
+  +r: {value: any, description: "Repeat every N seconds until nothing is listed"}
+  -a: {description: "AND the selections instead of OR"}
+  -t: {description: "Terse: PIDs only (for kill)"}
+  -n: {description: "No host name lookups (faster)"}
+  -P: {description: "No port name lookups (show numbers)"}
+  -l: {description: "Show user IDs instead of names"}
+  -U: {description: "UNIX domain sockets"}
+  -N: {description: "NFS files"}
+  -R: {description: "Show the parent PID (PPID column)"}
+  -o: {description: "Always show file offset"}
+  -b: {description: "Avoid kernel calls that might block"}
+  -V: {description: "Report items asked for that were not found"}
+  -w: {description: "Suppress warnings"}
+  -h: {description: "Help"}
+  -v: {description: "Version information"}
+args: file
+examples:
+  - command: "lsof -nP -iTCP:8080 -sTCP:LISTEN"
+    description: "who is listening on port 8080"
+  - command: "lsof -nP -iTCP -sTCP:LISTEN"
+    description: "all listening TCP ports"
+  - command: "lsof -nP -i"
+    description: "all network connections"
+  - command: "lsof -nP -iTCP -sTCP:ESTABLISHED"
+    description: "established TCP connections"
+  - command: "lsof -nP -i @192.168.1.10"
+    description: "connections to or from a host"
+  - command: "lsof -nP -iUDP"
+    description: "UDP sockets"
+  - command: "lsof -p 1234"
+    description: "everything a process has open"
+  - command: "lsof -c Safari"
+    description: "files open by a program (by name)"
+  - command: "lsof -a -u $USER -i"
+    description: "my network connections (-a: AND)"
+  - command: "lsof +D ~/Downloads"
+    description: "what holds files in a folder open"
+  - command: "lsof /Volumes/USB"
+    description: "why a disk can't be ejected"
+  - command: "lsof -t -iTCP:3000 -sTCP:LISTEN"
+    description: "PID listening on port 3000 (for kill)"
+  - command: "lsof -a -p 1234 -d cwd"
+    description: "current directory of a process"
+  - command: "lsof -c java -a -d txt"
+    description: "binaries and libraries of a program"
+  - command: "lsof +L1"
+    description: "deleted files still open (disk space not freed)"
+  - command: "lsof -nP -iTCP:443 -r 2"
+    description: "watch HTTPS connections every 2 seconds"

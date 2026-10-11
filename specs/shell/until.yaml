@@ -13,3 +13,13 @@ examples:
     description: "wait for a non-empty file"
   - command: 'n=0; until make test || [ $((n+=1)) -ge 5 ]; do sleep 2; done'
     description: "retry at most 5 times"
+  - command: 'until docker info >/dev/null 2>&1; do sleep 2; done; docker compose up -d'
+    description: "wait for the docker daemon"
+  - command: 'until nc -z localhost 5432; do sleep 1; done; echo "postgres up"'
+    description: "wait for a TCP port"
+  - command: 'until [ -z "$(pgrep -x rsync)" ]; do sleep 10; done; say "sync done"'
+    description: "wait until a program is gone"
+  - command: 'until npm test; do read -p "fix and press Enter "; done'
+    description: "rerun tests until they pass"
+  - command: 'until git pull --rebase; do git rebase --abort; sleep 30; done'
+    description: "retry pull on a flaky network"

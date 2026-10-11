@@ -17,3 +17,21 @@ examples:
     description: "repeat a command N times"
   - command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
     description: "each word of a command's output"
+  - command: 'for f in *.md; do pandoc "$f" -o "${f%.md}.pdf"; done'
+    description: "convert each file (output name from input)"
+  - command: 'for f in *; do mv -n "$f" "$(echo "$f" | tr "A-Z " "a-z_")"; done'
+    description: "lowercase names, spaces to underscores"
+  - command: 'for f in *.JPG; do mv -n "$f" "$(date -r "$f" +%Y-%m-%d_%H%M%S).jpg"; done'
+    description: "rename by modification time (macOS date -r)"
+  - command: 'for i in $(seq -w 1 12); do mkdir -p "2026-$i"; done'
+    description: "zero-padded numbered folders"
+  - command: 'for f in $(git diff --name-only main); do echo "== $f"; done'
+    description: "files changed against main"
+  - command: 'for b in $(git branch --merged main | grep -v main); do git branch -d "$b"; done'
+    description: "delete branches merged into main"
+  - command: 'for img in $(docker images -q -f dangling=true); do docker rmi "$img"; done'
+    description: "remove dangling docker images"
+  - command: 'for ((i = 1; i <= 10; i++)); do echo "$i"; done'
+    description: "C-style counter"
+  - command: 'for f in "$@"; do echo "arg: $f"; done'
+    description: "each script argument (in a script)"
