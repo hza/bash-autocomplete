@@ -283,15 +283,24 @@ void complete_users(void) {
 
 /* Signal names without "SIG" (HUP, KILL, ...). */
 void complete_signals(void) {
-    int i;
-    char name[32];
+    /* sys_signame is BSD-only (missing in glibc/musl): portable table instead */
+    static const char *const names[] = {
+        "HUP", "INT", "QUIT", "ILL", "TRAP", "ABRT", "BUS", "FPE", "KILL", "USR1",
+        "SEGV", "USR2", "PIPE", "ALRM", "TERM", "CHLD", "CONT", "STOP", "TSTP",
+        "TTIN", "TTOU", "URG", "XCPU", "XFSZ", "VTALRM", "PROF", "WINCH", "IO", "SYS",
+#ifdef SIGEMT
+        "EMT",
+#endif
+#ifdef SIGINFO
+        "INFO",
+#endif
+#ifdef SIGPWR
+        "PWR",
+#endif
+    };
+    size_t i;
     g_kind = NULL;
-    for (i = 1; i < NSIG; i++) {
-        size_t k;
-        snprintf(name, sizeof name, "%s", sys_signame[i]);
-        for (k = 0; name[k]; k++) name[k] = (char)toupper((unsigned char)name[k]);
-        emit(name, 1);
-    }
+    for (i = 0; i < sizeof names / sizeof *names; i++) emit(names[i], 1);
 }
 
 /* Hosts from ~/.ssh/config ("Host" names without patterns) and
