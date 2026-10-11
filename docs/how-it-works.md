@@ -9,7 +9,7 @@ bash expects.
 
 bash 3.2 lacks `compopt` and `mapfile`, so nothing here relies on them. Commands are
 registered with `complete -o nospace`, and the binary adds the trailing space itself to
-finished words. `-o bashdefault` lets bash's own `$VAR` completion handle words starting with `$` (the binary prints nothing for them), so unexported shell variables are listed too.
+finished words. `-o bashdefault` lets bash's own `$VAR` completion handle words starting with `$` (the binary prints nothing for them), so unexported shell variables are listed too. The same applies to `@` directly after non-space text (`user@<TAB>`): bash's own hostname completion lists hosts. A bare `@` at the start of a word is not handed over; it stays with the engine (spec examples, `curl @<TAB>`).
 
 Descriptions use the way bash handles several matches: it inserts only their common
 prefix and lists the rest. When more than one command matches, the binary returns each
