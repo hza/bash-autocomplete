@@ -27,6 +27,8 @@ extern const char *g_examples_name;
 void emit_desc(const char *cand, int space, const char *desc);
 void emit(const char *cand, int space);
 /* Fold and print all queued candidates. Call once. */
+/* Number of queued candidates. */
+int ncands(void);
 void flush(void);
 
 #endif

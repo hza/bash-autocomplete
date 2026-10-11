@@ -19,19 +19,30 @@ args:
   tree: "."
   filter: false
 examples:
-  - command: "duti -s com.apple.Preview com.adobe.pdf all"
+  - key: p
+    command: "duti -s com.apple.Preview com.adobe.pdf all"
     description: "open PDFs with Preview"
-  - command: "duti -s com.google.Chrome https"
+  - key: c
+    command: "duti -s com.google.Chrome https"
     description: "make Chrome the default browser for https links"
-  - command: "duti -s com.microsoft.VSCode public.plain-text all"
+  - key: v
+    command: "duti -s com.microsoft.VSCode public.plain-text all"
     description: "open plain text files with VS Code"
-  - command: "duti -s com.microsoft.VSCode net.daringfireball.markdown all"
+  - key: m
+    pin: true
+    command: "duti -s com.microsoft.VSCode net.daringfireball.markdown all"
     description: "open .md files with VS Code (use 📎 mdls to get the UTI)"
-  - command: "duti -s com.apple.mail mailto"
+  - key: e
+    command: "duti -s com.apple.mail mailto"
     description: "handle mailto: links with Mail"
-  - command: "duti -x md"
+  - key: x
+    pin: true
+    command: "duti -x md"
     description: "show which app opens .md files"
-  - command: "duti -d com.adobe.pdf"
+  - key: d
+    pin: true
+    command: "duti -d com.adobe.pdf"
     description: "print the default app for PDFs"
-  - command: "duti -l public.html"
+  - key: l
+    command: "duti -l public.html"
     description: "list every app that can open HTML"

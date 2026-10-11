@@ -1,25 +1,39 @@
 description: "Repeat until a command succeeds (bash keyword)"
 args: "@command"
 examples:
-  - command: 'until git push; do sleep 5; done'
+  - key: r
+    pin: true
+    command: 'until git push; do sleep 5; done'
     description: "retry a flaky command"
-  - command: 'until ping -c1 -t1 example.com >/dev/null; do sleep 2; done; say "back online"'
+  - key: n
+    pin: true
+    command: 'until ping -c1 -t1 example.com >/dev/null; do sleep 2; done; say "back online"'
     description: "wait for the network or a host"
-  - command: 'until ssh -o ConnectTimeout=3 host true; do sleep 5; done; ssh host'
+  - key: s
+    command: 'until ssh -o ConnectTimeout=3 host true; do sleep 5; done; ssh host'
     description: "reconnect once a rebooted server is back"
-  - command: 'until curl -sf -o /dev/null http://localhost:8080/health; do sleep 1; done; say ready'
+  - key: h
+    pin: true
+    command: 'until curl -sf -o /dev/null http://localhost:8080/health; do sleep 1; done; say ready'
     description: "wait for a service health check"
-  - command: 'until [ -s result.json ]; do sleep 1; done; cat result.json'
+  - key: e
+    command: 'until [ -s result.json ]; do sleep 1; done; cat result.json'
     description: "wait for a non-empty file"
-  - command: 'n=0; until make test || [ $((n+=1)) -ge 5 ]; do sleep 2; done'
+  - key: a
+    command: 'n=0; until make test || [ $((n+=1)) -ge 5 ]; do sleep 2; done'
     description: "retry at most 5 times"
-  - command: 'until docker info >/dev/null 2>&1; do sleep 2; done; docker compose up -d'
+  - key: d
+    command: 'until docker info >/dev/null 2>&1; do sleep 2; done; docker compose up -d'
     description: "wait for the docker daemon"
-  - command: 'until nc -z localhost 5432; do sleep 1; done; echo "postgres up"'
+  - key: i
+    command: 'until nc -z localhost 5432; do sleep 1; done; echo "postgres up"'
     description: "wait for a TCP port"
-  - command: 'until [ -z "$(pgrep -x rsync)" ]; do sleep 10; done; say "sync done"'
+  - key: t
+    command: 'until [ -z "$(pgrep -x rsync)" ]; do sleep 10; done; say "sync done"'
     description: "wait until a program is gone"
-  - command: 'until npm test; do read -p "fix and press Enter "; done'
+  - key: g
+    command: 'until npm test; do read -p "fix and press Enter "; done'
     description: "rerun tests until they pass"
-  - command: 'until git pull --rebase; do git rebase --abort; sleep 30; done'
+  - key: p
+    command: 'until git pull --rebase; do git rebase --abort; sleep 30; done'
     description: "retry pull on a flaky network"

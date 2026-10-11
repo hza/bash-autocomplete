@@ -1,5 +1,6 @@
 /* Spec walk: split the line, follow subcommands and flags, complete the
  * value under the cursor. */
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,6 +26,11 @@ static const ynode *find_group(const ynode *c, const ynode *root, char ch) {
 }
 
 /* `check`: warn about "groups" letters without a "-x" flag (own or root). */
+/* An example's `key`: one char of [0-9a-z] (typed as "@key"). */
+int example_key(const ynode *k) {
+    return k && k->type == Y_STR && k->str[0] && !k->str[1] && (isdigit((unsigned char)k->str[0]) || islower((unsigned char)k->str[0]));
+}
+
 int check_groups(const ynode *n, const ynode *root, const char *path) {
     const ynode *g, *c;
     const char *p;
@@ -38,6 +44,20 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
                 bad = 1;
             }
         }
+    if (yaml_get(n, "examples")) {
+        char seen[128] = {0};
+        for (g = yaml_get(n, "examples")->child; g; g = g->next) {
+            const ynode *k = yaml_get(g, "key");
+            if (!example_key(k)) {
+                fprintf(stderr, "%s: example \"%s\": key must be one of [0-9a-z]\n", path,
+                        yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
+                bad = 1;
+            } else if (seen[(int)k->str[0]]++) {
+                fprintf(stderr, "%s: duplicate example key %s\n", path, k->str);
+                bad = 1;
+            }
+        }
+    }
     for (c = yaml_get(n, "commands") ? yaml_get(n, "commands")->child : NULL; c; c = c->next) {
         char sub[512];
         snprintf(sub, sizeof sub, "%s %s", path, c->key);
@@ -232,8 +252,8 @@ static int exec_cached(const char *ex, long ttl, char *shell, size_t size) {
 
 static int is_true(const ynode *n) { return n && n->type == Y_BOOL && n->b; }
 
-/* `examples: true` on an exec value: its "value<TAB>desc" lines become
- * numbered examples (add_examples with an empty g_examples_name: "@id" is
+/* `examples: true` on an exec value: its "key<TAB>value<TAB>desc[<TAB>pin]" lines
+ * become examples (add_examples with an empty g_examples_name: "@key" is
  * replaced by the whole value, single-quoted). */
 static void exec_examples(const char *shell) {
     static ynode *arr;
@@ -242,14 +262,18 @@ static void exec_examples(const char *shell) {
     if (!f) return;
     if (!arr) arr = yaml_new(NULL, Y_ARR, NULL, NULL);
     while (fgets(line, sizeof line, f)) {
-        char *tab, *nl = strchr(line, '\n');
+        char *val, *desc, *pin = NULL, *nl = strchr(line, '\n');
         ynode *e;
         if (nl) *nl = 0;
-        if (!*line) continue;
-        if ((tab = strchr(line, '\t'))) *tab++ = 0;
+        if (!(val = strchr(line, '\t'))) continue;
+        *val++ = 0;
+        if ((desc = strchr(val, '\t'))) *desc++ = 0;
         e = yaml_new(arr, Y_OBJ, NULL, NULL);
-        yaml_new(e, Y_STR, "command", line);
-        if (tab && *tab) yaml_new(e, Y_STR, "description", tab);
+        yaml_new(e, Y_STR, "key", line);
+        yaml_new(e, Y_STR, "command", val);
+        if (desc && (pin = strchr(desc, '\t'))) *pin++ = 0;
+        if (desc && *desc) yaml_new(e, Y_STR, "description", desc);
+        if (pin && !strcmp(pin, "pin")) yaml_new(e, Y_BOOL, "pin", NULL)->b = 1;
     }
     pclose(f);
     g_examples = arr;
@@ -348,12 +372,49 @@ static int split(const char *line, char **words, size_t *start) {
     return n;
 }
 
+/* List cmd's flags, then (with_root) the root's (valid at every depth).
+ * A switch already among the typed words isn't offered again, unless
+ * `repeat: true`; a "-Dx=" key takes its value attached, so no space. */
+static void list_flags(const ynode *c, const ynode *root, char **w, int n, int with_root) {
+    const ynode *f, *s = c;
+    int i;
+    for (;;) {
+        for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
+            const ynode *gr;
+            if (!yaml_get(f, "value") && !(yaml_get(f, "repeat") && yaml_get(f, "repeat")->b)) {
+                for (i = 1; i < n - 1 && strcmp(w[i], f->key); i++) {}
+                if (i < n - 1) continue;
+            }
+            gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
+            g_group = gr ? gr->key : NULL;
+            g_gdesc = gr ? spec_desc(gr) : NULL;
+            g_show = g_group                                    ? SHOW_COLLAPSED
+                     : is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
+                     : is_str(yaml_get(f, "show"), "collapsed") ? SHOW_COLLAPSED
+                                                                : SHOW_DEFAULT;
+            emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
+        }
+        g_show = SHOW_DEFAULT;
+        g_group = g_gdesc = NULL;
+        if (!with_root || s == root) break;
+        s = root;
+    }
+}
+
+/* The root's flags at command c: everywhere, unless the root says
+ * `inherit_flags: false` (docker: global options only before the subcommand). */
+static const ynode *root_flags(const ynode *root, const ynode *c) {
+    const ynode *i = yaml_get(root, "inherit_flags");
+    return c == root || !(i && i->type == Y_BOOL && !i->b) ? root : NULL;
+}
+
 int do_complete(const char *line, const char *wbreaks) {
     char *w[MAXW];
     size_t start[MAXW];
     int n = split(line, w, start), i, lvl = 0, npos = 0;
     const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash, *cname;
+    static char cpath[1024]; /* "docker volume prune": examples are written in full */
 
     g_wbreaks = wbreaks;
     g_raw = line + start[n - 1];
@@ -361,6 +422,7 @@ int do_complete(const char *line, const char *wbreaks) {
 
     slash = strrchr(w[0], '/');
     cname = slash ? slash + 1 : w[0];
+    snprintf(cpath, sizeof cpath, "%s", cname);
     if (!(root = c = load_spec(cname))) {
         if (n > 1) { g_kind = "file"; complete_paths(0, NULL); } /* sudo cmd-without-spec */
         return 0;
@@ -376,7 +438,7 @@ int do_complete(const char *line, const char *wbreaks) {
         if (!strcmp(w[i], "--")) continue;
         if (w[i][0] == '-') {
             if (strchr(w[i], '=')) continue;
-            if ((find_flag(c, w[i], &v) || find_flag(root, w[i], &v)) && takes_value(v)) {
+            if ((find_flag(c, w[i], &v) || find_flag(root_flags(root, c), w[i], &v)) && takes_value(v)) {
                 if (i + 1 < n - 1 && g_nseen < MAXSEEN) {
                     g_seen_flag[g_nseen] = w[i];
                     g_seen_val[g_nseen++] = w[i + 1];
@@ -385,7 +447,11 @@ int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i])) || (s = resolve_alias(c, w[i], 0))) { parent = c; c = s; cname = w[i]; lvl = i; npos = 0; continue; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i])) || (s = resolve_alias(c, w[i], 0))) {
+            parent = c; c = s; cname = w[i]; lvl = i; npos = 0;
+            snprintf(cpath + strlen(cpath), sizeof cpath - strlen(cpath), " %s", s->key);
+            continue;
+        }
         if (is_str(yaml_get(c, "args"), "@command")) {
             if (strchr(w[i], '=') || !strcmp(w[i], "!")) continue; /* env NAME=value cmd, if ! cmd */
             /* the rest of the line is a command line of its own */
@@ -397,7 +463,7 @@ int do_complete(const char *line, const char *wbreaks) {
 
     /* value for previous flag? */
     if (n >= 3 && w[n - 2][0] == '-' && !strchr(w[n - 2], '=')) {
-        if ((find_flag(c, w[n - 2], &v) || find_flag(root, w[n - 2], &v)) && takes_value(v)) {
+        if ((find_flag(c, w[n - 2], &v) || find_flag(root_flags(root, c), w[n - 2], &v)) && takes_value(v)) {
             complete_value(v, c);
             return 0;
         }
@@ -410,8 +476,8 @@ int do_complete(const char *line, const char *wbreaks) {
         const char *eq = strchr(cur, '='), *req = strchr(g_raw, '=');
         snprintf(name, sizeof name, "%.*s", (int)(eq - cur), cur);
         snprintf(namq, sizeof namq, "%s=", name);
-        if (find_flag(c, namq, &v) || find_flag(root, namq, &v) ||
-            (cur[1] == '-' && (find_flag(c, name, &v) || find_flag(root, name, &v)))) {
+        if (find_flag(c, namq, &v) || find_flag(root_flags(root, c), namq, &v) ||
+            (cur[1] == '-' && (find_flag(c, name, &v) || find_flag(root_flags(root, c), name, &v)))) {
             g_cur = eq + 1;
             if (req) g_raw = req + 1;
             /* -Dx='a b c: an unclosed quote holds several words; complete the last */
@@ -426,38 +492,14 @@ int do_complete(const char *line, const char *wbreaks) {
     }
 
     if (cur[0] == '-') {
-        /* own flags, then root flags (valid at every depth); "-Dx=" takes
-         * its value attached, so no space */
-        const ynode *f, *s = c;
-        for (;;) {
-            for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
-                const ynode *gr;
-                /* a switch already on the line isn't offered again, unless `repeat: true` */
-                if (!yaml_get(f, "value") && !(yaml_get(f, "repeat") && yaml_get(f, "repeat")->b)) {
-                    for (i = 1; i < n - 1 && strcmp(w[i], f->key); i++) {}
-                    if (i < n - 1) continue;
-                }
-                gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
-                g_group = gr ? gr->key : NULL;
-                g_gdesc = gr ? spec_desc(gr) : NULL;
-                g_show = g_group                                    ? SHOW_COLLAPSED
-                         : is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
-                         : is_str(yaml_get(f, "show"), "collapsed") ? SHOW_COLLAPSED
-                                                                    : SHOW_DEFAULT;
-                emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
-            }
-            g_show = SHOW_DEFAULT;
-            g_group = g_gdesc = NULL;
-            if (s == root) break;
-            s = root;
-        }
+        list_flags(c, root, w, n, root_flags(root, c) != NULL);
         return 0;
     }
 
     emit_commands(c);
     /* examples only right after the command word ("duti <TAB>"), not deeper in the line */
     g_examples = n - 1 == lvl + 1 ? yaml_get(c, "examples") : NULL;
-    g_examples_name = cname;
+    g_examples_name = cpath;
     v = yaml_get(c, "args");
     /* "positional": the Nth positional word's value; past the list, "args" */
     {
@@ -467,8 +509,11 @@ int do_complete(const char *line, const char *wbreaks) {
     }
     /* "if <TAB>": the examples, not every $PATH executable; "if g<TAB>" completes commands */
     if (g_examples && !*g_cur && is_str(v, "@command")) return 0;
-    if (g_examples && *g_cur == '@') return 0; /* "wget @1": add_examples */
+    if (g_examples && *g_cur == '@') return 0; /* "wget @p": add_examples */
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
+    /* "docker compose down <TAB>": nothing else to offer, so the command's
+     * own flags (root ones only after "-") */
+    if (!*g_cur && !ncands() && !(g_examples && g_examples->child) && c != root) list_flags(c, root, w, n, 0);
     return 0;
 }

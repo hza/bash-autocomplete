@@ -341,45 +341,72 @@ flags:
   "--xattr": {description: "Store metadata in extended file attributes"}
 args: any
 examples:
-  - command: "curl -sS https://api.github.com/zen"
+  - key: s
+    command: "curl -sS https://api.github.com/zen"
     description: "quiet GET (s), errors still shown (S)"
-  - command: "curl -L -o page.html https://example.org"
+  - key: l
+    pin: true
+    command: "curl -L -o page.html https://example.org"
     description: "follow redirects, save to file"
-  - command: "curl -I https://example.org"
+  - key: i
+    pin: true
+    command: "curl -I https://example.org"
     description: "headers only (HEAD)"
-  - command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
+  - key: f
+    command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
     description: "fail on HTTP errors (-f -S)"
-  - command: "curl --json '{\"id\":1}' https://httpbin.org/post"
+  - key: j
+    pin: true
+    command: "curl --json '{\"id\":1}' https://httpbin.org/post"
     description: "POST JSON (sets Content-Type and Accept)"
-  - command: "curl -d 'name=ann&age=30' https://httpbin.org/post"
+  - key: d
+    pin: true
+    command: "curl -d 'name=ann&age=30' https://httpbin.org/post"
     description: "POST form fields (-d implies POST, urlencoded)"
-  - command: "curl -X DELETE https://httpbin.org/delete"
+  - key: x
+    command: "curl -X DELETE https://httpbin.org/delete"
     description: "any other method: PUT, PATCH, DELETE"
-  - command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
+  - key: u
+    command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
     description: "upload a file (multipart)"
-  - command: "curl -H 'Authorization: Bearer $TOKEN' https://api.example.org/me"
+  - key: h
+    pin: true
+    command: "curl -H 'Authorization: Bearer $TOKEN' https://api.example.org/me"
     description: "send a header"
-  - command: "curl -C - -O https://example.org/big.iso"
+  - key: r
+    command: "curl -C - -O https://example.org/big.iso"
     description: "resume a download. (-C -) - continue where it stopped."
-  - command: "curl --cacert ca.pem --cert me.pem --key me.key https://internal.example"
+  - key: c
+    command: "curl --cacert ca.pem --cert me.pem --key me.key https://internal.example"
     description: "client certificate"
-  - command: "curl -s -o /dev/null -w '%{http_code} %{time_total}s' https://example.org"
+  - key: w
+    command: "curl -s -o /dev/null -w '%{http_code} %{time_total}s' https://example.org"
     description: "print only status and time, e.g. 200 0.42s (-w output format)"
-  - command: "curl -u user:pass https://api.example.org/me"
+  - key: a
+    command: "curl -u user:pass https://api.example.org/me"
     description: "basic auth (prompts for the password with -u user)"
-  - command: "curl -x http://proxy.local:3128 https://example.org"
+  - key: p
+    command: "curl -x http://proxy.local:3128 https://example.org"
     description: "go through a proxy"
-  - command: "curl -v https://example.org"
+  - key: v
+    pin: true
+    command: "curl -v https://example.org"
     description: "verbose: show request, response headers, TLS"
-  - command: "curl -k https://self-signed.example"
+  - key: k
+    command: "curl -k https://self-signed.example"
     description: "skip certificate checks (insecure)"
-  - command: "curl --compressed https://example.org"
+  - key: z
+    command: "curl --compressed https://example.org"
     description: "ask for gzip/brotli and decompress"
-  - command: "curl -c cookies.txt -b cookies.txt https://example.org/login"
+  - key: b
+    command: "curl -c cookies.txt -b cookies.txt https://example.org/login"
     description: "save and send cookies"
-  - command: "curl -T report.pdf https://example.org/upload/"
+  - key: t
+    command: "curl -T report.pdf https://example.org/upload/"
     description: "upload a file with PUT"
-  - command: "curl --retry 5 --retry-delay 2 -O https://example.org/big.iso"
+  - key: y
+    command: "curl --retry 5 --retry-delay 2 -O https://example.org/big.iso"
     description: "retry on transient errors"
-  - command: "curl --resolve example.org:443:127.0.0.1 https://example.org"
+  - key: n
+    command: "curl --resolve example.org:443:127.0.0.1 https://example.org"
     description: "send a host to a chosen IP"

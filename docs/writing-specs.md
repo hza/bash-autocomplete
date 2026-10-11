@@ -41,6 +41,7 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 | Key | Meaning |
 |---|---|
 | `flags` | Map of flag name → flag (see below) |
+| `inherit_flags` | Top level only: `false` when the program accepts its top-level flags only before the subcommand (docker: `docker -D ps` works, `docker ps -D` fails). By default top-level flags are offered after subcommands too (git, mvn). |
 | `args` | What positional arguments complete to (a value) |
 | `positional` | List of values by position: the 1st positional argument completes to the 1st entry, the 2nd to the 2nd, and so on; past the end of the list, `args` applies. E.g. `git worktree add` uses `[dir, <branches>]` |
 | `commands` | Map of subcommand name → spec |
@@ -49,7 +50,7 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 | `alias_exec` | Shell command printing user-defined aliases of this spec's subcommands, one `name expansion` line each (space or tab between), e.g. git's `git config --get-regexp '^alias\.' \| sed 's/^alias\.//'`. A plain rename (`re = rebase`) is shown in the target's description like a static alias (`rebase -- … (🔥 re)`); others are listed with `🔥 alias: <expansion>` as description; a name defined twice (git: global, then local) takes the last definition; after an alias the line completes as the subcommand it expands to (first non-flag word, alias chains followed). Shell aliases (`!...`) resolve only with a `: git <sub>` hint inside, e.g. `!f() { : git switch ; ... }; f` |
 | `bridge` | Top level only: `cobra` hands every completion to the program itself (`CMD __complete …`, Go programs built with cobra); the rest of the spec is ignored. Written by `autocomplete from cobra CMD` |
 | `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
-| `examples` | List of `{command, description?}` (any level), shown on TAB after the command word (on an empty word only when nothing else would be listed, always after `@`) as `1️⃣ @1  -- curl -sS https://api.github.com/zen   📚 quiet GET, errors still shown` (1️⃣ `@1` … 9️⃣ `@9`, then 📌 `@a` … `@z`; at most 35 are shown). Typing `@1`, `@a` … and TAB replaces it with the example's command after the command name (`curl @1` → `curl -sS https://api.github.com/zen`); examples that don't start with the command name (pipelines like `git rev-parse HEAD \| pbcopy`) are only listed. Write them yourself (don't copy text from other projects' docs: their licenses may require attribution); meant for commands whose TAB lists nothing else. |
+| `examples` | List of `{key, command, description?, pin?}` (any level), shown on TAB after the command word (on an empty word only when nothing else would be listed, always after `@`) as `📌 @s  -- curl -sS https://api.github.com/zen   📚 quiet GET, errors still shown`. `key` is one lowercase letter or digit, unique within the list; pick a mnemonic one (when two examples want the same letter, give it to the more useful one). `pin: true` marks the most used ones: they are listed first with 📌, the rest with 🔥. Typing `@s` and TAB replaces it with the example's command after the command name, or the command path for subcommands (`curl @s` → `curl -sS https://api.github.com/zen`; `docker volume prune @x` → `docker volume prune -a -f`); examples that don't start with the command name (pipelines like `git rev-parse HEAD \| pbcopy`) are only listed. `autocomplete check` fails on missing or duplicate keys. Write them yourself (don't copy text from other projects' docs: their licenses may require attribution); meant for commands whose TAB lists nothing else. |
 | `groups` | Map of short-flag letters → `{description?}`, grouping rarely used short flags by meaning. Each key lists the letters of `-x` flags of this spec (or the top-level one) that are hidden from the list and shown together in one entry: `"Up": {description: proxy}` gives `-📌 Up  -- proxy: (U) Proxy user and password (p) HTTP proxy tunnel (using CONNECT)`. Top-level groups apply at every depth. `autocomplete check` reports letters with no matching flag |
 
 Each flag is a map with two optional keys, usually written on one line:
@@ -61,7 +62,7 @@ Each flag is a map with two optional keys, usually written on one line:
 | `repeat` | `true`: the flag may be given several times (`ssh -v -v`). A flag without a `value` that is already on the line isn't offered again unless it has `repeat: true`; flags with a value are always offered |
 | `show` | `always`: a frequently used flag, never folded into a group or into `-📌` (see below). `collapsed` (short flags only): a rarely used flag, left out of the list and only named in a `📌` entry; still listed when nothing else matches. `default` (or leaving it out): the normal behaviour |
 
-When a short and a long flag with the same description are both listed, only the long one is shown, with the short one as a hint: `--data  -- HTTP POST data (🔥 -d)`. Give a short/long pair the same description to get this.
+When a short and a long flag with the same description are both listed, only the short one is shown, with the long one as a hint: `-d  -- HTTP POST data (🔥 --data)`. Give a short/long pair the same description to get this.
 
 Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it; give it a `value` to complete that value too (mvn's `-Dspring-boot.run.profiles=` lists `application-<profile>.*` files). Inside an open quote (`-Dx='-Xmx1g -X`) the last space-separated word is completed, so a quoted value can hold several. Quote such keys in YAML.
 
@@ -90,14 +91,14 @@ A value can be:
 | `"@pids"` | process IDs of your processes, with the program name |
 | `"@processes"` | names of your running programs |
 | `"@signals"` | signal names: `HUP`, `INT`, `KILL`, … |
-| `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`) |
+| `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`); a line ending in `=` (`label=`) gets no space so you can type its value |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
 | &nbsp;&nbsp;`tree: true` | show `a/b` names as `a/` until you type past the `/`, like paths (e.g. `origin/` for remote branches) |
 | &nbsp;&nbsp;`tree: "."` | the same, folding at another separator character (e.g. `com.` for UTIs in duti) |
 | &nbsp;&nbsp;`cache: 300` | reuse the output for that many seconds (per command, current directory and, if the command reads `$AUTOCOMPLETE_CUR`, typed word), for slow commands; kept in `~/.cache/autocomplete/exec/` |
 | &nbsp;&nbsp;`filter: false` | show every line the command prints, even ones not starting with the typed word (the command filters itself, e.g. duti turns `md` into `net.daringfireball.markdown`) |
-| &nbsp;&nbsp;`examples: true` | list the `value<TAB>description` lines as numbered `1️⃣ @1`, `2️⃣ @2` … entries; typing `@2` and TAB inserts that value single-quoted (good for templates such as docker `--format`) |
+| &nbsp;&nbsp;`examples: true` | the command prints `key<TAB>value<TAB>description` lines (a 4th column `pin` = `pin: true`), listed like `examples` (`🔥 @j  -- json   📚 …`); typing `@j` and TAB inserts that value single-quoted (good for templates such as docker `--format`) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`), and so is `!` (`if ! git …`). Use it as `args`. If the spec has `examples`, an empty word shows them instead of every executable (`if <TAB>`) |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |

@@ -1,13 +1,14 @@
+inherit_flags: false # global options only before the subcommand ("docker ps -D" fails)
 flags:
   --config: {value: dir, description: "Location of client config files"}
-  -c: {value: any, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")", show: always}
-  --context: {value: any, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")"}
+  -c: {value: {exec: "docker context ls --format '{{.Name}}\t{{.Description}}'"}, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")", show: always}
+  --context: {value: {exec: "docker context ls --format '{{.Name}}\t{{.Description}}'"}, description: "Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with \"docker context use\")"}
   -D: {description: "Enable debug mode"}
   --debug: {description: "Enable debug mode"}
   -H: {value: any, description: "Daemon socket to connect to"}
   --host: {value: any, description: "Daemon socket to connect to"}
-  -l: {value: any, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")", show: always}
-  --log-level: {value: any, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")"}
+  -l: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" log-level"}, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")", show: always}
+  --log-level: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" log-level"}, description: "Set the logging level (\"debug\", \"info\", \"warn\", \"error\", \"fatal\")"}
   --help: {description: "Print usage", show: always}
   -v: {description: "Print version information and quit", show: always}
   --version: {description: "Print version information and quit"}
@@ -40,7 +41,7 @@ commands:
       --user: {value: any, description: "Username or UID (format: <name|uid>[:<group|gid>])"}
       --restart: {value: any, description: "Restart policy to apply when a container exits"}
       --platform: {value: any, description: "Set platform if server is multi-platform capable"}
-      --pull: {value: any, description: "Pull image before running (\"always\", \"missing\", \"never\")"}
+      --pull: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" pull"}, description: "Pull image before running (\"always\", \"missing\", \"never\")"}
       -h: {value: any, description: "Container host name"}
       --hostname: {value: any, description: "Container host name"}
       -m: {value: any, description: "Memory limit"}
@@ -311,6 +312,30 @@ commands:
   help:
     description: Help about any command
     args: "@subcommands"
+  container:
+    description: Manage containers
+    commands:
+      prune:
+        description: Remove all stopped containers
+        flags:
+          -f: {description: "Do not prompt for confirmation"}
+          --force: {description: "Do not prompt for confirmation"}
+          --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+        examples:
+          - key: f
+            pin: true
+            command: "docker container prune -f"
+            description: "remove stopped containers, no prompt"
+          - key: u
+            pin: true
+            command: "docker container prune --filter until=24h"
+            description: "only those created more than a day ago"
+          - key: l
+            command: "docker container prune --filter label=temp"
+            description: "only those labeled temp"
+          - key: k
+            command: "docker container prune --filter 'label!=keep'"
+            description: "all except those labeled keep"
   network:
     description: Manage networks
     commands:
@@ -356,7 +381,22 @@ commands:
         flags:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
-          --filter: {value: any, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+          --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+        examples:
+          - key: f
+            pin: true
+            command: "docker network prune -f"
+            description: "remove unused networks, no prompt"
+          - key: u
+            pin: true
+            command: "docker network prune --filter until=24h"
+            description: "only those created more than a day ago"
+          - key: l
+            command: "docker network prune --filter label=temp"
+            description: "only those labeled temp"
+          - key: k
+            command: "docker network prune --filter 'label!=keep'"
+            description: "all except those labeled keep"
   image:
     description: Manage images
     commands:
@@ -443,7 +483,26 @@ commands:
           --all: {description: "Remove all unused images, not just dangling ones"}
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
-          --filter: {value: any, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+          --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
+        examples:
+          - key: a
+            pin: true
+            command: "docker image prune -a"
+            description: "all unused images, not just dangling ones"
+          - key: f
+            pin: true
+            command: "docker image prune -f"
+            description: "dangling images, no prompt"
+          - key: u
+            pin: true
+            command: "docker image prune -a --filter until=168h"
+            description: "unused images created more than a week ago"
+          - key: x
+            command: "docker image prune -a -f"
+            description: "every unused image, no prompt"
+          - key: k
+            command: "docker image prune -a --filter 'label!=keep'"
+            description: "all unused except those labeled keep"
   volume:
     description: Manage volumes
     commands:
@@ -481,9 +540,29 @@ commands:
       prune:
         description: Remove unused local volumes
         flags:
+          -a: {description: "Remove all unused volumes, not just anonymous ones"}
+          --all: {description: "Remove all unused volumes, not just anonymous ones"}
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
-          --filter: {value: any, description: "Provide filter values (e.g. \"label=<label>\")"}
+          --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter-label"}, description: "Provide filter values (e.g. \"label=<label>\")"}
+        examples:
+          - key: a
+            pin: true
+            command: "docker volume prune -a"
+            description: "also unused named volumes"
+          - key: f
+            pin: true
+            command: "docker volume prune -f"
+            description: "anonymous ones, no prompt"
+          - key: x
+            command: "docker volume prune -a -f"
+            description: "every unused volume, no prompt"
+          - key: l
+            command: "docker volume prune -a --filter label=temp"
+            description: "only unused volumes labeled temp"
+          - key: k
+            command: "docker volume prune -a --filter 'label!=keep'"
+            description: "all unused except those labeled keep"
   system:
     description: Manage Docker
     commands:
@@ -499,7 +578,26 @@ commands:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --volumes: {description: "Prune anonymous volumes", show: always}
-          --filter: {value: any, description: "Provide filter values (e.g. \"label=<key>=<value>\")", show: always}
+          --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"label=<key>=<value>\")", show: always}
+        examples:
+          - key: a
+            pin: true
+            command: "docker system prune -a"
+            description: "also unused images, not just dangling ones"
+          - key: v
+            pin: true
+            command: "docker system prune --volumes"
+            description: "also anonymous volumes"
+          - key: f
+            pin: true
+            command: "docker system prune -f"
+            description: "no prompt"
+          - key: x
+            command: "docker system prune -a --volumes -f"
+            description: "everything unused, no prompt"
+          - key: u
+            command: "docker system prune --filter until=24h"
+            description: "only things created more than a day ago"
       events:
         description: Get real time events from the server
   compose:
@@ -522,6 +620,34 @@ commands:
           --no-deps: {description: "Don't start linked services"}
           --remove-orphans: {description: "Remove containers for services not defined in the Compose file", show: always}
           --wait: {description: "Wait for services to be running|healthy. Implies detached mode"}
+          --abort-on-container-exit: {description: "Stops all containers if any container was stopped. Incompatible with -d"}
+          --abort-on-container-failure: {description: "Stops all containers if any container exited with failure. Incompatible with -d"}
+          --always-recreate-deps: {description: "Recreate dependent containers. Incompatible with --no-recreate"}
+          --attach: {value: any, description: "Restrict attaching to the specified services. Incompatible with --attach-dependencies"}
+          --attach-dependencies: {description: "Automatically attach to log output of dependent services"}
+          --dry-run: {description: "Execute command in dry run mode"}
+          --exit-code-from: {value: any, description: "Return the exit code of the selected service container. Implies --abort-on-container-exit"}
+          --menu: {description: "Enable interactive shortcuts when running attached. Incompatible with --detach. Can also be enable/disable by setting COMPOSE_MENU environment var"}
+          --no-attach: {value: any, description: "Do not attach (stream logs) to the specified services"}
+          --no-build: {description: "Don't build an image, even if it's policy"}
+          --no-color: {description: "Produce monochrome output"}
+          --no-log-prefix: {description: "Don't print prefix in logs"}
+          --no-recreate: {description: "If containers already exist, don't recreate them. Incompatible with --force-recreate"}
+          --no-start: {description: "Don't start the services after creating them"}
+          --pull: {value: any, description: "Pull image before running (\"always\"|\"missing\"|\"never\") (default \"policy\")"}
+          --quiet-build: {description: "Suppress the build output"}
+          --quiet-pull: {description: "Pull without printing progress information"}
+          -V: {description: "Recreate anonymous volumes instead of retrieving data from the previous containers"}
+          --renew-anon-volumes: {description: "Recreate anonymous volumes instead of retrieving data from the previous containers"}
+          --scale: {value: any, description: "Scale SERVICE to NUM instances. Overrides the scale setting in the Compose file if present"}
+          -t: {value: any, description: "Use this timeout in seconds for container shutdown when attached or when containers are already running"}
+          --timeout: {value: any, description: "Use this timeout in seconds for container shutdown when attached or when containers are already running"}
+          --timestamps: {description: "Show timestamps"}
+          --wait-timeout: {value: any, description: "Maximum duration in seconds to wait for the project to be running|healthy"}
+          -w: {description: "Watch source code and rebuild/refresh containers when files are updated"}
+          --watch: {description: "Watch source code and rebuild/refresh containers when files are updated"}
+          -y: {description: "Assume \"yes\" as answer to all prompts and run non-interactively"}
+          --yes: {description: "Assume \"yes\" as answer to all prompts and run non-interactively"}
         args: any
       down:
         description: Stop and remove containers, networks
@@ -529,7 +655,10 @@ commands:
           -v: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
           --volumes: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
           --remove-orphans: {description: "Remove containers for services not defined in the Compose file", show: always}
-          --rmi: {value: any, description: "Remove images used by services. \"local\" remove only images that don't have a custom tag (\"local\"|\"all\")", show: always}
+          --rmi: {value: {exec: "printf 'local\\tonly images without a custom tag\\nall\\tall images used by services\\n'"}, description: "Remove images used by services", show: always}
+          -t: {value: any, description: "Specify a shutdown timeout in seconds"}
+          --timeout: {value: any, description: "Specify a shutdown timeout in seconds"}
+          --dry-run: {description: "Execute command in dry run mode"}
       ps:
         description: List containers
         flags:
@@ -540,6 +669,10 @@ commands:
           --filter: {value: any, description: "Filter services by a property (supported filters: status)"}
           --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" compose-ps", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
           --no-trunc: {description: "Don't truncate output"}
+          --dry-run: {description: "Execute command in dry run mode"}
+          --orphans: {description: "Include orphaned services (not declared by project) (default true)"}
+          --services: {description: "Display services"}
+          --status: {value: any, description: "Filter services by status. Values: [paused | restarting | removing | running | dead | created | exited]"}
         args: any
       logs:
         description: View output from containers
@@ -552,6 +685,10 @@ commands:
           --timestamps: {description: "Show timestamps", show: always}
           --since: {value: any, description: "Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)", show: always}
           --until: {value: any, description: "Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)", show: always}
+          --dry-run: {description: "Execute command in dry run mode"}
+          --index: {value: any, description: "index of the container if service has multiple replicas"}
+          --no-color: {description: "Produce monochrome output"}
+          --no-log-prefix: {description: "Don't print prefix in logs"}
         args: any
       build:
         description: Build or rebuild services
@@ -561,12 +698,36 @@ commands:
           --pull: {description: "Always attempt to pull a newer version of the image"}
           -q: {description: "Suppress the build output"}
           --quiet: {description: "Suppress the build output"}
+          --builder: {value: any, description: "Set builder to use"}
+          --check: {description: "Check build configuration"}
+          --dry-run: {description: "Execute command in dry run mode"}
+          -m: {value: any, description: "Set memory limit for the build container. Not supported by BuildKit"}
+          --memory: {value: any, description: "Set memory limit for the build container. Not supported by BuildKit"}
+          --print: {description: "Print equivalent bake file"}
+          --provenance: {value: any, description: "Add a provenance attestation"}
+          --push: {description: "Push service images"}
+          --sbom: {value: any, description: "Add a SBOM attestation"}
+          --ssh: {value: any, description: "Set SSH authentications used when building service images. (use 'default' for using your default SSH Agent)"}
+          --with-dependencies: {description: "Also build dependencies (transitively)"}
         args: any
       pull:
         description: Pull service images
+        flags:
+          --dry-run: {description: "Execute command in dry run mode"}
+          --ignore-buildable: {description: "Ignore images that can be built"}
+          --ignore-pull-failures: {description: "Pull what it can and ignores images with pull failures"}
+          --include-deps: {description: "Also pull services declared as dependencies"}
+          --policy: {value: any, description: "Apply pull policy (\"missing\"|\"always\")"}
+          -q: {description: "Pull without printing progress information"}
+          --quiet: {description: "Pull without printing progress information"}
         args: any
       restart:
         description: Restart service containers
+        flags:
+          --dry-run: {description: "Execute command in dry run mode"}
+          --no-deps: {description: "Don't restart dependent services"}
+          -t: {value: any, description: "Specify a shutdown timeout in seconds"}
+          --timeout: {value: any, description: "Specify a shutdown timeout in seconds"}
         args: any
       exec:
         description: Execute a command in a running container
@@ -580,12 +741,86 @@ commands:
           -w: {value: any, description: "Path to workdir directory for this command"}
           --workdir: {value: any, description: "Path to workdir directory for this command"}
           --privileged: {description: "Give extended privileges to the process"}
+          --dry-run: {description: "Execute command in dry run mode"}
+          --index: {value: any, description: "Index of the container if service has multiple replicas"}
+          -T: {description: "Disable pseudo-TTY allocation. By default 'docker compose exec' allocates a TTY. (default true)"}
+          --no-tty: {description: "Disable pseudo-TTY allocation. By default 'docker compose exec' allocates a TTY. (default true)"}
         args: any
       stop:
         description: Stop services
+        flags:
+          --dry-run: {description: "Execute command in dry run mode"}
+          -t: {value: any, description: "Specify a shutdown timeout in seconds"}
+          --timeout: {value: any, description: "Specify a shutdown timeout in seconds"}
         args: any
       start:
         description: Start services
+        flags:
+          --dry-run: {description: "Execute command in dry run mode"}
+          --wait: {description: "Wait for services to be running|healthy. Implies detached mode"}
+          --wait-timeout: {value: any, description: "Maximum duration in seconds to wait for the project to be running|healthy"}
         args: any
       config:
         description: Parse, resolve and render compose file
+        flags:
+          -q: {description: "Only validate the configuration, don't print anything"}
+          --quiet: {description: "Only validate the configuration, don't print anything"}
+          -o: {value: file, description: "Save to file (default to stdout)"}
+          --output: {value: file, description: "Save to file (default to stdout)"}
+          --format: {value: {exec: "printf 'yaml\\tYAML (default)\\njson\\tJSON\\n'"}, description: "Format the output"}
+          --services: {description: "Print the service names, one per line"}
+          --images: {description: "Print the image names, one per line"}
+          --volumes: {description: "Print the volume names, one per line"}
+          --networks: {description: "Print the network names, one per line"}
+          --profiles: {description: "Print the profile names, one per line"}
+          --models: {description: "Print the model names, one per line"}
+          --environment: {description: "Print environment used for interpolation"}
+          --variables: {description: "Print model variables and default values"}
+          --hash: {value: any, description: "Print the service config hash, one per line ('*' for all)"}
+          --no-interpolate: {description: "Don't interpolate environment variables"}
+          --no-normalize: {description: "Don't normalize compose model"}
+          --no-path-resolution: {description: "Don't resolve file paths"}
+          --no-env-resolution: {description: "Don't resolve service env files"}
+          --no-consistency: {description: "Don't check model consistency"}
+          --resolve-image-digests: {description: "Pin image tags to digests"}
+          --lock-image-digests: {description: "Produce an override file with image digests"}
+          --dry-run: {description: "Execute command in dry run mode"}
+        args:
+          exec: docker compose config --services
+        examples:
+          - key: q
+            pin: true
+            command: "docker compose config -q"
+            description: "validate only: no output, exit code tells"
+          - key: s
+            pin: true
+            command: "docker compose config --services"
+            description: "service names"
+          - key: i
+            pin: true
+            command: "docker compose config --images"
+            description: "image names"
+          - key: e
+            command: "docker compose config --environment"
+            description: "variables used for interpolation"
+          - key: v
+            command: "docker compose config --variables"
+            description: "variables and their defaults"
+          - key: n
+            command: "docker compose config --no-interpolate"
+            description: "keep ${VARS} as written"
+          - key: o
+            command: "docker compose config -o resolved.yaml"
+            description: "save the merged, resolved config"
+          - key: j
+            command: "docker compose config --format json"
+            description: "resolved config as JSON"
+          - key: p
+            command: "docker compose config --profiles"
+            description: "profile names"
+          - key: h
+            command: "docker compose config --hash '*'"
+            description: "config hash of every service"
+          - key: d
+            command: "docker compose config --resolve-image-digests"
+            description: "pin image tags to digests"

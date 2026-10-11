@@ -51,8 +51,8 @@ void emit_cmd_output(const char *shell, const char *suffix, int space, char tree
             char buf[1100];
             snprintf(buf, sizeof buf, "%s%s", line, suffix);
             emit_desc(buf, space, desc);
-        } else {
-            emit_desc(line, space, desc);
+        } else { /* "label=": a key still waiting for its value, no space */
+            emit_desc(line, space && line[strlen(line) - 1] != '=', desc);
         }
     }
     pclose(f);

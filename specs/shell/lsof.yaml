@@ -37,35 +37,55 @@ flags:
   -v: {description: "Version information"}
 args: file
 examples:
-  - command: "lsof -nP -iTCP:8080 -sTCP:LISTEN"
+  - key: p
+    pin: true
+    command: "lsof -nP -iTCP:8080 -sTCP:LISTEN"
     description: "who is listening on port 8080"
-  - command: "lsof -nP -iTCP -sTCP:LISTEN"
+  - key: l
+    pin: true
+    command: "lsof -nP -iTCP -sTCP:LISTEN"
     description: "all listening TCP ports"
-  - command: "lsof -nP -i"
+  - key: i
+    command: "lsof -nP -i"
     description: "all network connections"
-  - command: "lsof -nP -iTCP -sTCP:ESTABLISHED"
+  - key: e
+    command: "lsof -nP -iTCP -sTCP:ESTABLISHED"
     description: "established TCP connections"
-  - command: "lsof -nP -i @192.168.1.10"
+  - key: h
+    command: "lsof -nP -i @192.168.1.10"
     description: "connections to or from a host"
-  - command: "lsof -nP -iUDP"
+  - key: u
+    command: "lsof -nP -iUDP"
     description: "UDP sockets"
-  - command: "lsof -p 1234"
+  - key: o
+    pin: true
+    command: "lsof -p 1234"
     description: "everything a process has open"
-  - command: "lsof -c Safari"
+  - key: c
+    command: "lsof -c Safari"
     description: "files open by a program (by name)"
-  - command: "lsof -a -u $USER -i"
+  - key: m
+    command: "lsof -a -u $USER -i"
     description: "my network connections (-a: AND)"
-  - command: "lsof +D ~/Downloads"
+  - key: f
+    pin: true
+    command: "lsof +D ~/Downloads"
     description: "what holds files in a folder open"
-  - command: "lsof /Volumes/USB"
+  - key: v
+    command: "lsof /Volumes/USB"
     description: "why a disk can't be ejected"
-  - command: "lsof -t -iTCP:3000 -sTCP:LISTEN"
+  - key: k
+    command: "lsof -t -iTCP:3000 -sTCP:LISTEN"
     description: "PID listening on port 3000 (for kill)"
-  - command: "lsof -a -p 1234 -d cwd"
+  - key: d
+    command: "lsof -a -p 1234 -d cwd"
     description: "current directory of a process"
-  - command: "lsof -c java -a -d txt"
+  - key: b
+    command: "lsof -c java -a -d txt"
     description: "binaries and libraries of a program"
-  - command: "lsof +L1"
+  - key: x
+    command: "lsof +L1"
     description: "deleted files still open (disk space not freed)"
-  - command: "lsof -nP -iTCP:443 -r 2"
+  - key: w
+    command: "lsof -nP -iTCP:443 -r 2"
     description: "watch HTTPS connections every 2 seconds"

@@ -60,44 +60,70 @@ flags:
   -x: {description: "Stay on one file system (same as -xdev)"}
   -f: {value: dir, description: "Add a starting path (allows names starting with -)"}
 examples:
-  - command: "find . -name '*.log'"
+  - key: n
+    pin: true
+    command: "find . -name '*.log'"
     description: "files by name pattern"
-  - command: "find . -iname '*readme*'"
+  - key: i
+    pin: true
+    command: "find . -iname '*readme*'"
     description: "name match ignoring case"
-  - command: "find . -type d -name node_modules -prune"
+  - key: p
+    command: "find . -type d -name node_modules -prune"
     description: "node_modules dirs without descending into them"
-  - command: "find . -type f -mmin -30"
+  - key: m
+    pin: true
+    command: "find . -type f -mmin -30"
     description: "files modified in the last 30 minutes"
-  - command: "find . -type f -mtime +90"
+  - key: o
+    command: "find . -type f -mtime +90"
     description: "files not modified for 90 days"
-  - command: "find . -type f -size +100M"
+  - key: s
+    pin: true
+    command: "find . -type f -size +100M"
     description: "files larger than 100 MB"
-  - command: "find . -empty -type d -delete"
+  - key: e
+    pin: true
+    command: "find . -empty -type d -delete"
     description: "remove empty directories"
-  - command: "find . -name .DS_Store -delete"
+  - key: d
+    command: "find . -name .DS_Store -delete"
     description: "remove Finder metadata files"
-  - command: "find . -type f -name '*.java' -exec grep -l TODO {} +"
+  - key: t
+    pin: true
+    command: "find . -type f -name '*.java' -exec grep -l TODO {} +"
     description: "Java files containing TODO"
-  - command: "find . -type f -print0 | xargs -0 ls -lh"
+  - key: x
+    command: "find . -type f -print0 | xargs -0 ls -lh"
     description: "pass paths safely to xargs"
-  - command: "find . -maxdepth 1 -type l"
+  - key: l
+    command: "find . -maxdepth 1 -type l"
     description: "symlinks in the current directory only"
-  - command: 'find . -type l ! -exec test -e {} \; -print'
+  - key: b
+    command: 'find . -type l ! -exec test -e {} \; -print'
     description: "broken symlinks"
-  - command: "find . -newer package.json -type f"
+  - key: r
+    command: "find . -newer package.json -type f"
     description: "files changed after a reference file"
-  - command: "find . -type f -perm +111"
+  - key: a
+    command: "find . -type f -perm +111"
     description: "executable files"
-  - command: "find . -user $USER -type f -name '*.tmp'"
+  - key: u
+    command: "find . -user $USER -type f -name '*.tmp'"
     description: "your temp files"
-  - command: "find . -path ./.git -prune -o -type f -print"
+  - key: g
+    command: "find . -path ./.git -prune -o -type f -print"
     description: "all files, skipping .git"
-  - command: "find . -xattrname com.apple.quarantine"
+  - key: q
+    command: "find . -xattrname com.apple.quarantine"
     description: "files with the download quarantine flag"
-  - command: "find ~ -xdev -type f -size +1G 2>/dev/null"
+  - key: h
+    command: "find ~ -xdev -type f -size +1G 2>/dev/null"
     description: "huge files in home, one file system"
-  - command: 'find . -name ''*.orig'' -ok rm {} \;'
+  - key: k
+    command: 'find . -name ''*.orig'' -ok rm {} \;'
     description: "delete merge leftovers, confirming each"
-  - command: "find . -type f -newermt '2024-01-01'"
+  - key: w
+    command: "find . -type f -newermt '2024-01-01'"
     description: "files modified since a date"
 args: dir

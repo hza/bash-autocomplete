@@ -1,37 +1,56 @@
 description: "Loop over a list of words (bash keyword)"
 args: any
 examples:
-  - command: 'for f in *.jpeg; do mv -n "$f" "${f%.jpeg}.jpg"; done'
+  - key: j
+    command: 'for f in *.jpeg; do mv -n "$f" "${f%.jpeg}.jpg"; done'
     description: "change extension .jpeg -> .jpg"
-  - command: 'for f in *.png; do sips -s format jpeg "$f" --out "${f%.png}.jpg"; done'
+  - key: c
+    command: 'for f in *.png; do sips -s format jpeg "$f" --out "${f%.png}.jpg"; done'
     description: "convert images (macOS sips)"
-  - command: 'for f in *.txt; do mv -n "$f" "old_$f"; done'
+  - key: p
+    command: 'for f in *.txt; do mv -n "$f" "old_$f"; done'
     description: "add a prefix to file names"
-  - command: 'for f in *.log; do echo "$f: $(grep -c ERROR "$f")"; done'
+  - key: r
+    command: 'for f in *.log; do echo "$f: $(grep -c ERROR "$f")"; done'
     description: "count matches per file"
-  - command: 'for d in */; do (cd "$d" && git pull); done'
+  - key: s
+    pin: true
+    command: 'for d in */; do (cd "$d" && git pull); done'
     description: "run a command in each subfolder"
-  - command: 'for h in host1 host2; do ssh "$h" uptime; done'
+  - key: h
+    command: 'for h in host1 host2; do ssh "$h" uptime; done'
     description: "same command on several hosts"
-  - command: "for i in {1..5}; do curl -s -o /dev/null -w '%{http_code}\\n' https://example.com; done"
+  - key: e
+    command: "for i in {1..5}; do curl -s -o /dev/null -w '%{http_code}\\n' https://example.com; done"
     description: "repeat a command N times"
-  - command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
+  - key: o
+    pin: true
+    command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
     description: "each word of a command's output"
-  - command: 'for f in *.md; do pandoc "$f" -o "${f%.md}.pdf"; done'
+  - key: x
+    command: 'for f in *.md; do pandoc "$f" -o "${f%.md}.pdf"; done'
     description: "convert each file (output name from input)"
-  - command: 'for f in *; do mv -n "$f" "$(echo "$f" | tr "A-Z " "a-z_")"; done'
+  - key: l
+    command: 'for f in *; do mv -n "$f" "$(echo "$f" | tr "A-Z " "a-z_")"; done'
     description: "lowercase names, spaces to underscores"
-  - command: 'for f in *.JPG; do mv -n "$f" "$(date -r "$f" +%Y-%m-%d_%H%M%S).jpg"; done'
+  - key: t
+    command: 'for f in *.JPG; do mv -n "$f" "$(date -r "$f" +%Y-%m-%d_%H%M%S).jpg"; done'
     description: "rename by modification time (macOS date -r)"
-  - command: 'for i in $(seq -w 1 12); do mkdir -p "2026-$i"; done'
+  - key: g
+    command: 'for i in $(seq -w 1 12); do mkdir -p "2026-$i"; done'
     description: "zero-padded numbered folders"
-  - command: 'for f in $(git diff --name-only main); do echo "== $f"; done'
+  - key: b
+    command: 'for f in $(git diff --name-only main); do echo "== $f"; done'
     description: "files changed against main"
-  - command: 'for b in $(git branch --merged main | grep -v main); do git branch -d "$b"; done'
+  - key: d
+    command: 'for b in $(git branch --merged main | grep -v main); do git branch -d "$b"; done'
     description: "delete branches merged into main"
-  - command: 'for img in $(docker images -q -f dangling=true); do docker rmi "$img"; done'
+  - key: i
+    command: 'for img in $(docker images -q -f dangling=true); do docker rmi "$img"; done'
     description: "remove dangling docker images"
-  - command: 'for ((i = 1; i <= 10; i++)); do echo "$i"; done'
+  - key: k
+    command: 'for ((i = 1; i <= 10; i++)); do echo "$i"; done'
     description: "C-style counter"
-  - command: 'for f in "$@"; do echo "arg: $f"; done'
+  - key: a
+    command: 'for f in "$@"; do echo "arg: $f"; done'
     description: "each script argument (in a script)"

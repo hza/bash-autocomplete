@@ -5,9 +5,14 @@ flags:
     value: {exec: "printf '%s\\n' general ruler find font"}
     description: "Pasteboard to use"
 examples:
-  - command: "pbcopy < ~/.ssh/id_ed25519.pub"
+  - key: f
+    pin: true
+    command: "pbcopy < ~/.ssh/id_ed25519.pub"
     description: "copy a file's contents"
-  - command: "git rev-parse HEAD | pbcopy"
+  - key: o
+    pin: true
+    command: "git rev-parse HEAD | pbcopy"
     description: "copy a command's output"
-  - command: "pwd | tr -d '\\n' | pbcopy"
+  - key: n
+    command: "pwd | tr -d '\\n' | pbcopy"
     description: "copy without trailing newline"

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "complete.h"
 #include "output.h"
 #include "spec.h"
 #include "util.h"
@@ -28,6 +29,8 @@ typedef struct {
 } cand;
 static cand g_cands[MAXCANDS];
 static int g_ncands;
+
+int ncands(void) { return g_ncands; }
 const char *g_kind; /* kind given to candidates emitted now */
 int g_show;         /* "show" given to candidates emitted now */
 int g_noesc;        /* display-only candidates: no shell escaping */
@@ -273,18 +276,22 @@ static void collapse_flags(void) {
     g_noesc = 0;
 }
 
-/* A short flag listed next to a long one with the same description is
- * shown only as a hint on the long one: "--data  -- HTTP POST data (🔥 -d)".
- * Each long flag takes at most one short. */
+/* A short flag listed next to a long one with the same description
+ * replaces it, the long name becoming a hint: "-d  -- HTTP POST data
+ * (🔥 --data)". Each long flag takes at most one short. */
 static void merge_pairs(void) {
     static char paired[MAXCANDS];
     int i, j, k;
-    if (g_cur[0] != '-') return;
+    if (g_cur[0] != '-') { /* empty word: only when all are flags (do_complete's fallback) */
+        if (*g_cur) return;
+        for (i = 0; i < g_ncands; i++)
+            if (g_cands[i].text[0] != '-') return;
+    }
     memset(paired, 0, (size_t)g_ncands);
     for (i = k = 0; i < g_ncands; i++) {
         cand *c = &g_cands[i];
         int hit = -1;
-        if (c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "📌"))
+        if (c->text && c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "📌"))
             for (j = 0; j < g_ncands; j++)
                 if (!paired[j] && g_cands[j].text && !strncmp(g_cands[j].text, "--", 2) && g_cands[j].desc &&
                     !strcmp(g_cands[j].desc, c->desc)) {
@@ -293,12 +300,13 @@ static void merge_pairs(void) {
                 }
         if (hit < 0) continue;
         {
-            char *d = malloc(strlen(c->desc) + strlen(c->text) + 8);
+            cand *keep = c, *drop = &g_cands[hit]; /* the short stays, the long one goes */
+            char *d = malloc(strlen(c->desc) + strlen(drop->text) + 16);
             if (!d) continue;
-            sprintf(d, "%s (🔥 %s)", c->desc, c->text);
+            sprintf(d, "%s (🔥 %s)", c->desc, drop->text);
             paired[hit] = 1;
-            g_cands[hit].desc = d;
-            c->text = NULL; /* dropped below */
+            keep->desc = d;
+            drop->text = NULL; /* dropped below */
         }
     }
     for (i = k = 0; i < g_ncands; i++)
@@ -402,62 +410,70 @@ static void group_flags(void) {
     g_ncands = k;
 }
 
-/* On an empty word or "@", the spec's "examples" ({command, description?})
- * are listed as display-only "1️⃣ @1" … "9️⃣ @9", then "📌 @a" … "📌 @z"
- * entries (more are dropped), described by "command   📚 description".
- * Keycaps start with different digits, so bash lists instead of inserting
- * a shared prefix, and sort before "📌" (a lone example is just "@1").
- * "@id" typed in full is replaced by the example's command after
+/* On an empty word or "@", the spec's "examples" ({key, command,
+ * description?, pin?}) are listed as display-only "📌 @key" (pin: true,
+ * the most used ones) or "🔥 @key" entries described by
+ * "command   📚 description". The two icons differ in the first byte, so
+ * bash lists instead of inserting a common prefix (verified in pty); when
+ * all entries are of one kind, one gets the other icon (the smallest key
+ * is pinned, or the largest unpinned). 🔥 (U+1F525) sorts after 📌 (U+1F4CC).
+ * "@key" typed in full is replaced by the example's command after
  * "<name> "; bash keeps a leading "@" in the replaced text (readline
  * special prefix, verified in pty). Examples not starting with "<name> "
- * (pipelines) are only listed. When the empty word has other candidates
- * (lsof: files), examples are listed only on "@". An empty g_examples_name
- * (exec `examples: true` flag values) substitutes the whole value, quoted. */
+ * (pipelines) are only listed. An empty g_examples_name (exec
+ * `examples: true` flag values) substitutes the whole value, single-quoted.
+ * When the empty word has other candidates (lsof: files), examples are
+ * listed only on "@". */
 const ynode *g_examples;
 const char *g_examples_name;
 
-#define EXAMPLE_IDS "123456789abcdefghijklmnopqrstuvwxyz"
-
-static int want_id(const char *w) {
-    return w[0] == '@' && w[1] && !w[2] && strchr(EXAMPLE_IDS, w[1]);
+static int pinned(const ynode *e) {
+    const ynode *p = yaml_get(e, "pin");
+    return p && p->type == Y_BOOL && p->b;
 }
 
 static void add_examples(void) {
     const ynode *e;
-    int n = 0, want = 0;
+    int want, npin = 0, nall = 0;
+    char first = 0, last = 0;
     size_t nl;
-    char name[128], desc[1024];
-    if ((*g_cur && strcmp(g_cur, "@") && !want_id(g_cur)) || !g_examples || g_examples->type != Y_ARR) return;
+    char name[32], desc[1024];
+    if (!g_examples || g_examples->type != Y_ARR) return;
+    want = g_cur[0] == '@' && g_cur[1] && !g_cur[2];
+    if (*g_cur && strcmp(g_cur, "@") && !want) return;
     if (!*g_cur && g_ncands) return; /* other candidates (lsof files): examples only on "@" */
     nl = strlen(g_examples_name);
-    if (want_id(g_cur)) want = (int)(strchr(EXAMPLE_IDS, g_cur[1]) - EXAMPLE_IDS) + 1;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
     g_verbatim = 1;
-    for (e = g_examples->child; e && n < (int)strlen(EXAMPLE_IDS); e = e->next) {
-        const ynode *cmd = yaml_get(e, "command");
+    for (e = g_examples->child; e; e = e->next) {
+        const ynode *k = yaml_get(e, "key");
+        if (!example_key(k)) continue;
+        nall++;
+        npin += pinned(e);
+        if (!first || k->str[0] < first) first = k->str[0];
+        if (k->str[0] > last) last = k->str[0];
+    }
+    for (e = g_examples->child; e; e = e->next) {
+        const ynode *cmd = yaml_get(e, "command"), *k = yaml_get(e, "key");
         const char *d = spec_desc(e);
-        char id;
-        if (!cmd || cmd->type != Y_STR) continue;
-        id = EXAMPLE_IDS[n++];
-        if (want == n && !nl) { /* flag value (exec examples): quoted whole */
-            char q[4096], *o = q;
-            const char *c;
-            *o++ = '\'';
-            for (c = cmd->str; *c && o < q + sizeof q - 6; c++)
-                if (*c == '\'') { memcpy(o, "'\\''", 4); o += 4; } else *o++ = *c;
-            *o++ = '\''; *o = 0;
-            emit_desc(q, 1, NULL);
-            break;
+        int pin;
+        if (!cmd || cmd->type != Y_STR || !example_key(k)) continue;
+        if (want) {
+            if (k->str[0] != g_cur[1]) continue;
+            if (!nl) { /* flag value (exec examples): quoted whole */
+                char q[4096], *o = q;
+                const char *c;
+                *o++ = '\'';
+                for (c = cmd->str; *c && o < q + sizeof q - 6; c++)
+                    if (*c == '\'') { memcpy(o, "'\\''", 4); o += 4; } else *o++ = *c;
+                *o++ = '\''; *o = 0;
+                emit_desc(q, 1, NULL);
+            } else if (!strncmp(cmd->str, g_examples_name, nl) && cmd->str[nl] == ' ')
+                emit_desc(cmd->str + nl + 1, 1, NULL);
+            break; /* not substitutable: list nothing */
         }
-        if (want == n && !strncmp(cmd->str, g_examples_name, nl) && cmd->str[nl] == ' ') {
-            emit_desc(cmd->str + nl + 1, 1, NULL);
-            break;
-        }
-        if (want) continue; /* not substitutable or not this one: list nothing */
-        if (!g_examples->child->next) snprintf(name, sizeof name, "@%c", id);
-        else if (n <= 9) /* keycap: digit U+FE0F U+20E3, 2 x U+00A0 (keycaps overlap) */
-            snprintf(name, sizeof name, "%c\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0\xc2\xa0@%c", id, id);
-        else snprintf(name, sizeof name, "📌\xc2\xa0@%c", id); /* sorts after the digits */
+        pin = !npin ? k->str[0] == first : npin == nall ? k->str[0] != last : pinned(e);
+        snprintf(name, sizeof name, "%s\xc2\xa0@%s", pin ? "📌" : "🔥", k->str);
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);
     }

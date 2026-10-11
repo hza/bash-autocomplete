@@ -75,45 +75,71 @@ flags:
   -V: {description: "Version information"}
   --version: {description: "Version information"}
 examples:
-  - command: "grep -rn TODO ."
+  - key: t
+    pin: true
+    command: "grep -rn TODO ."
     description: "TODO lines with file and line number"
-  - command: "grep -rnw main --include='*.c' ."
+  - key: w
+    pin: true
+    command: "grep -rnw main --include='*.c' ."
     description: "whole word in C sources only"
-  - command: "grep -ril password --exclude-dir=.git ."
+  - key: f
+    pin: true
+    command: "grep -ril password --exclude-dir=.git ."
     description: "files mentioning a word, skipping .git"
-  - command: "grep -v '^#' config.txt"
+  - key: v
+    pin: true
+    command: "grep -v '^#' config.txt"
     description: "drop comment lines"
-  - command: "grep -v -e '^$' -e '^#' config.txt"
+  - key: e
+    command: "grep -v -e '^$' -e '^#' config.txt"
     description: "drop empty and comment lines"
-  - command: "grep -c ERROR app.log"
+  - key: c
+    command: "grep -c ERROR app.log"
     description: "count matching lines"
-  - command: "grep -C 3 Exception app.log"
+  - key: a
+    pin: true
+    command: "grep -C 3 Exception app.log"
     description: "3 lines of context around matches"
-  - command: "grep -E 'error|warn' app.log"
+  - key: o
+    pin: true
+    command: "grep -E 'error|warn' app.log"
     description: "either word (extended regex)"
-  - command: "grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+' access.log"
+  - key: i
+    command: "grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+' access.log"
     description: "extract IPv4-like addresses"
-  - command: "grep -F '[x]' notes.md"
+  - key: l
+    command: "grep -F '[x]' notes.md"
     description: "literal text, no regex escaping"
-  - command: "grep -L license -r src"
+  - key: n
+    command: "grep -L license -r src"
     description: "files missing a word"
-  - command: "grep -m 1 version package.json"
+  - key: m
+    command: "grep -m 1 version package.json"
     description: "first match only"
-  - command: "grep -q pattern file && echo found"
+  - key: q
+    command: "grep -q pattern file && echo found"
     description: "test for a match in a script"
-  - command: "grep -x 'exact line' file.txt"
+  - key: x
+    command: "grep -x 'exact line' file.txt"
     description: "whole line must match"
-  - command: "grep -o 'https\\?://[^ ]*' page.html"
+  - key: u
+    command: "grep -o 'https\\?://[^ ]*' page.html"
     description: "extract URLs"
-  - command: "grep -rl old src | xargs sed -i '' 's/old/new/g'"
+  - key: r
+    command: "grep -rl old src | xargs sed -i '' 's/old/new/g'"
     description: "replace in every file containing a word"
-  - command: "grep -Z error logs.gz"
+  - key: z
+    command: "grep -Z error logs.gz"
     description: "search a gzip-compressed file"
-  - command: "grep -e -v file.txt"
+  - key: d
+    command: "grep -e -v file.txt"
     description: "pattern that starts with a dash"
-  - command: "grep -h -r import --include='*.py' . | sort | uniq -c"
+  - key: s
+    command: "grep -h -r import --include='*.py' . | sort | uniq -c"
     description: "count distinct import lines"
-  - command: "grep --line-buffered ERROR <(tail -f app.log)"
+  - key: g
+    command: "grep --line-buffered ERROR <(tail -f app.log)"
     description: "follow a log as it grows"
 positional:
   - {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}

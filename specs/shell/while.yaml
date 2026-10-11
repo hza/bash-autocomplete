@@ -1,29 +1,45 @@
 description: "Repeat while a command succeeds (bash keyword)"
 args: "@command"
 examples:
-  - command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'
+  - key: l
+    pin: true
+    command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'
     description: "each line of a file (-n: ssh must not eat stdin)"
-  - command: 'while read -r b; do git log -1 --format="$b  %cr" "$b"; done < <(git branch --format="%(refname:short)")'
+  - key: o
+    pin: true
+    command: 'while read -r b; do git log -1 --format="$b  %cr" "$b"; done < <(git branch --format="%(refname:short)")'
     description: "each line of a command's output"
-  - command: 'while true; do clear; date; docker ps; sleep 2; done'
+  - key: c
+    command: 'while true; do clear; date; docker ps; sleep 2; done'
     description: "refresh a view every 2 s (Ctrl-C stops)"
-  - command: 'while pgrep -x make >/dev/null; do sleep 5; done; say "make finished"'
+  - key: w
+    pin: true
+    command: 'while pgrep -x make >/dev/null; do sleep 5; done; say "make finished"'
     description: "wait for a process to exit"
-  - command: 'while ! curl -sf -o /dev/null http://localhost:8080; do sleep 1; done; open http://localhost:8080'
+  - key: s
+    command: 'while ! curl -sf -o /dev/null http://localhost:8080; do sleep 1; done; open http://localhost:8080'
     description: "wait for a server to come up"
-  - command: 'while [ ! -f build/out.log ]; do sleep 1; done; tail -f build/out.log'
+  - key: f
+    command: 'while [ ! -f build/out.log ]; do sleep 1; done; tail -f build/out.log'
     description: "wait for a file to appear"
-  - command: 'while read -r line; do echo "${#line}: $line"; done < file.txt'
+  - key: r
+    command: 'while read -r line; do echo "${#line}: $line"; done < file.txt'
     description: "read a file line by line"
-  - command: 'while IFS=, read -r name email; do echo "$name <$email>"; done < users.csv'
+  - key: v
+    command: 'while IFS=, read -r name email; do echo "$name <$email>"; done < users.csv'
     description: "split CSV columns"
-  - command: 'find . -name "*.log" -print0 | while IFS= read -r -d "" f; do gzip "$f"; done'
+  - key: d
+    command: 'find . -name "*.log" -print0 | while IFS= read -r -d "" f; do gzip "$f"; done'
     description: "handle any file name from find"
-  - command: 'while sleep 60; do df -h / | tail -1; done'
+  - key: m
+    command: 'while sleep 60; do df -h / | tail -1; done'
     description: "print something every minute"
-  - command: 'while [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; do sleep 30; git fetch -q; done; say "new commits"'
+  - key: u
+    command: 'while [ "$(git rev-parse HEAD)" = "$(git rev-parse @{u})" ]; do sleep 30; git fetch -q; done; say "new commits"'
     description: "wait for new upstream commits"
-  - command: 'while kill -0 1234 2>/dev/null; do sleep 2; done; say done'
+  - key: g
+    command: 'while kill -0 1234 2>/dev/null; do sleep 2; done; say done'
     description: "wait for a process (pid) to exit"
-  - command: 'while getopts "vf:" o; do case $o in v) v=1;; f) file=$OPTARG;; esac; done'
+  - key: p
+    command: 'while getopts "vf:" o; do case $o in v) v=1;; f) file=$OPTARG;; esac; done'
     description: "parse options (in a script)"

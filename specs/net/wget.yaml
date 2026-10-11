@@ -221,37 +221,57 @@ flags:
   "--no-parent": {description: "Don't ascend to the parent directory"}
 args: any
 examples:
-  - command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
+  - key: p
+    command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
     description: "send a POST request and print the response"
-  - command: "wget --post-file=1.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post"
+  - key: f
+    command: "wget --post-file=1.jpg --header='Content-Type: image/jpeg' -O - https://httpbin.org/post"
     description: "upload a file (no multipart)"
-  - command: "wget --method=DELETE -O - https://httpbin.org/delete"
+  - key: x
+    command: "wget --method=DELETE -O - https://httpbin.org/delete"
     description: "any other method: PUT, PATCH, DELETE"
-  - command: "wget -O latest.tgz https://example.org/download?v=latest"
+  - key: o
+    pin: true
+    command: "wget -O latest.tgz https://example.org/download?v=latest"
     description: "save under another name"
-  - command: "wget -c https://example.org/big.iso"
+  - key: c
+    pin: true
+    command: "wget -c https://example.org/big.iso"
     description: "resume a download"
-  - command: "wget -q -O - https://example.org"
+  - key: s
+    pin: true
+    command: "wget -q -O - https://example.org"
     description: "print to stdout"
-  - command: "wget -i urls.txt -P downloads/"
+  - key: i
+    command: "wget -i urls.txt -P downloads/"
     description: "download a list of URLs into a dir"
-  - command: "wget -r -np -k https://example.org/docs/"
+  - key: m
+    command: "wget -r -np -k https://example.org/docs/"
     description: "mirror a docs folder for offline use"
-  - command: "wget --limit-rate=500k --tries=3 https://example.org/big.iso"
+  - key: l
+    command: "wget --limit-rate=500k --tries=3 https://example.org/big.iso"
     description: "throttle and retry"
-  - command: "wget --header='Authorization: Bearer $TOKEN' https://api.example.org/export"
+  - key: h
+    command: "wget --header='Authorization: Bearer $TOKEN' https://api.example.org/export"
     description: "send a header"
-  - command: "wget --user=me --ask-password https://example.org/private.zip"
+  - key: u
+    command: "wget --user=me --ask-password https://example.org/private.zip"
     description: "basic auth, password prompted"
-  - command: "wget -N https://example.org/data.csv"
+  - key: n
+    command: "wget -N https://example.org/data.csv"
     description: "download only if newer than the local file"
-  - command: "wget --spider https://example.org/page"
+  - key: w
+    command: "wget --spider https://example.org/page"
     description: "check that a link works, download nothing"
-  - command: "wget -U 'Mozilla/5.0' https://example.org"
+  - key: a
+    command: "wget -U 'Mozilla/5.0' https://example.org"
     description: "custom user agent"
-  - command: "wget --no-check-certificate https://self-signed.example"
+  - key: k
+    command: "wget --no-check-certificate https://self-signed.example"
     description: "skip certificate checks (insecure)"
-  - command: "wget -b https://example.org/big.iso"
+  - key: b
+    command: "wget -b https://example.org/big.iso"
     description: "download in the background (log in wget-log)"
-  - command: "wget -r -l1 -np -A '*.pdf' https://example.org/papers/"
+  - key: d
+    command: "wget -r -l1 -np -A '*.pdf' https://example.org/papers/"
     description: "only the PDFs linked from a page"

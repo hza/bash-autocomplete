@@ -1,84 +1,108 @@
 #!/bin/sh
-# docker --format value suggestions: sh docker.sh container|image|network|volume|ps|images|stats|networks|volumes|compose-ps
-# Prints "value<TAB>description" lines.
-row() { printf '%s\t%s\n' "$1" "$2"; }
+# docker value suggestions: sh docker.sh log-level|pull|filter|filter-label|container|image|network|volume|ps|images|stats|networks|volumes|compose-ps
+# Prints "key<TAB>value<TAB>description<TAB>[pin]" lines (spec: examples: true, typed as @key;
+# pin = most used, listed with 📌).
+row() { printf '%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4"; }
 inspect() {
-    row json "whole object as JSON"
-    row '{{json .}}' "whole object as one-line JSON"
+    row j json "whole object as JSON"
+    row o '{{json .}}' "whole object as one-line JSON"
 }
 table() {
-    row table "default columns with headers"
-    row json "one JSON object per line"
+    row t table "default columns with headers"
+    row j json "one JSON object per line"
 }
 case $1 in
+log-level) # plain value<TAB>description lines
+    printf '%s\t%s\n' debug "everything, incl. API calls" info "normal messages (default)" \
+        warn "warnings and errors" error "errors only" fatal "only fatal errors" ;;
+filter|filter-label) # prune --filter (volume prune: labels only)
+    [ "$1" = filter ] && printf '%s\t%s\n' until=24h "created more than a day ago" \
+        until=168h "created more than a week ago" until=720h "created more than 30 days ago" \
+        until=2026-01-01 "created before a date" until=1h "created more than an hour ago"
+    printf '%s\t%s\n' label= "only with a label: label=KEY or label=KEY=VALUE" \
+        'label!=' "only without a label: label!=KEY or label!=KEY=VALUE" ;;
+pull) # docker run --pull
+    printf '%s\t%s\n' missing "pull only if not present locally (default)" always "always pull, even if present" \
+        never "use the local image only, fail if missing" ;;
 container)
     inspect
-    row '{{.State.Status}}' "running, exited, ..."
-    row '{{.State.Health.Status}}' "healthcheck status"
-    row '{{.State.StartedAt}}' "start time"
-    row '{{.State.ExitCode}}' "last exit code"
-    row '{{.RestartCount}}' "restart count"
-    row '{{.Config.Image}}' "image name"
-    row '{{.Image}}' "image ID"
-    row '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' "IP addresses"
-    row '{{json .NetworkSettings.Ports}}' "port bindings"
-    row '{{json .Mounts}}' "mounts"
-    row '{{range .Config.Env}}{{println .}}{{end}}' "environment, one per line"
-    row '{{json .Config.Labels}}' "labels"
-    row '{{.LogPath}}' "log file path"
-    row '{{.HostConfig.RestartPolicy.Name}}' "restart policy" ;;
+    row s '{{.State.Status}}' "running, exited, ..." pin
+    row h '{{.State.Health.Status}}' "healthcheck status"
+    row t '{{.State.StartedAt}}' "start time"
+    row x '{{.State.ExitCode}}' "last exit code"
+    row r '{{.RestartCount}}' "restart count"
+    row i '{{.Config.Image}}' "image name"
+    row d '{{.Image}}' "image ID"
+    row a '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' "IP addresses" pin
+    row p '{{json .NetworkSettings.Ports}}' "port bindings" pin
+    row m '{{json .Mounts}}' "mounts"
+    row e '{{range .Config.Env}}{{println .}}{{end}}' "environment, one per line" pin
+    row l '{{json .Config.Labels}}' "labels"
+    row g '{{.LogPath}}' "log file path"
+    row y '{{.HostConfig.RestartPolicy.Name}}' "restart policy" ;;
 image)
     inspect
-    row '{{.Id}}' "image ID"
-    row '{{json .RepoTags}}' "tags"
-    row '{{.Created}}' "creation time"
-    row '{{.Size}}' "size in bytes"
-    row '{{.Architecture}}/{{.Os}}' "platform"
-    row '{{json .Config.Cmd}}' "default command"
-    row '{{json .Config.Entrypoint}}' "entrypoint"
-    row '{{json .Config.ExposedPorts}}' "exposed ports"
-    row '{{range .Config.Env}}{{println .}}{{end}}' "environment, one per line"
-    row '{{json .Config.Labels}}' "labels" ;;
+    row i '{{.Id}}' "image ID"
+    row t '{{json .RepoTags}}' "tags" pin
+    row c '{{.Created}}' "creation time"
+    row s '{{.Size}}' "size in bytes"
+    row a '{{.Architecture}}/{{.Os}}' "platform"
+    row d '{{json .Config.Cmd}}' "default command" pin
+    row n '{{json .Config.Entrypoint}}' "entrypoint"
+    row p '{{json .Config.ExposedPorts}}' "exposed ports" pin
+    row e '{{range .Config.Env}}{{println .}}{{end}}' "environment, one per line"
+    row l '{{json .Config.Labels}}' "labels" ;;
 network)
     inspect
-    row '{{.Driver}}' "driver"
-    row '{{range .IPAM.Config}}{{.Subnet}} {{end}}' "subnets"
-    row '{{range .Containers}}{{.Name}} {{.IPv4Address}}{{println}}{{end}}' "attached containers" ;;
+    row d '{{.Driver}}' "driver"
+    row s '{{range .IPAM.Config}}{{.Subnet}} {{end}}' "subnets" pin
+    row c '{{range .Containers}}{{.Name}} {{.IPv4Address}}{{println}}{{end}}' "attached containers" pin ;;
 volume)
     inspect
-    row '{{.Mountpoint}}' "host path"
-    row '{{.Driver}}' "driver"
-    row '{{.CreatedAt}}' "creation time"
-    row '{{json .Labels}}' "labels" ;;
+    row p '{{.Mountpoint}}' "host path" pin
+    row d '{{.Driver}}' "driver"
+    row c '{{.CreatedAt}}' "creation time"
+    row l '{{json .Labels}}' "labels" ;;
 ps)
     table
-    row '{{.Names}}' "names only"
-    row '{{.ID}}' "IDs only"
-    row 'table {{.Names}}\t{{.Status}}' "names and status"
-    row 'table {{.Names}}\t{{.Image}}\t{{.Ports}}' "names, image, ports"
-    row 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Size}}' "with size (add -s)"
-    row '{{.Names}}: {{.Label "com.docker.compose.project"}}' "compose project" ;;
+    row n '{{.Names}}' "names only" pin
+    row i '{{.ID}}' "IDs only"
+    row s 'table {{.Names}}\t{{.Status}}' "names and status" pin
+    row p 'table {{.Names}}\t{{.Image}}\t{{.Ports}}' "names, image, ports" pin
+    row z 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Size}}' "with size (add -s)"
+    row c '{{.Names}}: {{.Label "com.docker.compose.project"}}' "compose project"
+    row f 'table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}' "compact overview"
+    row b '{{.ID}} {{.Names}}' "ID and name"
+    row u 'table {{.Names}}\t{{.State}}' "names and state (running, exited, ...)"
+    row a 'table {{.Names}}\t{{.RunningFor}}\t{{.Status}}' "age and uptime"
+    row r 'table {{.Names}}\t{{.CreatedAt}}' "creation time"
+    row g 'table {{.Names}}\t{{.Image}}' "names and images"
+    row d 'table {{.Names}}\t{{.Command}}' "names and commands"
+    row m 'table {{.Names}}\t{{.Mounts}}' "mounts"
+    row v 'table {{.Names}}\t{{.LocalVolumes}}' "local volume count"
+    row w 'table {{.Names}}\t{{.Networks}}' "networks"
+    row l 'table {{.Names}}\t{{.Labels}}' "all labels" ;;
 images)
     table
-    row '{{.Repository}}:{{.Tag}}' "repo:tag only"
-    row '{{.ID}}' "IDs only"
-    row 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' "repo:tag and size"
-    row 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}' "with age" ;;
+    row r '{{.Repository}}:{{.Tag}}' "repo:tag only" pin
+    row i '{{.ID}}' "IDs only"
+    row s 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' "repo:tag and size" pin
+    row a 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}' "with age" ;;
 stats)
     table
-    row 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}' "CPU and memory"
-    row 'table {{.Name}}\t{{.NetIO}}\t{{.BlockIO}}' "network and disk I/O"
-    row '{{.Name}} {{.MemPerc}}' "memory percent" ;;
+    row c 'table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}' "CPU and memory" pin
+    row i 'table {{.Name}}\t{{.NetIO}}\t{{.BlockIO}}' "network and disk I/O"
+    row m '{{.Name}} {{.MemPerc}}' "memory percent" ;;
 networks)
     table
-    row '{{.Name}}' "names only"
-    row 'table {{.Name}}\t{{.Driver}}\t{{.Scope}}' "name, driver, scope" ;;
+    row n '{{.Name}}' "names only" pin
+    row d 'table {{.Name}}\t{{.Driver}}\t{{.Scope}}' "name, driver, scope" ;;
 volumes)
     table
-    row '{{.Name}}' "names only"
-    row 'table {{.Name}}\t{{.Driver}}\t{{.Mountpoint}}' "name, driver, path" ;;
+    row n '{{.Name}}' "names only" pin
+    row d 'table {{.Name}}\t{{.Driver}}\t{{.Mountpoint}}' "name, driver, path" ;;
 compose-ps)
     table
-    row '{{.Service}}' "service names"
-    row 'table {{.Service}}\t{{.State}}\t{{.Ports}}' "service, state, ports" ;;
+    row s '{{.Service}}' "service names"
+    row p 'table {{.Service}}\t{{.State}}\t{{.Ports}}' "service, state, ports" pin ;;
 esac
