@@ -579,3 +579,19 @@ The cache starts to pay off only for very large specs, hence the 100 KB threshol
 | ~1 MB | ~17 ms | ~28 ms |
 
 So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
+
+## mvn test names
+
+`mvn test -Dtest=<TAB>` (and `-Dit.test=`) scans `src/test` for test classes and methods, which
+can take seconds in big projects. The results are saved in `~/.cache/autocomplete/mvn-tests/` (per
+project directory) and reused until a file under any `src/test` directory changes (added,
+edited or deleted), or for 1 hour at most. A test module added since the last scan only shows up
+after that hour; delete the directory to rescan right away. `AUTOCOMPLETE_NOCACHE` doesn't affect
+this cache.
+
+## java main classes
+
+`java <TAB>` lists the `*.java` files under the current directory that declare `main(`. The list is
+saved in `~/.cache/autocomplete/java-mains/` (per project directory) and reused until a `.java`
+file is edited, added, deleted or renamed, or for 1 hour at most. Delete the directory to rescan
+right away. `AUTOCOMPLETE_NOCACHE` doesn't affect this cache.
