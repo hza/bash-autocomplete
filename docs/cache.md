@@ -45,7 +45,8 @@ this cache.
 
 ## java main classes
 
-`java <TAB>` lists the `*.java` files under the current directory that declare `main(`. The list is
-saved in `~/.cache/autocomplete/java-mains/` (per project directory) and reused until a `.java`
+`java <TAB>` lists the `*.java` files under the current directory that declare `main(`;
+`mvn exec:java -Dexec.mainClass=<TAB>` offers the same files under `src/main/java` or `src/test/java`
+as class names (`com.example.App`). The list is saved in `~/.cache/autocomplete/java-mains/` (per project directory) and reused until a `.java`
 file is edited, added, deleted or renamed, or for 1 hour at most. Delete the directory to rescan
 right away. `AUTOCOMPLETE_NOCACHE` doesn't affect this cache.

@@ -45,7 +45,9 @@ flags:
   '-Dspring-boot.run.jvmArguments=':
     description: "JVM args for spring-boot:run"
     value: {exec: "printf '%s\\t%s\\n' -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 'Debug on port 5005' -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 'Debug on 5005, wait for debugger' -Xmx512m 'Max heap 512 MB' -Xmx1g 'Max heap 1 GB' -Xmx2g 'Max heap 2 GB' -XX:+HeapDumpOnOutOfMemoryError 'Heap dump on OOM'"}
-  '-Dexec.mainClass=': {description: "Main class for exec:java"}
+  '-Dexec.mainClass=':
+    description: "Main class for exec:java"
+    value: {exec: 'sh "$AUTOCOMPLETE_SPEC_DIR/../lang/java.sh" classes'}
   '-Dexec.args=': {description: "Program arguments for exec:java"}
   '-Dexpression=': {description: "Expression for help:evaluate"}
   -DforceStdout: {description: "Print only the value (help:evaluate)"}
