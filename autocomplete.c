@@ -72,15 +72,51 @@ static void init_dirs(void) {
 
 static const char *g_exts[] = {".yaml", ".yml", 0};
 
-/* Path of the YAML spec for `name` (first dir/ext that exists), or 0. */
+static int cmp_str(const void *a, const void *b) {
+    return strcmp(*(char *const *)a, *(char *const *)b);
+}
+
+/* Max subfolder depth searched below each spec dir (guards symlink loops). */
+#define SPEC_DEPTH 4
+
+static int is_subdir(const char *dir, const struct dirent *e) {
+    char p[PATH_MAX];
+    struct stat st;
+    if (e->d_name[0] == '.') return 0;
+    snprintf(p, sizeof p, "%s/%s", dir, e->d_name);
+    return stat(p, &st) == 0 && S_ISDIR(st.st_mode);
+}
+
+/* Spec for `name` in `dir`, else in its subfolders (recursively, sorted). */
+static int find_in(const char *dir, const char *name, char *path, size_t size, int depth) {
+    char *subs[256], sub[PATH_MAX];
+    struct dirent *e;
+    DIR *d;
+    int e2, n = 0, i, found = 0;
+    for (e2 = 0; g_exts[e2]; e2++) {
+        snprintf(path, size, "%s/%s%s", dir, name, g_exts[e2]);
+        if (access(path, R_OK) == 0) return 1;
+    }
+    if (depth >= SPEC_DEPTH || !(d = opendir(dir))) return 0;
+    while ((e = readdir(d)) && n < 256)
+        if (is_subdir(dir, e)) subs[n++] = strdup(e->d_name);
+    closedir(d);
+    qsort(subs, n, sizeof *subs, cmp_str);
+    for (i = 0; i < n; i++) {
+        snprintf(sub, sizeof sub, "%s/%s", dir, subs[i]);
+        if (!found) found = find_in(sub, name, path, size, depth + 1);
+        free(subs[i]);
+    }
+    return found;
+}
+
+/* Path of the YAML spec for `name` (first dir that has it, searched
+ * recursively), or 0. */
 static int find_spec(const char *name, char *path, size_t size) {
-    int i, e;
+    int i;
     if (strchr(name, '/') || name[0] == '.') return 0;
     for (i = 0; i < g_ndirs; i++)
-        for (e = 0; g_exts[e]; e++) {
-            snprintf(path, size, "%s/%s%s", g_dirs[i], name, g_exts[e]);
-            if (access(path, R_OK) == 0) return 1;
-        }
+        if (find_in(g_dirs[i], name, path, size, 0)) return 1;
     return 0;
 }
 
@@ -1180,29 +1216,39 @@ static int do_complete(const char *line, const char *wbreaks) {
 
 /* ----------------------------------------------------------------- main */
 
-/* Call fn for every unique spec name (first dir wins). */
-static void each_spec(void (*fn)(const char *)) {
-    char *names[512];
-    int nn = 0, i, j;
-    for (i = 0; i < g_ndirs; i++) {
-        DIR *d = opendir(g_dirs[i]);
-        struct dirent *e;
-        if (!d) continue;
-        while ((e = readdir(d)) && nn < 512) {
-            size_t len = strlen(e->d_name), xl = 0;
-            int x;
-            if (e->d_name[0] == '.') continue;
-            for (x = 0; g_exts[x]; x++) {
-                xl = strlen(g_exts[x]);
-                if (len > xl && !strcmp(e->d_name + len - xl, g_exts[x])) break;
-            }
-            if (!g_exts[x]) continue;
-            e->d_name[len - xl] = 0;
-            for (j = 0; j < nn && strcmp(names[j], e->d_name); j++) {}
-            if (j == nn) names[nn++] = strdup(e->d_name);
+/* Add spec names found in dir and its subfolders to names (deduplicated). */
+static void collect_specs(const char *dir, char **names, int *nn, int max, int depth) {
+    char sub[PATH_MAX];
+    DIR *d = opendir(dir);
+    struct dirent *e;
+    int j;
+    if (!d) return;
+    while ((e = readdir(d)) && *nn < max) {
+        size_t len = strlen(e->d_name), xl = 0;
+        int x;
+        if (e->d_name[0] == '.') continue;
+        if (is_subdir(dir, e)) {
+            snprintf(sub, sizeof sub, "%s/%s", dir, e->d_name);
+            if (depth < SPEC_DEPTH) collect_specs(sub, names, nn, max, depth + 1);
+            continue;
         }
-        closedir(d);
+        for (x = 0; g_exts[x]; x++) {
+            xl = strlen(g_exts[x]);
+            if (len > xl && !strcmp(e->d_name + len - xl, g_exts[x])) break;
+        }
+        if (!g_exts[x]) continue;
+        e->d_name[len - xl] = 0;
+        for (j = 0; j < *nn && strcmp(names[j], e->d_name); j++) {}
+        if (j == *nn) names[(*nn)++] = strdup(e->d_name);
     }
+    closedir(d);
+}
+
+/* Call fn for every unique spec name (lookup order picks the file). */
+static void each_spec(void (*fn)(const char *)) {
+    char *names[2048];
+    int nn = 0, i;
+    for (i = 0; i < g_ndirs; i++) collect_specs(g_dirs[i], names, &nn, 2048, 0);
     for (i = 0; i < nn; i++) fn(names[i]);
 }
 
@@ -1223,7 +1269,43 @@ static void print_complete(const char *name) {
     }
     printf(" %s", name);
 }
-static void print_name(const char *name) { puts(name); }
+static char *g_list[2048];
+static int g_nlist;
+static void add_name(const char *name) { if (g_nlist < 2048) g_list[g_nlist++] = (char *)name; }
+
+/* `autocomplete list`: sorted; in columns (down, then across, like ls) on a
+ * tty, one per line otherwise (exec completers read it). */
+static void print_names(void) {
+    int i, r, c, w = 0, cols, rows;
+    qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
+    if (!isatty(1)) {
+        for (i = 0; i < g_nlist; i++) puts(g_list[i]);
+        return;
+    }
+    for (i = 0; i < g_nlist; i++)
+        if ((int)strlen(g_list[i]) > w) w = strlen(g_list[i]);
+    w += 2;
+    cols = term_width() / w;
+    if (cols < 1) cols = 1;
+    rows = (g_nlist + cols - 1) / cols;
+    for (r = 0; r < rows; r++) {
+        for (c = 0; c < cols && (i = c * rows + r) < g_nlist; c++)
+            printf("%-*s", c + 1 < cols && i + rows < g_nlist ? w : 0, g_list[i]);
+        putchar('\n');
+    }
+}
+/* "NAME<TAB>PATH" of the file lookup picks; " -> TARGET" for symlinks (aliases) */
+static void print_path(const char *name) {
+    char path[PATH_MAX], target[PATH_MAX];
+    ssize_t len;
+    if (!find_spec(name, path, sizeof path)) return;
+    len = readlink(path, target, sizeof target - 1);
+    if (len >= 0) {
+        target[len] = 0;
+        printf("%s\t%s -> %s\n", name, path, target);
+    } else
+        printf("%s\t%s\n", name, path);
+}
 
 static int g_cache_failed;
 
@@ -1287,10 +1369,6 @@ static int alias_rm(const char *dir, int argc, char **argv) {
     }
     if (removed) reload_hint();
     return rc;
-}
-
-static int cmp_str(const void *a, const void *b) {
-    return strcmp(*(char *const *)a, *(char *const *)b);
 }
 
 /* `autocomplete alias --list`: print "NAME -> CMD" for each alias symlink,
@@ -1538,12 +1616,13 @@ int main(int argc, char **argv) {
     if (argc >= 4 && !strcmp(argv[1], "from") && !strcmp(argv[2], "man"))
         return man_cmds(argc - 3, argv + 3);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
-        each_spec(print_name);
+        if (argc >= 3 && !strcmp(argv[2], "--paths")) each_spec(print_path);
+        else { each_spec(add_name); print_names(); }
         return 0;
     }
     fprintf(stderr,
             "usage: autocomplete bash              print bash init script\n"
-            "       autocomplete list              list available specs\n"
+            "       autocomplete list [--paths]    list available specs (with the file each resolves to)\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete from man [--force] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"

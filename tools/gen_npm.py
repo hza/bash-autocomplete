@@ -1,6 +1,6 @@
-"""Regenerate specs/npm.yaml from the installed npm.
+"""Regenerate specs/lang/npm.yaml from the installed npm.
 
-Usage: python3 tools/gen_npm.py specs/npm.yaml
+Usage: python3 tools/gen_npm.py specs/lang/npm.yaml
 
 Commands, aliases, subcommands and per-command flags come from `npm <cmd> --help`;
 flag descriptions from npm's docs/content/using-npm/config.md. Hand-written parts of

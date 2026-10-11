@@ -170,6 +170,12 @@ The first match wins, so your own files override the bundled ones:
 3. `specs/` next to the binary
 4. `../share/autocomplete` relative to the binary (where `make install` puts them)
 
-Files must be named `<command>.yaml` or `<command>.yml`.
+Files must be named `<command>.yaml` or `<command>.yml`. Inside each directory,
+specs may be organised into subfolders (up to 4 levels deep): a file directly in
+the directory wins over one in a subfolder, and subfolders are searched in
+alphabetical order. Helper scripts used by `exec` (see `$AUTOCOMPLETE_SPEC_DIR`)
+belong in the same folder as their spec.
 
-The bundled [`specs/`](../specs) (e.g. docker, git, gh, kubectl, make, npm) are good real-world examples.
+The bundled [`specs/`](../specs) are grouped by topic (`vcs/`, `cloud/`, `lang/`,
+`build/`, `macos/`, `net/`, `shell/`, `tools/`); e.g. `vcs/git.yaml`,
+`cloud/docker.yaml`, `lang/npm.yaml` are good real-world examples.

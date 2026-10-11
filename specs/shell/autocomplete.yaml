@@ -4,6 +4,8 @@ commands:
     description: "Print the bash init script (use with eval)"
   list:
     description: "List commands that have a spec"
+    flags:
+      --paths: {description: "Also show the spec file each command uses"}
   check:
     description: "Validate a spec and print it as JSON"
     args: file

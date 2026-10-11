@@ -2,6 +2,9 @@ PREFIX ?= /usr/local
 CFLAGS ?= -O2 -Wall -Wextra
 PROFILE ?= $(HOME)/.bashrc
 INIT = eval "$$(autocomplete bash)"
+# Bundled spec files (yaml + helper scripts), relative to specs/, any depth
+SPEC_FILES := $(shell cd specs && find . \( -name '*.yaml' -o -name '*.js' -o -name '*.sh' \) | sed 's|^\./||' | sort)
+SPEC_DIRS := $(sort $(filter-out ./,$(dir $(SPEC_FILES))))
 
 autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the autocomplete binary
 	$(CC) $(CFLAGS) -o $@ autocomplete.c yaml.c manparse.c
@@ -9,7 +12,11 @@ autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the a
 install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 	install -d $(PREFIX)/bin $(PREFIX)/share/autocomplete
 	install -m 755 autocomplete $(PREFIX)/bin/autocomplete
-	install -m 644 specs/*.yaml specs/*.js specs/*.sh $(PREFIX)/share/autocomplete/
+	@for f in $(SPEC_FILES); do \
+		install -d $(PREFIX)/share/autocomplete/$$(dirname $$f) && \
+		install -m 644 specs/$$f $(PREFIX)/share/autocomplete/$$f || exit 1; \
+	done
+	@echo "installed $(words $(SPEC_FILES)) spec files to $(PREFIX)/share/autocomplete"
 	@# skip under sudo: a root-owned ~/.cache would block later rebuilds
 	@[ "$$(id -u)" = 0 ] || $(PREFIX)/bin/autocomplete cache
 	@if grep -qF 'autocomplete bash' $(PROFILE) 2>/dev/null; then \
@@ -51,10 +58,10 @@ install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 # Removes only what install added: the binary, our bundled specs, and the
 # exact init line (~/.config/autocomplete is left alone).
 uninstall:  ## Remove everything install added
-	rm -f $(addprefix $${XDG_CACHE_HOME:-$(HOME)/.cache}/autocomplete/,$(patsubst specs/%.yaml,%.cache,$(wildcard specs/*.yaml)))
+	rm -f $(addprefix $${XDG_CACHE_HOME:-$(HOME)/.cache}/autocomplete/,$(patsubst %.yaml,%.cache,$(notdir $(filter %.yaml,$(SPEC_FILES)))))
 	rm -f $(PREFIX)/bin/autocomplete
-	rm -f $(addprefix $(PREFIX)/share/autocomplete/,$(notdir $(wildcard specs/*.yaml specs/*.js specs/*.sh)))
-	rmdir $(PREFIX)/share/autocomplete 2>/dev/null || true
+	rm -f $(addprefix $(PREFIX)/share/autocomplete/,$(SPEC_FILES))
+	rmdir $(addprefix $(PREFIX)/share/autocomplete/,$(SPEC_DIRS)) $(PREFIX)/share/autocomplete 2>/dev/null || true
 	@if grep -qxF '$(INIT)' $(PROFILE) 2>/dev/null; then \
 		sed -i '' '/^eval "\$$(autocomplete bash)"$$/d' $(PROFILE); \
 		echo '$(PROFILE): removed $(INIT)'; \

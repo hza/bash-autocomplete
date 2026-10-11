@@ -53,7 +53,7 @@ autocomplete works with the bash already on your Mac:
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
-  **tmux**, **kill**, **pkill**, **killall**, **jq**, **curl**, **wget**, **code** (VS Code),
+  **tmux**, **kill**, **pkill**, **killall**, **help** (bash builtins), **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
   **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
@@ -162,6 +162,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
 | `autocomplete list` | List commands that have a spec. |
+| `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete from man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
@@ -209,7 +210,7 @@ make clean
 ```
 
 The code is plain C with no dependencies: `autocomplete.c` (engine), `yaml.c` (YAML
-reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`.
+reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`, grouped into topic subfolders (`vcs/`, `cloud/`, `lang/`, …); specs are found at any depth.
 
 ## License
 
@@ -444,9 +445,15 @@ The first match wins, so your own files override the bundled ones:
 3. `specs/` next to the binary
 4. `../share/autocomplete` relative to the binary (where `make install` puts them)
 
-Files must be named `<command>.yaml` or `<command>.yml`.
+Files must be named `<command>.yaml` or `<command>.yml`. Inside each directory,
+specs may be organised into subfolders (up to 4 levels deep): a file directly in
+the directory wins over one in a subfolder, and subfolders are searched in
+alphabetical order. Helper scripts used by `exec` (see `$AUTOCOMPLETE_SPEC_DIR`)
+belong in the same folder as their spec.
 
-The bundled [`specs/`](../specs) (e.g. docker, git, gh, kubectl, make, npm) are good real-world examples.
+The bundled [`specs/`](../specs) are grouped by topic (`vcs/`, `cloud/`, `lang/`,
+`build/`, `macos/`, `net/`, `shell/`, `tools/`); e.g. `vcs/git.yaml`,
+`cloud/docker.yaml`, `lang/npm.yaml` are good real-world examples.
 
 ---
 

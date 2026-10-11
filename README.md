@@ -154,6 +154,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
 | `autocomplete list` | List commands that have a spec. |
+| `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete from man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
@@ -201,7 +202,7 @@ make clean
 ```
 
 The code is plain C with no dependencies: `autocomplete.c` (engine), `yaml.c` (YAML
-reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`.
+reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`, grouped into topic subfolders (`vcs/`, `cloud/`, `lang/`, …); specs are found at any depth.
 
 ## License
 
