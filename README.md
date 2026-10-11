@@ -201,8 +201,10 @@ make            # builds ./autocomplete
 make clean
 ```
 
-The code is plain C with no dependencies: `autocomplete.c` (engine), `yaml.c` (YAML
-reader and writer) and `manparse.c` (man page reader). Bundled specs live in `specs/`, grouped into topic subfolders (`vcs/`, `cloud/`, `lang/`, …); specs are found at any depth.
+The code is plain C with no dependencies, in `src/`: `main.c` (subcommands), `complete.c`
+(spec walk), `output.c` (candidate list and display), `builtins.c` (files, make, `$PATH`,
+`exec` completers), `spec.c` (spec lookup and cache), `yaml.c` (YAML reader and writer),
+`manparse.c` (man page reader) and `util.c`. Bundled specs live in `specs/`, grouped into topic subfolders (`vcs/`, `cloud/`, `lang/`, …); specs are found at any depth.
 
 ## License
 

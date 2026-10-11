@@ -6,8 +6,11 @@ INIT = eval "$$(autocomplete bash)"
 SPEC_FILES := $(shell cd specs && find . \( -name '*.yaml' -o -name '*.js' -o -name '*.sh' \) | sed 's|^\./||' | sort)
 SPEC_DIRS := $(sort $(filter-out ./,$(dir $(SPEC_FILES))))
 
-autocomplete: autocomplete.c yaml.c yaml.h manparse.c manparse.h  ## Build the autocomplete binary
-	$(CC) $(CFLAGS) -o $@ autocomplete.c yaml.c manparse.c
+SRCS := $(wildcard src/*.c)
+HDRS := $(wildcard src/*.h)
+
+autocomplete: $(SRCS) $(HDRS)  ## Build the autocomplete binary
+	$(CC) $(CFLAGS) -o $@ $(SRCS)
 
 install: autocomplete  ## Install binary and specs, set up ~/.bashrc
 	install -d $(PREFIX)/bin $(PREFIX)/share/autocomplete

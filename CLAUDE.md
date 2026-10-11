@@ -8,7 +8,13 @@ Bash completion engine in C. Target: macOS stock `/bin/bash` 3.2 + Apple clang. 
 - When a change affects users (new spec, new command, install behaviour, schema change), update the matching README/docs page; update this file only if agent-relevant facts changed.
 
 ## Files
-- `autocomplete.c` — engine: spec dir lookup, line tokenizer (`split`), spec walk (`do_complete`), candidate output (`emit`), built-in completers (`complete_files`, `complete_make_targets`), `bash`/`list`/`check`/`_complete` subcommands.
+- Sources in `src/`, each `.c` with a same-named `.h` (public API; everything else `static`). Makefile builds `src/*.c` into `./autocomplete` (binary stays at repo root: `<bin dir>/specs` lookup).
+  - `main.c` — `bash`/`list`/`check`/`cache`/`alias`/`from man`/`_complete` subcommands.
+  - `complete.c` — line tokenizer (`split`), spec walk (`do_complete`), `complete_value`, `emit_commands`, `check_groups`.
+  - `output.c` — candidate queue (`emit`/`emit_desc`), folding (`collapse_vars`/`collapse_flags`/`merge_pairs`/`group_flags`/`add_examples`), `flush`. Owns the `g_*` emit-state globals (`output.h`).
+  - `builtins.c` — `complete_files`, `complete_make_targets`/`_variables`, `complete_commands`, `emit_cmd_output`; seen flag values (`g_seen_*`).
+  - `spec.c` — lookup dirs, `find_spec`, `load_spec`, cache, `each_spec`, `spec_desc`.
+  - `util.c` — `cmp_str`, `mkdirs`, `term_width`/`term_rows`, `dwidth`.
 - `yaml.c`/`yaml.h` — own YAML-subset parser → `ynode` tree (`Y_NULL/BOOL/STR/ARR/OBJ`). No numbers: non-null/bool scalars are strings. No anchors, tags, `|`/`>` scalars. Tabs in indent = error.
 - `manparse.c`/`.h` — `man_spec(cmd)`: `MANWIDTH=1000 man -P cat | col -bx` → spec tree. Option entries = lines at the most common indent of entry-shaped lines; value from entry arg or SYNOPSIS `[-x arg]`. Heuristic; curl examples leak a few bogus flags.
 - `autocomplete from man [--force] CMD` writes `~/.config/autocomplete/CMD.yaml` from `man_spec` via `yaml_write` (single-quotes anything ambiguous; `-1`-style keys must be quoted or PyYAML reads ints). No live man fallback: completion always comes from YAML.
