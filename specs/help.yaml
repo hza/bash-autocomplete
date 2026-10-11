@@ -1,0 +1,5 @@
+description: Show help for bash builtins and keywords
+flags:
+  -s: {description: "Short usage synopsis only"}
+args:
+  exec: "compgen -b -k | sort -u | while IFS= read -r b; do s=$(help -s \"$b\" 2>/dev/null | head -1); printf '%s\\t%s\\n' \"$b\" \"${s#\"$b: \"}\"; done"

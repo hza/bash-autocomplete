@@ -45,7 +45,7 @@ autocomplete works with the bash already on your Mac:
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
-  **tmux**, **kill**, **pkill**, **killall**, **jq**, **curl**, **wget**, **code** (VS Code),
+  **tmux**, **kill**, **pkill**, **killall**, **help** (bash builtins), **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
   **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
