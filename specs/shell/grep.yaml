@@ -1,0 +1,120 @@
+description: "Search files for lines matching a pattern"
+flags:
+  -e: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}
+  --regexp: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}
+  -f: {value: file, description: "Read patterns from a file, one per line"}
+  --file: {value: file, description: "Read patterns from a file, one per line"}
+  -i: {description: "Ignore case"}
+  --ignore-case: {description: "Ignore case"}
+  -v: {description: "Select non-matching lines"}
+  --invert-match: {description: "Select non-matching lines"}
+  -w: {description: "Match whole words only"}
+  --word-regexp: {description: "Match whole words only"}
+  -x: {description: "Match whole lines only"}
+  --line-regexp: {description: "Match whole lines only"}
+  -E: {description: "Extended regex: | + ? () {} without backslashes"}
+  --extended-regexp: {description: "Extended regex: | + ? () {} without backslashes"}
+  -F: {description: "Fixed strings, no regex (fast, no escaping)"}
+  --fixed-strings: {description: "Fixed strings, no regex (fast, no escaping)"}
+  -G: {description: "Basic regex (default)"}
+  --basic-regexp: {description: "Basic regex (default)"}
+  -r: {description: "Recurse into directories"}
+  -R: {description: "Recurse into directories"}
+  --recursive: {description: "Recurse into directories"}
+  -n: {description: "Prefix lines with line numbers"}
+  --line-number: {description: "Prefix lines with line numbers"}
+  -c: {description: "Print only a count of matching lines per file"}
+  --count: {description: "Print only a count of matching lines per file"}
+  -l: {description: "Print only names of files with matches"}
+  --files-with-matches: {description: "Print only names of files with matches"}
+  -L: {description: "Print only names of files without matches"}
+  --files-without-match: {description: "Print only names of files without matches"}
+  -o: {description: "Print only the matched parts"}
+  --only-matching: {description: "Print only the matched parts"}
+  -q: {description: "Quiet: exit status only (0 = found)"}
+  --quiet: {description: "Quiet: exit status only (0 = found)"}
+  -s: {description: "No messages about missing or unreadable files"}
+  --no-messages: {description: "No messages about missing or unreadable files"}
+  -H: {description: "Always print file names"}
+  -h: {description: "Never print file names"}
+  --no-filename: {description: "Never print file names"}
+  -b: {description: "Prefix lines with byte offsets"}
+  --byte-offset: {description: "Prefix lines with byte offsets"}
+  -A: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context after each match"}
+  --after-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context after each match"}
+  -B: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context before each match"}
+  --before-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context before each match"}
+  -C: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context around each match"}
+  --context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context around each match"}
+  -m: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Stop after this many matches per file"}
+  --max-count: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Stop after this many matches per file"}
+  --include: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "With -r: only files matching a glob (repeatable)", repeat: true}
+  --exclude: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "With -r: skip files matching a glob (repeatable)", repeat: true}
+  --exclude-dir: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" dir"}, description: "With -r: skip directories matching a glob (repeatable)", repeat: true}
+  --include-dir: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" dir"}, description: "With -r: only directories matching a glob", repeat: true}
+  --color: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" color"}, description: "Highlight matches: auto, always, never"}
+  --binary-files: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" binary"}, description: "How to treat binary files"}
+  -a: {description: "Treat binary files as text"}
+  --text: {description: "Treat binary files as text"}
+  -I: {description: "Skip binary files"}
+  -D: {value: {exec: "printf '%s\\t%s\\n' read 'read devices and FIFOs' skip 'skip them'"}, description: "Devices and FIFOs: read or skip"}
+  -d: {value: {exec: "printf '%s\\t%s\\n' read 'read as files' recurse 'like -r' skip 'skip them'"}, description: "Directories: read, recurse or skip"}
+  -z: {description: "Input lines end with NUL, not newline"}
+  --null-data: {description: "Input lines end with NUL, not newline"}
+  --null: {description: "NUL after file names (for xargs -0 with -l)"}
+  -Z: {description: "Search compressed files (gzip)"}
+  --decompress: {description: "Search compressed files (gzip)"}
+  -J: {description: "Search bzip2 compressed files"}
+  -O: {description: "With -r: follow symlinks given on the command line only"}
+  -S: {description: "With -r: follow all symbolic links"}
+  -p: {description: "With -r: follow no symbolic links (default)"}
+  -U: {description: "Binary search, don't touch CR/LF"}
+  --line-buffered: {description: "Flush after every line (for tail -f pipelines)"}
+  --label: {value: any, description: "File name to show for standard input"}
+  --help: {description: "Show help"}
+  -V: {description: "Version information"}
+  --version: {description: "Version information"}
+examples:
+  - command: "grep -rn TODO ."
+    description: "TODO lines with file and line number"
+  - command: "grep -rnw main --include='*.c' ."
+    description: "whole word in C sources only"
+  - command: "grep -ril password --exclude-dir=.git ."
+    description: "files mentioning a word, skipping .git"
+  - command: "grep -v '^#' config.txt"
+    description: "drop comment lines"
+  - command: "grep -v -e '^$' -e '^#' config.txt"
+    description: "drop empty and comment lines"
+  - command: "grep -c ERROR app.log"
+    description: "count matching lines"
+  - command: "grep -C 3 Exception app.log"
+    description: "3 lines of context around matches"
+  - command: "grep -E 'error|warn' app.log"
+    description: "either word (extended regex)"
+  - command: "grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+' access.log"
+    description: "extract IPv4-like addresses"
+  - command: "grep -F '[x]' notes.md"
+    description: "literal text, no regex escaping"
+  - command: "grep -L license -r src"
+    description: "files missing a word"
+  - command: "grep -m 1 version package.json"
+    description: "first match only"
+  - command: "grep -q pattern file && echo found"
+    description: "test for a match in a script"
+  - command: "grep -x 'exact line' file.txt"
+    description: "whole line must match"
+  - command: "grep -o 'https\\?://[^ ]*' page.html"
+    description: "extract URLs"
+  - command: "grep -rl old src | xargs sed -i '' 's/old/new/g'"
+    description: "replace in every file containing a word"
+  - command: "grep -Z error logs.gz"
+    description: "search a gzip-compressed file"
+  - command: "grep -e -v file.txt"
+    description: "pattern that starts with a dash"
+  - command: "grep -h -r import --include='*.py' . | sort | uniq -c"
+    description: "count distinct import lines"
+  - command: "grep --line-buffered ERROR <(tail -f app.log)"
+    description: "follow a log as it grows"
+positional:
+  - {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}
+args: file
