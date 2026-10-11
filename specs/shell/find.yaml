@@ -1,38 +1,38 @@
 description: "Walk a file hierarchy and act on matching files"
 flags:
-  -name: {value: any, description: "Last path component matches a glob, e.g. '*.log'"}
-  -iname: {value: any, description: "Like -name, case insensitive"}
-  -path: {value: any, description: "Whole path matches a glob, e.g. '*/build/*'"}
-  -ipath: {value: any, description: "Like -path, case insensitive"}
-  -regex: {value: any, description: "Whole path matches a regular expression"}
-  -iregex: {value: any, description: "Like -regex, case insensitive"}
+  -name: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" name"}, description: "Last path component matches a glob, e.g. '*.log'"}
+  -iname: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" name"}, description: "Like -name, case insensitive"}
+  -path: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" path"}, description: "Whole path matches a glob, e.g. '*/build/*'"}
+  -ipath: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" path"}, description: "Like -path, case insensitive"}
+  -regex: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" regex"}, description: "Whole path matches a regular expression"}
+  -iregex: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" regex"}, description: "Like -regex, case insensitive"}
   -type: {value: {exec: "printf '%s\\t%s\\n' f file d directory l symlink p fifo s socket b block c character"}, description: "File type: f file, d dir, l symlink, p fifo, s socket"}
-  -size: {value: any, description: "Size in 512-byte blocks, or with k/M/G suffix; +n more, -n less"}
+  -size: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" size"}, description: "Size in 512-byte blocks, or with k/M/G suffix; +n more, -n less"}
   -empty: {description: "Empty file or directory"}
-  -mtime: {value: any, description: "Modified n days ago (+n more, -n less; units s/m/h/d/w)"}
-  -mmin: {value: any, description: "Modified n minutes ago (+n more, -n less)"}
-  -atime: {value: any, description: "Accessed n days ago"}
-  -amin: {value: any, description: "Accessed n minutes ago"}
-  -ctime: {value: any, description: "Status changed n days ago"}
-  -cmin: {value: any, description: "Status changed n minutes ago"}
-  -Btime: {value: any, description: "Created n days ago"}
-  -Bmin: {value: any, description: "Created n minutes ago"}
+  -mtime: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" time"}, description: "Modified n days ago (+n more, -n less; units s/m/h/d/w)"}
+  -mmin: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" min"}, description: "Modified n minutes ago (+n more, -n less)"}
+  -atime: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" time"}, description: "Accessed n days ago"}
+  -amin: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" min"}, description: "Accessed n minutes ago"}
+  -ctime: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" time"}, description: "Status changed n days ago"}
+  -cmin: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" min"}, description: "Status changed n minutes ago"}
+  -Btime: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" time"}, description: "Created n days ago"}
+  -Bmin: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" min"}, description: "Created n minutes ago"}
   -newer: {value: file, description: "Modified more recently than this file"}
-  -newermt: {value: any, description: "Modified after a date, e.g. '2024-01-31 12:00'"}
+  -newermt: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" date"}, description: "Modified after a date, e.g. '2024-01-31 12:00'"}
   -samefile: {value: file, description: "Hard link to this file"}
   -inum: {value: any, description: "Inode number n"}
-  -links: {value: any, description: "Has n hard links"}
-  -perm: {value: any, description: "Permission bits: exact 644, -mode all set, +mode any set"}
+  -links: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" links"}, description: "Has n hard links"}
+  -perm: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" perm"}, description: "Permission bits: exact 644, -mode all set, +mode any set"}
   -user: {value: "@users", description: "Owned by this user"}
-  -group: {value: any, description: "Owned by this group"}
+  -group: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" group"}, description: "Owned by this group"}
   -nouser: {description: "Owner has no user entry"}
   -nogroup: {description: "Group has no group entry"}
-  -fstype: {value: any, description: "On a file system of this type (apfs, nfs, local, rdonly)"}
+  -fstype: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" fstype"}, description: "On a file system of this type (apfs, nfs, local, rdonly)"}
   -xattr: {description: "Has extended attributes"}
-  -xattrname: {value: any, description: "Has this extended attribute, e.g. com.apple.quarantine"}
-  -lname: {value: any, description: "Symlink target matches a glob"}
-  -maxdepth: {value: any, description: "Descend at most n levels"}
-  -mindepth: {value: any, description: "Skip tests at levels below n"}
+  -xattrname: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" xattr"}, description: "Has this extended attribute, e.g. com.apple.quarantine"}
+  -lname: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" name"}, description: "Symlink target matches a glob"}
+  -maxdepth: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" depth"}, description: "Descend at most n levels"}
+  -mindepth: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" depth"}, description: "Skip tests at levels below n"}
   -prune: {description: "Don't descend into the matched directory"}
   -xdev: {description: "Stay on one file system"}
   -depth: {description: "Depth-first: contents before the directory"}
