@@ -93,8 +93,8 @@ static void cache_spec(const char *name) {
     struct stat st;
     ynode *n;
     if (!find_spec(name, path, sizeof path)) {
-        fprintf(stderr, "%s: no such spec\n", name);
-        g_cache_failed = 1;
+        /* listed but unreadable: a dangling symlink (e.g. a stale alias); warn only */
+        fprintf(stderr, "%s: no such spec (broken symlink? fix: autocomplete alias --force CMD %s)\n", name, name);
         return;
     }
     if (stat(path, &st) == 0 && st.st_size <= CACHE_MIN) return;

@@ -37,4 +37,4 @@ flags:
   -X: {description: print help on extra options}
   --help: {description: print help}
   --help-extra: {description: print help on extra options}
-args: file
+args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/java.sh\""}

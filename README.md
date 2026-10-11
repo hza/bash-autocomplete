@@ -76,7 +76,7 @@ autocomplete works with the bash already on your Mac:
   - node: `package.json` scripts for `--run`, test reporters; npx, bunx: binaries in `node_modules/.bin`
   - bun: scripts, dependencies (`remove`, `why`, `update`), `node_modules/.bin` for `bun x`
   - python: module names for `-m` (`python3 -m http<TAB>` → `http.server`)
-  - java: module names (`-m`, `--add-modules`), jars and class paths
+  - java: source files to run (`java <TAB>`: `*.java` files under the cwd declaring `main`), module names (`-m`, `--add-modules`), jars and class paths
   - aws: profiles, regions, S3 buckets; tmux: sessions and buffers
   - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
