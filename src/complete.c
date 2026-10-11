@@ -230,6 +230,32 @@ static int exec_cached(const char *ex, long ttl, char *shell, size_t size) {
     return 1;
 }
 
+static int is_true(const ynode *n) { return n && n->type == Y_BOOL && n->b; }
+
+/* `examples: true` on an exec value: its "value<TAB>desc" lines become
+ * numbered examples (add_examples with an empty g_examples_name: "@id" is
+ * replaced by the whole value, single-quoted). */
+static void exec_examples(const char *shell) {
+    static ynode *arr;
+    char line[4096];
+    FILE *f = popen(shell, "r");
+    if (!f) return;
+    if (!arr) arr = yaml_new(NULL, Y_ARR, NULL, NULL);
+    while (fgets(line, sizeof line, f)) {
+        char *tab, *nl = strchr(line, '\n');
+        ynode *e;
+        if (nl) *nl = 0;
+        if (!*line) continue;
+        if ((tab = strchr(line, '\t'))) *tab++ = 0;
+        e = yaml_new(arr, Y_OBJ, NULL, NULL);
+        yaml_new(e, Y_STR, "command", line);
+        if (tab && *tab) yaml_new(e, Y_STR, "description", tab);
+    }
+    pclose(f);
+    g_examples = arr;
+    g_examples_name = "";
+}
+
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
  * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
@@ -262,6 +288,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         if (!ex || ex->type != Y_STR) break;
         if (!(ca && ca->type == Y_STR && exec_cached(ex->str, atol(ca->str), shell, sizeof shell)))
             snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
+        if (is_true(yaml_get(v, "examples"))) { exec_examples(shell); break; }
         g_kind = NULL;
         g_nofilter = fl && fl->type == Y_BOOL && !fl->b;
         setenv("AUTOCOMPLETE_CUR", g_cur, 1); /* the word being completed, unescaped */

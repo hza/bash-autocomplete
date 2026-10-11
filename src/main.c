@@ -334,9 +334,9 @@ static int complete_env(void) {
        (-o bashdefault) and sees unexported shell variables too */
     for (i = strlen(buf); i > 0 && !isspace((unsigned char)buf[i - 1]) && !strchr(wb, buf[i - 1]); i--) {}
     if (buf[i] == '$') { free(buf); return 0; }
-    /* `user@host` word: same for bash's hostname completion; a bare `@x`
+    /* `user@host` word: same for bash's hostname completion; a bare `@x` or `--flag=@x`
        stays ours (spec examples) */
-    if (i >= 2 && buf[i - 1] == '@' && !isspace((unsigned char)buf[i - 2])) { free(buf); return 0; }
+    if (i >= 2 && buf[i - 1] == '@' && !isspace((unsigned char)buf[i - 2]) && buf[i - 2] != '=') { free(buf); return 0; }
     rc = do_complete(buf, wb);
     flush();
     free(buf);

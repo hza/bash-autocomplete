@@ -97,6 +97,7 @@ A value can be:
 | &nbsp;&nbsp;`tree: "."` | the same, folding at another separator character (e.g. `com.` for UTIs in duti) |
 | &nbsp;&nbsp;`cache: 300` | reuse the output for that many seconds (per command, current directory and, if the command reads `$AUTOCOMPLETE_CUR`, typed word), for slow commands; kept in `~/.cache/autocomplete/exec/` |
 | &nbsp;&nbsp;`filter: false` | show every line the command prints, even ones not starting with the typed word (the command filters itself, e.g. duti turns `md` into `net.daringfireball.markdown`) |
+| &nbsp;&nbsp;`examples: true` | list the `value<TAB>description` lines as numbered `1️⃣ @1`, `2️⃣ @2` … entries; typing `@2` and TAB inserts that value single-quoted (good for templates such as docker `--format`) |
 | `"@subcommands"` | the parent command's subcommands (e.g. `git help <TAB>`) |
 | `"@command"` | a command from `$PATH`; the words after it are completed with that command's spec (e.g. `sudo`, `xargs`). Words with `=` before the command are skipped (`env FOO=1 git …`), and so is `!` (`if ! git …`). Use it as `args`. If the spec has `examples`, an empty word shows them instead of every executable (`if <TAB>`) |
 | `"@make-targets"` | targets of the Makefile, with descriptions (see below) |

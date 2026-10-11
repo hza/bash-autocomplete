@@ -411,7 +411,8 @@ static void group_flags(void) {
  * "<name> "; bash keeps a leading "@" in the replaced text (readline
  * special prefix, verified in pty). Examples not starting with "<name> "
  * (pipelines) are only listed. When the empty word has other candidates
- * (lsof: files), examples are listed only on "@". */
+ * (lsof: files), examples are listed only on "@". An empty g_examples_name
+ * (exec `examples: true` flag values) substitutes the whole value, quoted. */
 const ynode *g_examples;
 const char *g_examples_name;
 
@@ -438,6 +439,16 @@ static void add_examples(void) {
         char id;
         if (!cmd || cmd->type != Y_STR) continue;
         id = EXAMPLE_IDS[n++];
+        if (want == n && !nl) { /* flag value (exec examples): quoted whole */
+            char q[4096], *o = q;
+            const char *c;
+            *o++ = '\'';
+            for (c = cmd->str; *c && o < q + sizeof q - 6; c++)
+                if (*c == '\'') { memcpy(o, "'\\''", 4); o += 4; } else *o++ = *c;
+            *o++ = '\''; *o = 0;
+            emit_desc(q, 1, NULL);
+            break;
+        }
         if (want == n && !strncmp(cmd->str, g_examples_name, nl) && cmd->str[nl] == ' ') {
             emit_desc(cmd->str + nl + 1, 1, NULL);
             break;
