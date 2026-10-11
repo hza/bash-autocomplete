@@ -9,6 +9,7 @@ flags:
   --bare: {description: "Treat the repository as a bare repository"}
   --help: {description: "Show help", show: always}
   --version: {description: "Print the git version", show: always}
+alias_exec: git config --get-regexp '^alias\.' | sed 's/^alias\.//'
 commands:
   add:
     description: Add file contents to the index
@@ -168,7 +169,6 @@ commands:
       tree: true
   branch:
     description: List, create, or delete branches
-    aliases: [br]
     flags:
       -a: {description: "List both remote-tracking and local branches", show: always}
       --all: {description: "List both remote-tracking and local branches", show: always}
@@ -196,7 +196,6 @@ commands:
       tree: true
   checkout:
     description: Switch branches or restore working tree files
-    aliases: [co]
     flags:
       -b: {value: any, description: "Create and checkout a new branch", show: always}
       -B: {value: any, description: "Create/reset and checkout a branch"}
@@ -251,7 +250,6 @@ commands:
       tree: true
   rebase:
     description: Reapply commits on top of another base tip
-    aliases: [re]
     flags:
       -i: {description: "Let the user edit the list of commits to rebase", show: always}
       --interactive: {description: "Let the user edit the list of commits to rebase", show: always}
@@ -267,7 +265,6 @@ commands:
       tree: true
   cherry-pick:
     description: Apply the changes introduced by some existing commits
-    aliases: [cp]
     flags:
       --continue: {description: "Resume revert or cherry-pick sequence"}
       --abort: {description: "Cancel revert or cherry-pick sequence"}
@@ -326,7 +323,6 @@ commands:
       exec: git tag
   fetch:
     description: Download objects and refs from another repository
-    aliases: [fe]
     flags:
       --all: {description: "Fetch from all remotes", show: always}
       -p: {description: "Prune remote-tracking branches no longer on remote", show: always}
@@ -353,7 +349,6 @@ commands:
         tree: true
   push:
     description: Update remote refs along with associated objects
-    aliases: [pu]
     flags:
       -u: {description: "Set upstream for git pull/status", show: always}
       --set-upstream: {description: "Set upstream for git pull/status", show: always}

@@ -67,27 +67,118 @@ static int when_ok(const ynode *spec) {
     return ok;
 }
 
-/* Emit every subcommand of `cmds` whose "when" holds. "aliases" are not
- * listed, only shown in the description ("desc (co, ch)"); an alias typed
- * in full is emitted. */
-static void emit_commands(const ynode *cmds) {
-    const ynode *c, *a, *al;
+/* "alias_exec: CMD": user-defined aliases of a spec's subcommands (git's
+ * alias.*), one "name expansion" line each (space or tab). Run once per
+ * spec. */
+#define MAXALIAS 256
+static const ynode *g_al_spec;
+static char *g_al_name[MAXALIAS], *g_al_exp[MAXALIAS];
+static int g_nal;
+
+static void load_aliases(const ynode *spec) {
+    const ynode *ex = yaml_get(spec, "alias_exec");
+    char shell[4096], line[2048];
+    FILE *f;
+    int i;
+    if (spec == g_al_spec) return;
+    g_al_spec = spec;
+    g_nal = 0;
+    if (!ex || ex->type != Y_STR) return;
+    snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
+    if (!(f = popen(shell, "r"))) return;
+    while (g_nal < MAXALIAS && fgets(line, sizeof line, f)) {
+        char *sep;
+        line[strcspn(line, "\r\n")] = 0;
+        if (!(sep = strpbrk(line, " \t")) || sep == line) continue;
+        *sep++ = 0;
+        /* a later line (git: local config after global) overrides */
+        for (i = 0; i < g_nal && strcmp(g_al_name[i], line); i++) {}
+        if (i == g_nal) g_al_name[g_nal++] = strdup(line);
+        g_al_exp[i] = strdup(sep + strspn(sep, " \t"));
+    }
+    pclose(f);
+}
+
+static const char *alias_exp(const ynode *spec, const char *name) {
+    int i;
+    load_aliases(spec);
+    for (i = 0; i < g_nal; i++)
+        if (!strcmp(g_al_name[i], name)) return g_al_exp[i];
+    return NULL;
+}
+
+static const ynode *find_command(const ynode *cmds, const char *name);
+static int find_flag(const ynode *cmd, const char *name, const ynode **val);
+static int takes_value(const ynode *v);
+
+/* Subcommand an alias stands for: the first word of its expansion that is
+ * not a flag ("-c x=y" values skipped when the spec's flag takes one),
+ * following alias chains. Shell aliases ("!...") only via a ": <cmd> <sub>"
+ * hint, as in git's completion ("!f() { : git checkout ; ...}; f"). */
+static const ynode *resolve_alias(const ynode *spec, const char *name, int depth) {
+    const char *e = alias_exp(spec, name), *p;
+    char word[256];
+    if (!e || depth > 8) return NULL;
+    if (*e == '!') {
+        if (!(p = strstr(e, ": "))) return NULL;
+        p += 2;
+        p += strcspn(p, " \t;"); /* the command name */
+    } else {
+        p = e;
+    }
+    for (;;) {
+        const ynode *s, *v = NULL;
+        size_t len;
+        p += strspn(p, " \t");
+        if (!*p || *p == ';') return NULL;
+        len = strcspn(p, " \t;");
+        snprintf(word, sizeof word, "%.*s", (int)len, p);
+        p += len;
+        if (word[0] == '-') {
+            if (!strchr(word, '=') && find_flag(spec, word, &v) && takes_value(v)) {
+                p += strspn(p, " \t");
+                p += strcspn(p, " \t;");
+            }
+            continue;
+        }
+        if ((s = find_command(yaml_get(spec, "commands"), word))) return s;
+        return resolve_alias(spec, word, depth + 1);
+    }
+}
+
+/* Emit every subcommand of `spec` whose "when" holds. "aliases" and
+ * "alias_exec" renames are not listed, only shown in the description
+ * ("desc (🔥 co, ch)"); an alias typed in full is emitted. */
+static void emit_commands(const ynode *spec) {
+    const ynode *cmds = yaml_get(spec, "commands"), *c, *a;
+    int i;
     g_kind = "command";
+    load_aliases(spec);
+    /* aliases with arguments ("cob = checkout -b") are listed on their own */
+    for (i = 0; i < g_nal; i++) {
+        char buf[1024];
+        if (find_command(cmds, g_al_exp[i])) continue;
+        snprintf(buf, sizeof buf, "alias: %s", g_al_exp[i]);
+        emit_desc(g_al_name[i], 1, strdup(buf));
+    }
     for (c = cmds ? cmds->child : NULL; c; c = c->next) {
         const char *d = spec_desc(c);
         char buf[1024];
-        size_t len;
+        size_t len, base;
         if (!when_ok(c)) continue;
-        al = yaml_get(c, "aliases");
-        al = al && al->type == Y_ARR ? al->child : NULL;
-        if (!al) { emit_desc(c->key, 1, d); continue; }
-        len = (size_t)snprintf(buf, sizeof buf, "%s%s(", d ? d : "", d ? " " : "");
-        for (a = al; a && len < sizeof buf; a = a->next)
-            if (a->type == Y_STR) {
-                len += (size_t)snprintf(buf + len, sizeof buf - len, "%s%s",
-                                        buf[len - 1] == '(' ? "" : ", ", a->str);
+        base = len = (size_t)snprintf(buf, sizeof buf, "%s%s(\xf0\x9f\x94\xa5 ", d ? d : "", d ? " " : "");
+        /* static "aliases", then plain renames from "alias_exec" ("re = rebase") */
+        for (a = yaml_get(c, "aliases") ? yaml_get(c, "aliases")->child : NULL; a; a = a->next)
+            if (a->type == Y_STR && len < sizeof buf) {
+                len += (size_t)snprintf(buf + len, sizeof buf - len, "%s%s", len == base ? "" : ", ", a->str);
                 if (!strcmp(a->str, g_cur)) emit_desc(a->str, 1, d);
             }
+        for (i = 0; i < g_nal; i++)
+            if (!strcmp(g_al_exp[i], c->key) && len < sizeof buf) {
+                len += (size_t)snprintf(buf + len, sizeof buf - len, "%s%s", len == base ? "" : ", ", g_al_name[i]);
+                if (!strcmp(g_al_name[i], g_cur)) emit_desc(g_al_name[i], 1, d);
+            }
+        if (len == base) { emit_desc(c->key, 1, d); continue; }
         if (len < sizeof buf - 1) strcat(buf, ")");
         emit_desc(c->key, 1, strdup(buf));
     }
@@ -122,7 +213,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         else if (!strcmp(v->str, "dir")) { g_kind = "dir"; complete_files(1); }
         else if (!strcmp(v->str, "@make-targets")) { g_kind = "target"; complete_make_targets(); }
         else if (!strcmp(v->str, "@make-variables")) { g_kind = "var"; complete_make_variables(); }
-        else if (!strcmp(v->str, "@subcommands")) emit_commands(yaml_get(parent, "commands"));
+        else if (!strcmp(v->str, "@subcommands")) emit_commands(parent);
         else if (!strcmp(v->str, "@command")) complete_commands();
         break;
     case Y_OBJ: {
@@ -223,7 +314,7 @@ int do_complete(const char *line, const char *wbreaks) {
             }
             continue;
         }
-        if ((s = find_command(yaml_get(c, "commands"), w[i]))) { parent = c; c = s; cname = w[i]; lvl = i; npos = 0; continue; }
+        if ((s = find_command(yaml_get(c, "commands"), w[i])) || (s = resolve_alias(c, w[i], 0))) { parent = c; c = s; cname = w[i]; lvl = i; npos = 0; continue; }
         if (is_str(yaml_get(c, "args"), "@command")) {
             if (strchr(w[i], '=')) continue; /* env NAME=value cmd */
             /* the rest of the line is a command line of its own */
@@ -286,7 +377,7 @@ int do_complete(const char *line, const char *wbreaks) {
         return 0;
     }
 
-    emit_commands(yaml_get(c, "commands"));
+    emit_commands(c);
     /* examples only right after the command word ("duti <TAB>"), not deeper in the line */
     g_examples = n - 1 == lvl + 1 ? yaml_get(c, "examples") : NULL;
     g_examples_title = spec_desc(c);
