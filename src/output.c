@@ -308,7 +308,7 @@ static void merge_pairs(void) {
 
 /* A flag list taller than the terminal is grouped by the next letter after
  * the typed word: "--content-disposition" and "--content-on-error" fall
- * into one "--c" entry (no space, description: the member names, those
+ * into one "--c🧩" entry (no space, description: the member names, those
  * sharing a first word shown once as "word-🧩"), so typing the letter lists
  * that group. Then the smallest groups are expanded back while the list
  * still fits, so a group of two only stays folded when space is short. */
@@ -381,7 +381,9 @@ static void group_flags(void) {
         if (j < 0 || size[j] == 1) { out[k++] = g_cands[i]; continue; }
         if (head[j] != i) continue;
         out[k] = g_cands[i];
-        { /* the entry is the members' common prefix: "--no-" for "--no-x --no-y" */
+        { /* the entry is the members' common prefix + "🧩": "--no-🧩" for "--no-x --no-y";
+           * display-only, since groups differ in their next letter bash never
+           * inserts past it */
             size_t lcp = strlen(g_cands[i].text);
             int b;
             for (b = i + 1; b < g_ncands; b++)
@@ -390,7 +392,8 @@ static void group_flags(void) {
                     while (c < lcp && g_cands[b].text[c] == g_cands[i].text[c]) c++;
                     lcp = c;
                 }
-            out[k].text = strndup(g_cands[i].text, lcp);
+            out[k].text = malloc(lcp + sizeof "🧩");
+            snprintf(out[k].text, lcp + sizeof "🧩", "%.*s🧩", (int)lcp, g_cands[i].text);
         }
         out[k].space = 0;
         out[k++].desc = group_names(gid, j);
