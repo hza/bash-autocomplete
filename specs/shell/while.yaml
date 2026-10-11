@@ -1,21 +1,15 @@
 description: "Repeat while a command succeeds (bash keyword)"
 args: "@command"
 examples:
-  - key: 'read -r line'
-    command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'
+  - command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'
     description: "each line of a file (-n: ssh must not eat stdin)"
-  - key: 'read < <(cmd)'
-    command: 'while read -r b; do git log -1 --format="$b  %cr" "$b"; done < <(git branch --format="%(refname:short)")'
+  - command: 'while read -r b; do git log -1 --format="$b  %cr" "$b"; done < <(git branch --format="%(refname:short)")'
     description: "each line of a command's output"
-  - key: 'true; sleep'
-    command: 'while true; do clear; date; docker ps; sleep 2; done'
+  - command: 'while true; do clear; date; docker ps; sleep 2; done'
     description: "refresh a view every 2 s (Ctrl-C stops)"
-  - key: 'pgrep'
-    command: 'while pgrep -x make >/dev/null; do sleep 5; done; say "make finished"'
+  - command: 'while pgrep -x make >/dev/null; do sleep 5; done; say "make finished"'
     description: "wait for a process to exit"
-  - key: '! curl -sf'
-    command: 'while ! curl -sf -o /dev/null http://localhost:8080; do sleep 1; done; open http://localhost:8080'
+  - command: 'while ! curl -sf -o /dev/null http://localhost:8080; do sleep 1; done; open http://localhost:8080'
     description: "wait for a server to come up"
-  - key: '[ ! -f file ]'
-    command: 'while [ ! -f build/out.log ]; do sleep 1; done; tail -f build/out.log'
+  - command: 'while [ ! -f build/out.log ]; do sleep 1; done; tail -f build/out.log'
     description: "wait for a file to appear"

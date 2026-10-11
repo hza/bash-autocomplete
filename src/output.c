@@ -31,6 +31,7 @@ static int g_ncands;
 const char *g_kind; /* kind given to candidates emitted now */
 int g_show;         /* "show" given to candidates emitted now */
 int g_noesc;        /* display-only candidates: no shell escaping */
+int g_verbatim;     /* examples: no filter, escaping or trimming */
 int g_nofilter;     /* exec `filter: false`: the command already matched g_cur */
 const char *g_group, *g_gdesc; /* group (and its description) given to candidates emitted now */
 
@@ -40,6 +41,10 @@ void emit_desc(const char *cand, int space, const char *desc) {
     char esc[4096];
     size_t n = 0;
     const char *p;
+    if (g_verbatim) { /* caller filtered; text replaces the whole word */
+        p = cand;
+        goto queue;
+    }
     if (!g_nofilter && strncmp(cand, g_cur, strlen(g_cur)) != 0) return;
     if (g_qpre) {
         /* skip words already inside the quote */
@@ -394,55 +399,53 @@ static void group_flags(void) {
     g_ncands = k;
 }
 
-/* On an empty word, the spec's "examples" ({key, command, description?})
- * are listed as display-only "1️⃣ key" entries (keycap number, zero-padded
- * when there are 10 or more so bash's sort keeps them in order; spaces in
- * key become U+00A0), described by "command   📚 description". Numbers
- * differ in their first byte, so bash lists them; only a lone example
- * gets a "… name" companion to keep bash from inserting it. */
+/* On an empty word or "@", the spec's "examples" ({command, description?})
+ * are listed as display-only "1️⃣ @1" … "9️⃣ @9", then "📌 @a" … "📌 @z"
+ * entries (more are dropped), described by "command   📚 description".
+ * Keycaps start with different digits, so bash lists instead of inserting
+ * a shared prefix, and sort before "📌" (a lone example is just "@1").
+ * "@id" typed in full is replaced by the example's command after
+ * "<name> "; bash keeps a leading "@" in the replaced text (readline
+ * special prefix, verified in pty). Examples not starting with "<name> "
+ * (pipelines) are only listed. */
 const ynode *g_examples;
-const char *g_examples_name, *g_examples_title; /* "… name  -- name: spec description" */
+const char *g_examples_name;
+
+#define EXAMPLE_IDS "123456789abcdefghijklmnopqrstuvwxyz"
+
+static int want_id(const char *w) {
+    return w[0] == '@' && w[1] && !w[2] && strchr(EXAMPLE_IDS, w[1]);
+}
 
 static void add_examples(void) {
     const ynode *e;
-    int n = 0, others = g_ncands, total = 0, w = 1;
-    char name[256], desc[1024];
-    if (*g_cur || !g_examples || g_examples->type != Y_ARR) return;
-    for (e = g_examples->child; e; e = e->next) total++;
-    for (; total >= 10; total /= 10) w++;
+    int n = 0, want = 0;
+    size_t nl;
+    char name[128], desc[1024];
+    if ((*g_cur && strcmp(g_cur, "@") && !want_id(g_cur)) || !g_examples || g_examples->type != Y_ARR) return;
+    nl = strlen(g_examples_name);
+    if (want_id(g_cur)) want = (int)(strchr(EXAMPLE_IDS, g_cur[1]) - EXAMPLE_IDS) + 1;
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
-    g_noesc = 1;
-    for (e = g_examples->child; e; e = e->next) {
+    g_verbatim = 1;
+    for (e = g_examples->child; e && n < (int)strlen(EXAMPLE_IDS); e = e->next) {
         const ynode *cmd = yaml_get(e, "command");
-        const ynode *key = yaml_get(e, "key");
-        const char *d = spec_desc(e), *k;
-        char num[16];
-        size_t len = 0;
-        int i;
-        if (!cmd || cmd->type != Y_STR || !key || key->type != Y_STR) continue;
-        n++;
-        snprintf(num, sizeof num, "%0*d", w, n);
-        for (i = 0; num[i]; i++) { /* digit U+FE0F U+20E3 = keycap */
-            name[len++] = num[i];
-            memcpy(name + len, "\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0", 8); /* keycaps overlap what follows */
-            len += 8;
+        const char *d = spec_desc(e);
+        char id;
+        if (!cmd || cmd->type != Y_STR) continue;
+        id = EXAMPLE_IDS[n++];
+        if (want == n && !strncmp(cmd->str, g_examples_name, nl) && cmd->str[nl] == ' ') {
+            emit_desc(cmd->str + nl + 1, 1, NULL);
+            break;
         }
-        memcpy(name + len, "\xc2\xa0", 2); /* U+00A0: see collapse_vars */
-        len += 2;
-        for (k = key->str; *k && len < sizeof name - 3; k++) {
-            if (*k == ' ') { name[len++] = '\xc2'; name[len++] = '\xa0'; }
-            else name[len++] = *k;
-        }
-        name[len] = 0;
+        if (want) continue; /* not substitutable or not this one: list nothing */
+        if (!g_examples->child->next) snprintf(name, sizeof name, "@%c", id);
+        else if (n <= 9) /* keycap: digit U+FE0F U+20E3, 2 x U+00A0 (keycaps overlap) */
+            snprintf(name, sizeof name, "%c\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0\xc2\xa0@%c", id, id);
+        else snprintf(name, sizeof name, "📌\xc2\xa0@%c", id); /* sorts after the digits */
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);
     }
-    if (n == 1 && !others) { /* a lone example would be inserted */
-        snprintf(desc, sizeof desc, "%s: %s", g_examples_name, g_examples_title ? g_examples_title : "type an argument");
-        snprintf(name, sizeof name, "……\xc2\xa0%s", g_examples_name); /* U+00A0 */
-        emit_desc(name, 0, desc);
-    }
-    g_noesc = 0;
+    g_verbatim = 0;
 }
 
 void flush(void) {

@@ -1,24 +1,17 @@
 description: "Run commands if a command succeeds (bash keyword)"
 args: "@command"
 examples:
-  - key: 'git diff --quiet'
-    command: 'if git diff --quiet; then git pull --rebase; else echo "uncommitted changes"; fi'
+  - command: 'if git diff --quiet; then git pull --rebase; else echo "uncommitted changes"; fi'
     description: "only if the work tree is clean"
-  - key: 'make; then say'
-    command: 'if make; then say "build ok"; else say "build failed"; fi'
+  - command: 'if make; then say "build ok"; else say "build failed"; fi'
     description: "announce the result of a long command"
-  - key: '[ -f .env ]'
-    command: 'if [ -f .env ]; then set -a; . ./.env; set +a; fi'
+  - command: 'if [ -f .env ]; then set -a; . ./.env; set +a; fi'
     description: "load .env into the shell"
-  - key: '[ -d dir ]'
-    command: 'if [ -d node_modules ]; then npm test; else npm ci && npm test; fi'
+  - command: 'if [ -d node_modules ]; then npm test; else npm ci && npm test; fi'
     description: "set up only when missing"
-  - key: 'grep -q'
-    command: 'if grep -q "^127.0.0.1.*myapp" /etc/hosts; then echo present; else echo missing; fi'
+  - command: 'if grep -q "^127.0.0.1.*myapp" /etc/hosts; then echo present; else echo missing; fi'
     description: "check a file contains something"
-  - key: 'command -v'
-    command: 'if command -v brew >/dev/null; then brew upgrade; fi'
+  - command: 'if command -v brew >/dev/null; then brew upgrade; fi'
     description: "only if a tool is installed"
-  - key: 'ping'
-    command: 'if ping -c1 -t1 example.com >/dev/null; then echo up; else echo down; fi'
+  - command: 'if ping -c1 -t1 example.com >/dev/null; then echo up; else echo down; fi'
     description: "is a host up"

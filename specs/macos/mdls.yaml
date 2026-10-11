@@ -13,21 +13,15 @@ flags:
   -sdb: {description: "Show Spotlight database info (_kMDItemSDBInfo)"}
 args: file
 examples:
-  - key: 'UTI'
-    command: "mdls -name kMDItemContentType -raw README.md"
+  - command: "mdls -name kMDItemContentType -raw README.md"
     description: "file's type identifier, e.g. for duti -s"
-  - key: 'UTI tree'
-    command: "mdls -name kMDItemContentTypeTree README.md"
+  - command: "mdls -name kMDItemContentTypeTree README.md"
     description: "the type and all types it conforms to"
-  - key: 'all'
-    command: "mdls photo.jpg"
+  - command: "mdls photo.jpg"
     description: "every metadata attribute of a file"
-  - key: 'several'
-    command: "mdls -name kMDItemPixelWidth -name kMDItemPixelHeight photo.jpg"
+  - command: "mdls -name kMDItemPixelWidth -name kMDItemPixelHeight photo.jpg"
     description: "image dimensions"
-  - key: 'download source'
-    command: "mdls -name kMDItemWhereFroms ~/Downloads/file.zip"
+  - command: "mdls -name kMDItemWhereFroms ~/Downloads/file.zip"
     description: "URL a downloaded file came from"
-  - key: 'null marker'
-    command: "mdls -raw -nullMarker none -name kMDItemDurationSeconds video.mov"
+  - command: "mdls -raw -nullMarker none -name kMDItemDurationSeconds video.mov"
     description: "print 'none' when the attribute is missing"

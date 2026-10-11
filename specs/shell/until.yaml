@@ -1,21 +1,15 @@
 description: "Repeat until a command succeeds (bash keyword)"
 args: "@command"
 examples:
-  - key: 'git push'
-    command: 'until git push; do sleep 5; done'
+  - command: 'until git push; do sleep 5; done'
     description: "retry a flaky command"
-  - key: 'ping'
-    command: 'until ping -c1 -t1 example.com >/dev/null; do sleep 2; done; say "back online"'
+  - command: 'until ping -c1 -t1 example.com >/dev/null; do sleep 2; done; say "back online"'
     description: "wait for the network or a host"
-  - key: 'ssh host true'
-    command: 'until ssh -o ConnectTimeout=3 host true; do sleep 5; done; ssh host'
+  - command: 'until ssh -o ConnectTimeout=3 host true; do sleep 5; done; ssh host'
     description: "reconnect once a rebooted server is back"
-  - key: 'curl -sf'
-    command: 'until curl -sf -o /dev/null http://localhost:8080/health; do sleep 1; done; say ready'
+  - command: 'until curl -sf -o /dev/null http://localhost:8080/health; do sleep 1; done; say ready'
     description: "wait for a service health check"
-  - key: '[ -s file ]'
-    command: 'until [ -s result.json ]; do sleep 1; done; cat result.json'
+  - command: 'until [ -s result.json ]; do sleep 1; done; cat result.json'
     description: "wait for a non-empty file"
-  - key: 'n -ge 5'
-    command: 'n=0; until make test || [ $((n+=1)) -ge 5 ]; do sleep 2; done'
+  - command: 'n=0; until make test || [ $((n+=1)) -ge 5 ]; do sleep 2; done'
     description: "retry at most 5 times"

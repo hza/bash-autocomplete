@@ -33,18 +33,13 @@ flags:
   --quality: {value: any, description: "Converter quality level (0-127)"}
 args: any
 examples:
-  - key: 'text'
-    command: "say 'build finished'"
+  - command: "say 'build finished'"
     description: "speak a phrase"
-  - key: '; say'
-    command: "make; say done"
+  - command: "make; say done"
     description: "announce when a command ends"
-  - key: '-v ?'
-    command: "say -v '?'"
+  - command: "say -v '?'"
     description: "list voices"
-  - key: '-v -r'
-    command: "say -v Samantha -r 200 'faster please'"
+  - command: "say -v Samantha -r 200 'faster please'"
     description: "pick voice and speed"
-  - key: '-f -o'
-    command: "say -f notes.txt -o notes.aiff"
+  - command: "say -f notes.txt -o notes.aiff"
     description: "read a file into an audio file"

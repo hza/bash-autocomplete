@@ -1,27 +1,19 @@
 description: "Loop over a list of words (bash keyword)"
 args: any
 examples:
-  - key: 'f in *.jpeg'
-    command: 'for f in *.jpeg; do mv -n "$f" "${f%.jpeg}.jpg"; done'
+  - command: 'for f in *.jpeg; do mv -n "$f" "${f%.jpeg}.jpg"; done'
     description: "change extension .jpeg -> .jpg"
-  - key: 'f in *.png'
-    command: 'for f in *.png; do sips -s format jpeg "$f" --out "${f%.png}.jpg"; done'
+  - command: 'for f in *.png; do sips -s format jpeg "$f" --out "${f%.png}.jpg"; done'
     description: "convert images (macOS sips)"
-  - key: 'f in *.txt'
-    command: 'for f in *.txt; do mv -n "$f" "old_$f"; done'
+  - command: 'for f in *.txt; do mv -n "$f" "old_$f"; done'
     description: "add a prefix to file names"
-  - key: 'f in *.log'
-    command: 'for f in *.log; do echo "$f: $(grep -c ERROR "$f")"; done'
+  - command: 'for f in *.log; do echo "$f: $(grep -c ERROR "$f")"; done'
     description: "count matches per file"
-  - key: 'd in */'
-    command: 'for d in */; do (cd "$d" && git pull); done'
+  - command: 'for d in */; do (cd "$d" && git pull); done'
     description: "run a command in each subfolder"
-  - key: 'h in host1 host2'
-    command: 'for h in host1 host2; do ssh "$h" uptime; done'
+  - command: 'for h in host1 host2; do ssh "$h" uptime; done'
     description: "same command on several hosts"
-  - key: 'i in {1..5}'
-    command: "for i in {1..5}; do curl -s -o /dev/null -w '%{http_code}\\n' https://example.com; done"
+  - command: "for i in {1..5}; do curl -s -o /dev/null -w '%{http_code}\\n' https://example.com; done"
     description: "repeat a command N times"
-  - key: 'p in $(pgrep x)'
-    command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
+  - command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
     description: "each word of a command's output"

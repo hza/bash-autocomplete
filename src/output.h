@@ -21,7 +21,7 @@ extern const char *g_group, *g_gdesc; /* "groups" key and its description */
 
 /* Spec "examples" listed on an empty word, with the command word and its description */
 extern const ynode *g_examples;
-extern const char *g_examples_name, *g_examples_title;
+extern const char *g_examples_name;
 
 /* Queue a candidate; space: finished word (append a space). */
 void emit_desc(const char *cand, int space, const char *desc);

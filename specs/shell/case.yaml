@@ -1,18 +1,13 @@
 description: "Run commands by matching a word against patterns (bash keyword)"
 args: any
 examples:
-  - key: '$(git branch)'
-    command: 'case "$(git branch --show-current)" in main|master) echo "on main, not pushing";; *) git push;; esac'
+  - command: 'case "$(git branch --show-current)" in main|master) echo "on main, not pushing";; *) git push;; esac'
     description: "guard a command by branch"
-  - key: '$(uname -s)'
-    command: 'case "$(uname -s)" in Darwin) open .;; Linux) xdg-open .;; esac'
+  - command: 'case "$(uname -s)" in Darwin) open .;; Linux) xdg-open .;; esac'
     description: "per-OS command"
-  - key: '$PWD'
-    command: 'case "$PWD" in */frontend*) npm test;; *) make test;; esac'
+  - command: 'case "$PWD" in */frontend*) npm test;; *) make test;; esac'
     description: "per-project command"
-  - key: '$f in *.zip'
-    command: 'for f in *.zip *.tar.gz; do case "$f" in *.zip) unzip -o "$f";; *.tar.gz) tar xzf "$f";; esac; done'
+  - command: 'for f in *.zip *.tar.gz; do case "$f" in *.zip) unzip -o "$f";; *.tar.gz) tar xzf "$f";; esac; done'
     description: "unpack archives by type"
-  - key: '$(date +%u)'
-    command: 'case "$(date +%u)" in 6|7) echo weekend;; *) echo workday;; esac'
+  - command: 'case "$(date +%u)" in 6|7) echo weekend;; *) echo workday;; esac'
     description: "by day of week"

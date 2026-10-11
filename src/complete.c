@@ -430,7 +430,6 @@ int do_complete(const char *line, const char *wbreaks) {
     emit_commands(c);
     /* examples only right after the command word ("duti <TAB>"), not deeper in the line */
     g_examples = n - 1 == lvl + 1 ? yaml_get(c, "examples") : NULL;
-    g_examples_title = spec_desc(c);
     g_examples_name = cname;
     v = yaml_get(c, "args");
     /* "positional": the Nth positional word's value; past the list, "args" */
@@ -441,6 +440,7 @@ int do_complete(const char *line, const char *wbreaks) {
     }
     /* "if <TAB>": the examples, not every $PATH executable; "if g<TAB>" completes commands */
     if (g_examples && !*g_cur && is_str(v, "@command")) return 0;
+    if (g_examples && *g_cur == '@') return 0; /* "wget @1": add_examples */
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
     return 0;

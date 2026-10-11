@@ -8,15 +8,11 @@ flags:
     value: {exec: "printf '%s\\n' txt rtf ps public.html"}
     description: "Data type to look for first"
 examples:
-  - key: '> file'
-    command: "pbpaste > notes.txt"
+  - command: "pbpaste > notes.txt"
     description: "save the clipboard to a file"
-  - key: '| jq'
-    command: "pbpaste | jq ."
+  - command: "pbpaste | jq ."
     description: "pretty-print copied JSON"
-  - key: '| sort | pbcopy'
-    command: "pbpaste | sort -u | pbcopy"
+  - command: "pbpaste | sort -u | pbcopy"
     description: "dedupe clipboard lines in place"
-  - key: '-Prefer'
-    command: "pbpaste -Prefer public.html > page.html"
+  - command: "pbpaste -Prefer public.html > page.html"
     description: "paste copied rich text as HTML"
