@@ -301,6 +301,9 @@ snippets:
   - key: j
     command: "tar -cJf backup.tar.xz project/"
     description: "create an xz archive (smaller, slower)"
+  - key: b
+    command: "tar -cjf backup.tar.bz2 project/"
+    description: "create a bzip2 archive"
   - key: a
     command: "tar -caf backup.tar.zst project/"
     description: "pick the compression from the suffix (.gz .bz2 .xz .zst)"
