@@ -1,0 +1,97 @@
+description: "Process status"
+flags:
+  -A:
+    description: 'Display information about other users'' processes, including those without controlling...'
+  -a:
+    description: 'Display information about other users'' processes as well as your own'
+  -C:
+    description: 'Change the way the CPU percentage is calculated by using a “raw” CPU calculation that...'
+  -c:
+    description: 'Change the “command” column output to just contain the executable name, rather than...'
+  -d:
+    description: 'Like -A, but excludes session leaders'
+  -E:
+    description: 'Display the environment as well'
+  -e:
+    description: 'Identical to -A'
+  -f:
+    description: 'Display the uid, pid, parent pid, recent CPU usage, process start time, controlling tty,...'
+  -G:
+    value: any
+    description: 'Display information about processes which are running with the specified real group IDs'
+  -g:
+    value: any
+    description: 'Display information about processes with the specified process group leaders'
+  -h:
+    description: 'Repeat the information header as often as necessary to guarantee one header per page of...'
+  -j:
+    description: 'Print information associated with the following keywords: user, pid, ppid, pgid, sess,...'
+  -L:
+    description: 'List the set of keywords available for the -O and -o options'
+  -l:
+    description: 'Display information associated with the following keywords: uid, pid, ppid, flags, cpu,...'
+  -M:
+    description: 'Print the threads corresponding to each task'
+  -m:
+    description: 'Sort by memory usage, instead of the combination of controlling terminal and process ID'
+  -O:
+    value: {exec: "p=${AUTOCOMPLETE_CUR%\"${AUTOCOMPLETE_CUR##*,}\"}; ps -L | tr ' ' '\\n' | grep . | sed \"s/^/$p/\"", nospace: true}
+    description: 'Add the information associated with the space or comma separated list of keywords...'
+  -o:
+    value: {exec: "p=${AUTOCOMPLETE_CUR%\"${AUTOCOMPLETE_CUR##*,}\"}; ps -L | tr ' ' '\\n' | grep . | sed \"s/^/$p/\"", nospace: true}
+    description: 'Display information associated with the space or comma separated list of keywords...'
+  -p:
+    value: "@pids"
+    description: 'Display information about processes which match the specified process IDs'
+  -r:
+    description: 'Sort by current CPU usage, instead of the combination of controlling terminal and process...'
+  -S:
+    description: 'Change the way the process time is calculated by summing all exited children to their...'
+  -T:
+    description: 'Display information about processes attached to the device associated with the standard...'
+  -t:
+    value: any
+    description: 'Display information about processes attached to the specified terminal devices'
+  -U:
+    value: "@users"
+    description: 'Display the processes belonging to the specified real user IDs'
+  -u:
+    value: "@users"
+    description: 'Display the processes belonging to the specified usernames'
+  -v:
+    description: 'Display information associated with the following keywords: pid, state, time, sl, re,...'
+  -w:
+    description: 'Use 132 columns to display information, instead of the default which is your window size'
+  -X:
+    description: 'When displaying processes matched by other options, skip any processes which do not have...'
+  -x:
+    description: 'When displaying processes matched by other options, include processes which do not have a...'
+examples:
+  - key: a
+    command: "ps aux"
+    description: "every process with user, CPU, memory and full command"
+    pin: true
+  - key: c
+    command: "ps -Ao pid,%cpu,time,comm -r | head -15"
+    description: "top CPU users"
+    pin: true
+  - key: m
+    command: "ps -Ao pid,%mem,rss,comm -m | head -15"
+    description: "top memory users (rss in KB)"
+    pin: true
+  - key: u
+    command: "ps -U \"$USER\" -o pid,etime,command"
+    description: "my processes with elapsed time"
+  - key: j
+    command: "ps -Ao pid,etime,command | grep '[j]ava'"
+    description: "find Java processes (the [j] hides the grep itself)"
+    pin: true
+  - key: t
+    command: "ps -Ao pid,ppid,user,comm"
+    description: "parent PIDs, to trace who started what"
+  - key: w
+    command: "ps -Aww -o pid,command"
+    description: "full command lines, never truncated"
+  - key: l
+    command: "ps -L"
+    description: "list the keywords for -o / -O"

@@ -1,0 +1,96 @@
+description: "Inspect and edit Java Flight Recorder files (.jfr)"
+commands:
+  print:
+    description: "Print the events of a recording"
+    flags:
+      --xml: {description: "XML output"}
+      --json: {description: "JSON output"}
+      --categories: {value: any, description: "Only events in these categories (comma list, globs)"}
+      --events: {value: any, description: "Only these event types (comma list, globs), e.g. jdk.GarbageCollection"}
+      --stack-depth: {value: any, description: "Stack frames per event (default 5)"}
+    args: {file: "*.jfr"}
+  view:
+    description: "Show a predefined view (table) of a recording"
+    flags:
+      --verbose: {description: "Also show the query behind the view"}
+      --width: {value: any, description: "View width in characters"}
+      --truncate: {value: {exec: "printf 'beginning\\nend\\n'"}, description: "Where to cut text that doesn't fit a cell"}
+      --cell-height: {value: any, description: "Max rows per table cell"}
+    positional:
+      - {exec: "jfr help view 2>&1 | awk '/views:$/ {f = 1; next} /^$/ {f = 0} f {for (i = 1; i <= NF; i++) print $i}'; printf 'types\\nall-views\\nall-events\\n'", cache: "86400"}
+    args: {file: "*.jfr"}
+  configure:
+    description: "Create a custom .jfc event configuration"
+    flags:
+      --interactive: {description: "Ask questions to build the configuration"}
+      --verbose: {description: "Show the modified settings"}
+      --input: {value: {file: "*.jfc"}, description: "Base .jfc files (comma list; none = start empty)"}
+      --output: {value: {file: "*.jfc"}, description: "Output file (default custom.jfc)"}
+    args: {exec: "jfr help configure 2>&1 | awk '/^  [a-z-]+=</ {sub(/^  /, \"\"); sub(/=.*/, \"=\"); print}'", cache: "86400"}
+  metadata:
+    description: "Show event types, their fields and descriptions"
+    flags:
+      --categories: {value: any, description: "Only events in these categories"}
+      --events: {value: any, description: "Only these event types"}
+    args: {file: "*.jfr"}
+  scrub:
+    description: "Copy a recording without some events, categories or threads"
+    flags:
+      --include-events: {value: any, description: "Keep only these event types"}
+      --exclude-events: {value: any, description: "Drop these event types"}
+      --include-categories: {value: any, description: "Keep only these categories"}
+      --exclude-categories: {value: any, description: "Drop these categories"}
+      --include-threads: {value: any, description: "Keep only events of these threads"}
+      --exclude-threads: {value: any, description: "Drop events of these threads"}
+    args: {file: "*.jfr"}
+  summary:
+    description: "Show general information and event counts of a recording"
+    args: {file: "*.jfr"}
+  assemble:
+    description: "Join leftover chunks of a disk repository into a recording"
+    positional: [dir]
+    args: {file: "*.jfr"}
+  disassemble:
+    description: "Split a recording into chunk files"
+    flags:
+      --output: {value: dir, description: "Output directory"}
+      --max-chunks: {value: any, description: "Max chunks per file"}
+      --max-size: {value: any, description: "Max size per file"}
+    args: {file: "*.jfr"}
+  version:
+    description: "Show the jfr version"
+  help:
+    description: "Show all commands, or help for one"
+    args: "@subcommands"
+examples:
+  - key: s
+    command: "jfr summary recording.jfr"
+    description: "duration, JVM and event counts"
+    pin: true
+  - key: h
+    command: "jfr view hot-methods recording.jfr"
+    description: "methods where the CPU time goes"
+    pin: true
+  - key: g
+    command: "jfr view gc-pauses recording.jfr"
+    description: "garbage collection pause times"
+    pin: true
+  - key: a
+    command: "jfr view allocation-by-class recording.jfr"
+    description: "which classes allocate the most memory"
+  - key: c
+    command: "jfr view contention-by-site recording.jfr"
+    description: "where threads wait for locks"
+  - key: e
+    command: "jfr print --events jdk.ExecutionSample --stack-depth 20 recording.jfr"
+    description: "CPU samples with deeper stacks"
+  - key: j
+    command: "jfr print --json --events jdk.GarbageCollection recording.jfr > gc.json"
+    description: "GC events as JSON for scripts"
+    pin: true
+  - key: p
+    command: "jfr configure method-profiling=max gc=detailed --output profile.jfc"
+    description: "settings file for -XX:StartFlightRecording:settings=profile.jfc"
+  - key: r
+    command: "jfr scrub --exclude-events jdk.InitialEnvironmentVariable,jdk.InitialSystemProperty recording.jfr clean.jfr"
+    description: "remove env vars and system properties before sharing"
