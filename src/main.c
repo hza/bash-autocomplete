@@ -8,7 +8,7 @@
  * looked up in:
  *   $AUTOCOMPLETE_SPECS (colon list), ~/.config/autocomplete,
  *   <binary dir>/specs, <binary dir>/../share/autocomplete
- * `autocomplete from man CMD` writes a spec for CMD from its man page.
+ * `autocomplete add CMD` writes a spec for CMD (cobra, man page or --help).
  *
  * Output of _complete: one candidate per line, already shell-escaped and
  * already trimmed to bash's notion of the current word (COMP_WORDBREAKS).
@@ -249,33 +249,58 @@ static int alias_cmds(int argc, char **argv) {
     return rc;
 }
 
-/* `autocomplete from man|help|cobra [--force] CMD...`: write
- * ~/.config/autocomplete/CMD.yaml from the man page, --help output, or as a
- * bridge to the program's own cobra completion. */
-static int from_cmds(const char *src, int argc, char **argv) {
-    ynode *(*gen)(const char *) = !strcmp(src, "man") ? man_spec : !strcmp(src, "help") ? help_spec
-                                : !strcmp(src, "cobra") ? cobra_spec : NULL;
-    const char *fail = !strcmp(src, "man") ? "no man page with options"
-                     : !strcmp(src, "help") ? "no options or commands in --help output"
-                                            : "no cobra completion (__complete)";
+/* `autocomplete add [--force] [--from man|help|cobra] CMD...`: write
+ * ~/.config/autocomplete/CMD.yaml from the first source that works (cobra
+ * bridge, man page, --help output), or only from --from SRC. */
+static const struct {
+    const char *name;
+    ynode *(*gen)(const char *);
+    const char *fail;
+} sources[] = {
+    {"cobra", cobra_spec, "no cobra completion (__complete)"},
+    {"man", man_spec, "no man page with options"},
+    {"help", help_spec, "no options or commands in --help output"},
+};
+#define NSOURCES (int)(sizeof sources / sizeof *sources)
+
+static int add_cmds(int argc, char **argv) {
     char dir[PATH_MAX], path[PATH_MAX];
-    int i, force = 0, rc = 0, made = 0;
-    if (!gen) {
-        fprintf(stderr, "from: unknown source %s (man, help, cobra)\n", src);
-        return 2;
+    int i, s, from = -1, force = 0, rc = 0, made = 0;
+    for (i = 0; i < argc; i++) {
+        const char *src = NULL;
+        if (!strcmp(argv[i], "--force")) force = 1;
+        else if (!strcmp(argv[i], "--from") && i + 1 < argc) src = argv[++i];
+        else if (!strncmp(argv[i], "--from=", 7)) src = argv[i] + 7;
+        else if (!strcmp(argv[i], "--from")) {
+            fprintf(stderr, "add: --from needs a source (cobra, man, help)\n");
+            return 2;
+        }
+        else if (argv[i][0] == '-') {
+            fprintf(stderr, "add: unknown option %s\n", argv[i]);
+            return 2;
+        }
+        if (!src) continue;
+        for (from = 0; from < NSOURCES && strcmp(sources[from].name, src); from++) ;
+        if (from == NSOURCES) {
+            fprintf(stderr, "add: unknown source %s (cobra, man, help)\n", src);
+            return 2;
+        }
     }
     if (!getenv("HOME")) {
-        fprintf(stderr, "from: HOME is not set\n");
+        fprintf(stderr, "add: HOME is not set\n");
         return 1;
     }
     snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
     mkdirs(dir);
-    for (i = 0; i < argc; i++)
-        if (!strcmp(argv[i], "--force")) force = 1;
     for (i = 0; i < argc; i++) {
-        ynode *n;
+        ynode *n = NULL, *g, **at;
         FILE *f;
-        if (!strcmp(argv[i], "--force")) continue;
+        int use = from;
+        if (!strcmp(argv[i], "--from")) {
+            i++;
+            continue;
+        }
+        if (argv[i][0] == '-') continue;
         if (!valid_name(argv[i])) {
             fprintf(stderr, "%s: not a command name\n", argv[i]);
             rc = 1;
@@ -287,19 +312,34 @@ static int from_cmds(const char *src, int argc, char **argv) {
             rc = 1;
             continue;
         }
-        if (!(n = gen(argv[i]))) {
-            fprintf(stderr, "%s: %s\n", argv[i], fail);
+        /* --force without --from: regenerate from the source recorded in `generated` */
+        if (use < 0 && (g = yaml_load(path, NULL, 0))) {
+            const ynode *k = yaml_get(g, "generated");
+            for (s = 0; k && k->type == Y_STR && s < NSOURCES; s++)
+                if (!strcmp(sources[s].name, k->str)) use = s;
+            yaml_free(g);
+        }
+        for (s = use < 0 ? 0 : use; s < (use < 0 ? NSOURCES : use + 1); s++)
+            if ((n = sources[s].gen(argv[i]))) break;
+        if (!n) {
+            fprintf(stderr, "%s: %s\n", argv[i],
+                    use < 0 ? "no cobra completion, man page or --help options" : sources[use].fail);
             rc = 1;
             continue;
         }
+        /* `generated: SRC` right after `description` (set_desc writes it first) */
+        g = yaml_new(NULL, Y_STR, "generated", sources[s].name);
+        at = n->child && !strcmp(n->child->key, "description") ? &n->child->next : &n->child;
+        g->next = *at;
+        *at = g;
         if (!(f = fopen(path, "w"))) {
             perror(path);
             rc = 1;
         } else {
-            fprintf(f, "# generated by `autocomplete from %s %s`; edit freely\n", src, argv[i]);
+            fputs("# generated by autocomplete add; edit freely\n", f);
             yaml_write(f, n);
             fclose(f);
-            puts(path);
+            printf("%s (%s)\n", path, sources[s].name);
             made++;
         }
         yaml_free(n);
@@ -516,7 +556,7 @@ int main(int argc, char **argv) {
         return g_cache_failed;
     }
     if (argc >= 2 && !strcmp(argv[1], "alias")) return alias_cmds(argc - 2, argv + 2);
-    if (argc >= 4 && !strcmp(argv[1], "from")) return from_cmds(argv[2], argc - 3, argv + 3);
+    if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         int i;
         for (i = 2; i < argc; i++) {
@@ -537,9 +577,8 @@ int main(int argc, char **argv) {
             "                                  ~/.config/autocomplete; --paths: with the spec file)\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
-            "       autocomplete from man [--force] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"
-            "       autocomplete from help [--force] CMD...  ... from CMD --help\n"
-            "       autocomplete from cobra [--force] CMD... ... delegating to CMD's cobra completion\n"
+            "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"
+            "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"

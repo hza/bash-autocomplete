@@ -13,24 +13,14 @@ commands:
   cache:
     description: "Precompile big specs (> 100 KB) into the cache"
     args: {exec: "autocomplete list | awk '{n = $1; sub(/^[^ ]+ */, \"\"); print n \"\\t\" $0}'"}
-  from:
-    description: "Generate a spec from another source"
-    commands:
-      man:
-        description: "Write a spec for a command from its man page"
-        flags:
-          --force: {description: "Replace an existing CMD spec"}
-        args: {exec: "compgen -c | sort -u"}
-      help:
-        description: "Write a spec for a command from its --help output"
-        flags:
-          --force: {description: "Replace an existing CMD spec"}
-        args: {exec: "compgen -c | sort -u"}
-      cobra:
-        description: "Write a spec that asks a cobra (Go) program for its own completions"
-        flags:
-          --force: {description: "Replace an existing CMD spec"}
-        args: {exec: "compgen -c | sort -u"}
+  add:
+    description: "Write a spec for a command (cobra, man page or --help, first that works)"
+    flags:
+      --force: {description: "Replace an existing CMD spec"}
+      --from:
+        description: "Use only this source"
+        value: {exec: "printf 'cobra\\tcobra (Go) program completion\\nman\\tthe man page\\nhelp\\tCMD --help output\\n'"}
+    args: {exec: "compgen -c | sort -u"}
   alias:
     description: "Complete NAME like CMD (CMD NAME..., symlinks its spec)"
     flags:

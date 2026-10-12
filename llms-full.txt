@@ -186,12 +186,10 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
 | `autocomplete list` | List commands that have a spec, one per line with its description. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
-| `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `from`, aliases, hand-written); combines with `--paths`. |
+| `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `add`, aliases, hand-written); combines with `--paths`. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
-| `autocomplete from man [--force] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from `man CMD`. |
-| `autocomplete from help [--force] CMD...` | Same, from `CMD --help` (flags and subcommands). |
-| `autocomplete from cobra [--force] CMD...` | Same, as a bridge to the program's own cobra completion (`bridge: cobra`). |
+| `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 | `autocomplete alias --list` | List aliases as `NAME -> CMD`. |
@@ -223,7 +221,7 @@ values. See [Adding your own commands](docs/adding-commands.md).
 - [Adding your own commands](docs/adding-commands.md): a quick start for new commands
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
-- [Generating specs](docs/generated-specs.md): `autocomplete from man|help|cobra`
+- [Generating specs](docs/generated-specs.md): `autocomplete add`
 - [Cache](docs/cache.md): how parsed specs are cached and how to reset it
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB
@@ -351,7 +349,8 @@ A spec has these optional keys, and `commands` nests the same structure for subc
 | `description` | One-line summary shown next to this command when several commands match |
 | `aliases` | List of other names for this subcommand, e.g. `aliases: [i, add]` under `install`; each is matched like the main name and shown in its description (`install  -- Install a package (🔥 i, add)`); an alias is offered as a candidate only once typed in full |
 | `alias_exec` | Shell command printing user-defined aliases of this spec's subcommands, one `name expansion` line each (space or tab between), e.g. git's `git config --get-regexp '^alias\.' \| sed 's/^alias\.//'`. A plain rename (`re = rebase`) is shown in the target's description like a static alias (`rebase -- … (🔥 re)`); others are listed with `🔥 alias: <expansion>` as description; a name defined twice (git: global, then local) takes the last definition; after an alias the line completes as the subcommand it expands to (first non-flag word, alias chains followed). Shell aliases (`!...`) resolve only with a `: git <sub>` hint inside, e.g. `!f() { : git switch ; ... }; f` |
-| `bridge` | Top level only: `cobra` hands every completion to the program itself (`CMD __complete …`, Go programs built with cobra); the rest of the spec is ignored. Written by `autocomplete from cobra CMD` |
+| `bridge` | Top level only: `cobra` hands every completion to the program itself (`CMD __complete …`, Go programs built with cobra); the rest of the spec is ignored. Written by `autocomplete add CMD` |
+| `generated` | Top level only: `cobra`, `man` or `help`, the source `autocomplete add` wrote the spec from. Ignored by completion; `add --force CMD` regenerates from it |
 | `when` | Only list this subcommand if a file in the current directory exists and (optionally) contains a string, e.g. `when: {file: pom.xml, contains: "<artifactId>spotless-maven-plugin</artifactId>"}`. Used for plugin goals that exist only in some projects. A typed command is still recognised either way |
 | `snippets` | List of `{key, command, description?, pin?}` (any level), shown on TAB after the command word (on an empty word only when nothing else would be listed, always after `@`) as `📌 @s  -- curl -sS https://api.github.com/zen   📚 quiet GET, errors still shown`. `key` is one lowercase letter or digit, unique within the list; pick a mnemonic one (when two snippets want the same letter, give it to the more useful one). `pin: true` marks the most used ones: they are listed first with 📌, the rest with 🔥. Typing `@s` and TAB replaces it with the snippet's command after the command name, or the command path for subcommands (`curl @s` → `curl -sS https://api.github.com/zen`; `docker volume prune @x` → `docker volume prune -a -f`); snippets that don't start with the command name (pipelines like `git rev-parse HEAD \| pbcopy`) are only listed. `autocomplete check` fails on missing or duplicate keys. Write them yourself (don't copy text from other projects' docs: their licenses may require attribution); meant for commands whose TAB lists nothing else. |
 | `groups` | Map of short-flag letters → `{description?}`, grouping rarely used short flags by meaning. Each key lists the letters of `-x` flags of this spec (or the top-level one) that are hidden from the list and shown together in one entry: `"Up": {description: proxy}` gives `-📌 Up  -- proxy: (U) Proxy user and password (p) HTTP proxy tunnel (using CONNECT)`. Top-level groups apply at every depth. `autocomplete check` reports letters with no matching flag |
@@ -501,15 +500,24 @@ The bundled [`specs/`](../specs) are grouped by topic (`vcs/`, `cloud/`, `lang/`
 
 # Generating specs: man pages, --help, cobra
 
-Three commands write a spec for you into `~/.config/autocomplete/CMD.yaml`:
+`autocomplete add CMD...` writes a spec for you into `~/.config/autocomplete/CMD.yaml`,
+from the first source that works:
 
-| Command | Source |
+| Source (`--from`) | What it reads |
 |---|---|
-| `autocomplete from man CMD...` | the man page (flags, descriptions, values) |
-| `autocomplete from help CMD...` | `CMD --help` output, for tools without a man page |
-| `autocomplete from cobra CMD...` | the program's own completion, for Go programs built with cobra (kubectl, helm, gh, hugo, ...) |
+| `cobra` | the program's own completion, for Go programs built with cobra (kubectl, helm, gh, hugo, ...) |
+| `man` | the man page (flags, descriptions, values) |
+| `help` | `CMD --help` output, for tools without a man page |
 
-All three take `--force` to overwrite an existing file.
+```sh
+autocomplete add ps kubectl rsync   # prints each file with the source used, e.g. ".../ps.yaml (man)"
+autocomplete add --from help ps     # use only this source
+autocomplete add --force ps         # overwrite an existing file
+```
+
+The spec records the source it came from as `generated: man` (right after `description`).
+`autocomplete add --force CMD` without `--from` regenerates from that same source, so a spec
+you once made with `--from help` stays a `--help` spec when you refresh it.
 
 ## From man pages
 
@@ -518,8 +526,8 @@ man page. autocomplete can read the page and turn it into flag completion with
 descriptions, so you don't have to write a spec by hand.
 
 ```sh
-autocomplete from man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
-autocomplete from man --force ps    # overwrite an existing file
+autocomplete add --from man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.yaml, grep.yaml
+autocomplete add --from man --force ps    # overwrite an existing file
 ```
 
 Every generated spec starts with a `description:` (shown by `autocomplete list`):
@@ -537,7 +545,7 @@ live values (see [Writing specs](writing-specs.md)). For example, change `-p`'s 
 ```
 
 Open a new terminal (or run `eval "$(autocomplete bash)"` again) so the new command is
-registered. After a system update changes a man page, run `autocomplete from man --force CMD` to
+registered. After a system update changes a man page, run `autocomplete add --from man --force CMD` to
 regenerate the spec (this overwrites your edits).
 
 ### What gets extracted
@@ -561,17 +569,17 @@ regenerate the spec (this overwrites your edits).
 ## From --help
 
 ```sh
-autocomplete from help rsync node
+autocomplete add --from help rsync node
 ```
 
-Uses the same option parser as `from man`, on the output of `CMD --help`. On top of that it
+Uses the same option parser as `--from man`, on the output of `CMD --help`. On top of that it
 reads:
 
 - option lists starting at the left margin (python's `-b     : issue warnings…`);
 - the `usage:` line, so a tool whose help is only a synopsis (`[--append] [-e program]`)
   still gets its flags;
 - `Commands:` / `Available Commands:` sections, which become subcommands with their
-  descriptions. Their own flags are not read: `from help` never runs `CMD SUB --help`,
+  descriptions. Their own flags are not read: `--from help` never runs `CMD SUB --help`,
   since a subcommand that ignores `--help` would do real work.
 - without such a section, one usage block per subcommand (`jfr print [--events <filter>]
   <file>` followed by an indented description line). Each block becomes a subcommand with
@@ -583,7 +591,7 @@ might act on an unknown flag.
 ## From cobra
 
 ```sh
-autocomplete from cobra helm
+autocomplete add --from cobra helm
 ```
 
 Programs built with Go's cobra library answer `CMD __complete WORDS…` with their own
@@ -595,7 +603,7 @@ bridge: cobra
 ```
 
 and every TAB asks the program. File and directory answers, extension filters and
-"no space" hints are honoured. `from cobra` refuses programs that don't answer like cobra.
+"no space" hints are honoured. `--from cobra` refuses programs that don't answer like cobra.
 A program with a bundled spec (kubectl, helm, docker) keeps using the spec unless you
 generate one: your `~/.config/autocomplete` file wins.
 
