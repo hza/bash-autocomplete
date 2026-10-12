@@ -51,63 +51,34 @@ static char *g_list[2048];
 static int g_nlist;
 static void add_name(const char *name) { if (g_nlist < 2048) g_list[g_nlist++] = (char *)name; }
 
-/* `autocomplete list`: sorted; in columns (down, then across, like ls) on a
- * tty, one per line otherwise (exec completers read it). */
-static void print_names(void) {
-    int i, r, c, w = 0, cols, rows;
-    qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
-    if (!isatty(1)) {
-        for (i = 0; i < g_nlist; i++) puts(g_list[i]);
-        return;
-    }
-    for (i = 0; i < g_nlist; i++)
-        if ((int)strlen(g_list[i]) > w) w = strlen(g_list[i]);
-    w += 2;
-    cols = term_width() / w;
-    if (cols < 1) cols = 1;
-    rows = (g_nlist + cols - 1) / cols;
-    for (r = 0; r < rows; r++) {
-        for (c = 0; c < cols && (i = c * rows + r) < g_nlist; c++)
-            printf("%-*s", c + 1 < cols && i + rows < g_nlist ? w : 0, g_list[i]);
-        putchar('\n');
-    }
-}
-/* "NAME<TAB>PATH" of the file lookup picks; " -> TARGET" for symlinks (aliases) */
-static void print_path(const char *name) {
-    char path[PATH_MAX], target[PATH_MAX];
-    ssize_t len;
-    if (!find_spec(name, path, sizeof path)) return;
-    len = readlink(path, target, sizeof target - 1);
-    if (len >= 0) {
-        target[len] = 0;
-        printf("%s\t%s -> %s\n", name, path, target);
-    } else
-        printf("%s\t%s\n", name, path);
-}
-
 /* `list --user`: only specs resolving to a file under ~/.config/autocomplete */
-static int g_list_user, g_list_paths, g_list_long;
+static int g_list_user, g_list_paths;
 static void list_spec(const char *name) {
     char path[PATH_MAX], dir[PATH_MAX];
     if (g_list_user) {
         snprintf(dir, sizeof dir, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
         if (!find_spec(name, path, sizeof path) || strncmp(path, dir, strlen(dir))) return;
     }
-    if (g_list_paths && !g_list_long) print_path(name);
-    else add_name(name);
+    add_name(name);
 }
 
-/* `list --long`: "name  description" per line (+ " [path]" with --paths) */
-static void print_long(void) {
-    char path[PATH_MAX];
+/* `autocomplete list`: sorted "name  description" lines; with --paths
+ * " [path]" (" -> target" for symlinks, i.e. aliases) */
+static void print_list(void) {
+    char path[PATH_MAX], target[PATH_MAX];
     int i, w = 0;
+    qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
     for (i = 0; i < g_nlist; i++)
         if ((int)strlen(g_list[i]) > w) w = (int)strlen(g_list[i]);
     for (i = 0; i < g_nlist; i++) {
         ynode *n = load_spec(g_list[i]);
         const char *d = n ? spec_desc(n) : NULL;
-        if (g_list_paths && find_spec(g_list[i], path, sizeof path)) printf("%-*s  %s%s[%s]", w, g_list[i], d ? d : "", d ? "  " : "", path);
-        else if (d) printf("%-*s  %s", w, g_list[i], d);
+        if (g_list_paths && find_spec(g_list[i], path, sizeof path)) {
+            ssize_t len = readlink(path, target, sizeof target - 1);
+            printf("%-*s  %s%s[%s", w, g_list[i], d ? d : "", d ? "  " : "", path);
+            if (len >= 0) printf(" -> %.*s", (int)len, target);
+            putchar(']');
+        } else if (d) printf("%-*s  %s", w, g_list[i], d);
         else printf("%s", g_list[i]);
         putchar('\n');
         if (n) yaml_free(n);
@@ -444,24 +415,19 @@ int main(int argc, char **argv) {
         for (i = 2; i < argc; i++) {
             if (!strcmp(argv[i], "--paths")) g_list_paths = 1;
             else if (!strcmp(argv[i], "--user")) g_list_user = 1;
-            else if (!strcmp(argv[i], "--long") || !strcmp(argv[i], "-l")) g_list_long = 1;
             else {
-                fprintf(stderr, "usage: autocomplete list [--user] [--long] [--paths]\n");
+                fprintf(stderr, "usage: autocomplete list [--user] [--paths]\n");
                 return 2;
             }
         }
         each_spec(list_spec);
-        if (g_list_long) {
-            qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
-            print_long();
-        } else if (!g_list_paths) print_names();
+        print_list();
         return 0;
     }
     fprintf(stderr,
             "usage: autocomplete bash              print bash init script\n"
-            "       autocomplete list [--user] [--long] [--paths]  list available specs (--user: only\n"
-            "                                  ~/.config/autocomplete; --long: with descriptions;\n"
-            "                                  --paths: with the file each resolves to)\n"
+            "       autocomplete list [--user] [--paths]  list specs with descriptions (--user: only\n"
+            "                                  ~/.config/autocomplete; --paths: with the spec file)\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete from man [--force] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"

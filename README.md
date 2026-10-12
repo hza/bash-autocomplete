@@ -153,9 +153,8 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | Command | Description |
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
-| `autocomplete list` | List commands that have a spec. |
+| `autocomplete list` | List commands that have a spec, one per line with its description. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
-| `autocomplete list --long` (`-l`) | One per line with each command's description (spec root `description`). |
 | `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `from`, aliases, hand-written); combines with `--paths`. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |

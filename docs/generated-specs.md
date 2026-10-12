@@ -21,7 +21,7 @@ autocomplete from man ps ls grep    # writes ~/.config/autocomplete/ps.yaml, ls.
 autocomplete from man --force ps    # overwrite an existing file
 ```
 
-Every generated spec starts with a `description:` (shown by `autocomplete list --long`):
+Every generated spec starts with a `description:` (shown by `autocomplete list`):
 the man page's NAME line, the intro paragraph of `--help` output (for cobra programs,
 of `CMD --help`), else the `whatis` line (`man -f CMD`). If none is found it is left
 empty (`description: ''`) for you to fill in.

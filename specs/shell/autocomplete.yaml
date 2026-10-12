@@ -3,18 +3,16 @@ commands:
   bash:
     description: "Print the bash init script (use with eval)"
   list:
-    description: "List commands that have a spec"
+    description: "List commands that have a spec, with descriptions"
     flags:
       --paths: {description: "Also show the spec file each command uses"}
-      --long: {description: "One per line with the command's description"}
-      -l: {description: "One per line with the command's description"}
       --user: {description: "Only specs in ~/.config/autocomplete (generated, aliases, your own)"}
   check:
     description: "Validate a spec and print it as JSON"
     args: file
   cache:
     description: "Precompile big specs (> 100 KB) into the cache"
-    args: {exec: "autocomplete list"}
+    args: {exec: "autocomplete list | awk '{n = $1; sub(/^[^ ]+ */, \"\"); print n \"\\t\" $0}'"}
   from:
     description: "Generate a spec from another source"
     commands:
@@ -41,4 +39,4 @@ commands:
         description: "Remove aliases (NAME...)"
         value: {exec: "autocomplete alias --list | cut -d' ' -f1"}
       --list: {description: "List aliases (NAME -> CMD)"}
-    args: {exec: "autocomplete list"}
+    args: {exec: "autocomplete list | awk '{n = $1; sub(/^[^ ]+ */, \"\"); print n \"\\t\" $0}'"}
