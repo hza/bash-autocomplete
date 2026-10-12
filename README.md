@@ -40,6 +40,44 @@ autocomplete works with the bash already on your Mac:
   are read only when you press TAB.
 - **No dependencies.** One binary, plain C, builds with the Xcode Command Line Tools.
 
+## Snippets: ready-made commands on TAB
+
+Most completion tools help you spell a flag you already know. Snippets help when you don't
+remember which flags you need. Press TAB right after a command and you get a list of
+complete, working commands, each with a one-letter key and a short explanation:
+
+```console
+$ curl <TAB>
+📌 @d  -- curl -d 'name=ann&age=30' https://httpbin.org/post   📚 POST form fields
+📌 @j  -- curl --json '{"id":1}' https://httpbin.org/post      📚 POST JSON
+📌 @l  -- curl -L -o page.html https://example.org             📚 follow redirects, save to file
+🔥 @x  -- curl -X DELETE https://httpbin.org/delete            📚 any other method: PUT, PATCH, DELETE
+...
+$ curl @x<TAB>
+$ curl -X DELETE https://httpbin.org/delete
+```
+
+Type `@` plus the key and press TAB, and the whole command is inserted for you to edit.
+📌 marks the most used ones, which are listed first.
+
+Bundled snippets cover the commands whose flags are hard to remember:
+
+- **curl**, **wget**: POST JSON or form data, uploads, headers only, redirects, resuming
+- **ps**, **lsof**: top CPU/memory processes, who listens on a port, open files of a process
+- **find**, **grep**: recently changed files, large files, recursive search with excludes
+- **jfr**: hot methods, GC pauses, allocations from a Java flight recording
+- **docker** `system`/`image`/`network`/`container`/`volume prune`, `docker compose config`
+- macOS **pbcopy**, **pbpaste**, **say**, **duti**, **mdls**
+- Shell keywords **for**, **while**, **until**, **case**, **if**: practical one-liners
+  (`if git <TAB>` still completes git, and so do `then`/`do`/`else`/`elif`)
+
+Add your own with a `snippets:` list in any spec ([format](docs/writing-specs.md)).
+
+Other tools don't do this inside TAB completion. bash-completion, zsh and fish complete
+flags and values only. Separate cheat-sheet tools like [navi](https://github.com/denisidoro/navi)
+or [tldr](https://tldr.sh) show examples, but in their own window or command, not on TAB at the
+prompt you're already typing on.
+
 ## Features
 
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**, **jfr**,
@@ -79,9 +117,8 @@ autocomplete works with the bash already on your Mac:
   - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
-- Command snippets for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
-  common recipes (`07  @7  -- curl -X DELETE https://httpbin.org/delete   📚 any other
-  method: PUT, PATCH, DELETE`) instead of nothing, and `curl @7<TAB>` inserts it; `ps @<TAB>` and `jfr @<TAB>` list recipes too (top CPU/memory, hot methods, GC pauses); `for`, `while`, `until`, `case` and `if <TAB>` show practical one-liners; `if git <TAB>` completes git, and so do `then`/`do`/`else`/`elif git <TAB>`.
+- [Snippets](#snippets-ready-made-commands-on-tab): `curl <TAB>` lists ready-made commands,
+  `curl @x<TAB>` inserts one.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - Add a command by writing a small YAML file, with no rebuild
   ([how](docs/adding-commands.md)).
