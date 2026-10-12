@@ -340,7 +340,7 @@ flags:
   "--write-out": {description: "Output FORMAT after completion", value: any, show: always}
   "--xattr": {description: "Store metadata in extended file attributes"}
 args: any
-examples:
+snippets:
   - key: s
     command: "curl -sS https://api.github.com/zen"
     description: "quiet GET (s), errors still shown (S)"

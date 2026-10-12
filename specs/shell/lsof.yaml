@@ -36,7 +36,7 @@ flags:
   -h: {description: "Help"}
   -v: {description: "Version information"}
 args: file
-examples:
+snippets:
   - key: p
     pin: true
     command: "lsof -nP -iTCP:8080 -sTCP:LISTEN"

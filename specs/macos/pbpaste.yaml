@@ -7,7 +7,7 @@ flags:
   -Prefer:
     value: {exec: "printf '%s\\n' txt rtf ps public.html"}
     description: "Data type to look for first"
-examples:
+snippets:
   - key: f
     pin: true
     command: "pbpaste > notes.txt"

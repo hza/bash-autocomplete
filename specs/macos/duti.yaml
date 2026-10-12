@@ -18,7 +18,7 @@ args:
   exec: 'set -f; set -- ${COMP_LINE%"$AUTOCOMPLETE_CUR"}; b=; n=0; for w; do if [ -n "$b" ]; then n=$((n+1)); elif [ "$p" = -s ]; then b=$w; fi; p=$w; done; [ -n "$b" ] || exit 0; if [ $n = 1 ]; then printf ''all\tall roles\nviewer\tview only\neditor\tview and edit\nshell\texecute\nnone\tno role\n''; exit 0; fi; [ $n = 0 ] || exit 0; osascript -l JavaScript "$AUTOCOMPLETE_SPEC_DIR/duti.js" args "$b" "$AUTOCOMPLETE_CUR"'
   tree: "."
   filter: false
-examples:
+snippets:
   - key: p
     command: "duti -s com.apple.Preview com.adobe.pdf all"
     description: "open PDFs with Preview"

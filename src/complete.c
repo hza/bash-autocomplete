@@ -26,8 +26,8 @@ static const ynode *find_group(const ynode *c, const ynode *root, char ch) {
 }
 
 /* `check`: warn about "groups" letters without a "-x" flag (own or root). */
-/* An example's `key`: one char of [0-9a-z] (typed as "@key"). */
-int example_key(const ynode *k) {
+/* A snippet's `key`: one char of [0-9a-z] (typed as "@key"). */
+int snippet_key(const ynode *k) {
     return k && k->type == Y_STR && k->str[0] && !k->str[1] && (isdigit((unsigned char)k->str[0]) || islower((unsigned char)k->str[0]));
 }
 
@@ -44,16 +44,16 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
                 bad = 1;
             }
         }
-    if (yaml_get(n, "examples")) {
+    if (yaml_get(n, "snippets")) {
         char seen[128] = {0};
-        for (g = yaml_get(n, "examples")->child; g; g = g->next) {
+        for (g = yaml_get(n, "snippets")->child; g; g = g->next) {
             const ynode *k = yaml_get(g, "key");
-            if (!example_key(k)) {
-                fprintf(stderr, "%s: example \"%s\": key must be one of [0-9a-z]\n", path,
+            if (!snippet_key(k)) {
+                fprintf(stderr, "%s: snippet \"%s\": key must be one of [0-9a-z]\n", path,
                         yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
                 bad = 1;
             } else if (seen[(int)k->str[0]]++) {
-                fprintf(stderr, "%s: duplicate example key %s\n", path, k->str);
+                fprintf(stderr, "%s: duplicate snippet key %s\n", path, k->str);
                 bad = 1;
             }
         }
@@ -252,10 +252,10 @@ static int exec_cached(const char *ex, long ttl, char *shell, size_t size) {
 
 static int is_true(const ynode *n) { return n && n->type == Y_BOOL && n->b; }
 
-/* `examples: true` on an exec value: its "key<TAB>value<TAB>desc[<TAB>pin]" lines
- * become examples (add_examples with an empty g_examples_name: "@key" is
+/* `snippets: true` on an exec value: its "key<TAB>value<TAB>desc[<TAB>pin]" lines
+ * become snippets (add_snippets with an empty g_snippets_name: "@key" is
  * replaced by the whole value, single-quoted). */
-static void exec_examples(const char *shell) {
+static void exec_snippets(const char *shell) {
     static ynode *arr;
     char line[4096];
     FILE *f = popen(shell, "r");
@@ -276,8 +276,8 @@ static void exec_examples(const char *shell) {
         if (pin && !strcmp(pin, "pin")) yaml_new(e, Y_BOOL, "pin", NULL)->b = 1;
     }
     pclose(f);
-    g_examples = arr;
-    g_examples_name = "";
+    g_snippets = arr;
+    g_snippets_name = "";
 }
 
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
@@ -312,7 +312,7 @@ static void complete_value(const ynode *v, const ynode *parent) {
         if (!ex || ex->type != Y_STR) break;
         if (!(ca && ca->type == Y_STR && exec_cached(ex->str, atol(ca->str), shell, sizeof shell)))
             snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);
-        if (is_true(yaml_get(v, "examples"))) { exec_examples(shell); break; }
+        if (is_true(yaml_get(v, "snippets"))) { exec_snippets(shell); break; }
         g_kind = NULL;
         g_nofilter = fl && fl->type == Y_BOOL && !fl->b;
         setenv("AUTOCOMPLETE_CUR", g_cur, 1); /* the word being completed, unescaped */
@@ -414,7 +414,7 @@ int do_complete(const char *line, const char *wbreaks) {
     int n = split(line, w, start), i, lvl = 0, npos = 0;
     const ynode *root, *c, *parent = NULL, *v = NULL;
     const char *cur, *slash, *cname;
-    static char cpath[1024]; /* "docker volume prune": examples are written in full */
+    static char cpath[1024]; /* "docker volume prune": snippets are written in full */
 
     g_wbreaks = wbreaks;
     g_raw = line + start[n - 1];
@@ -497,9 +497,9 @@ int do_complete(const char *line, const char *wbreaks) {
     }
 
     emit_commands(c);
-    /* examples only right after the command word ("duti <TAB>"), not deeper in the line */
-    g_examples = n - 1 == lvl + 1 ? yaml_get(c, "examples") : NULL;
-    g_examples_name = cpath;
+    /* snippets only right after the command word ("duti <TAB>"), not deeper in the line */
+    g_snippets = n - 1 == lvl + 1 ? yaml_get(c, "snippets") : NULL;
+    g_snippets_name = cpath;
     v = yaml_get(c, "args");
     /* "positional": the Nth positional word's value; past the list, "args" */
     {
@@ -507,13 +507,13 @@ int do_complete(const char *line, const char *wbreaks) {
         for (p = p && p->type == Y_ARR ? p->child : NULL, i = 0; p && i < npos; p = p->next) i++;
         if (p) v = p;
     }
-    /* "if <TAB>": the examples, not every $PATH executable; "if g<TAB>" completes commands */
-    if (g_examples && !*g_cur && is_str(v, "@command")) return 0;
-    if (g_examples && *g_cur == '@') return 0; /* "wget @p": add_examples */
+    /* "if <TAB>": the snippets, not every $PATH executable; "if g<TAB>" completes commands */
+    if (g_snippets && !*g_cur && is_str(v, "@command")) return 0;
+    if (g_snippets && *g_cur == '@') return 0; /* "wget @p": add_snippets */
     /* "@subcommands" on a leaf (docker help) lists the parent's commands */
     complete_value(v, is_str(v, "@subcommands") && parent ? parent : c);
     /* "docker compose down <TAB>": nothing else to offer, so the command's
      * own flags (root ones only after "-") */
-    if (!*g_cur && !ncands() && !(g_examples && g_examples->child) && c != root) list_flags(c, root, w, n, 0);
+    if (!*g_cur && !ncands() && !(g_snippets && g_snippets->child) && c != root) list_flags(c, root, w, n, 0);
     return 0;
 }

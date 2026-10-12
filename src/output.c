@@ -1,5 +1,5 @@
 /* Candidate queue: emit() escapes, filters and trims; flush() folds
- * (vars, flags, groups, examples) and prints the final list. */
+ * (vars, flags, groups, snippets) and prints the final list. */
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +34,7 @@ int ncands(void) { return g_ncands; }
 const char *g_kind; /* kind given to candidates emitted now */
 int g_show;         /* "show" given to candidates emitted now */
 int g_noesc;        /* display-only candidates: no shell escaping */
-int g_verbatim;     /* examples: no filter, escaping or trimming */
+int g_verbatim;     /* snippets: no filter, escaping or trimming */
 int g_nofilter;     /* exec `filter: false`: the command already matched g_cur */
 const char *g_group, *g_gdesc; /* group (and its description) given to candidates emitted now */
 
@@ -410,57 +410,57 @@ static void group_flags(void) {
     g_ncands = k;
 }
 
-/* On an empty word or "@", the spec's "examples" ({key, command,
+/* On an empty word or "@", the spec's "snippets" ({key, command,
  * description?, pin?}) are listed as display-only "📌 @key" (pin: true,
  * the most used ones) or "🔥 @key" entries described by
  * "command   📚 description". The two icons differ in the first byte, so
  * bash lists instead of inserting a common prefix (verified in pty); when
  * all entries are of one kind, one gets the other icon (the smallest key
  * is pinned, or the largest unpinned). 🔥 (U+1F525) sorts after 📌 (U+1F4CC).
- * "@key" typed in full is replaced by the example's command after
+ * "@key" typed in full is replaced by the snippet's command after
  * "<name> "; bash keeps a leading "@" in the replaced text (readline
- * special prefix, verified in pty). Examples not starting with "<name> "
- * (pipelines) are only listed. An empty g_examples_name (exec
- * `examples: true` flag values) substitutes the whole value, single-quoted.
- * When the empty word has other candidates (lsof: files), examples are
+ * special prefix, verified in pty). Snippets not starting with "<name> "
+ * (pipelines) are only listed. An empty g_snippets_name (exec
+ * `snippets: true` flag values) substitutes the whole value, single-quoted.
+ * When the empty word has other candidates (lsof: files), snippets are
  * listed only on "@". */
-const ynode *g_examples;
-const char *g_examples_name;
+const ynode *g_snippets;
+const char *g_snippets_name;
 
 static int pinned(const ynode *e) {
     const ynode *p = yaml_get(e, "pin");
     return p && p->type == Y_BOOL && p->b;
 }
 
-static void add_examples(void) {
+static void add_snippets(void) {
     const ynode *e;
     int want, npin = 0, nall = 0;
     char first = 0, last = 0;
     size_t nl;
     char name[32], desc[1024];
-    if (!g_examples || g_examples->type != Y_ARR) return;
+    if (!g_snippets || g_snippets->type != Y_ARR) return;
     want = g_cur[0] == '@' && g_cur[1] && !g_cur[2];
     if (*g_cur && strcmp(g_cur, "@") && !want) return;
-    if (!*g_cur && g_ncands) return; /* other candidates (lsof files): examples only on "@" */
-    nl = strlen(g_examples_name);
+    if (!*g_cur && g_ncands) return; /* other candidates (lsof files): snippets only on "@" */
+    nl = strlen(g_snippets_name);
     g_kind = g_ncands ? g_cands[0].kind : NULL; /* no [kind] tags */
     g_verbatim = 1;
-    for (e = g_examples->child; e; e = e->next) {
+    for (e = g_snippets->child; e; e = e->next) {
         const ynode *k = yaml_get(e, "key");
-        if (!example_key(k)) continue;
+        if (!snippet_key(k)) continue;
         nall++;
         npin += pinned(e);
         if (!first || k->str[0] < first) first = k->str[0];
         if (k->str[0] > last) last = k->str[0];
     }
-    for (e = g_examples->child; e; e = e->next) {
+    for (e = g_snippets->child; e; e = e->next) {
         const ynode *cmd = yaml_get(e, "command"), *k = yaml_get(e, "key");
         const char *d = spec_desc(e);
         int pin;
-        if (!cmd || cmd->type != Y_STR || !example_key(k)) continue;
+        if (!cmd || cmd->type != Y_STR || !snippet_key(k)) continue;
         if (want) {
             if (k->str[0] != g_cur[1]) continue;
-            if (!nl) { /* flag value (exec examples): quoted whole */
+            if (!nl) { /* flag value (exec snippets): quoted whole */
                 char q[4096], *o = q;
                 const char *c;
                 *o++ = '\'';
@@ -468,7 +468,7 @@ static void add_examples(void) {
                     if (*c == '\'') { memcpy(o, "'\\''", 4); o += 4; } else *o++ = *c;
                 *o++ = '\''; *o = 0;
                 emit_desc(q, 1, NULL);
-            } else if (!strncmp(cmd->str, g_examples_name, nl) && cmd->str[nl] == ' ')
+            } else if (!strncmp(cmd->str, g_snippets_name, nl) && cmd->str[nl] == ' ')
                 emit_desc(cmd->str + nl + 1, 1, NULL);
             break; /* not substitutable: list nothing */
         }
@@ -483,7 +483,7 @@ static void add_examples(void) {
 void flush(void) {
     int i, any = 0, width = 0, kwidth = 0, mixed = 0, cols, line;
     collapse_vars();
-    add_examples();
+    add_snippets();
     collapse_flags();
     merge_pairs();
     group_flags();

@@ -32,7 +32,7 @@ flags:
   --bit-rate: {value: any, description: "Bit rate for compressed formats"}
   --quality: {value: any, description: "Converter quality level (0-127)"}
 args: any
-examples:
+snippets:
   - key: p
     pin: true
     command: "say 'build finished'"

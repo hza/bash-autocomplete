@@ -1,5 +1,5 @@
 /* Candidate queue: emit() escapes, filters and trims; flush() folds
- * (vars, flags, groups, examples) and prints the final list. */
+ * (vars, flags, groups, snippets) and prints the final list. */
 #ifndef AUTOCOMPLETE_OUTPUT_H
 #define AUTOCOMPLETE_OUTPUT_H
 
@@ -19,9 +19,9 @@ extern int g_noesc;         /* display-only: no shell escaping */
 extern int g_nofilter;      /* exec `filter: false`: skip the g_cur prefix check */
 extern const char *g_group, *g_gdesc; /* "groups" key and its description */
 
-/* Spec "examples" listed on an empty word, with the command word and its description */
-extern const ynode *g_examples;
-extern const char *g_examples_name;
+/* Spec "snippets" listed on an empty word, with the command word and its description */
+extern const ynode *g_snippets;
+extern const char *g_snippets_name;
 
 /* Queue a candidate; space: finished word (append a space). */
 void emit_desc(const char *cand, int space, const char *desc);

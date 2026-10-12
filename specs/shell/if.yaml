@@ -1,6 +1,6 @@
 description: "Run commands if a command succeeds (bash keyword)"
 args: "@command"
-examples:
+snippets:
   - key: g
     command: 'if git diff --quiet; then git pull --rebase; else echo "uncommitted changes"; fi'
     description: "only if the work tree is clean"

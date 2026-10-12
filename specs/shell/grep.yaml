@@ -74,7 +74,7 @@ flags:
   --help: {description: "Show help"}
   -V: {description: "Version information"}
   --version: {description: "Version information"}
-examples:
+snippets:
   - key: t
     pin: true
     command: "grep -rn TODO ."

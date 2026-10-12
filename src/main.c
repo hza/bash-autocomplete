@@ -335,7 +335,7 @@ static int complete_env(void) {
     for (i = strlen(buf); i > 0 && !isspace((unsigned char)buf[i - 1]) && !strchr(wb, buf[i - 1]); i--) {}
     if (buf[i] == '$') { free(buf); return 0; }
     /* `user@host` word: same for bash's hostname completion; a bare `@x` or `--flag=@x`
-       stays ours (spec examples) */
+       stays ours (spec snippets) */
     if (i >= 2 && buf[i - 1] == '@' && !isspace((unsigned char)buf[i - 2]) && buf[i - 2] != '=') { free(buf); return 0; }
     rc = do_complete(buf, wb);
     flush();

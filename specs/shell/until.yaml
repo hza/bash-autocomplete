@@ -1,6 +1,6 @@
 description: "Repeat until a command succeeds (bash keyword)"
 args: "@command"
-examples:
+snippets:
   - key: r
     pin: true
     command: 'until git push; do sleep 5; done'

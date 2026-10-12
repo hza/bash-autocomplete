@@ -62,7 +62,7 @@ commands:
   help:
     description: "Show all commands, or help for one"
     args: "@subcommands"
-examples:
+snippets:
   - key: s
     command: "jfr summary recording.jfr"
     description: "duration, JVM and event counts"

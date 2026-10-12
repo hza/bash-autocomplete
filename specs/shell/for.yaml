@@ -1,6 +1,6 @@
 description: "Loop over a list of words (bash keyword)"
 args: any
-examples:
+snippets:
   - key: j
     command: 'for f in *.jpeg; do mv -n "$f" "${f%.jpeg}.jpg"; done'
     description: "change extension .jpeg -> .jpg"

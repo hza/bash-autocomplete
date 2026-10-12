@@ -4,7 +4,7 @@ flags:
   -pboard:
     value: {exec: "printf '%s\\n' general ruler find font"}
     description: "Pasteboard to use"
-examples:
+snippets:
   - key: f
     pin: true
     command: "pbcopy < ~/.ssh/id_ed25519.pub"

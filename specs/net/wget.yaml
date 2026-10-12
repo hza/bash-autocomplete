@@ -220,7 +220,7 @@ flags:
   "-np": {description: "Don't ascend to the parent directory"}
   "--no-parent": {description: "Don't ascend to the parent directory"}
 args: any
-examples:
+snippets:
   - key: p
     command: "wget --post-data='name=foo&id=42' -O - https://api.example.org/items"
     description: "send a POST request and print the response"

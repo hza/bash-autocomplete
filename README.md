@@ -19,8 +19,8 @@ $ make install
 It is a lightweight alternative to bash-completion that completes docker, git, kubectl, make,
 mvn, npm and more. You don't need Homebrew bash, the `bash-completion` package or zsh, and
 there are no shell scripts. It shines on parameter monsters like curl and wget. Hundreds of
-flags are grouped to fit your screen, and TAB on an empty argument shows ready-made usage
-examples.
+flags are grouped to fit your screen, and TAB on an empty argument shows ready-made command
+snippets.
 
 ## Why another bash completion tool?
 
@@ -79,7 +79,7 @@ autocomplete works with the bash already on your Mac:
   - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
-- Usage examples for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
+- Command snippets for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
   common recipes (`07  @7  -- curl -X DELETE https://httpbin.org/delete   📚 any other
   method: PUT, PATCH, DELETE`) instead of nothing, and `curl @7<TAB>` inserts it; `ps @<TAB>` and `jfr @<TAB>` list recipes too (top CPU/memory, hot methods, GC pauses); `for`, `while`, `until`, `case` and `if <TAB>` show practical one-liners; `if git <TAB>` completes git, and so do `then`/`do`/`else`/`elif git <TAB>`.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.

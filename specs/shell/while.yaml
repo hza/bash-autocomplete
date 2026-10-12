@@ -1,6 +1,6 @@
 description: "Repeat while a command succeeds (bash keyword)"
 args: "@command"
-examples:
+snippets:
   - key: l
     pin: true
     command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'

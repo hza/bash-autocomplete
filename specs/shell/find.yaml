@@ -59,7 +59,7 @@ flags:
   -s: {description: "Traverse in lexicographical order"}
   -x: {description: "Stay on one file system (same as -xdev)"}
   -f: {value: dir, description: "Add a starting path (allows names starting with -)"}
-examples:
+snippets:
   - key: n
     pin: true
     command: "find . -name '*.log'"

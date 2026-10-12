@@ -66,7 +66,7 @@ flags:
     description: 'When displaying processes matched by other options, skip any processes which do not have...'
   -x:
     description: 'When displaying processes matched by other options, include processes which do not have a...'
-examples:
+snippets:
   - key: a
     command: "ps aux"
     description: "every process with user, CPU, memory and full command"

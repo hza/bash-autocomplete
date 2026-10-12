@@ -80,9 +80,9 @@ commands:
       --all: {description: "Show all containers"}
       -q: {description: "Only display container IDs"}
       --quiet: {description: "Only display container IDs"}
-      -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", examples: true}, description: "Filter output based on conditions provided"}
-      --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", examples: true}, description: "Filter output based on conditions provided"}
-      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+      -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", snippets: true}, description: "Filter output based on conditions provided"}
+      --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps-filter", snippets: true}, description: "Filter output based on conditions provided"}
+      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" ps", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
       -n: {value: any, description: "Show n last created containers (includes all states)"}
       --last: {value: any, description: "Show n last created containers (includes all states)"}
       -l: {description: "Show the latest created container (includes all states)"}
@@ -99,7 +99,7 @@ commands:
       --quiet: {description: "Only show image IDs"}
       -f: {value: any, description: "Filter output based on conditions provided"}
       --filter: {value: any, description: "Filter output based on conditions provided"}
-      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" images", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" images", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
       --digests: {description: "Show digests"}
       --no-trunc: {description: "Don't truncate output"}
   pull:
@@ -200,8 +200,8 @@ commands:
   inspect:
     description: Return low-level information on Docker objects
     flags:
-      -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" container", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
-      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" container", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
+      -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" container", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
+      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" container", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates", show: always}
       -s: {description: "Display total file sizes if the type is container"}
       --size: {description: "Display total file sizes if the type is container"}
       --type: {value: any, description: "Only inspect objects of the given type"}
@@ -244,7 +244,7 @@ commands:
       --all: {description: "Show all containers"}
       --no-stream: {description: "Disable streaming stats and only pull the first result"}
       --no-trunc: {description: "Do not truncate output"}
-      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" stats", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+      --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" stats", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
     args:
       exec: docker ps --format '{{.Names}}'
   attach:
@@ -322,7 +322,7 @@ commands:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
-        examples:
+        snippets:
           - key: f
             pin: true
             command: "docker container prune -f"
@@ -347,7 +347,7 @@ commands:
           --quiet: {description: "Only display network IDs"}
           -f: {value: any, description: "Provide filter values (e.g. \"driver=bridge\")"}
           --filter: {value: any, description: "Provide filter values (e.g. \"driver=bridge\")"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" networks", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" networks", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
       create:
         description: Create a network
         flags:
@@ -365,8 +365,8 @@ commands:
       inspect:
         description: Display detailed information on one or more networks
         flags:
-          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" network", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" network", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" network", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" network", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
         args:
           exec: docker network ls --format '{{.Name}}'
       connect:
@@ -383,7 +383,7 @@ commands:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
-        examples:
+        snippets:
           - key: f
             pin: true
             command: "docker network prune -f"
@@ -411,7 +411,7 @@ commands:
           --quiet: {description: "Only show image IDs"}
           -f: {value: any, description: "Filter output based on conditions provided"}
           --filter: {value: any, description: "Filter output based on conditions provided"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" images", examples: true}, description: "Format output using a custom template"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" images", snippets: true}, description: "Format output using a custom template"}
           --digests: {description: "Show digests"}
           --no-trunc: {description: "Don't truncate output"}
       rm:
@@ -427,8 +427,8 @@ commands:
       inspect:
         description: Display detailed information on one or more images
         flags:
-          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" image", examples: true}, description: "Format output using a custom template"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" image", examples: true}, description: "Format output using a custom template"}
+          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" image", snippets: true}, description: "Format output using a custom template"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" image", snippets: true}, description: "Format output using a custom template"}
         args:
           exec: docker images --format '{{.Repository}}:{{.Tag}}'
           tree: true
@@ -485,7 +485,7 @@ commands:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
-        examples:
+        snippets:
           - key: a
             pin: true
             command: "docker image prune -a"
@@ -514,7 +514,7 @@ commands:
           --quiet: {description: "Only display volume names"}
           -f: {value: any, description: "Provide filter values (e.g. \"dangling=true\")"}
           --filter: {value: any, description: "Provide filter values (e.g. \"dangling=true\")"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volumes", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volumes", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
       create:
         description: Create a volume
         flags:
@@ -534,8 +534,8 @@ commands:
       inspect:
         description: Display detailed information on one or more volumes
         flags:
-          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volume", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volume", examples: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volume", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" volume", snippets: true}, description: "Format output using a custom template: 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
         args:
           exec: docker volume ls --format '{{.Name}}'
       prune:
@@ -546,7 +546,7 @@ commands:
           -f: {description: "Do not prompt for confirmation"}
           --force: {description: "Do not prompt for confirmation"}
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter-label"}, description: "Provide filter values (e.g. \"label=<label>\")"}
-        examples:
+        snippets:
           - key: a
             pin: true
             command: "docker volume prune -a"
@@ -580,7 +580,7 @@ commands:
           --force: {description: "Do not prompt for confirmation"}
           --volumes: {description: "Prune anonymous volumes", show: always}
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"label=<key>=<value>\")", show: always}
-        examples:
+        snippets:
           - key: a
             pin: true
             command: "docker system prune -a"
@@ -668,7 +668,7 @@ commands:
           -q: {description: "Only display IDs"}
           --quiet: {description: "Only display IDs"}
           --filter: {value: any, description: "Filter services by a property (supported filters: status)"}
-          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" compose-ps", examples: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
+          --format: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" compose-ps", snippets: true}, description: "Format output using a custom template: 'table': Print output in table format with column headers 'table TEMPLATE': Print output in table format using the given Go template 'json': Print in JSON format 'TEMPLATE': Print output using the given Go template. Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates"}
           --no-trunc: {description: "Don't truncate output"}
           --dry-run: {description: "Execute command in dry run mode"}
           --orphans: {description: "Include orphaned services (not declared by project) (default true)"}
@@ -788,7 +788,7 @@ commands:
           --dry-run: {description: "Execute command in dry run mode"}
         args:
           exec: docker compose config --services
-        examples:
+        snippets:
           - key: q
             pin: true
             command: "docker compose config -q"

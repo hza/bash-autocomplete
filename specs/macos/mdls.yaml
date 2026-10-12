@@ -12,7 +12,7 @@ flags:
   -plist: {value: file, description: "Write all attributes as XML plist to file ('-' for stdout)"}
   -sdb: {description: "Show Spotlight database info (_kMDItemSDBInfo)"}
 args: file
-examples:
+snippets:
   - key: t
     pin: true
     command: "mdls -name kMDItemContentType -raw README.md"
