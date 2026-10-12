@@ -232,6 +232,68 @@ static void help_usages(char **lines, int nl, const char *cmd, ynode *root) {
     }
 }
 
+/* Intro line of --help output: the first unindented line before any option,
+ * "Header:" or other indented text, skipping the usage block, version
+ * banners ("rg 14.1.0") and "Name <mail>" lines. "" if none. */
+static void help_intro(char **lines, int nl, char *out, size_t size) {
+    int i;
+    *out = 0;
+    for (i = 0; i < nl; i++) {
+        const char *l = lines[i], *sp = strchr(l, ' ');
+        size_t len = strlen(l);
+        if (!len) continue;
+        if (!strncasecmp(l, "usage", 5)) {
+            while (i + 1 < nl && lines[i + 1][0] == ' ' && lines[i + 1][indent(lines[i + 1])] != '-') i++;
+            continue;
+        }
+        if (l[0] == ' ' || l[0] == '-' || l[len - 1] == ':') return;
+        if (!sp || isdigit((unsigned char)sp[1]) || (sp[1] == 'v' && isdigit((unsigned char)sp[2]))) continue;
+        if (strchr(l, '<') && strchr(l, '@')) continue;
+        { /* the whole paragraph: wrapped lines up to a blank one */
+            char text[1024];
+            snprintf(text, sizeof text, "%s", l);
+            while (++i < nl && lines[i][0] && lines[i][0] != ' ' && strlen(text) < 400) {
+                strncat(text, " ", sizeof text - strlen(text) - 1);
+                strncat(text, lines[i], sizeof text - strlen(text) - 1);
+            }
+            sentence(text, out, size);
+        }
+        return;
+    }
+}
+
+/* root's description: desc, else the whatis line, else "" (always present,
+ * first key). */
+static void set_desc(ynode *root, const char *cmd, const char *desc) {
+    char shell[512], line[1024], buf[300] = "";
+    const char *p;
+    ynode *d;
+    FILE *f;
+    if (yaml_get(root, "description")) return;
+    if (desc && *desc) snprintf(buf, sizeof buf, "%s", desc);
+    else {
+        snprintf(shell, sizeof shell, "man -f '%s' 2>/dev/null", cmd);
+        if ((f = popen(shell, "r"))) {
+            while (fgets(line, sizeof line, f)) {
+                line[strcspn(line, "\r\n")] = 0;
+                /* "jfr(1)  - ..." / "ls(1), gls(1) - ..."; first exact name */
+                if (strncmp(line, cmd, strlen(cmd)) || line[strlen(cmd)] != '(' || !(p = strstr(line, " - "))) continue;
+                sentence(p + 3, buf, sizeof buf);
+                break;
+            }
+            pclose(f);
+        }
+    }
+    d = yaml_new(root, Y_STR, "description", buf);
+    if (root->child != d) { /* move to front */
+        ynode *q = root->child;
+        while (q->next != d) q = q->next;
+        q->next = NULL;
+        d->next = root->child;
+        root->child = d;
+    }
+}
+
 /* Spec from the text `shell` prints: a man page (help = 0) or --help
  * output (help = 1: no NAME/SYNOPSIS, "Commands:" sections). */
 static ynode *text_spec(const char *shell, const char *cmd, int help) {
@@ -307,11 +369,15 @@ static ynode *text_spec(const char *shell, const char *cmd, int help) {
         yaml_free(flags);
         flags = NULL;
     }
-    for (i = 0; i < nl; i++) free(lines[i]);
     if (!flags && !yaml_get(root, "commands")) {
+        for (i = 0; i < nl; i++) free(lines[i]);
         yaml_free(root);
         return NULL;
     }
+    if (help) help_intro(lines, nl, desc, sizeof desc);
+    else *desc = 0;
+    set_desc(root, cmd, desc);
+    for (i = 0; i < nl; i++) free(lines[i]);
     if (!yaml_get(root, "commands")) yaml_new(root, Y_STR, "args", "file");
     return root;
 }
@@ -350,5 +416,22 @@ ynode *cobra_spec(const char *cmd) {
     if (last[0] != ':' || !isdigit((unsigned char)last[1])) return NULL;
     root = yaml_new(NULL, Y_OBJ, NULL, NULL);
     yaml_new(root, Y_STR, "bridge", "cobra");
+    {   /* cobra always handles --help itself */
+        char *lines[64], desc[300] = "";
+        int nl = 0, i;
+        snprintf(shell, sizeof shell, "'%s' --help </dev/null 2>/dev/null", cmd);
+        if ((f = popen(shell, "r"))) {
+            while (nl < 64 && fgets(line, sizeof line, f)) {
+                size_t len = strcspn(line, "\r\n");
+                while (len && line[len - 1] == ' ') len--;
+                line[len] = 0;
+                lines[nl++] = strdup(line);
+            }
+            pclose(f);
+        }
+        help_intro(lines, nl, desc, sizeof desc);
+        for (i = 0; i < nl; i++) free(lines[i]);
+        set_desc(root, cmd, desc);
+    }
     return root;
 }

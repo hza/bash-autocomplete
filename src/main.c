@@ -85,6 +85,35 @@ static void print_path(const char *name) {
         printf("%s\t%s\n", name, path);
 }
 
+/* `list --user`: only specs resolving to a file under ~/.config/autocomplete */
+static int g_list_user, g_list_paths, g_list_long;
+static void list_spec(const char *name) {
+    char path[PATH_MAX], dir[PATH_MAX];
+    if (g_list_user) {
+        snprintf(dir, sizeof dir, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
+        if (!find_spec(name, path, sizeof path) || strncmp(path, dir, strlen(dir))) return;
+    }
+    if (g_list_paths && !g_list_long) print_path(name);
+    else add_name(name);
+}
+
+/* `list --long`: "name  description" per line (+ " [path]" with --paths) */
+static void print_long(void) {
+    char path[PATH_MAX];
+    int i, w = 0;
+    for (i = 0; i < g_nlist; i++)
+        if ((int)strlen(g_list[i]) > w) w = (int)strlen(g_list[i]);
+    for (i = 0; i < g_nlist; i++) {
+        ynode *n = load_spec(g_list[i]);
+        const char *d = n ? spec_desc(n) : NULL;
+        if (g_list_paths && find_spec(g_list[i], path, sizeof path)) printf("%-*s  %s%s[%s]", w, g_list[i], d ? d : "", d ? "  " : "", path);
+        else if (d) printf("%-*s  %s", w, g_list[i], d);
+        else printf("%s", g_list[i]);
+        putchar('\n');
+        if (n) yaml_free(n);
+    }
+}
+
 static int g_cache_failed;
 
 /* `autocomplete cache`: compile a big spec (> CACHE_MIN) unconditionally. */
@@ -411,13 +440,28 @@ int main(int argc, char **argv) {
     if (argc >= 2 && !strcmp(argv[1], "alias")) return alias_cmds(argc - 2, argv + 2);
     if (argc >= 4 && !strcmp(argv[1], "from")) return from_cmds(argv[2], argc - 3, argv + 3);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
-        if (argc >= 3 && !strcmp(argv[2], "--paths")) each_spec(print_path);
-        else { each_spec(add_name); print_names(); }
+        int i;
+        for (i = 2; i < argc; i++) {
+            if (!strcmp(argv[i], "--paths")) g_list_paths = 1;
+            else if (!strcmp(argv[i], "--user")) g_list_user = 1;
+            else if (!strcmp(argv[i], "--long") || !strcmp(argv[i], "-l")) g_list_long = 1;
+            else {
+                fprintf(stderr, "usage: autocomplete list [--user] [--long] [--paths]\n");
+                return 2;
+            }
+        }
+        each_spec(list_spec);
+        if (g_list_long) {
+            qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
+            print_long();
+        } else if (!g_list_paths) print_names();
         return 0;
     }
     fprintf(stderr,
             "usage: autocomplete bash              print bash init script\n"
-            "       autocomplete list [--paths]    list available specs (with the file each resolves to)\n"
+            "       autocomplete list [--user] [--long] [--paths]  list available specs (--user: only\n"
+            "                                  ~/.config/autocomplete; --long: with descriptions;\n"
+            "                                  --paths: with the file each resolves to)\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete from man [--force] CMD...   write ~/.config/autocomplete/CMD.yaml from man CMD\n"

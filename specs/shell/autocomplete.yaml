@@ -6,6 +6,9 @@ commands:
     description: "List commands that have a spec"
     flags:
       --paths: {description: "Also show the spec file each command uses"}
+      --long: {description: "One per line with the command's description"}
+      -l: {description: "One per line with the command's description"}
+      --user: {description: "Only specs in ~/.config/autocomplete (generated, aliases, your own)"}
   check:
     description: "Validate a spec and print it as JSON"
     args: file
