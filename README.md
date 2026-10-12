@@ -74,6 +74,8 @@ Bundled snippets cover the commands whose flags are hard to remember:
 - **ssh**: port forwarding, jump hosts, SOCKS proxy, remote commands
 - **jq**: pretty-print, pick and filter fields, CSV, shell variables
 - **jfr**: hot methods, GC pauses, allocations from a Java flight recording
+- **brew**: dependency tree (all installed or one formula), what depends on a formula,
+  leaves, unused dependencies, cleanup, Brewfile backup
 - **docker** `system`/`image`/`network`/`container`/`volume prune`, `docker compose config`
 - macOS **defaults** (hidden Finder, Dock and screenshot settings), **sips** (resize, convert
   HEIC), **pbcopy**, **pbpaste**, **say**, **duti**, **mdls**

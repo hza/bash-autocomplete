@@ -306,3 +306,38 @@ commands:
       --hide: {value: any, description: "Act as if none of the specified hidden are installed"}
     args:
       exec: "brew list --formula 2>/dev/null"
+snippets:
+  - key: t
+    mark: "1"
+    command: "brew deps --tree --installed"
+    description: "dependency tree of everything installed"
+  - key: d
+    mark: pin
+    command: "brew deps --tree git"
+    description: "dependency tree of one formula (installed or not)"
+  - key: u
+    mark: pin
+    command: "brew uses --installed --recursive openssl@3"
+    description: "installed formulae that depend on it, directly or not"
+  - key: l
+    mark: pin
+    command: "brew leaves -r"
+    description: "installed on request and needed by nothing (your real list)"
+  - key: a
+    command: "brew autoremove -n"
+    description: "dependencies nothing needs anymore (dry run; drop -n to remove)"
+  - key: o
+    command: "brew outdated --greedy"
+    description: "outdated, casks with auto-update included"
+  - key: c
+    command: "brew cleanup --prune=all -s"
+    description: "delete old versions and the whole download cache"
+  - key: v
+    command: "brew list --versions"
+    description: "installed formulae with versions"
+  - key: s
+    command: "brew services list"
+    description: "background services and their status"
+  - key: b
+    command: "brew bundle dump --file=~/Brewfile --force"
+    description: "save everything installed to a Brewfile (restore: brew bundle --file=~/Brewfile)"
