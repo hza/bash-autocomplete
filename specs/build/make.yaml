@@ -1,3 +1,4 @@
+description: "Build targets from a makefile"
 flags:
   -f: {value: file, description: "Read FILE as a makefile", show: always}
   --file: {value: file, description: "Read FILE as a makefile", show: always}

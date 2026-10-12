@@ -1,3 +1,4 @@
+description: "Server-side JavaScript runtime"
 flags:
   -e: {value: any, description: evaluate a script, show: always}
   --eval: {value: any, description: evaluate a script, show: always}

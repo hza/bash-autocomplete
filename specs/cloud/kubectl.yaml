@@ -1,3 +1,4 @@
+description: "Control Kubernetes clusters"
 flags:
   -n: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request", show: always}
   --namespace: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request", show: always}

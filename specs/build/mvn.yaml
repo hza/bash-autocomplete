@@ -1,3 +1,4 @@
+description: "Apache Maven build tool"
 flags:
   -am: {description: "Also build projects required by the -pl list"}
   --also-make: {description: "Also build projects required by the -pl list"}

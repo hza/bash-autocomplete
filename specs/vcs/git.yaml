@@ -1,3 +1,4 @@
+description: "Distributed version control"
 flags:
   -C: {value: dir, description: "Run as if git was started in <path>", show: always}
   -c: {value: any, description: "Set a config variable (name=value)", show: always}

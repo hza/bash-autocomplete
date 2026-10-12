@@ -1,3 +1,4 @@
+description: "Python interpreter"
 flags:
   -m:
     value: {exec: "python3 -c \"import pkgutil,sys;print('\\n'.join(sorted(set(sys.builtin_module_names)|{m.name for m in pkgutil.iter_modules()}|{'http.server','json.tool','pip','venv','unittest','pdb','cProfile','timeit','zipfile','tarfile','py_compile','compileall','site','sysconfig','calendar','base64','webbrowser','pydoc','ensurepip','trace','tabnanny','uuid'})))\""}

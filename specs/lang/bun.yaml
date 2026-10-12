@@ -1,3 +1,4 @@
+description: "JavaScript runtime, package manager, bundler and test runner"
 flags:
   --watch: {description: restart on file change, show: always}
   --hot: {description: reload in place on file change}

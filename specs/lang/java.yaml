@@ -1,3 +1,4 @@
+description: "Launch a Java application"
 flags:
   -cp: {value: file, description: class path (dirs and jars separated by colons)}
   -classpath: {value: file, description: class path (dirs and jars separated by colons), show: always}

@@ -1,3 +1,4 @@
+description: "Run a command from a local or remote npm package"
 flags:
   --package: {value: any, description: package to install before running}
   -p: {value: any, description: package to install before running}

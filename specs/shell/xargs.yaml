@@ -1,3 +1,4 @@
+description: "Build and run commands from standard input"
 flags:
   '-0': {description: input items are NUL-separated}
   -E: {value: any, description: stop at this end-of-file string}
