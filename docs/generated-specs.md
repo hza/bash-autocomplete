@@ -67,6 +67,9 @@ reads:
 - `Commands:` / `Available Commands:` sections, which become subcommands with their
   descriptions. Their own flags are not read: `from help` never runs `CMD SUB --help`,
   since a subcommand that ignores `--help` would do real work.
+- without such a section, one usage block per subcommand (`jfr print [--events <filter>]
+  <file>` followed by an indented description line). Each block becomes a subcommand with
+  the flags from its brackets, file arguments for `<file>`, and the description.
 
 The command is run with `--help` and stdin from `/dev/null`; don't use it on programs that
 might act on an unknown flag.

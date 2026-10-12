@@ -172,9 +172,69 @@ static void help_commands(char **lines, int nl, ynode *root) {
     }
 }
 
+/* Per-command usage blocks of --help output (jfr):
+ *
+ *  jfr print [--xml|--json]
+ *            [--events <filter>]
+ *            <file>
+ *      Print contents of a recording file.
+ *
+ * A line "<cmd> <name> ..." starts a command; deeper-indented lines starting
+ * with "[" or "<" continue its synopsis, the first other one is its
+ * description. "[-x arg]" / "[-a|-b]" become flags, "<file>" makes args
+ * file, "[<command>]" @subcommands. */
+static void help_usages(char **lines, int nl, const char *cmd, ynode *root) {
+    ynode *cmds = NULL, *c = NULL, *flags = NULL;
+    char name[64], desc[300], buf[1024];
+    size_t cl = strlen(cmd);
+    int i, ind = 0, gotdesc = 0;
+    for (i = 0; i < nl; i++) {
+        const char *l = lines[i], *p = l + indent(l), *d;
+        char *q;
+        int k = indent(l);
+        if (!strncmp(p, cmd, cl) && p[cl] == ' ' && isalpha((unsigned char)p[cl + 1])) {
+            for (d = p + cl + 1; isalnum((unsigned char)*d) || strchr("-_", *d); d++) {}
+            if (*d && *d != ' ') { c = NULL; continue; }
+            snprintf(name, sizeof name, "%.*s", (int)(d - p - cl - 1), p + cl + 1);
+            if (!cmds) cmds = yaml_new(root, Y_OBJ, "commands", NULL);
+            if (yaml_get(cmds, name)) { c = NULL; continue; }
+            c = yaml_new(cmds, Y_OBJ, name, NULL);
+            flags = NULL;
+            ind = k;
+            gotdesc = 0;
+        } else if (!c || k <= ind) {
+            c = NULL;
+            continue;
+        } else if (*p != '[' && *p != '<') {
+            if (!gotdesc) {
+                sentence(p, desc, sizeof desc);
+                if (*desc) yaml_new(c, Y_STR, "description", desc);
+                gotdesc = 1;
+            }
+            continue;
+        } else d = p;
+        if (gotdesc) continue;
+        snprintf(buf, sizeof buf, "%s", d);
+        if ((q = strstr(buf, " ("))) *q = 0; /* "(aliases --help, -h)" */
+        for (q = buf; *q; q++)
+            if (*q == '|' || *q == ']') *q = ' ';
+        if (strstr(buf, "[<command>")) yaml_new(c, Y_STR, "args", "@subcommands");
+        else if (strstr(buf, "file>") && !yaml_get(c, "args")) yaml_new(c, Y_STR, "args", "file");
+        for (q = buf; (q = strchr(q, '-')); q++) {
+            const char *s = q;
+            opt o;
+            if (q > buf && q[-1] != '[' && q[-1] != ' ') continue;
+            if (!parse_opt(&s, &o)) continue;
+            if (!flags) flags = yaml_new(c, Y_OBJ, "flags", NULL);
+            add_flag(flags, o.name, o.arg, NULL);
+            q = (char *)s - 1;
+        }
+    }
+}
+
 /* Spec from the text `shell` prints: a man page (help = 0) or --help
  * output (help = 1: no NAME/SYNOPSIS, "Commands:" sections). */
-static ynode *text_spec(const char *shell, int help) {
+static ynode *text_spec(const char *shell, const char *cmd, int help) {
     char buf[4096], *lines[MAXLINES], text[2048], desc[300];
     int nl = 0, i, j, ind = -1, counts[64] = {0}, nsyn;
     const char *p;
@@ -238,6 +298,7 @@ static ynode *text_spec(const char *shell, int help) {
     for (i = 0; i < nsyn; i++) add_flag(flags, syn[i].name, syn[i].arg, NULL);
 
     if (help) help_commands(lines, nl, root);
+    if (help && !yaml_get(root, "commands")) help_usages(lines, nl, cmd, root);
     if (!flags->child) { /* no empty "flags: {}" */
         ynode **pp = &root->child;
         while (*pp != flags) pp = &(*pp)->next;
@@ -266,7 +327,7 @@ ynode *man_spec(const char *cmd) {
     char shell[512];
     if (!plain_name(cmd)) return NULL;
     snprintf(shell, sizeof shell, "MANWIDTH=1000 man -P cat '%s' 2>/dev/null | col -bx", cmd);
-    return text_spec(shell, 0);
+    return text_spec(shell, cmd, 0);
 }
 
 ynode *help_spec(const char *cmd) {
@@ -274,7 +335,7 @@ ynode *help_spec(const char *cmd) {
     if (!plain_name(cmd)) return NULL;
     /* stdin from /dev/null: a command that ignores --help must not wait for input */
     snprintf(shell, sizeof shell, "'%s' --help </dev/null 2>&1 | col -bx", cmd);
-    return text_spec(shell, 1);
+    return text_spec(shell, cmd, 1);
 }
 
 ynode *cobra_spec(const char *cmd) {
