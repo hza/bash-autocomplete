@@ -16,6 +16,7 @@ extern char *g_qpre;        /* inside an open quote: text after it up to the las
 extern const char *g_kind;  /* source, e.g. "target"; tagged when kinds mix */
 extern int g_show;          /* SHOW_* */
 extern int g_noesc;         /* display-only: no shell escaping */
+extern int g_verbatim;      /* no filter, escaping or trimming (display-only lists) */
 extern int g_nofilter;      /* exec `filter: false`: skip the g_cur prefix check */
 extern const char *g_group, *g_gdesc; /* "groups" key and its description */
 

@@ -37,7 +37,9 @@ static void print_complete(const char *name) {
     if (!g_ncomplete++) {
         /* -C string is eval'd by bash: backslash-escape the path inside it,
            then single-quote the whole string for the `complete` line */
-        fputs("complete -o nospace -o bashdefault -C '", stdout);
+        /* $(compgen -v): the -C string runs in a subshell of the user's shell,
+           so unexported variables reach `${NAME` completion too */
+        fputs("complete -o nospace -o bashdefault -C 'AUTOCOMPLETE_VARS=$(compgen -v) ", stdout);
         for (p = g_self; *p; p++) {
             if (!isalnum((unsigned char)*p) && !strchr("/._-+,", *p)) putchar('\\');
             if (*p == '\'') fputs("'\\''", stdout);
@@ -312,6 +314,101 @@ static void print_bash(const char *self) {
     if (g_ncomplete) putchar('\n');
 }
 
+/* `${NAME<op>` cheat-sheet (bash 3.2 forms only). `op`: what is typed after
+   the name (`pre`: right after `${`; `0` stands for any digit), `ex`: the
+   example after the name (`pre`: the whole expansion), `res`: its result when
+   the variable holds PARAM_SAMPLE. */
+#define PARAM_SAMPLE "src/lib/a.tar.gz"
+static const struct { int pre; const char *op, *ex, *res, *desc; } params[] = {
+    {0, "}", "}", PARAM_SAMPLE, "sample value for the rows below"},
+    {0, "%", "%.*}", "src/lib/a.tar", "cut shortest matching suffix"},
+    {0, "%%", "%%.*}", "src/lib/a", "cut longest matching suffix"},
+    {0, "%/*", "%/*}", "src/lib", "dirname"},
+    {0, "#", "#*/}", "lib/a.tar.gz", "cut shortest matching prefix"},
+    {0, "##", "##*/}", "a.tar.gz", "cut longest matching prefix: basename"},
+    {0, "##*.", "##*.}", "gz", "extension"},
+    {0, "/", "/a/X}", "src/lib/X.tar.gz", "replace first match"},
+    {0, "//", "//a/X}", "src/lib/X.tXr.gz", "replace every match"},
+    {0, "/#", "/#src/out}", "out/lib/a.tar.gz", "replace at start"},
+    {0, "/%", "/%gz/xz}", "src/lib/a.tar.xz", "replace at end"},
+    {0, ":-", ":-dflt}", "dflt if unset/empty", "default"},
+    {0, "-", "-dflt}", "dflt if unset", "default, empty stays"},
+    {0, ":=", ":=dflt}", "dflt if unset/empty", "default, also assigned"},
+    {0, ":+", ":+alt}", "alt if non-empty", "alternate, else empty"},
+    {0, ":?", ":?msg}", "error if unset/empty", "required, msg on error"},
+    {0, ":0", ":4}", "lib/a.tar.gz", "substring from offset"},
+    {0, ":0:", ":4:3}", "lib", "substring: offset, length"},
+    {0, ": -", ": -6}", "tar.gz", "last N chars (space required)"},
+    {1, "#", "${#v}", "16", "length"},
+    {1, "!*", "${!PA*}", "PATH PAGER ...", "names starting with PA"},
+    {1, "!", "${!ref}", "$NAME if ref=NAME", "indirection"},
+};
+
+/* Word `${…` with an operator started: list the matching forms display-only
+   (emoji first, so bash lists them and never inserts one). 0: not ours. */
+static int complete_param(const char *w) {
+    const char *p = w + 2, *vars = getenv("AUTOCOMPLETE_VARS");
+    char name[64], desc[256];
+    size_t i, k, ol, nl, want, rw;
+    char *ex[sizeof params / sizeof *params] = {0}, show[sizeof params / sizeof *params] = {0};
+    int n = 0, exact = 0, pre = *p == '#' || *p == '!';
+    if (!pre) {
+        if (isalpha((unsigned char)*p) || *p == '_')
+            while (isalnum((unsigned char)*p) || *p == '_') p++;
+        else if (isdigit((unsigned char)*p) || *p == '@' || *p == '*') p++;
+        else if (*p) return 0;
+    }
+    ol = strlen(p);
+    if (strchr(p, '}') || (pre && ol > 1)) return 0;
+    g_cur = w;
+    g_kind = NULL;
+    g_verbatim = 1;
+    if (!ol && !pre) {
+        /* `${NAME`: shell variable names (`compgen -v` from the init line) as
+           `${NAME` without the `}` bash would add; an exact name also lists the
+           operators. No list (older init line): bash completes the name. */
+        const char *v, *e;
+        if (!vars) { g_verbatim = 0; return 0; }
+        nl = p - w;
+        for (v = vars; *v; v = *e ? e + 1 : e) {
+            e = strchr(v, '\n');
+            if (!e) e = v + strlen(v);
+            if ((size_t)(e - v) + 2 < nl || (size_t)(e - v) + 3 > sizeof name || strncmp(v, w + 2, nl - 2)) continue;
+            snprintf(name, sizeof name, "${%.*s", (int)(e - v), v);
+            if (!strcmp(name, w)) exact = 1;
+            else emit_desc(name, 0, NULL);
+        }
+        if (!exact) { g_verbatim = 0; return ncands() > 0; }
+    }
+    g_cur = w;
+    g_kind = NULL;
+    g_verbatim = 1;
+    for (i = 0, want = rw = 0; i < sizeof params / sizeof *params; i++) {
+        const char *o = params[i].op;
+        if (params[i].pre != pre) continue;
+        /* typed text must be a prefix of the form; any digit matches the 0 placeholder */
+        for (k = 0; k < ol && o[k]; k++)
+            if (o[k] != p[k] && !(o[k] == '0' && isdigit((unsigned char)p[k]))) break;
+        if (k < ol) continue;
+        show[i] = 1;
+        ex[i] = pre ? strdup(params[i].ex) : NULL;
+        if (!pre && asprintf(&ex[i], "%.*s%s", (int)(p - w), w, params[i].ex) < 0) ex[i] = NULL;
+        if (ex[i] && strlen(ex[i]) > want) want = strlen(ex[i]);
+        if (strlen(params[i].res) > rw) rw = strlen(params[i].res);
+    }
+    for (i = 0; i < sizeof params / sizeof *params; i++) {
+        if (!show[i] || !ex[i]) continue;
+        snprintf(name, sizeof name, "%s\xc2\xa0%s", n ? "🔥" : "📌", params[i].op);
+        snprintf(desc, sizeof desc, "%-*s → %-*s 📚 %s", (int)want, ex[i], (int)rw, params[i].res, params[i].desc);
+        emit_desc(name, 0, desc);
+        free(ex[i]);
+        n++;
+    }
+    if (ncands() == 1) emit_desc("🔎\xc2\xa0keep", 0, "typed text stays"); /* a lone entry would be inserted */
+    g_verbatim = 0;
+    return 1;
+}
+
 /* `complete -C` passes the line in $COMP_LINE, the cursor (in characters) in
    $COMP_POINT; COMP_WORDBREAKS isn't exported, so it is used only if the user
    exported it. */
@@ -319,7 +416,8 @@ static int complete_env(void) {
     const char *line = getenv("COMP_LINE"), *pt = getenv("COMP_POINT");
     const char *wb = getenv("COMP_WORDBREAKS");
     char *buf;
-    size_t i = 0;
+    size_t i = 0, j;
+    char *k;
     long n;
     int rc;
     if (!line) return 1;
@@ -333,6 +431,15 @@ static int complete_env(void) {
     /* `$VAR` word: print nothing, bash's own variable completion takes over
        (-o bashdefault) and sees unexported shell variables too */
     for (i = strlen(buf); i > 0 && !isspace((unsigned char)buf[i - 1]) && !strchr(wb, buf[i - 1]); i--) {}
+    /* `${NAME<op>`: our cheat-sheet; `:` is a wordbreak, so take the last `${`
+       of the space/quote-delimited word */
+    for (j = strlen(buf); j > 0 && !strchr(" \t\"'", buf[j - 1]); j--) {}
+    for (k = buf + strlen(buf); k > buf + j && strncmp(k, "${", 2); k--) {}
+    if (!strncmp(k, "${", 2) && complete_param(k)) {
+        flush();
+        free(buf);
+        return 0;
+    }
     if (buf[i] == '$') { free(buf); return 0; }
     /* `user@host` word: same for bash's hostname completion; a bare `@x` or `--flag=@x`
        stays ours (spec snippets) */
