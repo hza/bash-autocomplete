@@ -1,0 +1,102 @@
+description: "apply a diff file to an original (BSD patch)"
+flags:
+  -p: {value: {exec: "printf '%s\\n' 0 1 2 3"}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)", show: always}
+  --strip: {value: {exec: "printf '%s\\n' 0 1 2 3"}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)"}
+  -i: {value: file, description: "Read the patch from this file instead of stdin", show: always}
+  --input: {value: file, description: "Read the patch from this file instead of stdin"}
+  -o: {value: any, description: "Write the patched file to this name", show: always}
+  --output: {value: any, description: "Write the patched file to this name"}
+  -d: {value: dir, description: "Change to this directory first", show: always}
+  --directory: {value: dir, description: "Change to this directory first"}
+  -R: {description: "Patch was made with old and new swapped: undo it", show: always}
+  --reverse: {description: "Patch was made with old and new swapped: undo it"}
+  -C: {description: "Check that the patch applies, change nothing", show: always}
+  --check: {description: "Check that the patch applies, change nothing"}
+  --dry-run: {description: "Check that the patch applies, change nothing"}
+  -b: {description: "Save the original as FILE.orig before changing it", show: always}
+  --backup: {description: "Save the original as FILE.orig before changing it"}
+  --backup-if-mismatch: {description: "Back up only when a hunk failed or needed fuzz"}
+  --no-backup-if-mismatch: {description: "Back up every file that is patched"}
+  -z: {value: any, description: "Backup extension instead of .orig"}
+  --suffix: {value: any, description: "Backup extension instead of .orig"}
+  -B: {value: any, description: "Backup file name prefix"}
+  --prefix: {value: any, description: "Backup file name prefix"}
+  -Y: {value: any, description: "Prepend this to the basename of the backup file"}
+  --basename-prefix: {value: any, description: "Prepend this to the basename of the backup file"}
+  -V: {value: {exec: "printf '%s\\t%s\\n' t 'numbered backups' nil 'numbered if they exist' never 'simple backups' none 'no backups'"}, description: "Backup naming: numbered, existing, simple, none"}
+  --version-control: {value: {exec: "printf '%s\\t%s\\n' t 'numbered backups' nil 'numbered if they exist' never 'simple backups' none 'no backups'"}, description: "Backup naming: numbered, existing, simple, none"}
+  -r: {value: any, description: "Write rejected hunks to this file (default FILE.rej)"}
+  --reject-file: {value: any, description: "Write rejected hunks to this file (default FILE.rej)"}
+  -N: {description: "Skip hunks that look reversed or already applied", show: always}
+  --forward: {description: "Skip hunks that look reversed or already applied"}
+  -l: {description: "Ignore whitespace differences when matching context", show: always}
+  --ignore-whitespace: {description: "Ignore whitespace differences when matching context"}
+  -F: {value: any, description: "Maximum fuzz factor (default 2)"}
+  --fuzz: {value: any, description: "Maximum fuzz factor (default 2)"}
+  -s: {description: "Silent unless an error occurs"}
+  --quiet: {description: "Silent unless an error occurs"}
+  --silent: {description: "Silent unless an error occurs"}
+  -f: {description: "Force: no questions, skip missing files, assume not reversed"}
+  --force: {description: "Force: no questions, skip missing files, assume not reversed"}
+  -t: {description: "Batch: like -f, but assume reversed patches are reversed"}
+  --batch: {description: "Batch: like -f, but assume reversed patches are reversed"}
+  -E: {description: "Remove output files that end up empty"}
+  --remove-empty-files: {description: "Remove output files that end up empty"}
+  -T: {description: "Set file times from the timestamps in the diff header"}
+  --set-time: {description: "Set file times from the timestamps in the diff header"}
+  -Z: {description: "Like -T, timestamps are UTC"}
+  --set-utc: {description: "Like -T, timestamps are UTC"}
+  -g: {value: any, description: "Consult version control (RCS, Perforce) for missing or read-only files"}
+  --get: {value: any, description: "Consult version control (RCS, Perforce) for missing or read-only files"}
+  -c: {description: "Read the patch as a context diff"}
+  --context: {description: "Read the patch as a context diff"}
+  -u: {description: "Read the patch as a unified diff"}
+  --unified: {description: "Read the patch as a unified diff"}
+  -n: {description: "Read the patch as a normal diff"}
+  --normal: {description: "Read the patch as a normal diff"}
+  -e: {description: "Read the patch as an ed script"}
+  --ed: {description: "Read the patch as an ed script"}
+  -D: {value: any, description: "Wrap changes in #ifdef SYMBOL ... #endif"}
+  --ifdef: {value: any, description: "Wrap changes in #ifdef SYMBOL ... #endif"}
+  -x: {value: any, description: "Internal debugging flags"}
+  --debug: {value: any, description: "Internal debugging flags"}
+  --quoting-style: {value: {exec: "printf '%s\\n' literal shell shell-always c escape"}, description: "How file names are quoted in messages"}
+  --posix: {description: "Strict POSIX behaviour (no default backups, POSIX file name choice)"}
+  --help: {description: "Print a help message"}
+  -v: {description: "Print the patch version"}
+  --version: {description: "Print the patch version"}
+args: file
+snippets:
+  - key: p
+    mark: pin
+    command: "patch -p1 < changes.diff"
+    description: "apply a git diff made at the repo root (strips a/ b/)"
+  - key: c
+    mark: pin
+    command: "patch -p1 --dry-run < changes.diff"
+    description: "check the diff applies cleanly, change nothing"
+  - key: r
+    mark: pin
+    command: "patch -R -p1 < changes.diff"
+    description: "undo a diff that was already applied"
+  - key: b
+    command: "patch -b -p1 < changes.diff"
+    description: "apply and keep FILE.orig backups"
+  - key: d
+    command: "patch -d src -p1 < changes.diff"
+    description: "apply inside another directory"
+  - key: i
+    command: "patch -p1 -i changes.diff"
+    description: "same as < changes.diff, the file as an argument"
+  - key: n
+    command: "patch -N -p1 < changes.diff"
+    description: "skip hunks that are already applied"
+  - key: l
+    command: "patch -l -p1 < changes.diff"
+    description: "tolerate changed whitespace (tabs turned into spaces)"
+  - key: o
+    command: "patch -o fixed.c original.c fix.diff"
+    description: "write the result to another file, original untouched"
+  - key: s
+    command: "patch -s -p1 < changes.diff"
+    description: "silent unless something fails"

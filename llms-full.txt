@@ -104,7 +104,7 @@ prompt you're already typing on.
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**, **az**, **gcloud**, **doctl**, **flyctl**/**fly**, **vercel**, **pulumi**, **minikube**, **kind**,
   **k9s**, **kubectx**, **kubens**, **ansible**, **ansible-playbook**, **psql**, **pg_dump**, **mysql**,
   **mysqldump**, **redis-cli**, **sqlite3**,
-  **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **rg**, **sed**, **awk**, **tar**, **zip**, **unzip**, **unrar**, **gzip**, **gunzip**, **xz**, **unxz**, **bzip2**, **bunzip2**, **compress**, **uncompress**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **rsync**, **openssl**, **dig**, **nc**, **tcpdump**, **code** (VS Code),
+  **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **rg**, **sed**, **awk**, **patch**, **diff**, **tar**, **zip**, **unzip**, **unrar**, **gzip**, **gunzip**, **xz**, **unxz**, **bzip2**, **bunzip2**, **compress**, **uncompress**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **rsync**, **openssl**, **dig**, **nc**, **tcpdump**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
   **pbpaste**, **sips**, **screencapture**, **duti**, **mdls**, **mdfind**, **pmset**, **networksetup**, **security**, **codesign**, **xcrun**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
