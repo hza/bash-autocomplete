@@ -1,0 +1,349 @@
+description: OpenSSL cryptography toolkit
+commands:
+  x509:
+    description: "Display, convert and sign X.509 certificates"
+    flags:
+      -in: {value: file, description: "Input certificate (or CSR with -req)", show: always}
+      -out: {value: file, description: "Output file", show: always}
+      -noout: {description: "Don't print the encoded certificate", show: always}
+      -text: {description: "Print the certificate in text form", show: always}
+      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
+      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -subject: {description: "Print the subject name"}
+      -issuer: {description: "Print the issuer name"}
+      -dates: {description: "Print notBefore and notAfter"}
+      -enddate: {description: "Print notAfter"}
+      -startdate: {description: "Print notBefore"}
+      -serial: {description: "Print the serial number"}
+      -fingerprint: {description: "Print the digest of the DER encoding"}
+      -sha256: {description: "Use SHA-256 for -fingerprint"}
+      -pubkey: {description: "Print the public key in PEM"}
+      -modulus: {description: "Print the RSA modulus"}
+      -hash: {description: "Print the subject hash (c_rehash name)"}
+      -ext: {value: any, description: "Print these extensions (comma list, e.g. subjectAltName)"}
+      -checkend: {value: any, description: "Exit 1 if the certificate expires within N seconds"}
+      -checkhost: {value: "@hosts", description: "Check that the certificate matches a host"}
+      -nameopt: {value: any, description: "Name printing options (e.g. RFC2253, multiline)"}
+      -req: {description: "Input is a CSR to be signed"}
+      -new: {description: "Generate a new certificate"}
+      -x509toreq: {description: "Convert the certificate to a CSR"}
+      -key: {value: file, description: "Private key to sign with (self-sign)"}
+      -signkey: {value: file, description: "Self-sign with this key"}
+      -CA: {value: file, description: "CA certificate to sign with"}
+      -CAkey: {value: file, description: "CA private key"}
+      -CAcreateserial: {description: "Create the CA serial file if missing"}
+      -CAserial: {value: file, description: "CA serial number file"}
+      -days: {value: any, description: "Days until the new certificate expires"}
+      -subj: {value: any, description: "Subject name (/CN=example.com/O=Org)"}
+      -set_serial: {value: any, description: "Serial number to use"}
+      -extfile: {value: file, description: "File with extensions to add"}
+      -extensions: {value: any, description: "Section of -extfile to use"}
+      -copy_extensions: {value: {exec: "printf '%s\\n' none copy copyall"}, description: "Copy extensions from the CSR"}
+      -passin: {value: any, description: "Key password source (pass:x, env:VAR, file:path)"}
+  req:
+    description: "Create and process certificate requests (CSR)"
+    flags:
+      -new: {description: "Generate a new CSR", show: always}
+      -x509: {description: "Output a self-signed certificate instead of a CSR", show: always}
+      -newkey: {value: {exec: "printf '%s\\n' rsa:2048 rsa:4096 ec ed25519"}, description: "Generate a new key (rsa:BITS, ec, ed25519)", show: always}
+      -key: {value: file, description: "Private key to use"}
+      -keyout: {value: file, description: "File to write the new private key to", show: always}
+      -in: {value: file, description: "Input CSR"}
+      -out: {value: file, description: "Output file", show: always}
+      -noenc: {description: "Don't encrypt the private key"}
+      -nodes: {description: "Don't encrypt the private key (deprecated: -noenc)"}
+      -subj: {value: any, description: "Subject name (/CN=example.com/O=Org)", show: always}
+      -addext: {value: any, description: "Add an extension (e.g. subjectAltName=DNS:example.com)"}
+      -days: {value: any, description: "Validity in days (with -x509)"}
+      -text: {description: "Print the CSR in text form"}
+      -noout: {description: "Don't print the encoded CSR"}
+      -verify: {description: "Verify the CSR signature"}
+      -config: {value: file, description: "Configuration file"}
+      -extensions: {value: any, description: "Certificate extension section (with -x509)"}
+      -reqexts: {value: any, description: "CSR extension section"}
+      -pkeyopt: {value: any, description: "Key generation option (opt:value)"}
+      -batch: {description: "Don't ask for subject fields"}
+      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
+      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -sha256: {description: "Sign with SHA-256"}
+      -passin: {value: any, description: "Key password source"}
+      -passout: {value: any, description: "Output key password source"}
+  s_client:
+    description: "Generic TLS client (connect and inspect a server)"
+    flags:
+      -connect: {value: "@hosts", description: "host:port to connect to", show: always}
+      -servername: {value: "@hosts", description: "SNI host name", show: always}
+      -showcerts: {description: "Show the whole certificate chain", show: always}
+      -brief: {description: "Print only a connection summary"}
+      -quiet: {description: "No session/cert info; implies -ign_eof"}
+      -starttls: {value: {exec: "printf '%s\\n' smtp pop3 imap ftp xmpp xmpp-server irc postgres mysql lmtp nntp sieve ldap"}, description: "Upgrade a plain-text protocol to TLS"}
+      -CAfile: {value: file, description: "Trusted CA certificates file"}
+      -CApath: {value: dir, description: "Trusted CA certificates directory"}
+      -cert: {value: file, description: "Client certificate"}
+      -key: {value: file, description: "Client private key"}
+      -verify_return_error: {description: "Abort on verification errors"}
+      -verify_hostname: {value: "@hosts", description: "Check the certificate matches this host"}
+      -status: {description: "Request OCSP stapling"}
+      -alpn: {value: any, description: "ALPN protocols (comma list, e.g. h2,http/1.1)"}
+      -tls1_2: {description: "Use TLS 1.2 only"}
+      -tls1_3: {description: "Use TLS 1.3 only"}
+      -cipher: {value: any, description: "TLS 1.2 cipher list"}
+      -ciphersuites: {value: any, description: "TLS 1.3 cipher suites"}
+      -crlf: {description: "Translate LF to CRLF"}
+      -debug: {description: "Print extensive debug info"}
+      -msg: {description: "Print protocol messages"}
+      -state: {description: "Print the SSL session states"}
+      -proxy: {value: any, description: "Connect via an HTTP proxy (host:port)"}
+      -no-interactive: {description: "Exit after the handshake (no stdin)"}
+      '-4': {description: "Use IPv4 only"}
+      '-6': {description: "Use IPv6 only"}
+  s_server:
+    description: "Generic TLS server for testing"
+    flags:
+      -accept: {value: any, description: "Port (or host:port) to listen on"}
+      -cert: {value: file, description: "Server certificate"}
+      -key: {value: file, description: "Server private key"}
+      -www: {description: "Reply to GET / with a status page"}
+      -WWW: {description: "Serve files from the current directory"}
+  genpkey:
+    description: "Generate a private key"
+    flags:
+      -algorithm: {value: {exec: "printf '%s\\n' RSA EC ED25519 ED448 X25519 X448 RSA-PSS DSA DH"}, description: "Key algorithm", show: always}
+      -pkeyopt: {value: {exec: "printf '%s\\n' rsa_keygen_bits:2048 rsa_keygen_bits:4096 ec_paramgen_curve:P-256 ec_paramgen_curve:P-384"}, description: "Algorithm option (opt:value)", show: always}
+      -out: {value: file, description: "Output key file", show: always}
+      -outpubkey: {value: file, description: "Also write the public key"}
+      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -pass: {value: any, description: "Output password source"}
+      -paramfile: {value: file, description: "Parameters file"}
+      -genparam: {description: "Generate parameters, not a key"}
+      -text: {description: "Also print the key in text form"}
+  genrsa:
+    description: "Generate an RSA private key (legacy; use genpkey)"
+    flags:
+      -out: {value: file, description: "Output key file"}
+      -aes256: {description: "Encrypt the key with AES-256"}
+  pkey:
+    description: "Process public or private keys"
+    flags:
+      -in: {value: file, description: "Input key", show: always}
+      -out: {value: file, description: "Output file", show: always}
+      -pubout: {description: "Output the public key", show: always}
+      -pubin: {description: "Input is a public key"}
+      -text: {description: "Print the key in text form"}
+      -noout: {description: "Don't print the encoded key"}
+      -check: {description: "Check key consistency"}
+      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
+      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -passin: {value: any, description: "Input password source"}
+      -passout: {value: any, description: "Output password source"}
+  pkeyutl:
+    description: "Sign, verify, encrypt, decrypt or derive with a key"
+    flags:
+      -in: {value: file, description: "Input file"}
+      -out: {value: file, description: "Output file"}
+      -inkey: {value: file, description: "Key file"}
+      -pubin: {description: "Key is a public key"}
+      -sign: {description: "Sign the input"}
+      -verify: {description: "Verify a signature"}
+      -sigfile: {value: file, description: "Signature to verify"}
+      -encrypt: {description: "Encrypt with the public key"}
+      -decrypt: {description: "Decrypt with the private key"}
+      -derive: {description: "Derive a shared secret"}
+      -peerkey: {value: file, description: "Peer key for -derive"}
+  rand:
+    description: "Generate random bytes"
+    flags:
+      -hex: {description: "Output in hex", show: always}
+      -base64: {description: "Output in base64", show: always}
+      -out: {value: file, description: "Output file"}
+  dgst:
+    description: "Message digests, HMAC and signatures"
+    flags:
+      -sha256: {description: "SHA-256", show: always}
+      -sha512: {description: "SHA-512"}
+      -sha1: {description: "SHA-1"}
+      -md5: {description: "MD5"}
+      -r: {description: "Output in coreutils format (hash *file)"}
+      -hex: {description: "Output as hex"}
+      -binary: {description: "Output in binary"}
+      -out: {value: file, description: "Output file"}
+      -hmac: {value: any, description: "HMAC with this key"}
+      -sign: {value: file, description: "Sign the digest with this private key"}
+      -verify: {value: file, description: "Verify a signature with this public key"}
+      -prverify: {value: file, description: "Verify a signature with this private key"}
+      -signature: {value: file, description: "Signature file to verify"}
+      -list: {description: "List supported digests"}
+    args: file
+  enc:
+    description: "Symmetric encryption and decryption"
+    flags:
+      -e: {description: "Encrypt (default)"}
+      -d: {description: "Decrypt", show: always}
+      -in: {value: file, description: "Input file", show: always}
+      -out: {value: file, description: "Output file", show: always}
+      -pbkdf2: {description: "Derive the key with PBKDF2", show: always}
+      -iter: {value: any, description: "PBKDF2 iterations"}
+      -a: {description: "Base64 encode/decode"}
+      -base64: {description: "Base64 encode/decode"}
+      -A: {description: "Base64 on one line"}
+      -pass: {value: any, description: "Password source (pass:x, env:VAR, file:path, stdin)"}
+      -k: {value: any, description: "Password (deprecated: -pass)"}
+      -K: {value: any, description: "Raw key in hex"}
+      -iv: {value: any, description: "IV in hex"}
+      -S: {value: any, description: "Salt in hex"}
+      -md: {value: any, description: "Digest for key derivation"}
+      -nosalt: {description: "Don't use a salt"}
+      -p: {description: "Print the key and IV"}
+      -P: {description: "Print the key and IV, then exit"}
+      -list: {description: "List supported ciphers"}
+      -aes-256-cbc: {description: "AES-256 in CBC mode"}
+      -aes-256-ctr: {description: "AES-256 in CTR mode"}
+      -chacha20: {description: "ChaCha20 stream cipher"}
+  base64:
+    description: "Base64 encode/decode (enc -base64)"
+    flags:
+      -d: {description: "Decode"}
+      -A: {description: "Single line"}
+      -in: {value: file, description: "Input file"}
+      -out: {value: file, description: "Output file"}
+  pkcs12:
+    description: "Create and parse PKCS#12 (.p12/.pfx) files"
+    flags:
+      -export: {description: "Create a PKCS#12 file", show: always}
+      -in: {value: file, description: "Input file", show: always}
+      -out: {value: file, description: "Output file", show: always}
+      -inkey: {value: file, description: "Private key to include"}
+      -certfile: {value: file, description: "Extra certificates to include"}
+      -name: {value: any, description: "Friendly name"}
+      -nokeys: {description: "Don't output private keys"}
+      -nocerts: {description: "Don't output certificates"}
+      -clcerts: {description: "Output client certificates only"}
+      -cacerts: {description: "Output CA certificates only"}
+      -info: {description: "Print info about the file structure"}
+      -noenc: {description: "Don't encrypt output private keys"}
+      -nodes: {description: "Don't encrypt output private keys (deprecated: -noenc)"}
+      -legacy: {description: "Use legacy algorithms (old .p12 files)"}
+      -passin: {value: any, description: "Input password source"}
+      -passout: {value: any, description: "Output password source"}
+  verify:
+    description: "Verify certificate chains"
+    flags:
+      -CAfile: {value: file, description: "Trusted CA certificates file", show: always}
+      -CApath: {value: dir, description: "Trusted CA certificates directory"}
+      -untrusted: {value: file, description: "Intermediate certificates", show: always}
+      -show_chain: {description: "Print the verified chain"}
+      -verify_hostname: {value: "@hosts", description: "Check the certificate matches this host"}
+      -purpose: {value: {exec: "printf '%s\\n' sslclient sslserver nssslserver smimesign smimeencrypt crlsign any ocsphelper timestampsign codesign"}, description: "Required certificate purpose"}
+      -crl_check: {description: "Check the leaf against CRLs"}
+      -CRLfile: {value: file, description: "CRL file"}
+      -partial_chain: {description: "Accept chains anchored at a non-root trusted cert"}
+      -verbose: {description: "Print extra information"}
+    args: file
+  crl:
+    description: "Process certificate revocation lists"
+    flags:
+      -in: {value: file, description: "Input CRL"}
+      -out: {value: file, description: "Output file"}
+      -text: {description: "Print in text form"}
+      -noout: {description: "Don't print the encoded CRL"}
+      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
+  ec:
+    description: "Process EC keys (legacy; use pkey)"
+  ecparam:
+    description: "EC parameters and key generation"
+    flags:
+      -name: {value: {exec: "printf '%s\\n' prime256v1 secp384r1 secp521r1 secp256k1"}, description: "Curve name"}
+      -genkey: {description: "Generate a key"}
+      -list_curves: {description: "List supported curves"}
+      -out: {value: file, description: "Output file"}
+  rsa:
+    description: "Process RSA keys (legacy; use pkey)"
+  ca:
+    description: "Minimal certificate authority"
+  cms:
+    description: "CMS (S/MIME v3) sign, verify, encrypt, decrypt"
+  smime:
+    description: "S/MIME sign, verify, encrypt, decrypt"
+  ocsp:
+    description: "OCSP client and responder"
+  ciphers:
+    description: "List TLS cipher suites"
+    flags:
+      -v: {description: "Verbose listing"}
+      -s: {description: "Only ciphers supported by the TLS method"}
+      -tls1_2: {description: "TLS 1.2 ciphers"}
+      -tls1_3: {description: "TLS 1.3 ciphers"}
+  passwd:
+    description: "Compute password hashes"
+    flags:
+      '-6': {description: "SHA-512 crypt"}
+      '-5': {description: "SHA-256 crypt"}
+      -apr1: {description: "Apache MD5 variant"}
+      -salt: {value: any, description: "Use this salt"}
+      -stdin: {description: "Read passwords from stdin"}
+  prime:
+    description: "Check or generate prime numbers"
+    flags:
+      -generate: {description: "Generate a prime"}
+      -bits: {value: any, description: "Size of the generated prime"}
+      -hex: {description: "Hex input/output"}
+  speed:
+    description: "Benchmark algorithms"
+    flags:
+      -evp: {value: any, description: "Algorithm to benchmark via EVP"}
+      -seconds: {value: any, description: "Run each test for N seconds"}
+  list:
+    description: "List algorithms and commands"
+    flags:
+      -commands: {description: "Standard commands"}
+      -digest-algorithms: {description: "Digest algorithms"}
+      -cipher-algorithms: {description: "Cipher algorithms"}
+      -public-key-algorithms: {description: "Public key algorithms"}
+      -providers: {description: "Loaded providers"}
+  errstr:
+    description: "Explain an error code"
+  version:
+    description: "Print version information"
+    flags:
+      -a: {description: "All information"}
+snippets:
+  - key: c
+    mark: pin
+    command: "openssl x509 -in cert.pem -noout -subject -issuer -dates -ext subjectAltName"
+    description: "who, by whom, valid when, for which names"
+  - key: s
+    mark: pin
+    command: "openssl s_client -connect example.org:443 -servername example.org -showcerts </dev/null"
+    description: "fetch the TLS chain a server presents"
+  - key: e
+    command: "openssl s_client -connect example.org:443 -servername example.org </dev/null 2>/dev/null | openssl x509 -noout -enddate"
+    description: "expiry date of a live server cert"
+  - key: k
+    mark: pin
+    command: "openssl req -x509 -newkey rsa:2048 -noenc -keyout key.pem -out cert.pem -days 365 -subj /CN=localhost -addext subjectAltName=DNS:localhost"
+    description: "self-signed cert + key for localhost"
+  - key: r
+    command: "openssl req -new -newkey rsa:2048 -noenc -keyout site.key -out site.csr -subj /CN=example.org"
+    description: "new key and CSR to send to a CA"
+  - key: g
+    command: "openssl genpkey -algorithm ED25519 -out ed25519.pem"
+    description: "new Ed25519 private key"
+  - key: p
+    mark: pin
+    command: "openssl rand -base64 32"
+    description: "random password / secret"
+  - key: h
+    command: "openssl dgst -sha256 -r file.bin"
+    description: "SHA-256 of a file"
+  - key: x
+    command: "openssl pkcs12 -export -inkey key.pem -in cert.pem -out bundle.p12"
+    description: "pack key + cert into .p12"
+  - key: u
+    command: "openssl pkcs12 -in bundle.p12 -noenc -out all.pem"
+    description: "unpack .p12 to PEM"
+  - key: n
+    command: "openssl enc -aes-256-cbc -pbkdf2 -in secret.txt -out secret.enc"
+    description: "encrypt a file with a password (-d to decrypt)"
+  - key: v
+    command: "openssl verify -CAfile ca.pem -untrusted chain.pem cert.pem"
+    description: "check a cert against a CA"

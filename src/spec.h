@@ -24,6 +24,8 @@ int cache_dir(const char *sub, char *dir, size_t size);
 int save_cache(const char *name, const ynode *n, const char *src, char *out, size_t size);
 /* Load a spec (from its cache when big and fresh); exports AUTOCOMPLETE_SPEC_DIR. */
 ynode *load_spec(const char *name);
+/* Name of the last loaded spec after resolving symlinks (fly -> "flyctl"). */
+extern char g_spec_real[256];
 /* "description" of a command or flag spec, if any. */
 const char *spec_desc(const ynode *spec);
 /* Call fn for every unique spec name. */

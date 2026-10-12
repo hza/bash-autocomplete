@@ -1,0 +1,73 @@
+description: Kubernetes in Docker
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -v: {value: any, description: "Log verbosity"}
+  --verbosity: {value: any, description: "Log verbosity"}
+  -q: {description: "Silence all stderr output"}
+  --quiet: {description: "Silence all stderr output"}
+commands:
+  create:
+    description: Create a resource
+    commands:
+      cluster:
+        description: Create a local cluster
+        flags:
+          --name: {value: any, description: "Cluster name", show: always}
+          --config: {value: {file: "*.yaml *.yml"}, description: "Cluster config file", show: always}
+          --image: {value: any, description: "Node image, e.g. kindest/node:v1.30.0"}
+          --kubeconfig: {value: file, description: "Kubeconfig to write"}
+          --wait: {value: any, description: "Wait for the control plane, e.g. 60s"}
+          --retain: {description: "Keep nodes on failure for debugging"}
+  delete:
+    description: Delete a resource
+    commands:
+      cluster: {description: "Delete a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --kubeconfig: {value: file, description: "Kubeconfig to clean"}}}
+      clusters: {description: "Delete clusters", flags: {-A: {description: "Delete all clusters"}, --all: {description: "Delete all clusters"}}, args: {exec: "kind get clusters 2>/dev/null"}}
+  get:
+    description: Show resources
+    commands:
+      clusters: {description: "List clusters"}
+      nodes: {description: "List nodes of a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, -A: {description: "All clusters"}, --all-clusters: {description: "All clusters"}}}
+      kubeconfig: {description: "Print the kubeconfig of a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --internal: {description: "Use the internal address"}}}
+  load:
+    description: Load images into nodes
+    commands:
+      docker-image: {description: "Load docker images into the cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --nodes: {value: any, description: "Only these nodes"}}, args: {exec: "docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -v '<none>'"}}
+      image-archive: {description: "Load an image tarball", flags: {--name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --nodes: {value: any, description: "Only these nodes"}}, args: {file: "*.tar"}}
+  export:
+    description: Export logs or kubeconfig
+    commands:
+      kubeconfig: {description: "Write the cluster's kubeconfig", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --kubeconfig: {value: file, description: "Target kubeconfig"}, --internal: {description: "Use the internal address"}}}
+      logs: {description: "Dump node logs", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}}, args: dir}
+  build:
+    description: Build node images
+    commands:
+      node-image: {description: "Build a node image from Kubernetes sources", flags: {--image: {value: any, description: "Resulting image name"}, --type: {value: {exec: "printf '%s\\n' release url file source"}, description: "Source type"}, --arch: {value: {exec: "printf '%s\\n' amd64 arm64"}, description: "Architecture"}}, args: any}
+  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish"}}
+  version: {description: "Show kind version"}
+snippets:
+  - key: c
+    mark: pin
+    command: "kind create cluster --name dev"
+    description: "fresh single-node cluster"
+  - key: f
+    command: "kind create cluster --name dev --config kind.yaml"
+    description: "cluster from a config file"
+  - key: l
+    mark: pin
+    command: "kind load docker-image my-app:dev --name dev"
+    description: "make a local image available"
+  - key: g
+    mark: pin
+    command: "kind get clusters"
+    description: "what clusters exist"
+  - key: d
+    command: "kind delete cluster --name dev"
+    description: "remove a cluster"
+  - key: k
+    command: "kind export kubeconfig --name dev"
+    description: "point kubectl at a cluster"
+  - key: x
+    command: "kind delete clusters -A"
+    description: "remove all clusters"

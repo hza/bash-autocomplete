@@ -1,0 +1,176 @@
+description: "Run or locate developer tools of the active Xcode / Command Line Tools"
+inherit_flags: false # xcrun options go before the tool name
+flags:
+  -v: {description: "Verbose tool lookup"}
+  --verbose: {description: "Verbose tool lookup"}
+  -n: {description: "Don't use the lookup cache"}
+  --no-cache: {description: "Don't use the lookup cache"}
+  -k: {description: "Remove the lookup cache"}
+  --kill-cache: {description: "Remove the lookup cache"}
+  --sdk:
+    value: {exec: "printf '%s\\n' macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator xros xrsimulator driverkit"}
+    description: "SDK to look the tool up in"
+    show: always
+  --toolchain: {value: {exec: "ls /Library/Developer/Toolchains ~/Library/Developer/Toolchains 2>/dev/null | sed -n 's/[.]xctoolchain$//p'"}, description: "Toolchain to look the tool up in"}
+  -l: {description: "Print the command line before running it"}
+  --log: {description: "Print the command line before running it"}
+  -f: {value: {exec: "ls \"$(xcode-select -p)/usr/bin\" \"$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin\" 2>/dev/null | sort -u"}, description: "Print the path of a tool", show: always}
+  --find: {value: {exec: "ls \"$(xcode-select -p)/usr/bin\" \"$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin\" 2>/dev/null | sort -u"}, description: "Print the path of a tool"}
+  -r: {description: "Run the tool (default)"}
+  --run: {description: "Run the tool (default)"}
+  --show-sdk-path: {description: "Print the path of the selected SDK", show: always}
+  --show-sdk-version: {description: "Print the version of the selected SDK"}
+  --show-sdk-build-version: {description: "Print the build version of the selected SDK"}
+  --show-sdk-platform-path: {description: "Print the platform path of the selected SDK"}
+  --show-sdk-platform-version: {description: "Print the platform version of the selected SDK"}
+  --version: {description: "Show the xcrun version"}
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+args: "@command"
+commands:
+  simctl:
+    description: "Control iOS/watchOS/tvOS/visionOS simulators (needs Xcode)"
+    commands:
+      list:
+        description: "List devices, runtimes, device types or pairs"
+        flags:
+          -j: {description: "JSON output"}
+          --json: {description: "JSON output"}
+          -v: {description: "More detail"}
+        positional: [{exec: "printf '%s\\n' devices devicetypes runtimes pairs"}, {exec: "printf '%s\\n' available booted"}]
+      boot: {description: "Boot a device", args: {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}}
+      shutdown: {description: "Shut down a device (or all)", args: [{exec: "echo all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      erase: {description: "Erase a device's content and settings (or all)", args: [{exec: "echo all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      create: {description: "Create a device: name devicetype [runtime]", args: any}
+      clone: {description: "Clone a device: device newname", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      delete: {description: "Delete devices (or unavailable / all)", args: [{exec: "printf '%s\\n' unavailable all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      rename: {description: "Rename a device: device newname", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      install: {description: "Install an app: device app-path", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {file: "*.app"}]}
+      uninstall: {description: "Uninstall an app: device bundle-id", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      launch:
+        description: "Launch an app: device bundle-id [args]"
+        flags:
+          --console: {description: "Attach to the app's stdout/stderr"}
+          --console-pty: {description: "Attach via a pty"}
+          --terminate-running-process: {description: "Terminate a running instance first"}
+          -w: {description: "Wait for a debugger"}
+        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]
+      terminate: {description: "Terminate an app: device bundle-id", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      openurl: {description: "Open a URL in a device", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      addmedia: {description: "Add photos/videos to a device: device file...", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}], args: file}
+      get_app_container: {description: "Path of an app's container: device bundle-id [app|data|groups]", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      listapps: {description: "List installed apps", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      io:
+        description: "Screenshot / record video: device screenshot|recordVideo file"
+        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' screenshot recordVideo"}, file]
+      spawn: {description: "Run a process inside a device", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      privacy:
+        description: "Grant/revoke/reset privacy permissions: device action service [bundle-id]"
+        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' grant revoke reset"}, {exec: "printf '%s\\n' all calendar contacts-limited contacts location location-always photos-add photos media-library microphone motion reminders siri"}]
+      push: {description: "Send a push notification: device bundle-id payload.json", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, any, {file: "*.json *.apns"}]}
+      status_bar: {description: "Override the status bar: device override|clear|list", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' override clear list"}]}
+      ui: {description: "Get/set UI options: device appearance [light|dark]", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' appearance content_size increase_contrast"}, {exec: "printf '%s\\n' light dark"}]}
+      pbcopy: {description: "Copy stdin to a device's pasteboard", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      pbpaste: {description: "Print a device's pasteboard", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      keychain: {description: "Add certificates or reset a device's keychain", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' add-root-cert add-cert reset"}, file]}
+      diagnose: {description: "Collect diagnostic information"}
+      spawn_logs: {description: "Device log stream (see: spawn device log stream)"}
+      runtime: {description: "Manage simulator runtimes", commands: {list: {description: "List runtimes"}, add: {description: "Add a runtime image", args: file}, delete: {description: "Delete a runtime", args: any}}}
+      help: {description: "Help for a subcommand", args: "@subcommands"}
+  notarytool:
+    description: "Submit software to the Apple notary service"
+    flags:
+      -p: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n "s/.*\"svce\"<blob>=\"com.apple.gke.notary.tool.saved-creds.\(.*\)\"/\1/p"', cache: 300}, description: "Saved keychain profile (store-credentials)", show: always}
+      --keychain-profile: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n "s/.*\"svce\"<blob>=\"com.apple.gke.notary.tool.saved-creds.\(.*\)\"/\1/p"', cache: 300}, description: "Saved keychain profile (store-credentials)"}
+      -k: {value: {file: "*.p8"}, description: "App Store Connect API key file"}
+      --key: {value: {file: "*.p8"}, description: "App Store Connect API key file"}
+      -d: {value: any, description: "App Store Connect API key ID"}
+      --key-id: {value: any, description: "App Store Connect API key ID"}
+      -i: {value: any, description: "App Store Connect API issuer ID"}
+      --issuer: {value: any, description: "App Store Connect API issuer ID"}
+      --apple-id: {value: any, description: "Developer Apple ID"}
+      --password: {value: any, description: "App-specific password"}
+      --team-id: {value: any, description: "Developer team ID"}
+      --keychain: {value: file, description: "Keychain file to read credentials from"}
+      -f: {value: {exec: "printf '%s\\n' text json plist"}, description: "Output format"}
+      --output-format: {value: {exec: "printf '%s\\n' text json plist"}, description: "Output format"}
+      --progress: {description: "Show progress"}
+      --no-progress: {description: "Hide progress"}
+      -v: {description: "Verbose output"}
+      --verbose: {description: "Verbose output"}
+      -h: {description: "Show help"}
+      --help: {description: "Show help"}
+    commands:
+      store-credentials:
+        description: "Save notary credentials in the keychain"
+        flags:
+          --sync: {description: "Sync the profile via iCloud Keychain"}
+          --validate: {description: "Check the credentials before saving"}
+          --no-validate: {description: "Save without checking"}
+        args: any
+      submit:
+        description: "Upload a zip, dmg or pkg for notarization"
+        flags:
+          --wait: {description: "Wait until processing finishes", show: always}
+          --no-wait: {description: "Return after the upload"}
+          --timeout: {value: any, description: "Time limit for --wait, e.g. 30m, 1h"}
+          --webhook: {value: any, description: "URL to call when processing finishes"}
+          --s3-acceleration: {description: "Use accelerated upload"}
+          --no-s3-acceleration: {description: "Don't use accelerated upload"}
+          --force: {description: "Upload even if pre-flight checks fail"}
+        args: {file: "*.zip *.dmg *.pkg"}
+      info: {description: "Status of a submission (id)", args: any}
+      wait:
+        description: "Wait for a submission (id) to finish"
+        flags:
+          --timeout: {value: any, description: "Time limit, e.g. 30m, 1h"}
+        args: any
+      history: {description: "Previous submissions of your team"}
+      log: {description: "Notarization log of a submission: id [output-file]", positional: [any, file]}
+      help: {description: "Help for a subcommand", args: "@subcommands"}
+  stapler:
+    description: "Attach or check a notarization ticket"
+    flags:
+      -q: {description: "Quiet"}
+      -v: {description: "Verbose"}
+    commands:
+      staple: {description: "Fetch and attach the ticket", args: file}
+      validate: {description: "Check an attached ticket", args: file}
+snippets:
+  - key: p
+    mark: pin
+    command: "xcrun --show-sdk-path"
+    description: "path of the default SDK"
+  - key: f
+    mark: pin
+    command: "xcrun -f clang"
+    description: "which clang xcrun would run"
+  - key: n
+    mark: pin
+    command: "xcrun notarytool submit MyApp.zip -p notary --wait"
+    description: "notarize with a saved profile and wait"
+  - key: s
+    mark: pin
+    command: "xcrun stapler staple MyApp.dmg"
+    description: "attach the notarization ticket"
+  - key: l
+    command: "xcrun notarytool log <id> -p notary"
+    description: "why a submission was rejected"
+  - key: c
+    command: "xcrun notarytool store-credentials notary --apple-id you@example.com --team-id TEAMID"
+    description: "save notary credentials as profile 'notary'"
+  - key: d
+    command: "xcrun simctl list devices available"
+    description: "simulators you can boot"
+  - key: b
+    command: "xcrun simctl boot 'iPhone 16' && open -a Simulator"
+    description: "boot a simulator and show it"
+  - key: i
+    command: "xcrun simctl io booted screenshot shot.png"
+    description: "screenshot of the booted simulator"
+  - key: o
+    command: "xcrun simctl openurl booted https://example.com"
+    description: "open a URL in the booted simulator"
+  - key: v
+    command: "xcrun --sdk iphoneos --show-sdk-version"
+    description: "version of the iOS SDK"

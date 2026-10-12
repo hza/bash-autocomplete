@@ -1,0 +1,514 @@
+description: "Keychains, certificates, keys and trust settings"
+flags:
+  -h: {description: "Show all commands, or usage of the given ones"}
+  -i: {description: "Interactive mode"}
+  -l: {description: "Run leaks on itself before exiting"}
+  -p: {value: any, description: "Interactive mode with this prompt"}
+  -q: {description: "Less verbose"}
+  -v: {description: "More verbose"}
+inherit_flags: false # global options only before the command
+commands:
+  help:
+    description: "Show all commands, or usage of a command"
+    args: "@subcommands"
+  list-keychains:
+    description: "Show or set the keychain search list"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -d: {value: {exec: "printf '%s\\n' user system common dynamic"}, description: "Preference domain"}
+      -s: {description: "Set it to the given keychain(s)", show: always}
+  default-keychain:
+    description: "Show or set the default keychain"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -d: {value: {exec: "printf '%s\\n' user system common dynamic"}, description: "Preference domain"}
+      -s: {description: "Set it to the given keychain(s)", show: always}
+  login-keychain:
+    description: "Show or set the login keychain"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -d: {value: {exec: "printf '%s\\n' user system common dynamic"}, description: "Preference domain"}
+      -s: {description: "Set it to the given keychain(s)", show: always}
+  create-keychain:
+    description: "Create keychains"
+    args: file
+    flags:
+      -P: {description: "Ask for the password in a dialog"}
+      -p: {value: any, description: "Password (insecure)"}
+  delete-keychain:
+    description: "Delete keychains and drop them from the search list"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+  lock-keychain:
+    description: "Lock a keychain (default one if none given)"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {description: "Lock all keychains"}
+  unlock-keychain:
+    description: "Unlock a keychain (default one if none given)"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -u: {description: "Unlock via the user interface"}
+      -p: {value: any, description: "Password (insecure; prompts if omitted)"}
+  set-keychain-settings:
+    description: "Set lock settings (no options = never auto-lock)"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -l: {description: "Lock on sleep"}
+      -u: {description: "Lock after the timeout"}
+      -t: {value: {exec: "printf '%s\\n' 300 3600"}, description: "Timeout in seconds"}
+  set-keychain-password:
+    description: "Change a keychain password"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -o: {value: any, description: "Old password (prompts if omitted)"}
+      -p: {value: any, description: "New password (prompts if omitted)"}
+  show-keychain-info:
+    description: "Show the settings of a keychain"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+  dump-keychain:
+    description: "Dump the items of keychains"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {description: "Include access control lists"}
+      -d: {description: "Include decrypted data (prompts)"}
+      -i: {description: "Interactive ACL editing"}
+      -r: {description: "Include raw encrypted data"}
+  create-keypair:
+    description: "Create an asymmetric key pair"
+    args: any
+    flags:
+      -a: {value: {exec: "printf '%s\\n' rsa dh dsa fee"}, description: "Algorithm (default rsa)"}
+      -s: {value: {exec: "printf '%s\\n' 2048 4096"}, description: "Key size in bits"}
+      -f: {value: any, description: "Valid from date"}
+      -t: {value: any, description: "Valid to date"}
+      -d: {value: any, description: "Valid for N days"}
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain to use"}
+      -A: {description: "Allow any app to use the key (insecure)"}
+      -T: {value: file, description: "App allowed to use the key (repeatable)"}
+  add-generic-password:
+    description: "Add a generic password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"svce"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Service", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -G: {value: any, description: "Generic attribute value"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -p: {value: any, description: "Password (legacy, same as -w)"}
+      -w: {value: any, description: "Password; last on the line to be prompted"}
+      -A: {description: "Allow any app to access the item (insecure)"}
+      -T: {value: file, description: "App allowed to access the item (repeatable)"}
+      -U: {description: "Update the item if it exists"}
+      -X: {value: any, description: "Password as hex"}
+  add-internet-password:
+    description: "Add an internet password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"srvr"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Server", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -d: {value: any, description: "Security domain"}
+      -P: {value: any, description: "Port"}
+      -r: {value: any, description: "Protocol (four-char code, e.g. http)"}
+      -t: {value: any, description: "Authentication type (four-char code)"}
+      -p: {value: any, description: "Path"}
+      -w: {value: any, description: "Password; last on the line to be prompted"}
+      -A: {description: "Allow any app to access the item (insecure)"}
+      -T: {value: file, description: "App allowed to access the item (repeatable)"}
+      -U: {description: "Update the item if it exists"}
+      -X: {value: any, description: "Password as hex"}
+  add-certificates:
+    description: "Add DER certificate files to a keychain"
+    args: {file: "*.cer *.der *.crt"}
+    flags:
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain instead of the default"}
+  find-generic-password:
+    description: "Find a generic password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"svce"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match service", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -G: {value: any, description: "Generic attribute value"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -g: {description: "Also show the password"}
+      -w: {description: "Print only the password", show: always}
+  delete-generic-password:
+    description: "Delete a generic password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"svce"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match service", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -G: {value: any, description: "Generic attribute value"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+  set-generic-password-partition-list:
+    description: "Set the partition list of a generic password"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"svce"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match service", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -G: {value: any, description: "Generic attribute value"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -S: {value: any, description: "Comma-separated partition list (e.g. apple-tool:,apple:)"}
+      -k: {value: any, description: "Keychain password"}
+  find-internet-password:
+    description: "Find an internet password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"srvr"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match server", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -d: {value: any, description: "Security domain"}
+      -P: {value: any, description: "Port"}
+      -r: {value: any, description: "Protocol (four-char code, e.g. http)"}
+      -t: {value: any, description: "Authentication type (four-char code)"}
+      -p: {value: any, description: "Match path"}
+      -g: {description: "Also show the password"}
+      -w: {description: "Print only the password", show: always}
+  delete-internet-password:
+    description: "Delete an internet password item"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"srvr"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match server", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -d: {value: any, description: "Security domain"}
+      -P: {value: any, description: "Port"}
+      -r: {value: any, description: "Protocol (four-char code, e.g. http)"}
+      -t: {value: any, description: "Authentication type (four-char code)"}
+      -p: {value: any, description: "Match path"}
+  set-internet-password-partition-list:
+    description: "Set the partition list of an internet password"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"acct"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match account", show: always}
+      -s: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n ''s/.*"srvr"<blob>="\(.*\)"$/\1/p'' | sort -u', cache: 300}, description: "Match server", show: always}
+      -c: {value: any, description: "Creator (four-char code)"}
+      -C: {value: any, description: "Type (four-char code)"}
+      -D: {value: any, description: "Kind"}
+      -j: {value: any, description: "Comment"}
+      -l: {value: any, description: "Label"}
+      -d: {value: any, description: "Security domain"}
+      -P: {value: any, description: "Port"}
+      -r: {value: any, description: "Protocol (four-char code, e.g. http)"}
+      -t: {value: any, description: "Authentication type (four-char code)"}
+      -p: {value: any, description: "Match path"}
+      -S: {value: any, description: "Comma-separated partition list (e.g. apple-tool:,apple:)"}
+      -k: {value: any, description: "Keychain password"}
+  find-key:
+    description: "Find keys"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {value: any, description: "Match application label"}
+      -c: {value: any, description: "Match creator (four-char code)"}
+      -d: {description: "Keys that can decrypt"}
+      -D: {value: any, description: "Match description"}
+      -e: {description: "Keys that can encrypt"}
+      -j: {value: any, description: "Match comment"}
+      -l: {value: any, description: "Match label"}
+      -r: {description: "Keys that can derive"}
+      -s: {description: "Keys that can sign"}
+      -t: {value: {exec: "printf '%s\\n' symmetric public private"}, description: "Key type"}
+      -u: {description: "Keys that can unwrap"}
+      -v: {description: "Keys that can verify"}
+      -w: {description: "Keys that can wrap"}
+  set-key-partition-list:
+    description: "Set the partition list of a key"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -S: {value: any, description: "Comma-separated partition list (apple: for codesign)"}
+      -k: {value: any, description: "Keychain password"}
+      -a: {value: any, description: "Match application label"}
+      -c: {value: any, description: "Match creator (four-char code)"}
+      -d: {description: "Keys that can decrypt"}
+      -D: {value: any, description: "Match description"}
+      -e: {description: "Keys that can encrypt"}
+      -j: {value: any, description: "Match comment"}
+      -l: {value: any, description: "Match label"}
+      -r: {description: "Keys that can derive"}
+      -s: {description: "Keys that can sign"}
+      -t: {value: {exec: "printf '%s\\n' symmetric public private"}, description: "Key type"}
+      -u: {description: "Keys that can unwrap"}
+      -v: {description: "Keys that can verify"}
+      -w: {description: "Keys that can wrap"}
+  find-certificate:
+    description: "Find certificates"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -a: {description: "All matches, not just the first", show: always}
+      -c: {value: any, description: "Match name", show: always}
+      -e: {value: any, description: "Match email address"}
+      -m: {description: "Show email addresses"}
+      -p: {description: "Output PEM", show: always}
+      -Z: {description: "Print SHA-256 and SHA-1 hashes"}
+  find-identity:
+    description: "Find identities (certificate + private key)"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -p: {value: {exec: "printf '%s\\n' basic ssl-client ssl-server smime eap ipsec ichat codesigning sys-default sys-kerberos-kdc"}, description: "Policy (repeatable)", show: always}
+      -s: {value: any, description: "Policy string (host name, email)"}
+      -v: {description: "Valid identities only", show: always}
+  delete-certificate:
+    description: "Delete a certificate"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -c: {value: any, description: "By common name"}
+      -Z: {value: any, description: "By SHA-256 or SHA-1 hash"}
+      -t: {description: "Also delete user trust settings"}
+  delete-identity:
+    description: "Delete a certificate and its private key"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -c: {value: any, description: "By common name"}
+      -Z: {value: any, description: "By SHA-256 or SHA-1 hash"}
+      -t: {description: "Also delete user trust settings"}
+  set-identity-preference:
+    description: "Set the preferred identity for a service"
+    args: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}
+    flags:
+      -n: {description: "No identity (clear the preference)"}
+      -c: {value: any, description: "Identity by common name"}
+      -s: {value: any, description: "Service (URL, email, host)"}
+      -u: {value: {exec: "printf '%s\\n' 0 1 2 4 8 16 32 64 128 256"}, description: "Key usage (0 = all)"}
+      -Z: {value: any, description: "Identity by certificate hash"}
+  get-identity-preference:
+    description: "Show the preferred identity for a service"
+    flags:
+      -s: {value: any, description: "Service (URL, email, host)"}
+      -u: {value: {exec: "printf '%s\\n' 0 1 2 4 8 16 32 64 128 256"}, description: "Key usage"}
+      -p: {description: "Output the certificate as PEM"}
+      -c: {description: "Print the common name"}
+      -Z: {description: "Print the certificate hashes"}
+  create-db:
+    description: "Create a db using the DL"
+    args: file
+    flags:
+      -a: {description: "Turn off autocommit"}
+      -g: {value: {exec: "printf '%s\\n' dl cspdl"}, description: "DL to use"}
+      -m: {value: any, description: "File mode, e.g. 0644"}
+      -o: {description: "Force openparams"}
+      '-0': {description: "Force version 0 openparams"}
+  export:
+    description: "Export keychain items"
+    flags:
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain to export from"}
+      -t: {value: {exec: "printf '%s\\n' certs allKeys pubKeys privKeys identities all"}, description: "Item type", show: always}
+      -f: {value: {exec: "printf '%s\\n' openssl bsafe pkcs7 pkcs8 pkcs12 x509 openssh1 openssh2 pemseq"}, description: "Output format", show: always}
+      -w: {description: "Wrap private keys"}
+      -p: {description: "PEM armour"}
+      -P: {value: any, description: "Wrapping passphrase (else asked in a dialog)"}
+      -o: {value: file, description: "Output file", show: always}
+  import:
+    description: "Import items from a file into a keychain"
+    args: {file: "*.p12 *.pfx *.pem *.cer *.crt *.der *.key *.p7b"}
+    flags:
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain to import into", show: always}
+      -t: {value: {exec: "printf '%s\\n' cert pub priv session agg"}, description: "Item type"}
+      -f: {value: {exec: "printf '%s\\n' openssl bsafe raw pkcs7 pkcs8 pkcs12 x509 openssh1 openssh2 pemseq"}, description: "Input format"}
+      -w: {description: "Private keys are wrapped"}
+      -x: {description: "Make private keys non-extractable"}
+      -P: {value: any, description: "Unwrapping passphrase (else asked in a dialog)"}
+      -a: {value: any, description: "Extended attribute: name value"}
+      -A: {description: "Allow any app to use the key (insecure)"}
+      -T: {value: file, description: "App allowed to use the key (repeatable)", show: always}
+  cms:
+    description: "Encode or decode CMS messages"
+    flags:
+      -C: {description: "Create an encrypted message"}
+      -D: {description: "Decode a message"}
+      -E: {description: "Create an enveloped message"}
+      -S: {description: "Create a signed message"}
+      -c: {value: file, description: "Detached content file"}
+      -h: {value: any, description: "Email headers at this output level"}
+      -n: {description: "Suppress content output"}
+      -r: {value: any, description: "Recipients (comma list of nicknames/emails)"}
+      -G: {description: "Include a signing time"}
+      -H: {value: {exec: "printf '%s\\n' SHA256 SHA384 SHA512 SHA1 MD5"}, description: "Hash algorithm"}
+      -N: {value: any, description: "Signing certificate nickname"}
+      -P: {description: "Include SMIMECapabilities"}
+      -T: {description: "Leave the content out of the message"}
+      -Y: {value: any, description: "EncryptionKeyPreference certificate (NONE to omit)"}
+      -Z: {value: any, description: "Certificate by subject key ID"}
+      -e: {value: file, description: "Envelope file"}
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain"}
+      -i: {value: file, description: "Input file (default stdin)"}
+      -o: {value: file, description: "Output file (default stdout)"}
+      -p: {value: any, description: "Key db password"}
+      -s: {description: "Feed data one byte at a time"}
+      -u: {value: {exec: "printf '%s\\n' 0 1 2 3 4 5 6 7 8 9 10 11"}, description: "Certificate usage"}
+      -v: {description: "Debug output"}
+  install-mds:
+    description: "Install or re-install the MDS database"
+  add-trusted-cert:
+    description: "Trust a certificate (user, or admin with -d)"
+    args: {file: "*.cer *.crt *.der *.pem"}
+    flags:
+      -d: {description: "Admin cert store instead of user", show: always}
+      -r: {value: {exec: "printf '%s\\n' trustRoot trustAsRoot deny unspecified"}, description: "Result type", show: always}
+      -p: {value: {exec: "printf '%s\\n' ssl smime codeSign IPSec basic swUpdate pkgSign eap macappstore appleID timestamping"}, description: "Policy constraint"}
+      -a: {value: file, description: "Application constraint"}
+      -s: {value: any, description: "Policy string"}
+      -e: {value: {exec: "printf '%s\\n' certExpired hostnameMismatch"}, description: "Allowed error"}
+      -u: {value: {exec: "printf '%s\\n' -1 1 2 4 8 16 32"}, description: "Key usage"}
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain to add the cert to"}
+      -i: {value: file, description: "Input trust settings file"}
+      -o: {value: file, description: "Output trust settings file"}
+  remove-trusted-cert:
+    description: "Remove a certificate from trust settings"
+    args: {file: "*.cer *.crt *.der *.pem"}
+    flags:
+      -d: {description: "Admin cert store instead of user"}
+  dump-trust-settings:
+    description: "Show trust settings"
+    flags:
+      -s: {description: "System trust settings"}
+      -d: {description: "Admin trust settings"}
+  user-trust-settings-enable:
+    description: "Show or switch user-level trust settings"
+    flags:
+      -d: {description: "Disable"}
+      -e: {description: "Enable"}
+  trust-settings-export:
+    description: "Export trust settings to a file"
+    args: file
+    flags:
+      -s: {description: "System trust settings"}
+      -d: {description: "Admin trust settings"}
+  trust-settings-import:
+    description: "Import trust settings from a file"
+    args: file
+    flags:
+      -d: {description: "Admin trust settings"}
+  verify-cert:
+    description: "Verify certificates or a TLS server (URL)"
+    args: any
+    flags:
+      -c: {value: {file: "*.cer *.crt *.der *.pem"}, description: "Certificate to verify (leaf first, repeatable)", show: always}
+      -r: {value: {file: "*.cer *.crt *.der *.pem"}, description: "Root certificate (repeatable)"}
+      -p: {value: {exec: "printf '%s\\n' ssl smime codeSign IPSec basic swUpdate pkgSign eap macappstore appleID timestamping"}, description: "Policy (default basic)", show: always}
+      -C: {description: "Client usage"}
+      -d: {value: any, description: "Verification date YYYY-MM-DD-hh:mm:ss"}
+      -k: {value: {exec: 'security list-keychains 2>/dev/null | sed ''s/^ *"//; s/"$//'''}, description: "Keychain for intermediates"}
+      -n: {value: any, description: "Name to verify (SSL host, email)"}
+      -N: {description: "Search no keychains"}
+      -L: {description: "Local certificates only, no network"}
+      -l: {description: "Leaf is a CA certificate"}
+      -e: {value: any, description: "Email address (deprecated: -n)"}
+      -s: {value: any, description: "SSL host (deprecated: -n)"}
+      -q: {description: "Quiet"}
+      -R: {value: {exec: "printf '%s\\n' ocsp require offline"}, description: "Revocation check (repeatable)"}
+      -P: {description: "Print the chain as PEM"}
+      -t: {description: "Print certificates as text"}
+      -v: {description: "Verbose", show: always}
+  authorize:
+    description: "Request authorization rights"
+    args: {exec: "printf '%s\\n' system.privilege.admin system.preferences system.preferences.security system.login.console system.install.software"}
+    flags:
+      -u: {description: "Allow user interaction"}
+      -p: {description: "Allow partial rights"}
+      -d: {description: "Destroy acquired rights"}
+      -P: {description: "Pre-authorize only"}
+      -l: {description: "Least privileged mode"}
+      -i: {description: "Internalize authref from stdin"}
+      -e: {description: "Externalize authref to stdout"}
+      -w: {description: "Wait until stdout closes"}
+  authorizationdb:
+    description: "Read or change the authorization policy database"
+    commands:
+      read: {description: "Print a right definition", args: {exec: "printf '%s\\n' system.privilege.admin system.preferences system.preferences.security system.login.console system.install.software"}}
+      write: {description: "Set a right (rule name, allow/deny, or plist on stdin)", positional: [{exec: "printf '%s\\n' system.privilege.admin system.preferences system.preferences.security system.login.console system.install.software"}, {exec: "printf '%s\\n' allow deny authenticate-admin authenticate-session-owner is-admin"}]}
+      remove: {description: "Remove a right", args: {exec: "printf '%s\\n' system.privilege.admin system.preferences system.preferences.security system.login.console system.install.software"}}
+  execute-with-privileges:
+    description: "Run a tool with privileges"
+    args: "@command"
+  leaks:
+    description: "Run leaks on this process"
+    flags:
+      -cycles: {description: "Stricter algorithm"}
+      -nocontext: {description: "No hex dumps"}
+      -nostacks: {description: "No stack traces"}
+      -exclude: {value: any, description: "Ignore leaks from this symbol"}
+  smartcards:
+    description: "Enable, disable or list disabled smartcard tokens"
+    commands:
+      token:
+        description: "Manage smartcard tokens"
+        flags:
+          -l: {description: "List disabled tokens"}
+          -e: {value: {exec: "pluginkit -m -p com.apple.ctk-tokens 2>/dev/null | awk '{print $NF}' | sed 's/(.*//'"}, description: "Enable a token"}
+          -d: {value: {exec: "pluginkit -m -p com.apple.ctk-tokens 2>/dev/null | awk '{print $NF}' | sed 's/(.*//'"}, description: "Disable a token"}
+  list-smartcards:
+    description: "Show ids of available smartcards"
+  export-smartcard:
+    description: "Show or export items from smartcards"
+    flags:
+      -i: {value: {exec: "security list-smartcards 2>/dev/null"}, description: "Token id"}
+      -t: {value: {exec: "printf '%s\\n' certs privKeys identities all"}, description: "Item type (default all)"}
+      -e: {value: dir, description: "Export certificates and public keys here"}
+  error:
+    description: "Explain security error codes (decimal or hex)"
+    args: any
+snippets:
+  - key: p
+    mark: pin
+    command: "security find-generic-password -s my-service -a \"$USER\" -w"
+    description: "read a stored password (stdout, scripts)"
+  - key: a
+    mark: pin
+    command: "security add-generic-password -s my-service -a \"$USER\" -U -w"
+    description: "store/update a password (prompted, not in history)"
+  - key: i
+    mark: pin
+    command: "security find-identity -v -p codesigning"
+    description: "signing identities usable by codesign"
+  - key: d
+    command: "security delete-generic-password -s my-service -a \"$USER\""
+    description: "remove a stored password"
+  - key: c
+    command: "security find-certificate -a -c Apple -Z | grep SHA-256"
+    description: "certificates by name with their hashes"
+  - key: e
+    command: "security find-certificate -a -p /Library/Keychains/System.keychain > system-certs.pem"
+    description: "export System keychain certificates as PEM"
+  - key: t
+    mark: pin
+    command: "sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ca.crt"
+    description: "trust a root CA system-wide"
+  - key: v
+    command: "security verify-cert -v https://example.com"
+    description: "check a server's TLS certificate chain"
+  - key: u
+    command: "security unlock-keychain ~/Library/Keychains/login.keychain-db"
+    description: "unlock the login keychain (e.g. over ssh)"
+  - key: l
+    command: "security list-keychains -d user"
+    description: "keychain search list"
+  - key: r
+    command: "security error -25300"
+    description: "what an OSStatus code means"

@@ -468,8 +468,15 @@ static void add_snippets(void) {
                     if (*c == '\'') { memcpy(o, "'\\''", 4); o += 4; } else *o++ = *c;
                 *o++ = '\''; *o = 0;
                 emit_desc(q, 1, NULL);
-            } else if (!strncmp(cmd->str, g_snippets_name, nl) && cmd->str[nl] == ' ')
+            } else if (!strncmp(cmd->str, g_snippets_name, nl) && cmd->str[nl] == ' ') {
                 emit_desc(cmd->str + nl + 1, 1, NULL);
+            } else { /* symlinked spec (fly -> flyctl): snippets use the real name */
+                char alt[1024];
+                size_t al = (size_t)snprintf(alt, sizeof alt, "%s%s", g_spec_real,
+                                             g_snippets_name + strcspn(g_snippets_name, " "));
+                if (al < sizeof alt && !strncmp(cmd->str, alt, al) && cmd->str[al] == ' ')
+                    emit_desc(cmd->str + al + 1, 1, NULL);
+            }
             break; /* not substitutable: list nothing */
         }
         pin = !npin ? k->str[0] == first : npin == nall ? k->str[0] != last : pinned(e);

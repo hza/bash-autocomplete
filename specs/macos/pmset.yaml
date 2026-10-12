@@ -1,0 +1,183 @@
+description: "Manipulate power management settings"
+flags:
+  -a: {description: "Apply settings to all power sources", show: always}
+  -b: {description: "Apply settings to battery power", show: always}
+  -c: {description: "Apply settings to charger (wall power)", show: always}
+  -u: {description: "Apply settings to UPS power"}
+  -g:
+    value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" get"}
+    description: "Show settings or status (default: settings in use)"
+    show: always
+commands:
+  displaysleep:
+    description: "Display sleep timer in minutes (0 = never)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}]
+    args: "@subcommands"
+  disksleep:
+    description: "Disk spindown timer in minutes (0 = never)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}]
+    args: "@subcommands"
+  sleep:
+    description: "System sleep timer in minutes (0 = never)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}]
+    args: "@subcommands"
+  womp:
+    description: "Wake for network access (magic packet), 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  ring:
+    description: "Wake on modem ring, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  powernap:
+    description: "Power Nap, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  proximitywake:
+    description: "Wake when devices with the same iCloud account are near, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  autorestart:
+    description: "Restart automatically after power loss, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  lidwake:
+    description: "Wake when the lid is opened, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  acwake:
+    description: "Wake when the power source changes, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  lessbright:
+    description: "Dim the display slightly on this power source, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  halfdim:
+    description: "Half-brightness step before display sleep, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  sms:
+    description: "Sudden Motion Sensor parks disk heads, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  hibernatemode:
+    description: "Hibernation mode: 0, 3 or 25"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" hibernatemode"}]
+    args: "@subcommands"
+  hibernatefile:
+    description: "Hibernation image location (root volume only)"
+    positional: [file]
+    args: "@subcommands"
+  ttyskeepawake:
+    description: "Active tty sessions prevent idle sleep, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  networkoversleep:
+    description: "How shared network services behave during sleep (unsupported)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  destroyfvkeyonstandby:
+    description: "Destroy the FileVault key on standby (1) or keep it (0)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  standby:
+    description: "Hibernate automatically after sleeping a while, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  standbydelayhigh:
+    description: "Seconds before standby, battery above highstandbythreshold"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" seconds"}]
+    args: "@subcommands"
+  standbydelaylow:
+    description: "Seconds before standby, battery below highstandbythreshold"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" seconds"}]
+    args: "@subcommands"
+  highstandbythreshold:
+    description: "Battery percent choosing standbydelayhigh/low"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" percent"}]
+    args: "@subcommands"
+  autopoweroff:
+    description: "Low-power chipset sleep after autopoweroffdelay, 0/1"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" bool"}]
+    args: "@subcommands"
+  autopoweroffdelay:
+    description: "Seconds of sleep before autopoweroff"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" seconds"}]
+    args: "@subcommands"
+  haltlevel:
+    description: "UPS: shut down at this battery percent (-1 = off; with -u)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" ups"}]
+    args: "@subcommands"
+  haltafter:
+    description: "UPS: shut down after this many minutes on UPS (with -u)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" ups"}]
+    args: "@subcommands"
+  haltremain:
+    description: "UPS: shut down when this many minutes remain (with -u)"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" ups"}]
+    args: "@subcommands"
+  schedule:
+    description: "Schedule a one-time sleep, wake, power-on or shutdown"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" type"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" datetime"}]
+    commands:
+      cancel:
+        description: "Cancel one scheduled event"
+        positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" type"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" datetime"}]
+      cancelall:
+        description: "Cancel all scheduled events"
+  repeat:
+    description: "Schedule a daily/weekly power-on and power-off event"
+    positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" type"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" weekdays"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" time"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" type"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" weekdays"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" time"}]
+    commands:
+      cancel:
+        description: "Cancel the repeating events"
+  relative:
+    description: "Wake or power on N seconds after sleep/shutdown"
+    commands:
+      wake: {description: "Wake after the given seconds", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" seconds"}]}
+      poweron: {description: "Power on after the given seconds", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" seconds"}]}
+  sleepnow: {description: "Sleep immediately"}
+  displaysleepnow: {description: "Turn the display off immediately"}
+  touch: {description: "Re-read settings from disk"}
+  boot: {description: "Tell the kernel that boot is complete"}
+  restoredefaults: {description: "Restore default power settings"}
+  noidle: {description: "Prevent idle sleep while running (deprecated: use caffeinate)"}
+  resetdisplayambientparams: {description: "Reset ambient light parameters of Apple displays"}
+  dim: {description: "Deprecated name of displaysleep", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}], args: "@subcommands"}
+  spindown: {description: "Deprecated name of disksleep", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}], args: "@subcommands"}
+snippets:
+  - key: b
+    mark: pin
+    command: "pmset -g batt"
+    description: "battery charge and power source"
+  - key: a
+    mark: pin
+    command: "pmset -g assertions"
+    description: "which processes keep the Mac or display awake"
+  - key: g
+    mark: pin
+    command: "pmset -g"
+    description: "power settings currently in use"
+  - key: l
+    command: "pmset -g log | grep -E ' (Sleep|Wake) '"
+    description: "recent sleep and wake history"
+  - key: c
+    command: "pmset -g custom"
+    description: "settings per power source (battery / AC)"
+  - key: s
+    command: "pmset -g sched"
+    description: "scheduled wake, sleep and power events"
+  - key: d
+    command: "sudo pmset -b displaysleep 5"
+    description: "on battery, turn the display off after 5 min"
+  - key: w
+    command: "sudo pmset schedule wake \"$(date -v+1d '+%m/%d/%y') 07:30:00\""
+    description: "wake tomorrow at 7:30"
+  - key: x
+    command: "sudo pmset repeat cancel"
+    description: "drop the repeating power-on/off schedule"
+  - key: n
+    mark: pin
+    command: "pmset displaysleepnow"
+    description: "turn the display off right now"

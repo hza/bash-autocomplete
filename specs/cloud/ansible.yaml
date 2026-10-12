@@ -1,0 +1,84 @@
+description: Run ad-hoc Ansible tasks against hosts
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  --version: {description: "Show version"}
+  -i: {value: [file, dir], description: "Inventory file, dir or host list", show: always}
+  --inventory: {value: [file, dir], description: "Inventory file, dir or host list"}
+  -m: {value: {exec: "printf '%s\\n' ping command shell raw script copy fetch file template lineinfile apt yum dnf package pip service systemd user group setup gather_facts debug reboot cron git get_url unarchive stat uri wait_for"}, description: "Module name (default command)", show: always}
+  --module-name: {value: {exec: "printf '%s\\n' ping command shell raw script copy fetch file template lineinfile apt yum dnf package pip service systemd user group setup gather_facts debug reboot cron git get_url unarchive stat uri wait_for"}, description: "Module name (default command)"}
+  -a: {value: any, description: "Module arguments", show: always}
+  --args: {value: any, description: "Module arguments"}
+  -b: {description: "Become (sudo)", show: always}
+  --become: {description: "Become (sudo)"}
+  --become-user: {value: any, description: "User to become (default root)"}
+  --become-method: {value: {exec: "printf '%s\\n' sudo su doas pbrun pfexec runas machinectl"}, description: "Privilege escalation method"}
+  -K: {description: "Ask for the become password"}
+  --ask-become-pass: {description: "Ask for the become password"}
+  -u: {value: any, description: "Remote user"}
+  --user: {value: any, description: "Remote user"}
+  -k: {description: "Ask for the SSH password"}
+  --ask-pass: {description: "Ask for the SSH password"}
+  --private-key: {value: file, description: "SSH private key"}
+  --key-file: {value: file, description: "SSH private key"}
+  -c: {value: {exec: "printf '%s\\n' ssh paramiko local docker winrm psrp"}, description: "Connection type"}
+  --connection: {value: {exec: "printf '%s\\n' ssh paramiko local docker winrm psrp"}, description: "Connection type"}
+  -T: {value: any, description: "Connection timeout in seconds"}
+  --timeout: {value: any, description: "Connection timeout in seconds"}
+  -l: {value: any, description: "Limit to a host pattern"}
+  --limit: {value: any, description: "Limit to a host pattern"}
+  -f: {value: any, description: "Parallel processes (default 5)"}
+  --forks: {value: any, description: "Parallel processes (default 5)"}
+  -e: {value: any, description: "Extra variables key=value, JSON or @file"}
+  --extra-vars: {value: any, description: "Extra variables key=value, JSON or @file"}
+  -o: {description: "One-line output"}
+  --one-line: {description: "One-line output"}
+  -t: {value: dir, description: "Write output per host into a directory"}
+  --tree: {value: dir, description: "Write output per host into a directory"}
+  -C: {description: "Dry run, report what would change"}
+  --check: {description: "Dry run, report what would change"}
+  -D: {description: "Show diffs of changed files"}
+  --diff: {description: "Show diffs of changed files"}
+  -B: {value: any, description: "Run asynchronously, fail after N seconds"}
+  --background: {value: any, description: "Run asynchronously, fail after N seconds"}
+  -P: {value: any, description: "Async poll interval"}
+  --poll: {value: any, description: "Async poll interval"}
+  --list-hosts: {description: "List matching hosts and exit"}
+  --vault-id: {value: any, description: "Vault identity label@source"}
+  -J: {description: "Ask for the vault password"}
+  --ask-vault-pass: {description: "Ask for the vault password"}
+  --vault-password-file: {value: file, description: "Vault password file"}
+  --playbook-dir: {value: dir, description: "Pretend playbook directory (roles, group_vars)"}
+  -M: {value: dir, description: "Extra module path"}
+  --module-path: {value: dir, description: "Extra module path"}
+  -v: {description: "Verbose (-vvv for more)", repeat: true}
+  --verbose: {description: "Verbose", repeat: true}
+args: {exec: "echo all; { ansible-inventory --graph 2>/dev/null | sed -n 's/^[ |-]*@\\([^:]*\\):$/\\1/p'; ansible all --list-hosts 2>/dev/null | sed -n 's/^ *//; /^hosts (/d; p'; } | sort -u", cache: 60}
+snippets:
+  - key: p
+    mark: pin
+    command: "ansible all -m ping"
+    description: "can we reach everyone?"
+  - key: s
+    mark: pin
+    command: "ansible web -b -m shell -a 'uptime'"
+    description: "shell command on a group"
+  - key: f
+    mark: pin
+    command: "ansible myhost -m setup -a 'filter=ansible_distribution*'"
+    description: "peek at host facts"
+  - key: l
+    command: "ansible all -i inventory.ini --list-hosts"
+    description: "which hosts the inventory yields"
+  - key: c
+    command: "ansible web -b -m copy -a 'src=./file dest=/tmp/file'"
+    description: "push a file to hosts"
+  - key: r
+    command: "ansible web -b -m service -a 'name=nginx state=restarted'"
+    description: "restart a service"
+  - key: b
+    command: "ansible web -b -m reboot"
+    description: "reboot and wait"
+  - key: i
+    command: "ansible localhost -c local -m debug -a 'var=hostvars'"
+    description: "inspect vars without ssh"

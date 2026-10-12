@@ -1,0 +1,48 @@
+description: "Pattern scanning and processing language (BSD awk)"
+flags:
+  -F: {value: {exec: "printf '%s\\t%s\\n' , comma ':' colon '\\t' tab ';' semicolon '|' pipe '=' 'equals sign'"}, description: "Input field separator (regex)", show: always}
+  -v: {value: any, description: "Assign var=value before the program runs (repeatable)", repeat: true, show: always}
+  -f: {value: file, description: "Read the program from a file", repeat: true}
+  -d: {description: "Debug output"}
+  -safe: {description: "Safe mode: no system(), pipes or file output"}
+  --version: {description: "Version information"}
+  -version: {description: "Version information"}
+snippets:
+  - key: s
+    mark: pin
+    command: "awk '{ s += $1 } END { print s }' file.txt"
+    description: "sum the first column"
+  - key: f
+    mark: pin
+    command: "awk -F, '{ print $2 }' data.csv"
+    description: "second field of comma-separated lines"
+  - key: u
+    mark: pin
+    command: "awk '!seen[$0]++' file.txt"
+    description: "unique lines, keep order"
+  - key: p
+    mark: pin
+    command: "awk '{ print $1, $NF }' file.txt"
+    description: "first and last field"
+  - key: a
+    command: "awk '{ s += $1; n++ } END { if (n) print s / n }' file.txt"
+    description: "average of the first column"
+  - key: c
+    command: "awk '{ c[$1]++ } END { for (k in c) print c[k], k }' file.txt"
+    description: "count occurrences per first field"
+  - key: n
+    command: "awk 'NR >= 10 && NR <= 20' file.txt"
+    description: "lines 10 to 20"
+  - key: l
+    command: "awk 'length > 80' file.txt"
+    description: "lines longer than 80 chars"
+  - key: m
+    command: "awk '$3 > 100' file.txt"
+    description: "rows whose third field exceeds 100"
+  - key: v
+    command: "awk -v lim=5 '$2 > lim' file.txt"
+    description: "pass a shell value in as a variable"
+  - key: t
+    command: "awk -F'\\t' -v OFS=, '{ $1 = $1; print }' file.tsv"
+    description: "convert tab-separated to comma-separated"
+args: file

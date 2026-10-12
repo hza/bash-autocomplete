@@ -220,3 +220,41 @@ commands:
   help:
     description: Help about any command
     args: "@subcommands"
+snippets:
+  - key: p
+    mark: pin
+    command: "kubectl get pods -A -o wide"
+    description: "pods in every namespace with node and IP"
+  - key: r
+    mark: pin
+    command: "kubectl rollout restart deployment/my-app"
+    description: "restart all pods of a deployment"
+  - key: f
+    mark: pin
+    command: "kubectl port-forward svc/my-service 8080:80"
+    description: "localhost:8080 reaches the service's port 80"
+  - key: l
+    mark: pin
+    command: "kubectl logs -f deployment/my-app --since=10m"
+    description: "follow logs of a deployment"
+  - key: e
+    command: "kubectl get events --sort-by=.lastTimestamp"
+    description: "recent events, newest last"
+  - key: s
+    command: "kubectl get secret my-secret -o jsonpath='{.data.password}' | base64 -d"
+    description: "decode one key of a secret"
+  - key: x
+    command: "kubectl exec -it deploy/my-app -- sh"
+    description: "shell inside a running pod"
+  - key: n
+    command: "kubectl config set-context --current --namespace=my-ns"
+    description: "change the default namespace"
+  - key: c
+    command: "kubectl config get-contexts"
+    description: "clusters you can switch to"
+  - key: t
+    command: "kubectl top pods --sort-by=memory"
+    description: "pods by memory use"
+  - key: d
+    command: "kubectl run debug --rm -it --image=busybox -- sh"
+    description: "throwaway pod for network debugging"

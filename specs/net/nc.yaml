@@ -1,0 +1,71 @@
+description: Netcat - arbitrary TCP and UDP connections and listeners
+flags:
+  -l: {description: "Listen for an incoming connection", show: always}
+  -k: {description: "Keep listening after a connection closes (with -l)"}
+  -u: {description: "Use UDP instead of TCP", show: always}
+  -v: {description: "Verbose output", show: always}
+  -z: {description: "Scan for listening daemons without sending data", show: always}
+  -n: {description: "No DNS or service lookups"}
+  -w: {value: any, description: "Idle timeout in seconds"}
+  -G: {value: any, description: "TCP connection timeout in seconds"}
+  -p: {value: any, description: "Source port"}
+  -s: {value: any, description: "Source IP address"}
+  -b: {value: {exec: "ifconfig -l | tr ' ' '\\n'"}, description: "Bind the socket to this interface"}
+  -U: {description: "Use Unix domain sockets"}
+  -x: {value: any, description: "Connect through a proxy (address[:port])"}
+  -X: {value: {exec: "printf '%s\\t%s\\n' 4 'SOCKS v4' 5 'SOCKS v5' connect 'HTTPS proxy'"}, description: "Proxy protocol"}
+  -c: {description: "Send CRLF as line ending"}
+  -d: {description: "Do not read from stdin"}
+  -i: {value: any, description: "Delay between lines sent/received (seconds)"}
+  -r: {description: "Randomize ports"}
+  -t: {description: "Answer telnet negotiation (refuse)"}
+  -D: {description: "Enable socket debugging"}
+  -A: {description: "Set SO_RECV_ANYIF on the socket"}
+  -C: {description: "Don't use cellular data"}
+  -H: {value: any, description: "Initial TCP keepalive timeout (s)"}
+  -I: {value: any, description: "TCP keepalive interval (s)"}
+  -J: {value: any, description: "TCP keepalive probe count"}
+  -L: {value: any, description: "Probes before an adaptive timeout"}
+  -h: {description: "Print help"}
+  '-4': {description: "IPv4 only"}
+  '-6': {description: "IPv6 only"}
+  --apple-delegate-pid: {value: "@pids", description: "Delegate the socket for this PID"}
+  --apple-delegate-uuid: {value: any, description: "Delegate the socket for this UUID"}
+  --apple-ext-bk-idle: {description: "Extended background idle time when suspended"}
+  --apple-nowakefromsleep: {value: any, description: "Exclude the local port from wake-on-sleep checks (n > 0)"}
+  --apple-ecn: {value: {exec: "printf '%s\\n' default enable disable"}, description: "TCP ECN mode"}
+args: "@hosts"
+snippets:
+  - key: p
+    mark: pin
+    command: "nc -vz example.org 443"
+    description: "is this TCP port open?"
+  - key: r
+    command: "nc -vz example.org 20-25"
+    description: "scan a port range"
+  - key: l
+    mark: pin
+    command: "nc -l 9000"
+    description: "listen on port 9000, print what arrives"
+  - key: k
+    command: "nc -lk 9000"
+    description: "keep listening across connections"
+  - key: s
+    command: "nc -l 9000 > received.bin"
+    description: "receive a file (run first)"
+  - key: f
+    command: "nc -w 3 host 9000 < file.bin"
+    description: "send a file to a listener"
+  - key: h
+    mark: pin
+    command: "printf 'GET / HTTP/1.0\\r\\nHost: example.org\\r\\n\\r\\n' | nc example.org 80"
+    description: "raw HTTP request by hand"
+  - key: u
+    command: "nc -vzu 8.8.8.8 53"
+    description: "probe a UDP port"
+  - key: x
+    command: "nc -x localhost:1080 example.org 80"
+    description: "connect through a SOCKS proxy"
+  - key: d
+    command: "nc -U /var/run/docker.sock"
+    description: "talk to a Unix socket"

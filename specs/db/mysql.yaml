@@ -1,0 +1,89 @@
+description: MySQL / MariaDB command-line client
+flags:
+  -h: {value: "@hosts", description: "Connect to host", show: always}
+  --host: {value: "@hosts", description: "Connect to host"}
+  -P: {value: any, description: "Port number for TCP/IP connection", show: always}
+  --port: {value: any, description: "Port number for TCP/IP connection"}
+  -u: {value: "@users", description: "User for login", show: always}
+  --user: {value: "@users", description: "User for login"}
+  -p: {description: "Prompt for password (or -pSECRET, no space)", show: always}
+  --password: {description: "Prompt for password (or --password=SECRET)"}
+  -D: {value: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}, description: "Database to use", show: always}
+  --database: {value: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}, description: "Database to use"}
+  -e: {value: any, description: "Execute statement and quit", show: always}
+  --execute: {value: any, description: "Execute statement and quit"}
+  -S: {value: file, description: "Socket file for connection"}
+  --socket: {value: file, description: "Socket file for connection"}
+  --protocol: {value: {exec: "printf '%s\\t%s\\n' tcp 'TCP/IP' socket 'Unix socket file' pipe 'named pipe (Windows)' memory 'shared memory (Windows)'"}, description: "Transport protocol"}
+  -B: {description: "Batch mode: tab-separated output, no history"}
+  --batch: {description: "Batch mode: tab-separated output, no history"}
+  -N: {description: "Do not write column names in results"}
+  --skip-column-names: {description: "Do not write column names in results"}
+  -s: {description: "Silent mode (less output)"}
+  --silent: {description: "Silent mode (less output)"}
+  -r: {description: "Raw output, no escaping"}
+  --raw: {description: "Raw output, no escaping"}
+  -t: {description: "Output in table format"}
+  --table: {description: "Output in table format"}
+  -E: {description: "Print rows vertically"}
+  --vertical: {description: "Print rows vertically"}
+  -H: {description: "Produce HTML output"}
+  --html: {description: "Produce HTML output"}
+  -X: {description: "Produce XML output"}
+  --xml: {description: "Produce XML output"}
+  -v: {description: "Verbose (repeat for more)", repeat: true}
+  --verbose: {description: "Verbose (repeat for more)", repeat: true}
+  -f: {description: "Continue even on SQL errors"}
+  --force: {description: "Continue even on SQL errors"}
+  -A: {description: "No automatic rehashing (faster start)"}
+  --no-auto-rehash: {description: "No automatic rehashing (faster start)"}
+  -U: {description: "Refuse UPDATE/DELETE without key in WHERE"}
+  --safe-updates: {description: "Refuse UPDATE/DELETE without key in WHERE"}
+  --defaults-file: {value: file, description: "Read options only from this file"}
+  --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
+  --no-defaults: {description: "Do not read any option files"}
+  --login-path: {value: any, description: "Read options from this login path (.mylogin.cnf)"}
+  --default-character-set: {value: {exec: "printf '%s\\n' utf8mb4 utf8 latin1 ascii binary"}, description: "Default character set"}
+  --ssl-mode: {value: {exec: "printf '%s\\n' DISABLED PREFERRED REQUIRED VERIFY_CA VERIFY_IDENTITY"}, description: "TLS mode for the connection"}
+  --ssl-ca: {value: file, description: "CA certificate file"}
+  --ssl-cert: {value: file, description: "Client certificate file"}
+  --ssl-key: {value: file, description: "Client key file"}
+  --local-infile: {description: "Enable LOAD DATA LOCAL INFILE"}
+  --init-command: {value: any, description: "SQL to run after connecting"}
+  --connect-timeout: {value: any, description: "Seconds before connection timeout"}
+  --tee: {value: file, description: "Append all output to file"}
+  --pager: {value: any, description: "Pager command for query output"}
+  --prompt: {value: any, description: "Custom prompt format"}
+  --comments: {description: "Keep comments in statements sent to the server"}
+  -V: {description: "Print version and exit"}
+  --version: {description: "Print version and exit"}
+  --help: {description: "Show help and exit"}
+args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
+snippets:
+  - key: c
+    mark: pin
+    command: "mysql -h 127.0.0.1 -P 3306 -u root -p mydb"
+    description: "connect over TCP with password prompt"
+  - key: f
+    mark: pin
+    command: "mysql -u root -p mydb < script.sql"
+    description: "run a SQL file"
+  - key: e
+    mark: pin
+    command: "mysql -u root -p -e 'SHOW TABLES' mydb"
+    description: "run one statement and quit"
+  - key: t
+    command: "mysql -u root -p -NBe 'SELECT * FROM users' mydb > users.tsv"
+    description: "export a query as tab-separated rows"
+  - key: z
+    command: "gunzip < dump.sql.gz | mysql -u root -p mydb"
+    description: "restore a compressed dump"
+  - key: p
+    command: "mysql -u root -p -e 'SHOW FULL PROCESSLIST'"
+    description: "show running queries"
+  - key: s
+    command: "mysql -u root -p -e \"SELECT table_schema, ROUND(SUM(data_length+index_length)/1048576) AS mb FROM information_schema.tables GROUP BY table_schema\""
+    description: "size of each database in MB"
+  - key: v
+    command: "mysql -u root -p -e 'SELECT * FROM users LIMIT 1\\G' mydb"
+    description: "one row, printed vertically"

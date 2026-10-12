@@ -1,0 +1,90 @@
+description: "Create, check and display code signatures"
+flags:
+  -s: {value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)", show: always}
+  --sign: {value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)"}
+  -v: {description: "Verify signatures (or more verbose when repeated)", repeat: true, show: always}
+  --verify: {description: "Verify signatures"}
+  --verbose: {description: "More output (--verbose=N for a level)"}
+  -d: {description: "Display signature information", show: always}
+  --display: {description: "Display signature information"}
+  -h: {description: "Show the hosting chain of running code (pids)"}
+  --hosting: {description: "Show the hosting chain of running code (pids)"}
+  -f: {description: "Replace an existing signature", show: always}
+  --force: {description: "Replace an existing signature"}
+  -a: {value: {exec: "printf '%s\\n' arm64 x86_64 arm64e i386"}, description: "Select a Mach-O architecture"}
+  --architecture: {value: {exec: "printf '%s\\n' arm64 x86_64 arm64e i386"}, description: "Select a Mach-O architecture"}
+  --all-architectures: {description: "Verify each architecture of a universal binary"}
+  --bundle-version: {value: any, description: "Bundle version (Versions/x) to sign or check"}
+  --check-notarization: {description: "Also check notarization (with --verify)"}
+  -D: {value: file, description: "Write a detached signature to this file"}
+  --detached: {value: file, description: "Write a detached signature to this file"}
+  --deep: {description: "Recurse into nested code (deprecated for signing)"}
+  --detached-database: {description: "Store detached signatures in the system database"}
+  --force-library-entitlements: {description: "Allow entitlements on libraries"}
+  --generate-entitlement-der: {description: "Add DER-encoded entitlements"}
+  -i: {value: any, description: "Signing identifier, e.g. com.example.tool"}
+  --identifier: {value: any, description: "Signing identifier, e.g. com.example.tool"}
+  -o: {value: {exec: "printf '%s\\n' runtime kill hard host expires library linker-signed"}, description: "Option flags, comma-separated (runtime = hardened runtime)", show: always}
+  --options: {value: {exec: "printf '%s\\n' runtime kill hard host expires library linker-signed"}, description: "Option flags, comma-separated (runtime = hardened runtime)"}
+  -P: {value: any, description: "Page size for signing (bytes, power of two)"}
+  --pagesize: {value: any, description: "Page size for signing (bytes, power of two)"}
+  --remove-signature: {description: "Remove the signature"}
+  -r: {value: file, description: "Internal requirements (file, - or =text)"}
+  --requirements: {value: file, description: "Internal requirements (file, - or =text)"}
+  -R: {value: any, description: "Verify against this requirement (file, - or =text)"}
+  --test-requirement: {value: any, description: "Verify against this requirement (file, - or =text)"}
+  --continue: {description: "Keep going after an error"}
+  --dryrun: {description: "Do everything except write the signature"}
+  --entitlements: {value: {file: "*.plist *.entitlements *.xml"}, description: "Entitlements file to embed (or output with -d)", show: always}
+  --enforce-constraint-validity: {description: "Fail if launch constraints are invalid"}
+  --extract-certificates: {value: any, description: "Write the certificate chain to <prefix>N files"}
+  --file-list: {value: file, description: "Write the list of touched files to this path"}
+  --ignore-resources: {description: "Skip resource checks when verifying"}
+  --keychain: {value: file, description: "Keychain to look up the identity in"}
+  --prefix: {value: any, description: "Prefix for an implicit identifier, e.g. com.example."}
+  '--preserve-metadata=': {value: {exec: "printf '%s\\n' identifier entitlements requirements flags runtime launch-constraints library-constraints"}, description: "Keep parts of the old signature (comma list)"}
+  '--strict=': {value: {exec: "printf '%s\\n' all symlinks sideband"}, description: "Extra validation checks (plain --strict = all)"}
+  --strict: {description: "All extra validation checks"}
+  '--timestamp=': {value: {exec: "printf '%s\\n' none"}, description: "Timestamp server URL (none = no timestamp)"}
+  --timestamp: {description: "Timestamp the signature (Apple's server)", show: always}
+  --runtime-version: {value: any, description: "Hardened runtime version to record"}
+  --launch-constraint-self: {value: {file: "*.plist"}, description: "Launch constraint on this executable"}
+  --launch-constraint-parent: {value: {file: "*.plist"}, description: "Launch constraint on the parent process"}
+  --launch-constraint-responsible: {value: {file: "*.plist"}, description: "Launch constraint on the responsible process"}
+  --library-constraint: {value: {file: "*.plist"}, description: "Constraint on loaded libraries"}
+  --strip-disallowed-xattrs: {description: "Remove xattrs that would break the signature"}
+  --single-threaded-signing: {description: "Sign bundle contents on one thread"}
+  --validate-constraint: {description: "Check launch constraint plists"}
+args: [file, "@pids"]
+snippets:
+  - key: v
+    mark: pin
+    command: "codesign -vvv --deep --strict MyApp.app"
+    description: "verify a bundle and everything nested in it"
+  - key: d
+    mark: pin
+    command: "codesign -dvvv MyApp.app"
+    description: "who signed it: identifier, team, authority, flags"
+  - key: a
+    mark: pin
+    command: "codesign -s - -f ./mytool"
+    description: "ad-hoc sign a local binary"
+  - key: s
+    mark: pin
+    command: "codesign -s 'Developer ID Application' -f --options runtime --timestamp MyApp.app"
+    description: "release signing with hardened runtime + timestamp"
+  - key: e
+    command: "codesign -d --entitlements - MyApp.app"
+    description: "print the embedded entitlements"
+  - key: r
+    command: "codesign -d -r- MyApp.app"
+    description: "show the designated requirement"
+  - key: x
+    command: "codesign --remove-signature ./mytool"
+    description: "strip the signature"
+  - key: n
+    command: "codesign -v --check-notarization -R '=notarized' MyApp.app"
+    description: "check that the app is notarized"
+  - key: c
+    command: "codesign -d --extract-certificates=cert MyApp.app"
+    description: "dump the signing certificate chain to cert0, cert1…"

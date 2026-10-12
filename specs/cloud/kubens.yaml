@@ -1,0 +1,28 @@
+description: Switch the kubectl namespace
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -c: {description: "Show the current namespace"}
+  --current: {description: "Show the current namespace"}
+  -f: {description: "Switch even if the namespace doesn't exist"}
+  --force: {description: "Switch even if the namespace doesn't exist"}
+  -u: {description: "Unset the namespace (back to default)"}
+  --unset: {description: "Unset the namespace (back to default)"}
+  -V: {description: "Show version"}
+  --version: {description: "Show version"}
+args: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'; echo -", cache: 30}
+snippets:
+  - key: s
+    mark: pin
+    command: "kubens -"
+    description: "back to the previous namespace"
+  - key: c
+    mark: pin
+    command: "kubens -c"
+    description: "print the active namespace"
+  - key: k
+    command: "kubens kube-system"
+    description: "jump to kube-system"
+  - key: u
+    command: "kubens -u"
+    description: "reset to default"

@@ -1,0 +1,333 @@
+description: DigitalOcean command-line interface
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -t: {value: any, description: "API v2 access token"}
+  --access-token: {value: any, description: "API v2 access token"}
+  --context: {value: {exec: "doctl auth list 2>/dev/null | sed 's/ (current)//'"}, description: "Authentication context name"}
+  -c: {value: file, description: "Path to config file"}
+  --config: {value: file, description: "Path to config file"}
+  -o: {value: {exec: "printf '%s\\n' text json"}, description: "Output format", show: always}
+  --output: {value: {exec: "printf '%s\\n' text json"}, description: "Output format"}
+  --format: {value: any, description: "Columns to show, comma separated"}
+  --no-header: {description: "Omit the header row"}
+  -u: {value: any, description: "Override the default API endpoint"}
+  --api-url: {value: any, description: "Override the default API endpoint"}
+  --interactive: {value: {exec: "printf '%s\\n' true false"}, description: "Enable interactive prompts"}
+  --trace: {description: "Show a log of network activity"}
+  -v: {description: "Verbose output"}
+  --verbose: {description: "Verbose output"}
+commands:
+  auth:
+    description: Manage authentication contexts
+    commands:
+      init: {description: "Initialize doctl with an API token", flags: {--context: {value: any, description: "Name for the new context"}}}
+      list: {description: "List available contexts", aliases: [ls]}
+      switch: {description: "Switch the active context", flags: {--context: {value: {exec: "doctl auth list 2>/dev/null | sed 's/ (current)//'"}, description: "Context to switch to", show: always}}}
+      remove: {description: "Remove a context", aliases: [rm], flags: {--context: {value: {exec: "doctl auth list 2>/dev/null | sed 's/ (current)//'"}, description: "Context to remove"}}}
+  account:
+    description: Show account information
+    commands:
+      get: {description: "Show account details"}
+      ratelimit: {description: "Show API rate limit status"}
+  balance:
+    description: Show account balance
+    commands:
+      get: {description: "Show current balance"}
+  billing-history:
+    description: Show billing history
+    commands:
+      list: {description: "List billing history entries"}
+  invoice:
+    description: Manage invoices
+    commands:
+      list: {description: "List invoices"}
+      get: {description: "Show invoice items", args: any}
+      summary: {description: "Show invoice summary", args: any}
+      pdf: {description: "Download invoice PDF", args: any}
+      csv: {description: "Download invoice CSV", args: any}
+  compute:
+    description: Manage Droplets, volumes, networking and more
+    commands:
+      droplet:
+        description: Manage Droplets
+        aliases: [d]
+        commands:
+          list:
+            description: List Droplets
+            aliases: [ls]
+            flags:
+              --region: {value: any, description: "Filter by region slug"}
+              --tag-name: {value: any, description: "Filter by tag"}
+          get:
+            description: Show a Droplet
+            args: {exec: "doctl compute droplet list --format Name --no-header 2>/dev/null", cache: 60}
+          create:
+            description: Create a Droplet
+            aliases: [c]
+            flags:
+              --image: {value: any, description: "Image slug or ID", show: always}
+              --size: {value: {exec: "doctl compute size list --format Slug --no-header 2>/dev/null", cache: 3600}, description: "Size slug", show: always}
+              --region: {value: {exec: "doctl compute region list --format Slug --no-header 2>/dev/null", cache: 3600}, description: "Region slug", show: always}
+              --ssh-keys: {value: any, description: "SSH key IDs or fingerprints"}
+              --vpc-uuid: {value: any, description: "VPC to attach to"}
+              --tag-names: {value: any, description: "Tags to apply"}
+              --user-data-file: {value: file, description: "Cloud-init user data file"}
+              --enable-backups: {description: "Enable automated backups"}
+              --enable-monitoring: {description: "Install the monitoring agent"}
+              --wait: {description: "Wait until the Droplet is active"}
+          delete:
+            description: Delete Droplets
+            aliases: [rm, d]
+            flags:
+              -f: {description: "Delete without confirmation"}
+              --force: {description: "Delete without confirmation"}
+              --tag-name: {value: any, description: "Delete Droplets with this tag"}
+            args: {exec: "doctl compute droplet list --format Name --no-header 2>/dev/null", cache: 60}
+          actions: {description: "List Droplet actions", args: any}
+          backups: {description: "List Droplet backups", args: any}
+          snapshots: {description: "List Droplet snapshots", args: any}
+          tag: {description: "Tag a Droplet", flags: {--tag-name: {value: any, description: "Tag to add"}}, args: any}
+          untag: {description: "Remove a tag from a Droplet", flags: {--tag-name: {value: any, description: "Tag to remove"}}, args: any}
+      droplet-action:
+        description: Run actions on Droplets
+        commands:
+          power-on: {description: "Power on a Droplet", args: any}
+          power-off: {description: "Power off a Droplet", args: any}
+          reboot: {description: "Reboot a Droplet", args: any}
+          shutdown: {description: "Shut down a Droplet gracefully", args: any}
+          resize: {description: "Resize a Droplet", flags: {--size: {value: any, description: "New size slug"}, --resize-disk: {description: "Also resize the disk"}}, args: any}
+          snapshot: {description: "Snapshot a Droplet", flags: {--snapshot-name: {value: any, description: "Snapshot name"}}, args: any}
+          rebuild: {description: "Rebuild a Droplet from an image", flags: {--image: {value: any, description: "Image slug or ID"}}, args: any}
+      ssh:
+        description: SSH into a Droplet
+        flags:
+          --ssh-user: {value: any, description: "Remote user"}
+          --ssh-key-path: {value: file, description: "Private key path"}
+          --ssh-port: {value: any, description: "Port"}
+          --ssh-command: {value: any, description: "Command to run remotely"}
+          --ssh-agent-forwarding: {description: "Enable agent forwarding"}
+        args: {exec: "doctl compute droplet list --format Name --no-header 2>/dev/null", cache: 60}
+      ssh-key:
+        description: Manage SSH keys
+        commands:
+          list: {description: "List SSH keys", aliases: [ls]}
+          get: {description: "Show an SSH key", args: any}
+          import: {description: "Import a public key", flags: {--public-key-file: {value: file, description: "Public key file"}}, args: any}
+          delete: {description: "Delete an SSH key", aliases: [rm], args: any}
+      volume:
+        description: Manage block storage volumes
+        commands:
+          list: {description: "List volumes", aliases: [ls]}
+          create: {description: "Create a volume", flags: {--size: {value: any, description: "Size, e.g. 100GiB"}, --region: {value: any, description: "Region slug"}, --fs-type: {value: {exec: "printf '%s\\n' ext4 xfs"}, description: "Filesystem"}}, args: any}
+          delete: {description: "Delete a volume", aliases: [rm], args: any}
+          snapshot: {description: "Snapshot a volume", args: any}
+      volume-action:
+        description: Attach, detach or resize volumes
+        commands:
+          attach: {description: "Attach a volume to a Droplet", args: any}
+          detach: {description: "Detach a volume", args: any}
+          resize: {description: "Resize a volume", args: any}
+      firewall:
+        description: Manage cloud firewalls
+        commands:
+          list: {description: "List firewalls", aliases: [ls]}
+          get: {description: "Show a firewall", args: any}
+          create: {description: "Create a firewall", flags: {--name: {value: any, description: "Firewall name"}, --inbound-rules: {value: any, description: "Inbound rules"}, --outbound-rules: {value: any, description: "Outbound rules"}, --droplet-ids: {value: any, description: "Droplet IDs"}}}
+          update: {description: "Update a firewall", args: any}
+          delete: {description: "Delete a firewall", aliases: [rm], args: any}
+      load-balancer:
+        description: Manage load balancers
+        commands:
+          list: {description: "List load balancers", aliases: [ls]}
+          get: {description: "Show a load balancer", args: any}
+          create: {description: "Create a load balancer"}
+          delete: {description: "Delete a load balancer", aliases: [rm], args: any}
+      domain:
+        description: Manage DNS domains
+        commands:
+          list: {description: "List domains", aliases: [ls]}
+          create: {description: "Add a domain", flags: {--ip-address: {value: any, description: "IP for the apex A record"}}, args: any}
+          delete: {description: "Delete a domain", aliases: [rm], args: any}
+          records:
+            description: Manage DNS records
+            commands:
+              list: {description: "List records of a domain", args: {exec: "doctl compute domain list --format Domain --no-header 2>/dev/null", cache: 300}}
+              create: {description: "Create a record", flags: {--record-type: {value: {exec: "printf '%s\\n' A AAAA CNAME MX TXT NS SRV CAA"}, description: "Record type"}, --record-name: {value: any, description: "Record name"}, --record-data: {value: any, description: "Record data"}, --record-ttl: {value: any, description: "TTL in seconds"}}, args: any}
+              update: {description: "Update a record", args: any}
+              delete: {description: "Delete records", args: any}
+      image: {description: "Manage images", commands: {list: {description: "List images"}, list-distribution: {description: "List distribution images"}, list-application: {description: "List 1-Click app images"}, list-user: {description: "List your images"}, delete: {description: "Delete an image", args: any}}}
+      snapshot: {description: "Manage snapshots", commands: {list: {description: "List snapshots"}, get: {description: "Show a snapshot", args: any}, delete: {description: "Delete snapshots", args: any}}}
+      region: {description: "List regions", commands: {list: {description: "List available regions"}}}
+      size: {description: "List Droplet sizes", commands: {list: {description: "List available sizes"}}}
+      tag: {description: "Manage tags", commands: {list: {description: "List tags"}, create: {description: "Create a tag", args: any}, delete: {description: "Delete a tag", args: any}}}
+      reserved-ip: {description: "Manage reserved IPs", commands: {list: {description: "List reserved IPs"}, create: {description: "Create a reserved IP"}, delete: {description: "Delete a reserved IP", args: any}}}
+      vpc: {description: "Manage VPCs", commands: {list: {description: "List VPCs"}, create: {description: "Create a VPC"}, delete: {description: "Delete a VPC", args: any}}}
+      certificate: {description: "Manage TLS certificates", commands: {list: {description: "List certificates"}, create: {description: "Create a certificate"}, delete: {description: "Delete a certificate", args: any}}}
+  kubernetes:
+    description: Manage Kubernetes clusters
+    aliases: [k8s, k]
+    commands:
+      cluster:
+        description: Manage clusters
+        aliases: [c]
+        commands:
+          list: {description: "List clusters", aliases: [ls]}
+          get: {description: "Show a cluster", args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+          create:
+            description: Create a cluster
+            flags:
+              --region: {value: {exec: "doctl compute region list --format Slug --no-header 2>/dev/null", cache: 3600}, description: "Region slug", show: always}
+              --version: {value: any, description: "Kubernetes version slug"}
+              --node-pool: {value: any, description: "Node pool spec: name=;size=;count="}
+              --count: {value: any, description: "Nodes in the default pool"}
+              --size: {value: any, description: "Node size slug"}
+              --auto-upgrade: {description: "Enable automatic upgrades"}
+              --ha: {description: "Highly available control plane"}
+              --vpc-uuid: {value: any, description: "VPC for the cluster"}
+              --wait: {description: "Wait until the cluster is running"}
+            args: any
+          delete: {description: "Delete a cluster", aliases: [rm], flags: {-f: {description: "No confirmation"}, --dangerous: {description: "Also delete associated resources"}}, args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+          upgrade: {description: "Upgrade a cluster", flags: {--version: {value: any, description: "Target version"}}, args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+          kubeconfig:
+            description: Manage cluster kubeconfig
+            commands:
+              save: {description: "Merge cluster credentials into kubeconfig", flags: {--set-current-context: {value: {exec: "printf '%s\\n' true false"}, description: "Switch to the new context"}}, args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+              show: {description: "Print the kubeconfig", args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+              remove: {description: "Remove cluster from kubeconfig", args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+          node-pool:
+            description: Manage node pools
+            commands:
+              list: {description: "List node pools", args: any}
+              create: {description: "Create a node pool", flags: {--name: {value: any, description: "Pool name"}, --size: {value: any, description: "Node size"}, --count: {value: any, description: "Node count"}, --auto-scale: {description: "Enable autoscaling"}, --min-nodes: {value: any, description: "Minimum nodes"}, --max-nodes: {value: any, description: "Maximum nodes"}}, args: any}
+              update: {description: "Update a node pool", args: any}
+              delete: {description: "Delete a node pool", args: any}
+      options:
+        description: List available options
+        commands:
+          versions: {description: "List Kubernetes versions"}
+          regions: {description: "List regions"}
+          sizes: {description: "List node sizes"}
+  apps:
+    description: Manage App Platform apps
+    commands:
+      list: {description: "List apps", aliases: [ls]}
+      get: {description: "Show an app", args: any}
+      create: {description: "Create an app from a spec", flags: {--spec: {value: {file: "*.yaml *.yml *.json"}, description: "App spec file", show: always}, --wait: {description: "Wait for deployment"}, --upsert: {description: "Update if the app exists"}}}
+      update: {description: "Update an app spec", flags: {--spec: {value: {file: "*.yaml *.yml *.json"}, description: "App spec file", show: always}, --wait: {description: "Wait for deployment"}}, args: any}
+      delete: {description: "Delete an app", aliases: [rm], flags: {-f: {description: "No confirmation"}}, args: any}
+      create-deployment: {description: "Trigger a deployment", flags: {--force-rebuild: {description: "Rebuild from source"}, --wait: {description: "Wait for completion"}}, args: any}
+      list-deployments: {description: "List deployments of an app", args: any}
+      logs:
+        description: Show app logs
+        flags:
+          --type: {value: {exec: "printf '%s\\n' build deploy run run_restarted"}, description: "Log type", show: always}
+          -f: {description: "Follow logs"}
+          --follow: {description: "Follow logs"}
+          --deployment: {value: any, description: "Deployment ID"}
+          --tail: {value: any, description: "Number of lines"}
+        args: any
+      console: {description: "Open a console in a component", args: any}
+      spec: {description: "App spec tools", commands: {get: {description: "Print the app spec", args: any}, validate: {description: "Validate a spec file", args: file}}}
+  databases:
+    description: Manage managed databases
+    aliases: [db]
+    commands:
+      list: {description: "List database clusters", aliases: [ls]}
+      get: {description: "Show a database cluster", args: any}
+      create:
+        description: Create a database cluster
+        flags:
+          --engine: {value: {exec: "printf '%s\\n' pg mysql redis valkey mongodb kafka opensearch"}, description: "Database engine", show: always}
+          --region: {value: any, description: "Region slug"}
+          --size: {value: any, description: "Node size slug"}
+          --num-nodes: {value: any, description: "Number of nodes"}
+          --version: {value: any, description: "Engine version"}
+          --wait: {description: "Wait until online"}
+        args: any
+      delete: {description: "Delete a database cluster", aliases: [rm], args: any}
+      connection: {description: "Show connection details", args: any}
+      user: {description: "Manage database users", commands: {list: {description: "List users", args: any}, create: {description: "Create a user", args: any}, delete: {description: "Delete a user", args: any}}}
+      db: {description: "Manage databases in a cluster", commands: {list: {description: "List databases", args: any}, create: {description: "Create a database", args: any}, delete: {description: "Delete a database", args: any}}}
+      pool: {description: "Manage connection pools", commands: {list: {description: "List pools", args: any}, create: {description: "Create a pool", args: any}, delete: {description: "Delete a pool", args: any}}}
+      firewalls: {description: "Manage trusted sources", commands: {list: {description: "List rules", args: any}, append: {description: "Add a rule", args: any}, remove: {description: "Remove a rule", args: any}}}
+      backups: {description: "List backups", args: any}
+      resize: {description: "Resize a cluster", args: any}
+  registry:
+    description: Manage the container registry
+    aliases: [reg]
+    commands:
+      create: {description: "Create a registry", args: any}
+      get: {description: "Show the registry"}
+      delete: {description: "Delete the registry"}
+      login: {description: "Log docker in to the registry", flags: {--expiry-seconds: {value: any, description: "Credential lifetime"}}}
+      logout: {description: "Log docker out of the registry"}
+      kubernetes-manifest: {description: "Print a pull secret manifest"}
+      repository: {description: "Manage repositories", aliases: [repo], commands: {list-v2: {description: "List repositories"}, list-tags: {description: "List tags", args: any}, delete-tag: {description: "Delete a tag", args: any}, delete-manifest: {description: "Delete a manifest", args: any}}}
+      garbage-collection: {description: "Manage garbage collection", aliases: [gc], commands: {start: {description: "Start garbage collection"}, get-active: {description: "Show active run"}, list: {description: "List past runs"}}}
+  projects:
+    description: Manage projects
+    commands:
+      list: {description: "List projects"}
+      get: {description: "Show a project", args: any}
+      create: {description: "Create a project", flags: {--name: {value: any, description: "Project name"}, --purpose: {value: any, description: "Project purpose"}, --environment: {value: {exec: "printf '%s\\n' Development Staging Production"}, description: "Environment"}}}
+      delete: {description: "Delete a project", args: any}
+      resources: {description: "Manage project resources", commands: {list: {description: "List resources", args: any}, assign: {description: "Assign resources", args: any}}}
+  serverless:
+    description: Manage Functions
+    aliases: [sls]
+    commands:
+      install: {description: "Install serverless support"}
+      connect: {description: "Connect to a namespace", args: any}
+      deploy: {description: "Deploy a functions project", args: dir}
+      functions: {description: "Manage deployed functions", commands: {list: {description: "List functions"}, get: {description: "Show a function", args: any}, invoke: {description: "Invoke a function", args: any}}}
+      namespaces: {description: "Manage namespaces", commands: {list: {description: "List namespaces"}, create: {description: "Create a namespace"}, delete: {description: "Delete a namespace", args: any}}}
+      init: {description: "Create a functions project", args: dir}
+      watch: {description: "Watch and redeploy on change", args: dir}
+  monitoring:
+    description: Manage alerts and uptime checks
+    commands:
+      alert: {description: "Manage alert policies", commands: {list: {description: "List alert policies"}, create: {description: "Create an alert policy"}, delete: {description: "Delete an alert policy", args: any}}}
+      uptime: {description: "Manage uptime checks", commands: {list: {description: "List checks"}, create: {description: "Create a check", args: any}, delete: {description: "Delete a check", args: any}}}
+  spaces:
+    description: Manage Spaces access keys
+    commands:
+      keys: {description: "Manage Spaces keys", commands: {list: {description: "List keys"}, create: {description: "Create a key", args: any}, delete: {description: "Delete a key", args: any}}}
+  1-click: {description: "List 1-Click applications", commands: {list: {description: "List 1-Click apps"}}}
+  version: {description: "Show doctl version"}
+  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+snippets:
+  - key: l
+    mark: pin
+    command: "doctl compute droplet list --format Name,PublicIPv4,Status,Region"
+    description: "droplets with IP and status"
+  - key: k
+    mark: pin
+    command: "doctl kubernetes cluster kubeconfig save my-cluster"
+    description: "add a cluster to kubeconfig"
+  - key: s
+    mark: pin
+    command: "doctl compute ssh my-droplet --ssh-user root"
+    description: "shell into a droplet"
+  - key: c
+    command: "doctl compute droplet create my-droplet --image ubuntu-24-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys KEY_ID --wait"
+    description: "new small Ubuntu droplet"
+  - key: a
+    mark: pin
+    command: "doctl apps logs APP_ID --type run --follow"
+    description: "tail runtime logs of an app"
+  - key: d
+    command: "doctl apps create-deployment APP_ID --wait"
+    description: "redeploy an app"
+  - key: r
+    command: "doctl registry login"
+    description: "docker login to the registry"
+  - key: x
+    command: "doctl auth switch --context work"
+    description: "switch account context"
+  - key: b
+    command: "doctl balance get"
+    description: "month-to-date balance"
+  - key: z
+    command: "doctl compute size list --format Slug,Memory,VCPUs,PriceMonthly"
+    description: "sizes with monthly price"

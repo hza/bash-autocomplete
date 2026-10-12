@@ -1,0 +1,103 @@
+description: PostgreSQL interactive terminal
+flags:
+  -h: {value: "@hosts", description: "Database server host or socket directory", show: always}
+  --host: {value: "@hosts", description: "Database server host or socket directory"}
+  -p: {value: any, description: "Database server port", show: always}
+  --port: {value: any, description: "Database server port"}
+  -U: {value: "@users", description: "Database user name", show: always}
+  --username: {value: "@users", description: "Database user name"}
+  -d: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database name to connect to", show: always}
+  --dbname: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database name to connect to"}
+  -c: {value: any, description: "Run one command (SQL or meta) and exit", show: always}
+  --command: {value: any, description: "Run one command (SQL or meta) and exit"}
+  -f: {value: {file: "*.sql"}, description: "Execute commands from file, then exit", show: always}
+  --file: {value: {file: "*.sql"}, description: "Execute commands from file, then exit"}
+  -l: {description: "List available databases, then exit"}
+  --list: {description: "List available databases, then exit"}
+  -v: {value: any, description: "Set psql variable NAME=VALUE", repeat: true}
+  --set: {value: any, description: "Set psql variable NAME=VALUE", repeat: true}
+  -X: {description: "Do not read startup file (~/.psqlrc)"}
+  --no-psqlrc: {description: "Do not read startup file (~/.psqlrc)"}
+  '-1': {description: "Execute as a single transaction (with -f/-c)"}
+  --single-transaction: {description: "Execute as a single transaction (with -f/-c)"}
+  -a: {description: "Echo all input from script"}
+  --echo-all: {description: "Echo all input from script"}
+  -b: {description: "Echo failed commands"}
+  --echo-errors: {description: "Echo failed commands"}
+  -e: {description: "Echo commands sent to server"}
+  --echo-queries: {description: "Echo commands sent to server"}
+  -E: {description: "Display queries that internal commands generate"}
+  --echo-hidden: {description: "Display queries that internal commands generate"}
+  -L: {value: file, description: "Send session log to file"}
+  --log-file: {value: file, description: "Send session log to file"}
+  -n: {description: "Disable readline line editing"}
+  --no-readline: {description: "Disable readline line editing"}
+  -o: {value: file, description: "Send query results to file (or |pipe)"}
+  --output: {value: file, description: "Send query results to file (or |pipe)"}
+  -q: {description: "Run quietly (no messages, only query output)"}
+  --quiet: {description: "Run quietly (no messages, only query output)"}
+  -s: {description: "Single-step mode (confirm each query)"}
+  --single-step: {description: "Single-step mode (confirm each query)"}
+  -S: {description: "Single-line mode (end of line terminates command)"}
+  --single-line: {description: "Single-line mode (end of line terminates command)"}
+  -A: {description: "Unaligned table output mode"}
+  --no-align: {description: "Unaligned table output mode"}
+  --csv: {description: "CSV table output mode"}
+  -F: {value: any, description: "Field separator for unaligned output"}
+  --field-separator: {value: any, description: "Field separator for unaligned output"}
+  -H: {description: "HTML table output mode"}
+  --html: {description: "HTML table output mode"}
+  -P: {value: any, description: "Set printing option VAR=ARG (see \\pset)", repeat: true}
+  --pset: {value: any, description: "Set printing option VAR=ARG (see \\pset)", repeat: true}
+  -R: {value: any, description: "Record separator for unaligned output"}
+  --record-separator: {value: any, description: "Record separator for unaligned output"}
+  -t: {description: "Print rows only (no headers/footers)", show: always}
+  --tuples-only: {description: "Print rows only (no headers/footers)"}
+  -T: {value: any, description: "HTML table tag attributes"}
+  --table-attr: {value: any, description: "HTML table tag attributes"}
+  -x: {description: "Expanded table output"}
+  --expanded: {description: "Expanded table output"}
+  -z: {description: "Zero byte as field separator (unaligned)"}
+  --field-separator-zero: {description: "Zero byte as field separator (unaligned)"}
+  '-0': {description: "Zero byte as record separator (unaligned)"}
+  --record-separator-zero: {description: "Zero byte as record separator (unaligned)"}
+  -w: {description: "Never prompt for password"}
+  --no-password: {description: "Never prompt for password"}
+  -W: {description: "Force password prompt"}
+  --password: {description: "Force password prompt"}
+  -V: {description: "Print version and exit"}
+  --version: {description: "Print version and exit"}
+  --help: {description: "Show help and exit"}
+args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
+snippets:
+  - key: u
+    mark: pin
+    command: "psql postgresql://user:secret@localhost:5432/mydb"
+    description: "connect with a connection URL"
+  - key: f
+    mark: pin
+    command: "psql -d mydb -v ON_ERROR_STOP=1 -1 -f script.sql"
+    description: "run a SQL file in one transaction, stop on error"
+  - key: c
+    mark: pin
+    command: "psql -d mydb -c '\\copy (SELECT * FROM users) TO users.csv CSV HEADER'"
+    description: "export a query to a local CSV file"
+  - key: i
+    command: "psql -d mydb -c '\\copy users FROM users.csv CSV HEADER'"
+    description: "load a local CSV file into a table"
+  - key: t
+    mark: pin
+    command: "psql -d mydb -c '\\dt+'"
+    description: "list tables with sizes"
+  - key: l
+    command: "psql -l"
+    description: "list databases"
+  - key: q
+    command: "psql -d mydb -At -c 'SELECT count(*) FROM users'"
+    description: "bare value for shell scripts"
+  - key: a
+    command: "psql -d mydb -c 'SELECT pid, state, query FROM pg_stat_activity'"
+    description: "show running sessions and queries"
+  - key: s
+    command: "psql -d mydb -c \"SELECT pg_size_pretty(pg_database_size('mydb'))\""
+    description: "database size"

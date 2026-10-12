@@ -1,0 +1,94 @@
+description: Redis command-line client
+flags:
+  -h: {value: "@hosts", description: "Server hostname (default 127.0.0.1)", show: always}
+  -p: {value: any, description: "Server port (default 6379)", show: always}
+  -s: {value: file, description: "Server Unix socket (overrides host/port)"}
+  -a: {value: any, description: "Password (prefer REDISCLI_AUTH env var)"}
+  --user: {value: any, description: "ACL user name (with -a)"}
+  --pass: {value: any, description: "Password (same as -a)"}
+  --askpass: {description: "Prompt for password"}
+  -u: {value: any, description: "Server URI (redis://user:pass@host:port/db)", show: always}
+  -n: {value: {exec: "i=0; while [ $i -le 15 ]; do echo $i; i=$((i+1)); done"}, description: "Database number", show: always}
+  '-3': {description: "Use RESP3 protocol"}
+  -r: {value: any, description: "Repeat the command N times"}
+  -i: {value: any, description: "Interval in seconds between repeats"}
+  -x: {description: "Read last argument from stdin"}
+  -X: {value: any, description: "Read tag argument from stdin"}
+  -d: {value: any, description: "Delimiter between raw response elements"}
+  -D: {value: any, description: "Delimiter between responses"}
+  -c: {description: "Cluster mode (follow MOVED/ASK redirects)", show: always}
+  -e: {description: "Exit with error code on command failure"}
+  '-4': {description: "Prefer IPv4"}
+  '-6': {description: "Prefer IPv6"}
+  --tls: {description: "Connect with TLS"}
+  --sni: {value: any, description: "Server name indication for TLS"}
+  --cacert: {value: file, description: "CA certificate file"}
+  --cacertdir: {value: dir, description: "Directory of trusted CA certificates"}
+  --insecure: {description: "Skip TLS certificate verification"}
+  --cert: {value: file, description: "Client certificate file"}
+  --key: {value: file, description: "Client private key file"}
+  --raw: {description: "Raw replies (no type formatting)"}
+  --no-raw: {description: "Force formatted replies"}
+  --quoted-input: {description: "Treat input as quoted strings"}
+  --csv: {description: "Output in CSV format"}
+  --json: {description: "Output in JSON format"}
+  --quoted-json: {description: "JSON output with ASCII-safe quoting"}
+  --show-pushes: {value: {exec: "printf '%s\\n' yes no"}, description: "Print RESP3 push messages"}
+  --stat: {description: "Rolling stats about the server"}
+  --latency: {description: "Continuously sample latency"}
+  --latency-history: {description: "Latency samples, reset every 15 s"}
+  --latency-dist: {description: "Latency spectrum as a chart"}
+  --lru-test: {value: any, description: "Simulate a cache workload with N keys"}
+  --replica: {description: "Act as a replica and show received commands"}
+  --rdb: {value: file, description: "Transfer an RDB dump to a local file"}
+  --functions-rdb: {value: file, description: "Write only functions from the RDB to file"}
+  --pipe: {description: "Bulk insert: send raw protocol from stdin"}
+  --pipe-timeout: {value: any, description: "Seconds to wait for replies in --pipe mode"}
+  --bigkeys: {description: "Sample keys looking for big ones", show: always}
+  --memkeys: {description: "Sample keys looking for memory-heavy ones"}
+  --hotkeys: {description: "Sample keys looking for hot ones (LFU policy)"}
+  --scan: {description: "List all keys with SCAN", show: always}
+  --pattern: {value: any, description: "Key pattern for --scan/--bigkeys"}
+  --count: {value: any, description: "SCAN COUNT hint"}
+  --quoted-pattern: {value: any, description: "Quoted key pattern for --scan"}
+  --intrinsic-latency: {value: any, description: "Measure system latency for N seconds"}
+  --eval: {value: {file: "*.lua"}, description: "Run a Lua script file"}
+  --ldb: {description: "Debug the --eval script with the Lua debugger"}
+  --ldb-sync-mode: {description: "Synchronous Lua debugger (blocks server)"}
+  --cluster: {value: {exec: "printf '%s\\n' create check info fix reshard rebalance add-node del-node call set-timeout import backup help"}, description: "Cluster manager subcommand"}
+  --verbose: {description: "Verbose mode"}
+  --no-auth-warning: {description: "Hide warning about passwords on the command line"}
+  --help: {description: "Show help and exit"}
+  --version: {description: "Print version and exit"}
+args: {exec: "printf '%s\\n' PING INFO GET SET DEL KEYS SCAN EXISTS EXPIRE TTL TYPE INCR HGET HSET HGETALL LPUSH RPUSH LRANGE SADD SMEMBERS ZADD ZRANGE PUBLISH SUBSCRIBE MONITOR DBSIZE FLUSHDB FLUSHALL CONFIG CLIENT SLOWLOG MEMORY SAVE BGSAVE"}
+snippets:
+  - key: s
+    mark: pin
+    command: "redis-cli --scan --pattern 'user:*'"
+    description: "list keys matching a pattern (safe, uses SCAN)"
+  - key: m
+    mark: pin
+    command: "redis-cli monitor"
+    description: "watch every command the server receives"
+  - key: i
+    mark: pin
+    command: "redis-cli info memory"
+    description: "memory usage details"
+  - key: d
+    command: "redis-cli --scan --pattern 'tmp:*' | xargs -n 100 redis-cli del"
+    description: "delete keys matching a pattern"
+  - key: b
+    command: "redis-cli --bigkeys"
+    description: "find the biggest keys"
+  - key: l
+    command: "redis-cli --latency-history"
+    description: "track latency over time"
+  - key: u
+    command: "redis-cli -u redis://user:secret@host:6379/0 ping"
+    description: "connect with a URI and check it answers"
+  - key: t
+    command: "redis-cli ttl mykey"
+    description: "seconds until a key expires"
+  - key: w
+    command: "redis-cli slowlog get 10"
+    description: "last 10 slow commands"

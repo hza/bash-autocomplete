@@ -1,0 +1,188 @@
+description: "Recursively search files for a regex (ripgrep), honouring .gitignore"
+flags:
+  -e: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "A pattern to search for", repeat: true}
+  --regexp: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "A pattern to search for", repeat: true}
+  -f: {value: file, description: "Search for patterns from the given file", repeat: true}
+  --file: {value: file, description: "Search for patterns from the given file", repeat: true}
+  --pre: {value: "@command", description: "Search output of COMMAND for each PATH"}
+  --pre-glob: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "Include or exclude files from a preprocessor"}
+  -z: {description: "Search in compressed files"}
+  --search-zip: {description: "Search in compressed files"}
+  -s: {description: "Search case sensitively (default)"}
+  --case-sensitive: {description: "Search case sensitively (default)"}
+  --crlf: {description: "Use CRLF line terminators (nice for Windows)"}
+  --dfa-size-limit: {value: any, description: "The upper size limit of the regex DFA"}
+  -E: {value: {exec: "printf '%s\\t%s\\n' utf-8 'UTF-8' utf-16le 'UTF-16 little endian' latin1 'ISO-8859-1' none 'raw bytes, no transcoding' auto 'detect BOM (default)'"}, description: "Specify the text encoding of files to search"}
+  --encoding: {value: {exec: "printf '%s\\t%s\\n' utf-8 'UTF-8' utf-16le 'UTF-16 little endian' latin1 'ISO-8859-1' none 'raw bytes, no transcoding' auto 'detect BOM (default)'"}, description: "Specify the text encoding of files to search"}
+  --engine: {value: {exec: "printf '%s\\t%s\\n' default 'Rust regex engine' pcre2 'PCRE2 (lookaround, backrefs)' auto 'PCRE2 only when needed'"}, description: "Specify which regex engine to use"}
+  -F: {description: "Treat all patterns as literals", show: always}
+  --fixed-strings: {description: "Treat all patterns as literals"}
+  -i: {description: "Case insensitive search", show: always}
+  --ignore-case: {description: "Case insensitive search"}
+  -v: {description: "Invert matching"}
+  --invert-match: {description: "Invert matching"}
+  -x: {description: "Show matches surrounded by line boundaries"}
+  --line-regexp: {description: "Show matches surrounded by line boundaries"}
+  -m: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Limit the number of matching lines"}
+  --max-count: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Limit the number of matching lines"}
+  --mmap: {description: "Search with memory maps when possible"}
+  -U: {description: "Enable searching across multiple lines"}
+  --multiline: {description: "Enable searching across multiple lines"}
+  --multiline-dotall: {description: "Make '.' match line terminators"}
+  --no-unicode: {description: "Disable Unicode mode"}
+  --null-data: {description: "Use NUL as a line terminator"}
+  -P: {description: "Enable PCRE2 matching"}
+  --pcre2: {description: "Enable PCRE2 matching"}
+  --regex-size-limit: {value: any, description: "The size limit of the compiled regex"}
+  -S: {description: "Smart case search", show: always}
+  --smart-case: {description: "Smart case search"}
+  --stop-on-nonmatch: {description: "Stop searching after a non-match"}
+  -a: {description: "Search binary files as if they were text"}
+  --text: {description: "Search binary files as if they were text"}
+  -j: {value: any, description: "Set the approximate number of threads to use"}
+  --threads: {value: any, description: "Set the approximate number of threads to use"}
+  -w: {description: "Show matches surrounded by word boundaries", show: always}
+  --word-regexp: {description: "Show matches surrounded by word boundaries"}
+  --binary: {description: "Search binary files"}
+  -L: {description: "Follow symbolic links"}
+  --follow: {description: "Follow symbolic links"}
+  -g: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "Include or exclude file paths", show: always, repeat: true}
+  --glob: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "Include or exclude file paths", repeat: true}
+  --glob-case-insensitive: {description: "Process all glob patterns case insensitively"}
+  '-.': {description: "Search hidden files and directories"}
+  --hidden: {description: "Search hidden files and directories", show: always}
+  --iglob: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "Include/exclude paths case insensitively", repeat: true}
+  --ignore-file: {value: file, description: "Specify additional ignore files"}
+  --ignore-file-case-insensitive: {description: "Process ignore files case insensitively"}
+  -d: {value: any, description: "Descend at most NUM directories"}
+  --max-depth: {value: any, description: "Descend at most NUM directories"}
+  --max-filesize: {value: any, description: "Ignore files larger than NUM in size"}
+  --no-ignore: {description: "Don't use ignore files"}
+  --no-ignore-dot: {description: "Don't use .ignore or .rgignore files"}
+  --no-ignore-exclude: {description: "Don't use local exclusion files"}
+  --no-ignore-files: {description: "Don't use --ignore-file arguments"}
+  --no-ignore-global: {description: "Don't use global ignore files"}
+  --no-ignore-parent: {description: "Don't use ignore files in parent directories"}
+  --no-ignore-vcs: {description: "Don't use ignore files from source control"}
+  --no-require-git: {description: "Use .gitignore outside of git repositories"}
+  --one-file-system: {description: "Skip directories on other file systems"}
+  -t: {value: {exec: "rg --type-list | sed 's/: /\t/'"}, description: "Only search files matching TYPE", show: always, repeat: true}
+  --type: {value: {exec: "rg --type-list | sed 's/: /\t/'"}, description: "Only search files matching TYPE", repeat: true}
+  -T: {value: {exec: "rg --type-list | sed 's/: /\t/'"}, description: "Do not search files matching TYPE", repeat: true}
+  --type-not: {value: {exec: "rg --type-list | sed 's/: /\t/'"}, description: "Do not search files matching TYPE", repeat: true}
+  --type-add: {value: any, description: "Add a new glob for a file type", repeat: true}
+  --type-clear: {value: {exec: "rg --type-list | sed 's/: /\t/'"}, description: "Clear globs for a file type"}
+  -u: {description: "Reduce the level of \"smart\" filtering"}
+  --unrestricted: {description: "Reduce the level of \"smart\" filtering"}
+  -A: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines after each match"}
+  --after-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines after each match"}
+  -B: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines before each match"}
+  --before-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines before each match"}
+  --block-buffered: {description: "Force block buffering"}
+  -b: {description: "Print the byte offset for each matching line"}
+  --byte-offset: {description: "Print the byte offset for each matching line"}
+  --color: {value: {exec: "printf '%s\\t%s\\n' auto 'when stdout is a terminal' always 'always colorize' never 'no color' ansi 'ANSI escapes even on Windows'"}, description: "When to use color"}
+  --colors: {value: any, description: "Configure color settings and styles"}
+  --column: {description: "Show column numbers"}
+  -C: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines before and after each match", show: always}
+  --context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines before and after each match"}
+  --context-separator: {value: any, description: "Set the separator for contextual chunks"}
+  --field-context-separator: {value: any, description: "Set the field context separator"}
+  --field-match-separator: {value: any, description: "Set the field match separator"}
+  --heading: {description: "Print matches grouped by each file"}
+  -h: {description: "Show help output"}
+  --help: {description: "Show help output"}
+  --hostname-bin: {value: "@command", description: "Run a program to get this system's hostname"}
+  --hyperlink-format: {value: any, description: "Set the format of hyperlinks"}
+  --include-zero: {description: "Include zero matches in summary output"}
+  --line-buffered: {description: "Force line buffering"}
+  -n: {description: "Show line numbers"}
+  --line-number: {description: "Show line numbers"}
+  -N: {description: "Suppress line numbers"}
+  --no-line-number: {description: "Suppress line numbers"}
+  -M: {value: any, description: "Omit lines longer than this limit"}
+  --max-columns: {value: any, description: "Omit lines longer than this limit"}
+  --max-columns-preview: {description: "Show preview for lines exceeding the limit"}
+  '-0': {description: "Print a NUL byte after file paths"}
+  --null: {description: "Print a NUL byte after file paths"}
+  -o: {description: "Print only matched parts of a line"}
+  --only-matching: {description: "Print only matched parts of a line"}
+  --path-separator: {value: any, description: "Set the path separator for printing paths"}
+  --passthru: {description: "Print both matching and non-matching lines"}
+  -p: {description: "Alias for colors, headings and line numbers"}
+  --pretty: {description: "Alias for colors, headings and line numbers"}
+  -q: {description: "Do not print anything to stdout"}
+  --quiet: {description: "Do not print anything to stdout"}
+  -r: {value: any, description: "Replace matches with the given text"}
+  --replace: {value: any, description: "Replace matches with the given text"}
+  --sort: {value: {exec: "printf '%s\\t%s\\n' path 'by file path' modified 'by modification time' accessed 'by access time' created 'by creation time' none 'no sorting (parallel)'"}, description: "Sort results in ascending order"}
+  --sortr: {value: {exec: "printf '%s\\t%s\\n' path 'by file path' modified 'by modification time' accessed 'by access time' created 'by creation time' none 'no sorting (parallel)'"}, description: "Sort results in descending order"}
+  --trim: {description: "Trim prefix whitespace from matches"}
+  --vimgrep: {description: "Print results im a vim compatible format"}
+  -H: {description: "Print the file path with each matching line"}
+  --with-filename: {description: "Print the file path with each matching line"}
+  -I: {description: "Never print the path with each matching line"}
+  --no-filename: {description: "Never print the path with each matching line"}
+  -c: {description: "Show count of matching lines for each file"}
+  --count: {description: "Show count of matching lines for each file"}
+  --count-matches: {description: "Show count of every match for each file"}
+  -l: {description: "Print the paths with at least one match", show: always}
+  --files-with-matches: {description: "Print the paths with at least one match"}
+  --files-without-match: {description: "Print the paths that contain zero matches"}
+  --json: {description: "Show search results in a JSON Lines format"}
+  --debug: {description: "Show debug messages"}
+  --no-ignore-messages: {description: "Suppress gitignore parse error messages"}
+  --no-messages: {description: "Suppress some error messages"}
+  --stats: {description: "Print statistics about the search"}
+  --trace: {description: "Show trace messages"}
+  --files: {description: "Print each file that would be searched"}
+  --generate: {value: {exec: "printf '%s\\t%s\\n' man 'roff man page' complete-bash 'bash completion' complete-zsh 'zsh completion' complete-fish 'fish completion' complete-powershell 'PowerShell completion'"}, description: "Generate man pages and completion scripts"}
+  --no-config: {description: "Never read configuration files"}
+  --pcre2-version: {description: "Print the version of PCRE2 that ripgrep uses"}
+  --type-list: {description: "Show all supported file types"}
+  -V: {description: "Print ripgrep's version"}
+  --version: {description: "Print ripgrep's version"}
+snippets:
+  - key: t
+    mark: pin
+    command: "rg -t py 'def main'"
+    description: "search only one file type"
+  - key: g
+    mark: pin
+    command: "rg -g '!*.min.js' fetch"
+    description: "exclude files by glob"
+  - key: l
+    mark: pin
+    command: "rg -l TODO"
+    description: "names of files with a match"
+  - key: h
+    mark: pin
+    command: "rg -uu --hidden secret"
+    description: "include hidden and ignored files"
+  - key: w
+    command: "rg -w -S count src"
+    description: "whole word, smart case, in one dir"
+  - key: f
+    command: "rg -F 'a.b(c)'"
+    description: "literal text, no regex"
+  - key: r
+    command: "rg 'old_name' -r 'new_name'"
+    description: "preview a replacement (files untouched)"
+  - key: c
+    command: "rg -c ERROR --sort path"
+    description: "matches per file, sorted by path"
+  - key: m
+    command: "rg -U 'struct \\w+ \\{[^}]*\\}'"
+    description: "multiline match"
+  - key: p
+    command: "rg -P '(?<=id=)\\d+' -o"
+    description: "PCRE2 lookbehind, print only the match"
+  - key: s
+    command: "rg --files | rg -i test"
+    description: "list searchable files, filter names"
+  - key: j
+    command: "rg --json panic | jq -c 'select(.type==\"match\")'"
+    description: "machine-readable results"
+positional:
+  - {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}
+args: file

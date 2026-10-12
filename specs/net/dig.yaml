@@ -1,0 +1,55 @@
+description: DNS lookup utility
+flags:
+  -x: {value: any, description: "Reverse lookup of an IP address", show: always}
+  -t: {value: {exec: "printf '%s\\n' A AAAA CNAME MX NS TXT SOA PTR SRV CAA DS DNSKEY HTTPS SVCB ANY AXFR"}, description: "Record type to query", show: always}
+  -p: {value: any, description: "Server port (default 53)"}
+  -q: {value: "@hosts", description: "Domain name to query"}
+  -c: {value: {exec: "printf '%s\\n' IN CH HS ANY"}, description: "Query class"}
+  -f: {value: file, description: "Batch mode: read queries from a file"}
+  -b: {value: any, description: "Source address (address[#port])"}
+  -k: {value: file, description: "TSIG key file"}
+  -y: {value: any, description: "TSIG key ([hmac:]name:secret)"}
+  '-4': {description: "Use IPv4 only"}
+  '-6': {description: "Use IPv6 only"}
+  -i: {description: "Reverse IPv6 lookups via ip6.int (obsolete)"}
+  -m: {description: "Enable memory usage debugging"}
+  -v: {description: "Print the version and exit"}
+  -h: {description: "Print help and exit"}
+args:
+  - "@hosts"
+  - {exec: "printf '%s\\n' A AAAA CNAME MX NS TXT SOA PTR SRV CAA DS DNSKEY HTTPS SVCB ANY AXFR"}
+  - exec: "printf '%s\\t%s\\n' +short 'Terse answer only' +noall 'Clear all display flags' +answer 'Show the answer section' +trace 'Trace delegation from the root' +tcp 'Use TCP' +dnssec 'Request DNSSEC records' +multiline 'Verbose multi-line records' +norecurse 'No recursion desired' +nocmd 'No initial comment line' +nocomments 'No comment lines' +nostats 'No statistics' +noquestion 'No question section' +authority 'Show the authority section' +additional 'Show the additional section' +nssearch 'SOA from every authoritative server' +search 'Use the resolv.conf search list' +time= 'Timeout in seconds' +tries= 'Number of tries' +retry= 'Number of retries' +bufsize= 'EDNS buffer size' +subnet= 'EDNS client subnet' +nsid 'Request the name server ID' +ttlid 'Show TTLs' +identify 'Show the answering server (with +short)' +cd 'Set the CD (checking disabled) bit'"
+snippets:
+  - key: s
+    mark: pin
+    command: "dig +short example.org"
+    description: "just the addresses"
+  - key: m
+    mark: pin
+    command: "dig +short MX example.org"
+    description: "mail servers"
+  - key: a
+    command: "dig +noall +answer example.org ANY"
+    description: "answer section only, all types"
+  - key: x
+    mark: pin
+    command: "dig -x 8.8.8.8 +short"
+    description: "reverse lookup of an IP"
+  - key: r
+    command: "dig @1.1.1.1 example.org"
+    description: "ask a specific resolver"
+  - key: t
+    command: "dig +trace example.org"
+    description: "follow delegation from the root servers"
+  - key: n
+    command: "dig +short NS example.org"
+    description: "authoritative name servers"
+  - key: c
+    command: "dig +short TXT example.org"
+    description: "TXT records (SPF, verification tokens)"
+  - key: d
+    command: "dig +dnssec +multiline DNSKEY example.org"
+    description: "DNSSEC keys"
+  - key: o
+    command: "dig +nssearch example.org"
+    description: "SOA serial on every authoritative server"

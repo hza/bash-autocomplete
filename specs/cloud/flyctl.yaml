@@ -1,0 +1,238 @@
+description: Fly.io command-line interface
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -a: {value: {exec: "flyctl apps list --json 2>/dev/null | sed -n 's/^ *\"Name\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 120}, description: "Application name", show: always}
+  --app: {value: {exec: "flyctl apps list --json 2>/dev/null | sed -n 's/^ *\"Name\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 120}, description: "Application name"}
+  -c: {value: {file: "*.toml"}, description: "Path to fly.toml"}
+  --config: {value: {file: "*.toml"}, description: "Path to fly.toml"}
+  -t: {value: any, description: "Fly API access token"}
+  --access-token: {value: any, description: "Fly API access token"}
+  -j: {description: "JSON output"}
+  --json: {description: "JSON output"}
+  --debug: {description: "Print debug output"}
+  --verbose: {description: "Verbose output"}
+commands:
+  launch:
+    description: Create and configure a new app from source
+    flags:
+      --name: {value: any, description: "App name"}
+      -r: {value: {exec: "flyctl platform regions --json 2>/dev/null | sed -n 's/^ *\"Code\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 86400}, description: "Primary region"}
+      --region: {value: {exec: "flyctl platform regions --json 2>/dev/null | sed -n 's/^ *\"Code\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 86400}, description: "Primary region"}
+      -o: {value: any, description: "Organization slug"}
+      --org: {value: any, description: "Organization slug"}
+      --image: {value: any, description: "Deploy a prebuilt Docker image"}
+      --dockerfile: {value: file, description: "Path to a Dockerfile"}
+      --no-deploy: {description: "Configure only, don't deploy", show: always}
+      --copy-config: {description: "Use the existing fly.toml"}
+      --ha: {description: "Create spare machines for high availability"}
+      --vm-size: {value: any, description: "Machine size preset"}
+      -y: {description: "Accept defaults"}
+      --yes: {description: "Accept defaults"}
+    args: dir
+  deploy:
+    description: Deploy the app
+    flags:
+      -i: {value: any, description: "Deploy this image"}
+      --image: {value: any, description: "Deploy this image"}
+      --dockerfile: {value: file, description: "Path to a Dockerfile"}
+      --build-arg: {value: any, description: "Docker build argument NAME=VALUE"}
+      -e: {value: any, description: "Set environment variable NAME=VALUE"}
+      --env: {value: any, description: "Set environment variable NAME=VALUE"}
+      --remote-only: {description: "Build on a remote builder", show: always}
+      --local-only: {description: "Build with local Docker"}
+      --strategy: {value: {exec: "printf '%s\\n' canary rolling bluegreen immediate"}, description: "Deployment strategy", show: always}
+      --ha: {value: {exec: "printf '%s\\n' true false"}, description: "Create spare machines"}
+      --detach: {description: "Return immediately"}
+      --no-cache: {description: "Don't use the build cache"}
+      --wait-timeout: {value: any, description: "Time to wait for machines"}
+      --now: {description: "Deploy without confirmation"}
+      --regions: {value: any, description: "Deploy only to these regions"}
+      --build-only: {description: "Build but don't deploy"}
+    args: dir
+  status:
+    description: Show app status
+    flags:
+      --all: {description: "Include stopped machines"}
+      --watch: {description: "Refresh continuously"}
+  logs:
+    description: Show app logs
+    flags:
+      -n: {description: "Don't tail, print buffered logs only", show: always}
+      --no-tail: {description: "Don't tail, print buffered logs only"}
+      -r: {value: any, description: "Filter by region"}
+      --region: {value: any, description: "Filter by region"}
+      --machine: {value: any, description: "Filter by machine ID"}
+  open:
+    description: Open the app in a browser
+    args: any
+  ssh:
+    description: SSH into machines
+    commands:
+      console:
+        description: Open a shell on a machine
+        flags:
+          -C: {value: any, description: "Command to run instead of a shell", show: always}
+          --command: {value: any, description: "Command to run instead of a shell"}
+          -s: {description: "Pick the machine interactively", show: always}
+          --select: {description: "Pick the machine interactively"}
+          --machine: {value: any, description: "Machine ID"}
+          -u: {value: any, description: "Remote user"}
+          --user: {value: any, description: "Remote user"}
+          --pty: {description: "Allocate a pseudo-terminal"}
+      sftp: {description: "Transfer files over SFTP", commands: {shell: {description: "Interactive SFTP shell"}, get: {description: "Download a file", args: any}, put: {description: "Upload a file", args: file}, find: {description: "List remote files", args: any}}}
+      issue: {description: "Issue an SSH certificate"}
+  console: {description: "Run a console process for the app", flags: {--command: {value: any, description: "Command to run"}, --vm-size: {value: any, description: "Machine size"}}}
+  apps:
+    description: Manage apps
+    commands:
+      list: {description: "List apps", aliases: [ls], flags: {-o: {value: any, description: "Filter by organization"}}}
+      create: {description: "Create a new app", flags: {--name: {value: any, description: "App name"}, -o: {value: any, description: "Organization"}, --org: {value: any, description: "Organization"}}, args: any}
+      destroy: {description: "Delete an app permanently", aliases: [delete], flags: {-y: {description: "No confirmation"}, --yes: {description: "No confirmation"}}, args: {exec: "flyctl apps list --json 2>/dev/null | sed -n 's/^ *\"Name\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 120}}
+      restart: {description: "Restart all machines of an app", args: {exec: "flyctl apps list --json 2>/dev/null | sed -n 's/^ *\"Name\": *\"\\([^\"]*\\)\".*/\\1/p'", cache: 120}}
+      move: {description: "Move an app to another organization", args: any}
+      open: {description: "Open the app in a browser", args: any}
+      releases: {description: "List app releases"}
+  machine:
+    description: Manage Fly Machines
+    aliases: [machines, m]
+    commands:
+      list: {description: "List machines", aliases: [ls], flags: {-q: {description: "Only print IDs"}, --quiet: {description: "Only print IDs"}}}
+      status: {description: "Show machine status", args: any}
+      run:
+        description: Run a new machine
+        flags:
+          --name: {value: any, description: "Machine name"}
+          -e: {value: any, description: "Environment variable NAME=VALUE"}
+          --env: {value: any, description: "Environment variable NAME=VALUE"}
+          -r: {value: any, description: "Region"}
+          --region: {value: any, description: "Region"}
+          --vm-size: {value: any, description: "Machine size preset"}
+          --vm-memory: {value: any, description: "Memory in MB"}
+          -p: {value: any, description: "Publish port"}
+          --port: {value: any, description: "Publish port"}
+          -v: {value: any, description: "Mount volume NAME:/path"}
+          --volume: {value: any, description: "Mount volume NAME:/path"}
+          --rm: {description: "Destroy the machine when it exits"}
+          --shell: {description: "Open a shell on the machine"}
+          --entrypoint: {value: any, description: "Override the entrypoint"}
+        args: any
+      start: {description: "Start machines", args: any}
+      stop: {description: "Stop machines", args: any}
+      restart: {description: "Restart machines", args: any}
+      destroy: {description: "Destroy machines", aliases: [remove, rm], flags: {-f: {description: "Kill a running machine"}, --force: {description: "Kill a running machine"}}, args: any}
+      clone: {description: "Clone a machine", flags: {--region: {value: any, description: "Target region"}}, args: any}
+      update: {description: "Update a machine config", flags: {--image: {value: any, description: "New image"}, --vm-size: {value: any, description: "New size"}, -y: {description: "No confirmation"}}, args: any}
+      exec: {description: "Run a command on a machine", args: any}
+      cordon: {description: "Stop routing traffic to machines", args: any}
+      uncordon: {description: "Resume routing traffic to machines", args: any}
+  scale:
+    description: Scale app resources
+    commands:
+      count: {description: "Change the number of machines", flags: {--region: {value: any, description: "Region to scale in"}, --process-group: {value: any, description: "Process group"}, -y: {description: "No confirmation"}, --yes: {description: "No confirmation"}}, args: any}
+      vm: {description: "Change the machine size", flags: {--vm-memory: {value: any, description: "Memory in MB"}, --process-group: {value: any, description: "Process group"}}, args: {exec: "printf '%s\\n' shared-cpu-1x shared-cpu-2x shared-cpu-4x shared-cpu-8x performance-1x performance-2x performance-4x performance-8x performance-16x"}}
+      memory: {description: "Change machine memory", args: any}
+      show: {description: "Show current scaling"}
+  secrets:
+    description: Manage app secrets
+    commands:
+      list: {description: "List secret names and digests", aliases: [ls]}
+      set: {description: "Set secrets NAME=VALUE", flags: {--stage: {description: "Set without redeploying", show: always}, --detach: {description: "Return immediately"}}, args: any}
+      unset: {description: "Remove secrets", flags: {--stage: {description: "Remove without redeploying"}}, args: any}
+      import: {description: "Read NAME=VALUE lines from stdin", flags: {--stage: {description: "Import without redeploying"}}}
+      deploy: {description: "Deploy staged secrets"}
+  volumes:
+    description: Manage persistent volumes
+    aliases: [volume, vol]
+    commands:
+      list: {description: "List volumes", aliases: [ls]}
+      create: {description: "Create a volume", flags: {-s: {value: any, description: "Size in GB"}, --size: {value: any, description: "Size in GB"}, -r: {value: any, description: "Region"}, --region: {value: any, description: "Region"}, -n: {value: any, description: "Number of volumes"}, --count: {value: any, description: "Number of volumes"}, -y: {description: "No confirmation"}}, args: any}
+      extend: {description: "Grow a volume", flags: {-s: {value: any, description: "New size in GB"}, --size: {value: any, description: "New size in GB"}}, args: any}
+      destroy: {description: "Delete a volume", aliases: [delete, rm], args: any}
+      show: {description: "Show a volume", args: any}
+      fork: {description: "Copy a volume", args: any}
+      snapshots: {description: "Manage volume snapshots", commands: {list: {description: "List snapshots", args: any}, create: {description: "Create a snapshot", args: any}}}
+  ips:
+    description: Manage app IP addresses
+    commands:
+      list: {description: "List IP addresses"}
+      allocate-v4: {description: "Allocate an IPv4 address", flags: {--shared: {description: "Use a shared IPv4"}}}
+      allocate-v6: {description: "Allocate an IPv6 address", flags: {--private: {description: "Private Flycast address"}}}
+      release: {description: "Release an IP address", args: any}
+      private: {description: "List private IPs of machines"}
+  certs:
+    description: Manage TLS certificates
+    commands:
+      list: {description: "List certificates"}
+      add: {description: "Add a certificate for a hostname", args: any}
+      show: {description: "Show certificate status", args: any}
+      check: {description: "Check DNS for a certificate", args: any}
+      remove: {description: "Remove a certificate", args: any}
+  config:
+    description: Manage app configuration
+    commands:
+      show: {description: "Show the deployed configuration"}
+      save: {description: "Save the deployed config to fly.toml", flags: {-y: {description: "Overwrite without asking"}}}
+      validate: {description: "Validate fly.toml"}
+      env: {description: "Show environment variables"}
+  regions: {description: "List regions", commands: {list: {description: "List app regions"}}}
+  releases: {description: "List app releases", flags: {--image: {description: "Show image references"}}}
+  proxy: {description: "Proxy local port to the app or a machine", args: any}
+  wireguard: {description: "Manage WireGuard peers", aliases: [wg], commands: {list: {description: "List peers"}, create: {description: "Add a peer"}, remove: {description: "Remove a peer"}}}
+  postgres:
+    description: Manage Postgres clusters
+    aliases: [pg]
+    commands:
+      create: {description: "Create a Postgres cluster", flags: {--name: {value: any, description: "Cluster name"}, --region: {value: any, description: "Region"}, --initial-cluster-size: {value: any, description: "Number of nodes"}, --vm-size: {value: any, description: "Machine size"}, --volume-size: {value: any, description: "Volume size in GB"}}}
+      attach: {description: "Attach a cluster to an app", flags: {--app: {value: any, description: "App to attach to"}}, args: any}
+      detach: {description: "Detach a cluster from an app", args: any}
+      connect: {description: "Open psql to the cluster", flags: {-d: {value: any, description: "Database"}, --database: {value: any, description: "Database"}}}
+      list: {description: "List Postgres clusters"}
+      db: {description: "Manage databases", commands: {list: {description: "List databases"}}}
+      users: {description: "Manage users", commands: {list: {description: "List users"}}}
+      restart: {description: "Restart the cluster"}
+  redis: {description: "Manage Upstash Redis", commands: {create: {description: "Create a Redis database"}, list: {description: "List databases"}, connect: {description: "Connect with redis-cli"}, destroy: {description: "Delete a database", args: any}}}
+  tokens: {description: "Manage API tokens", commands: {create: {description: "Create a token", commands: {deploy: {description: "Deploy token for an app"}, org: {description: "Org-wide token"}, readonly: {description: "Read-only token"}}}, list: {description: "List tokens"}, revoke: {description: "Revoke tokens", args: any}}}
+  orgs: {description: "Manage organizations", commands: {list: {description: "List organizations"}, show: {description: "Show an organization", args: any}, create: {description: "Create an organization", args: any}, invite: {description: "Invite a member", args: any}}}
+  auth: {description: "Manage authentication", commands: {login: {description: "Log in"}, logout: {description: "Log out"}, whoami: {description: "Show the current user"}, token: {description: "Print the auth token"}, docker: {description: "Log Docker in to registry.fly.io"}, signup: {description: "Create an account"}}}
+  platform: {description: "Platform information", commands: {regions: {description: "List regions"}, vm-sizes: {description: "List machine sizes"}, status: {description: "Show platform status"}}}
+  dashboard: {description: "Open the web dashboard"}
+  doctor: {description: "Check the local environment"}
+  image: {description: "Manage app images", commands: {show: {description: "Show the current image"}, update: {description: "Update to the latest image"}}}
+  version: {description: "Show flyctl version", commands: {upgrade: {description: "Upgrade flyctl"}}}
+  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+snippets:
+  - key: d
+    mark: pin
+    command: "flyctl deploy --remote-only"
+    description: "build remotely and deploy"
+  - key: l
+    mark: pin
+    command: "flyctl logs -a my-app"
+    description: "tail logs of an app"
+  - key: s
+    mark: pin
+    command: "flyctl ssh console -a my-app -s"
+    description: "shell on a chosen machine"
+  - key: t
+    mark: pin
+    command: "flyctl status -a my-app"
+    description: "app and machine status"
+  - key: e
+    command: "flyctl secrets set KEY=value -a my-app"
+    description: "set a secret (redeploys)"
+  - key: c
+    command: "flyctl scale count 2 -a my-app"
+    description: "run two machines"
+  - key: n
+    command: "flyctl launch --no-deploy"
+    description: "create fly.toml from source"
+  - key: p
+    command: "flyctl proxy 5432 -a my-db"
+    description: "forward a local port to an app"
+  - key: m
+    command: "flyctl machine list -a my-app"
+    description: "machines of an app"
+  - key: r
+    command: "flyctl apps restart my-app"
+    description: "restart every machine"

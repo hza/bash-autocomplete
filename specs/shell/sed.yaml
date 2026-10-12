@@ -1,0 +1,58 @@
+description: "Stream editor: filter and transform text (BSD sed)"
+flags:
+  -E: {description: "Extended regex: | + ? () {} without backslashes", show: always}
+  -r: {description: "Same as -E (GNU compatibility)"}
+  -n: {description: "Print nothing unless asked (p command)", show: always}
+  -e: {value: any, description: "Add an editing command (repeatable)", repeat: true, show: always}
+  -f: {value: file, description: "Read editing commands from a file"}
+  -i: {value: {exec: "printf '%s\\t%s\\n' .bak 'backup as FILE.bak' .orig 'backup as FILE.orig'"}, description: "Edit files in place; argument = backup suffix ('' for none)", show: always}
+  -I: {value: {exec: "printf '%s\\t%s\\n' .bak 'backup as FILE.bak' .orig 'backup as FILE.orig'"}, description: "Edit in place, files form one continuous stream"}
+  -a: {description: "Create w-command files before processing starts"}
+  -H: {description: "Enhanced regex features"}
+  -l: {description: "Line-buffered output"}
+  -u: {description: "Unbuffered output"}
+  -s: {description: "Treat files separately, not as one stream"}
+  -z: {description: "Input lines end with NUL, not newline"}
+  --debug: {description: "Annotate program execution"}
+snippets:
+  - key: i
+    mark: pin
+    command: "sed -i '' 's/foo/bar/g' file.txt"
+    description: "replace everywhere in place, no backup"
+  - key: b
+    command: "sed -i .bak 's/foo/bar/g' file.txt"
+    description: "replace in place, keep file.txt.bak"
+  - key: s
+    mark: pin
+    command: "sed 's/foo/bar/g' file.txt"
+    description: "replace all, print result"
+  - key: r
+    mark: pin
+    command: "sed -n '10,20p' file.txt"
+    description: "print a line range"
+  - key: d
+    mark: pin
+    command: "sed '/^[[:space:]]*$/d' file.txt"
+    description: "delete blank lines"
+  - key: c
+    command: "sed '/^#/d' file.txt"
+    description: "drop comment lines"
+  - key: f
+    command: "sed -n '1p' file.txt"
+    description: "first line only"
+  - key: l
+    command: "sed -n '$p' file.txt"
+    description: "last line only"
+  - key: t
+    command: "sed 's/[[:space:]]*$//' file.txt"
+    description: "strip trailing whitespace"
+  - key: x
+    command: "sed -E 's/([0-9]+)-([0-9]+)/\\2-\\1/' file.txt"
+    description: "swap two captured groups"
+  - key: m
+    command: "sed -n '/BEGIN/,/END/p' file.txt"
+    description: "lines between two markers"
+  - key: q
+    command: "sed '5q' file.txt"
+    description: "first 5 lines, then stop reading"
+args: file

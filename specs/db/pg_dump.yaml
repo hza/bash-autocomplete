@@ -1,0 +1,106 @@
+description: Extract a PostgreSQL database into a script or archive file
+flags:
+  -h: {value: "@hosts", description: "Database server host or socket directory", show: always}
+  --host: {value: "@hosts", description: "Database server host or socket directory"}
+  -p: {value: any, description: "Database server port"}
+  --port: {value: any, description: "Database server port"}
+  -U: {value: "@users", description: "Database user name", show: always}
+  --username: {value: "@users", description: "Database user name"}
+  -d: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database to dump (name or connection string)", show: always}
+  --dbname: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database to dump (name or connection string)"}
+  -w: {description: "Never prompt for password"}
+  --no-password: {description: "Never prompt for password"}
+  -W: {description: "Force password prompt"}
+  --password: {description: "Force password prompt"}
+  --role: {value: any, description: "Run SET ROLE before dump"}
+  -f: {value: file, description: "Output file or directory name", show: always}
+  --file: {value: file, description: "Output file or directory name"}
+  -F: {value: {exec: "printf '%s\\t%s\\n' p 'plain SQL script (default)' c 'custom archive (pg_restore)' d 'directory archive (parallel dump)' t 'tar archive'"}, description: "Output format", show: always}
+  --format: {value: {exec: "printf '%s\\t%s\\n' plain 'SQL script (default)' custom 'archive for pg_restore' directory 'archive dir (parallel dump)' tar 'tar archive'"}, description: "Output format"}
+  -j: {value: any, description: "Parallel jobs (directory format)"}
+  --jobs: {value: any, description: "Parallel jobs (directory format)"}
+  -v: {description: "Verbose mode"}
+  --verbose: {description: "Verbose mode"}
+  -Z: {value: any, description: "Compression level or method (0-9, gzip, lz4, zstd)"}
+  --compress: {value: any, description: "Compression level or method (0-9, gzip, lz4, zstd)"}
+  --lock-wait-timeout: {value: any, description: "Fail after waiting this long for a table lock"}
+  --no-sync: {description: "Do not wait for changes to be written to disk"}
+  -a: {description: "Dump only the data, not the schema"}
+  --data-only: {description: "Dump only the data, not the schema"}
+  -s: {description: "Dump only the schema, no data", show: always}
+  --schema-only: {description: "Dump only the schema, no data"}
+  -b: {description: "Include large objects"}
+  --blobs: {description: "Include large objects"}
+  -B: {description: "Exclude large objects"}
+  --no-blobs: {description: "Exclude large objects"}
+  -c: {description: "Drop objects before recreating them"}
+  --clean: {description: "Drop objects before recreating them"}
+  --if-exists: {description: "Use IF EXISTS when dropping objects"}
+  -C: {description: "Include commands to create the database"}
+  --create: {description: "Include commands to create the database"}
+  -E: {value: any, description: "Dump data in this encoding"}
+  --encoding: {value: any, description: "Dump data in this encoding"}
+  -n: {value: any, description: "Dump only matching schema(s)", repeat: true}
+  --schema: {value: any, description: "Dump only matching schema(s)", repeat: true}
+  -N: {value: any, description: "Do not dump matching schema(s)", repeat: true}
+  --exclude-schema: {value: any, description: "Do not dump matching schema(s)", repeat: true}
+  -t: {value: any, description: "Dump only matching table(s)", show: always, repeat: true}
+  --table: {value: any, description: "Dump only matching table(s)", repeat: true}
+  -T: {value: any, description: "Do not dump matching table(s)", repeat: true}
+  --exclude-table: {value: any, description: "Do not dump matching table(s)", repeat: true}
+  --exclude-table-data: {value: any, description: "Do not dump data of matching table(s)", repeat: true}
+  -O: {description: "Skip restoration of object ownership"}
+  --no-owner: {description: "Skip restoration of object ownership"}
+  -x: {description: "Do not dump privileges (grant/revoke)"}
+  --no-privileges: {description: "Do not dump privileges (grant/revoke)"}
+  --no-acl: {description: "Do not dump privileges (grant/revoke)"}
+  -S: {value: "@users", description: "Superuser name for plain-text output"}
+  --superuser: {value: "@users", description: "Superuser name for plain-text output"}
+  --column-inserts: {description: "Dump data as INSERT with column names"}
+  --inserts: {description: "Dump data as INSERT instead of COPY"}
+  --rows-per-insert: {value: any, description: "Rows per INSERT (implies --inserts)"}
+  --on-conflict-do-nothing: {description: "Add ON CONFLICT DO NOTHING to INSERTs"}
+  --disable-triggers: {description: "Disable triggers during data-only restore"}
+  --no-comments: {description: "Do not dump comments"}
+  --no-publications: {description: "Do not dump publications"}
+  --no-subscriptions: {description: "Do not dump subscriptions"}
+  --no-security-labels: {description: "Do not dump security labels"}
+  --no-tablespaces: {description: "Do not dump tablespace assignments"}
+  --no-unlogged-table-data: {description: "Do not dump unlogged table data"}
+  --quote-all-identifiers: {description: "Quote all identifiers"}
+  --serializable-deferrable: {description: "Wait until the dump can run without anomalies"}
+  --snapshot: {value: any, description: "Use the given snapshot"}
+  --strict-names: {description: "Require each -t/-n pattern to match"}
+  --use-set-session-authorization: {description: "Use SET SESSION AUTHORIZATION instead of ALTER OWNER"}
+  -V: {description: "Print version and exit"}
+  --version: {description: "Print version and exit"}
+  --help: {description: "Show help and exit"}
+args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
+snippets:
+  - key: c
+    mark: pin
+    command: "pg_dump -Fc -f mydb.dump mydb"
+    description: "custom-format archive for pg_restore"
+  - key: s
+    mark: pin
+    command: "pg_dump -s -f schema.sql mydb"
+    description: "schema only, as SQL"
+  - key: p
+    mark: pin
+    command: "pg_dump -O -x mydb | gzip > mydb.sql.gz"
+    description: "portable compressed SQL, no owners/grants"
+  - key: t
+    command: "pg_dump -t users -a --inserts mydb > users.sql"
+    description: "data of one table as INSERTs"
+  - key: d
+    command: "pg_dump -Fd -j 4 -f mydb.dir mydb"
+    description: "directory format, 4 parallel jobs"
+  - key: r
+    command: "pg_dump -h db.example.com -U admin -Fc -f prod.dump prod"
+    description: "dump a remote database"
+  - key: x
+    command: "pg_dump --exclude-table-data='audit_*' -Fc -f mydb.dump mydb"
+    description: "skip data of big log tables"
+  - key: l
+    command: "pg_dump -Fc mydb | pg_restore -d mydb_copy"
+    description: "copy into another (existing) database"

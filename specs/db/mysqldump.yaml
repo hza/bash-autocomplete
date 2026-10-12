@@ -1,0 +1,103 @@
+description: Dump MySQL / MariaDB databases as SQL
+flags:
+  -h: {value: "@hosts", description: "Connect to host", show: always}
+  --host: {value: "@hosts", description: "Connect to host"}
+  -P: {value: any, description: "Port number for TCP/IP connection"}
+  --port: {value: any, description: "Port number for TCP/IP connection"}
+  -u: {value: "@users", description: "User for login", show: always}
+  --user: {value: "@users", description: "User for login"}
+  -p: {description: "Prompt for password (or -pSECRET, no space)", show: always}
+  --password: {description: "Prompt for password (or --password=SECRET)"}
+  -S: {value: file, description: "Socket file for connection"}
+  --socket: {value: file, description: "Socket file for connection"}
+  --protocol: {value: {exec: "printf '%s\\t%s\\n' tcp 'TCP/IP' socket 'Unix socket file' pipe 'named pipe (Windows)' memory 'shared memory (Windows)'"}, description: "Transport protocol"}
+  -B: {description: "Dump several databases (names as args)", show: always}
+  --databases: {description: "Dump several databases (names as args)"}
+  -A: {description: "Dump all databases", show: always}
+  --all-databases: {description: "Dump all databases"}
+  -r: {value: {file: "*.sql"}, description: "Write output to file"}
+  --result-file: {value: {file: "*.sql"}, description: "Write output to file"}
+  -d: {description: "No row data (schema only)", show: always}
+  --no-data: {description: "No row data (schema only)"}
+  -t: {description: "No CREATE TABLE statements (data only)"}
+  --no-create-info: {description: "No CREATE TABLE statements (data only)"}
+  -n: {description: "No CREATE DATABASE statements"}
+  --no-create-db: {description: "No CREATE DATABASE statements"}
+  --single-transaction: {description: "Consistent InnoDB dump without locking", show: always}
+  -R: {description: "Include stored procedures and functions"}
+  --routines: {description: "Include stored procedures and functions"}
+  -E: {description: "Include events"}
+  --events: {description: "Include events"}
+  --triggers: {description: "Include triggers (default on)"}
+  --skip-triggers: {description: "Do not dump triggers"}
+  --ignore-table: {value: any, description: "Skip table (db.table)", repeat: true}
+  -w: {value: any, description: "Dump only rows matching WHERE condition"}
+  --where: {value: any, description: "Dump only rows matching WHERE condition"}
+  --add-drop-database: {description: "Add DROP DATABASE before each CREATE DATABASE"}
+  --add-drop-table: {description: "Add DROP TABLE before each CREATE TABLE"}
+  --skip-add-drop-table: {description: "Do not add DROP TABLE"}
+  -c: {description: "Use complete INSERTs with column names"}
+  --complete-insert: {description: "Use complete INSERTs with column names"}
+  --skip-extended-insert: {description: "One INSERT per row"}
+  --insert-ignore: {description: "Write INSERT IGNORE"}
+  --replace: {description: "Write REPLACE instead of INSERT"}
+  --hex-blob: {description: "Dump binary columns as hex"}
+  -x: {description: "Lock all tables across all databases"}
+  --lock-all-tables: {description: "Lock all tables across all databases"}
+  -l: {description: "Lock tables per database"}
+  --lock-tables: {description: "Lock tables per database"}
+  --skip-lock-tables: {description: "Do not lock tables"}
+  --quick: {description: "Stream rows instead of buffering (default on)"}
+  --compact: {description: "Less verbose output (no comments etc.)"}
+  --skip-comments: {description: "Do not write comments"}
+  --set-gtid-purged: {value: {exec: "printf '%s\\n' OFF ON AUTO COMMENTED"}, description: "Write SET @@GLOBAL.GTID_PURGED"}
+  --source-data: {value: {exec: "printf '%s\\t%s\\n' 1 'CHANGE REPLICATION SOURCE statement' 2 'same, commented out'"}, description: "Include binary log position"}
+  --master-data: {value: {exec: "printf '%s\\t%s\\n' 1 'CHANGE MASTER statement' 2 'same, commented out'"}, description: "Include binary log position (older name)"}
+  -T: {value: dir, description: "Write tab-separated data files to dir"}
+  --tab: {value: dir, description: "Write tab-separated data files to dir"}
+  -X: {description: "Produce XML output"}
+  --xml: {description: "Produce XML output"}
+  --default-character-set: {value: {exec: "printf '%s\\n' utf8mb4 utf8 latin1 binary"}, description: "Default character set"}
+  --defaults-file: {value: file, description: "Read options only from this file"}
+  --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
+  --no-defaults: {description: "Do not read any option files"}
+  --login-path: {value: any, description: "Read options from this login path (.mylogin.cnf)"}
+  --ssl-mode: {value: {exec: "printf '%s\\n' DISABLED PREFERRED REQUIRED VERIFY_CA VERIFY_IDENTITY"}, description: "TLS mode for the connection"}
+  --column-statistics: {description: "Write ANALYZE TABLE statements (0 to disable)"}
+  --no-tablespaces: {description: "Do not write tablespace info"}
+  -f: {description: "Continue even on SQL errors"}
+  --force: {description: "Continue even on SQL errors"}
+  -v: {description: "Verbose progress on stderr"}
+  --verbose: {description: "Verbose progress on stderr"}
+  -V: {description: "Print version and exit"}
+  --version: {description: "Print version and exit"}
+  --help: {description: "Show help and exit"}
+args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
+snippets:
+  - key: s
+    mark: pin
+    command: "mysqldump -u root -p --single-transaction --routines mydb > mydb.sql"
+    description: "consistent dump of one database"
+  - key: z
+    mark: pin
+    command: "mysqldump -u root -p --single-transaction mydb | gzip > mydb.sql.gz"
+    description: "compressed dump"
+  - key: d
+    mark: pin
+    command: "mysqldump -u root -p -d mydb > schema.sql"
+    description: "schema only"
+  - key: a
+    command: "mysqldump -u root -p -A --single-transaction > all.sql"
+    description: "every database"
+  - key: t
+    command: "mysqldump -u root -p mydb users orders > tables.sql"
+    description: "only some tables"
+  - key: w
+    command: "mysqldump -u root -p -t -w 'id < 1000' mydb users > part.sql"
+    description: "data of matching rows only"
+  - key: i
+    command: "mysqldump -u root -p --ignore-table=mydb.logs mydb > mydb.sql"
+    description: "skip a large table"
+  - key: c
+    command: "mysqldump -h src -u root -p mydb | mysql -h dst -u root -p mydb"
+    description: "copy a database to another server"

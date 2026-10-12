@@ -259,3 +259,38 @@ commands:
         description: Retrieves and displays a password for the specified registry
         flags:
           --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The AWS region to use"}
+snippets:
+  - key: w
+    mark: pin
+    command: "aws sts get-caller-identity"
+    description: "who am I: account, user/role ARN"
+  - key: s
+    mark: pin
+    command: "aws sso login --profile myprofile"
+    description: "refresh SSO credentials for a profile"
+  - key: e
+    command: "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com"
+    description: "docker login to ECR"
+  - key: i
+    mark: pin
+    command: "aws ec2 describe-instances --query 'Reservations[].Instances[].[InstanceId, State.Name, InstanceType, PrivateIpAddress, Tags[?Key==`Name`]|[0].Value]' --output table"
+    description: "EC2 instances: id, state, type, IP, name"
+  - key: l
+    mark: pin
+    command: "aws logs tail /aws/lambda/my-function --follow --since 10m"
+    description: "follow a CloudWatch log group"
+  - key: b
+    command: "aws s3 ls s3://my-bucket/ --recursive --human-readable --summarize"
+    description: "bucket contents with total size"
+  - key: c
+    command: "aws s3 sync ./dist s3://my-bucket/ --delete"
+    description: "mirror a folder to a bucket"
+  - key: p
+    command: "aws s3 presign s3://my-bucket/file.zip --expires-in 3600"
+    description: "temporary download link, 1 hour"
+  - key: m
+    command: "aws ssm start-session --target i-0123456789abcdef0"
+    description: "shell on an instance without SSH"
+  - key: r
+    command: "aws configure list"
+    description: "effective profile, region and key source"

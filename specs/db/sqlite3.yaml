@@ -1,0 +1,82 @@
+description: Command-line interface for SQLite databases
+flags:
+  -A: {value: any, description: "Run .archive ARGS and exit"}
+  -append: {description: "Append the database to the end of the file"}
+  -ascii: {description: "Output mode 'ascii'"}
+  -bail: {description: "Stop after hitting an error"}
+  -batch: {description: "Force batch I/O"}
+  -box: {description: "Output mode 'box'", show: always}
+  -column: {description: "Output mode 'column'", show: always}
+  -cmd: {value: any, description: "Run COMMAND before reading stdin", show: always}
+  -csv: {description: "Output mode 'csv'", show: always}
+  -deserialize: {description: "Open the database with sqlite3_deserialize()"}
+  -echo: {description: "Print inputs before execution"}
+  -init: {value: file, description: "Read and process this file first"}
+  -header: {description: "Turn headers on", show: always}
+  -noheader: {description: "Turn headers off"}
+  -help: {description: "Show help"}
+  -hexkey: {value: any, description: "Hexadecimal encryption key"}
+  -html: {description: "Output mode HTML"}
+  -interactive: {description: "Force interactive I/O"}
+  -key: {value: any, description: "Raw encryption key"}
+  -json: {description: "Output mode 'json'", show: always}
+  -line: {description: "Output mode 'line'"}
+  -list: {description: "Output mode 'list'"}
+  -lookaside: {value: any, description: "Lookaside memory: SIZE N"}
+  -markdown: {description: "Output mode 'markdown'"}
+  -maxsize: {value: any, description: "Maximum size for a -deserialize database"}
+  -memtrace: {description: "Trace all memory allocations"}
+  -newline: {value: any, description: "Row separator (default '\\n')"}
+  -nofollow: {description: "Refuse to open symlinked database files"}
+  -nonce: {value: any, description: "Safe-mode escape nonce"}
+  -nullvalue: {value: any, description: "Text shown for NULL values"}
+  -pagecache: {value: any, description: "Page cache memory: SIZE N"}
+  -pcachetrace: {description: "Trace all page cache operations"}
+  -quote: {description: "Output mode 'quote'"}
+  -readonly: {description: "Open the database read-only", show: always}
+  -safe: {description: "Enable safe mode"}
+  -separator: {value: any, description: "Column separator (default '|')"}
+  -stats: {description: "Print memory stats before each finalize"}
+  -textkey: {value: any, description: "Passphrase hashed into the encryption key"}
+  -table: {description: "Output mode 'table'"}
+  -tabs: {description: "Output mode 'tabs'"}
+  -unsafe-testing: {description: "Allow unsafe commands and modes for testing"}
+  -version: {description: "Show SQLite version"}
+  -vfs: {value: any, description: "Default VFS name"}
+  -zip: {description: "Open the file as a ZIP archive"}
+args: {file: "*.db *.sqlite *.sqlite3"}
+snippets:
+  - key: t
+    mark: pin
+    command: "sqlite3 app.db .tables"
+    description: "list tables"
+  - key: s
+    mark: pin
+    command: "sqlite3 app.db '.schema users'"
+    description: "CREATE statement of a table"
+  - key: c
+    mark: pin
+    command: "sqlite3 -header -csv app.db 'SELECT * FROM users' > users.csv"
+    description: "query to CSV with header"
+  - key: i
+    command: "sqlite3 app.db -cmd '.import --csv users.csv users' .quit"
+    description: "import a CSV file into a table"
+  - key: j
+    mark: pin
+    command: "sqlite3 -json app.db 'SELECT * FROM users LIMIT 5'"
+    description: "query results as JSON"
+  - key: d
+    command: "sqlite3 app.db .dump > app.sql"
+    description: "dump the whole database as SQL"
+  - key: r
+    command: "sqlite3 new.db < app.sql"
+    description: "rebuild a database from a SQL dump"
+  - key: b
+    command: "sqlite3 app.db \".backup 'backup.db'\""
+    description: "online backup to another file"
+  - key: v
+    command: "sqlite3 app.db 'VACUUM'"
+    description: "compact the database file"
+  - key: q
+    command: "sqlite3 -readonly -box app.db 'PRAGMA integrity_check'"
+    description: "check the database for corruption"

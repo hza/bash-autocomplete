@@ -1,0 +1,51 @@
+description: Terminal UI for Kubernetes clusters
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  --context: {value: {exec: "kubectl config get-contexts -o name 2>/dev/null"}, description: "Kubeconfig context to use", show: always}
+  --cluster: {value: any, description: "Kubeconfig cluster to use"}
+  --kubeconfig: {value: file, description: "Path to the kubeconfig file"}
+  -n: {value: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'", cache: 30}, description: "Namespace to start in", show: always}
+  --namespace: {value: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'", cache: 30}, description: "Namespace to start in"}
+  -A: {description: "Start in all namespaces"}
+  --all-namespaces: {description: "Start in all namespaces"}
+  -c: {value: {exec: "printf '%s\\n' pods deploy svc nodes ns ctx events cm secrets ingress pvc jobs cronjobs sts ds xray pulses popeye"}, description: "Initial resource view (command)", show: always}
+  --command: {value: {exec: "printf '%s\\n' pods deploy svc nodes ns ctx events cm secrets ingress pvc jobs cronjobs sts ds xray pulses popeye"}, description: "Initial resource view (command)"}
+  --readonly: {description: "Disable all modifying commands"}
+  --write: {description: "Override readonly config"}
+  --headless: {description: "Hide the header"}
+  --logoless: {description: "Hide the logo"}
+  --crumbsless: {description: "Hide the breadcrumbs"}
+  -r: {value: any, description: "Refresh rate in seconds"}
+  --refresh: {value: any, description: "Refresh rate in seconds"}
+  -l: {value: {exec: "printf '%s\\n' debug info warn error"}, description: "Log level"}
+  --logLevel: {value: {exec: "printf '%s\\n' debug info warn error"}, description: "Log level"}
+  --logFile: {value: file, description: "Log file path"}
+  --as: {value: any, description: "Impersonate a user"}
+  --as-group: {value: any, description: "Impersonate a group"}
+  --request-timeout: {value: any, description: "API request timeout"}
+  --insecure-skip-tls-verify: {description: "Skip TLS verification"}
+commands:
+  info: {description: "Show config and log locations"}
+  version: {description: "Show k9s version", flags: {-s: {description: "Short output"}, --short: {description: "Short output"}}}
+  help: {description: "Show help"}
+  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+snippets:
+  - key: a
+    mark: pin
+    command: "k9s -A"
+    description: "every namespace"
+  - key: n
+    mark: pin
+    command: "k9s -n my-ns -c pods"
+    description: "pods of one namespace"
+  - key: c
+    mark: pin
+    command: "k9s --context my-ctx"
+    description: "open another cluster"
+  - key: r
+    command: "k9s --readonly"
+    description: "look, don't touch"
+  - key: i
+    command: "k9s info"
+    description: "where config and logs live"

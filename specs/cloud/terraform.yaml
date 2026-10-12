@@ -317,3 +317,34 @@ commands:
     description: Release a stuck lock on the current workspace
     flags:
       --help: {description: "Show help"}
+snippets:
+  - key: p
+    mark: pin
+    command: "terraform plan -out=tfplan"
+    description: "save a plan to apply exactly later"
+  - key: a
+    mark: pin
+    command: "terraform apply tfplan"
+    description: "apply the saved plan, no prompt"
+  - key: s
+    mark: pin
+    command: "terraform state list"
+    description: "resources tracked in state"
+  - key: t
+    command: "terraform plan -target=module.my_module"
+    description: "plan only one module or resource"
+  - key: i
+    command: "terraform init -upgrade"
+    description: "re-init and pick newer provider versions"
+  - key: f
+    command: "terraform fmt -recursive"
+    description: "format every .tf file below here"
+  - key: o
+    command: "terraform output -json"
+    description: "outputs as JSON for scripts"
+  - key: r
+    command: "terraform apply -replace=aws_instance.web"
+    description: "force recreate one resource"
+  - key: w
+    command: "terraform workspace select -or-create staging"
+    description: "switch workspace, creating it if missing"

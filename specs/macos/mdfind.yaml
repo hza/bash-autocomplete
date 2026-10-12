@@ -1,0 +1,41 @@
+description: "Find files using the Spotlight metadata index"
+flags:
+  '-0': {description: "Print a NUL after each path (for xargs -0)"}
+  -live: {description: "Keep running and update the number of matches"}
+  -count: {description: "Print the number of matches instead of paths", show: always}
+  -onlyin: {value: dir, description: "Search only in this directory", show: always}
+  -name: {value: any, description: "Match file names only", show: always}
+  -literal: {description: "Take the query literally, without interpretation"}
+  -interpret: {description: "Interpret the query like the Spotlight menu"}
+  -s: {value: any, description: "Show the contents of a smart folder"}
+  -attr: {value: {exec: "mdimport -A 2>/dev/null | cut -d\"'\" -f2 | grep '^kMDItem'", cache: 3600}, description: "Also print the value of this attribute"}
+  -reprint: {description: "Reprint results on live updates"}
+args: any
+snippets:
+  - key: n
+    mark: pin
+    command: "mdfind -name report.pdf"
+    description: "files whose name contains report.pdf"
+  - key: o
+    mark: pin
+    command: "mdfind -onlyin ~/Documents invoice"
+    description: "anything mentioning invoice under ~/Documents"
+  - key: a
+    mark: pin
+    command: "mdfind \"kMDItemCFBundleIdentifier == 'com.apple.Safari'\""
+    description: "locate an app by bundle id"
+  - key: t
+    command: "mdfind 'kMDItemContentType == com.adobe.pdf' -onlyin ."
+    description: "PDFs below the current directory"
+  - key: d
+    command: "mdfind 'kMDItemFSContentChangeDate >= $time.today(-7)' -onlyin ~"
+    description: "home files changed in the last 7 days"
+  - key: w
+    command: "mdfind 'kMDItemWhereFroms == \"*github.com*\"'"
+    description: "downloads that came from github.com"
+  - key: c
+    command: "mdfind -count 'kMDItemKind == Folder'"
+    description: "how many folders Spotlight knows"
+  - key: z
+    command: "mdfind 'kMDItemFSSize > 1000000000' -onlyin ~"
+    description: "files over 1 GB in your home"

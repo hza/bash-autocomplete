@@ -1,0 +1,95 @@
+description: Dump traffic on a network
+flags:
+  -i: {value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on", show: always}
+  --interface: {value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on"}
+  -n: {description: "Don't resolve addresses and ports to names", show: always}
+  -w: {value: file, description: "Write raw packets to a file", show: always}
+  -r: {value: {file: "*.pcap *.pcapng *.cap"}, description: "Read packets from a file", show: always}
+  -c: {value: any, description: "Exit after this many packets"}
+  -A: {description: "Print packets in ASCII"}
+  -X: {description: "Print packets in hex and ASCII"}
+  -XX: {description: "Hex and ASCII including the link-level header"}
+  -x: {description: "Print packets in hex"}
+  -xx: {description: "Hex including the link-level header"}
+  -v: {description: "Verbose output (-vv, -vvv for more)"}
+  -vv: {description: "More verbose output"}
+  -vvv: {description: "Most verbose output"}
+  -q: {description: "Quick output (less protocol info)"}
+  -e: {description: "Print the link-level header"}
+  -l: {description: "Line-buffered stdout (for piping)"}
+  -s: {value: any, description: "Snapshot length in bytes (0 = default 262144)"}
+  --snapshot-length: {value: any, description: "Snapshot length in bytes (0 = default 262144)"}
+  -D: {description: "List capture interfaces"}
+  --list-interfaces: {description: "List capture interfaces"}
+  -t: {description: "No timestamps"}
+  -tt: {description: "Unix epoch timestamps"}
+  -ttt: {description: "Delta to the previous packet"}
+  -tttt: {description: "Date and time timestamps"}
+  -ttttt: {description: "Delta to the first packet"}
+  -N: {description: "Don't print domain qualification of host names"}
+  -S: {description: "Absolute TCP sequence numbers"}
+  -p: {description: "Don't put the interface into promiscuous mode"}
+  -I: {description: "Monitor mode (Wi-Fi)"}
+  -F: {value: file, description: "Read the filter expression from a file"}
+  -C: {value: any, description: "Rotate the -w file at this size (MB)"}
+  -G: {value: any, description: "Rotate the -w file every N seconds"}
+  -W: {value: any, description: "Max number of rotated files"}
+  -z: {value: any, description: "Command to run on each rotated file"}
+  -Z: {value: "@users", description: "Drop privileges to this user"}
+  -Q: {value: {exec: "printf '%s\\n' in out inout"}, description: "Capture direction (or a metadata filter)"}
+  -T: {value: {exec: "printf '%s\\n' aodv carp cnfp lmp pgm pgm_zmtp1 radius resp rpc rtcp rtp snmp tftp vat vxlan wb zmtp1"}, description: "Interpret selected packets as this type"}
+  -y: {value: any, description: "Data link type"}
+  -L: {description: "List data link types of the interface"}
+  -B: {value: any, description: "Capture buffer size (KiB)"}
+  -E: {value: any, description: "Decrypt IPsec ESP (spi@ipaddr algo:secret)"}
+  -M: {value: any, description: "TCP-MD5 shared secret"}
+  -V: {value: file, description: "Read a list of capture files from a file"}
+  -U: {description: "Packet-buffered output"}
+  -K: {description: "Don't verify checksums"}
+  -k: {description: "Print packet metadata (attach letters: -kNP)"}
+  -P: {description: "Write pcap-ng"}
+  -g: {description: "Don't break line after the IP header in verbose mode"}
+  -d: {description: "Dump the compiled filter and stop"}
+  -h: {description: "Print version and usage"}
+  --immediate-mode: {description: "Deliver packets as they arrive"}
+  --count: {description: "Only print the packet count when reading files"}
+  --number: {description: "Number the packets"}
+  --print: {description: "Print packets even when writing with -w"}
+  --version: {description: "Print version strings"}
+  --time-stamp-precision: {value: {exec: "printf '%s\\n' micro nano"}, description: "Timestamp precision"}
+args:
+  exec: "printf '%s\\n' host net port portrange src dst tcp udp icmp icmp6 arp ip ip6 ether vlan and or not less greater"
+snippets:
+  - key: p
+    mark: pin
+    command: "tcpdump -i any -n port 443"
+    description: "HTTPS traffic on all interfaces"
+  - key: h
+    mark: pin
+    command: "tcpdump -i en0 -n host 192.168.1.10"
+    description: "everything to/from one host"
+  - key: w
+    mark: pin
+    command: "tcpdump -i en0 -n -w capture.pcap"
+    description: "save to a file for Wireshark"
+  - key: r
+    command: "tcpdump -n -r capture.pcap"
+    description: "read a saved capture"
+  - key: a
+    command: "tcpdump -i any -n -A -s 0 'tcp port 80'"
+    description: "show plain HTTP payloads"
+  - key: d
+    command: "tcpdump -i any -n port 53"
+    description: "watch DNS queries"
+  - key: s
+    command: "tcpdump -i en0 -n 'tcp[tcpflags] & tcp-syn != 0'"
+    description: "only new TCP connections (SYN)"
+  - key: c
+    command: "tcpdump -i en0 -n -c 100 icmp"
+    description: "first 100 pings, then stop"
+  - key: k
+    command: "tcpdump -i pktap,all -kNP -n port 443"
+    description: "show which process owns each packet (macOS)"
+  - key: l
+    command: "tcpdump -D"
+    description: "list capture interfaces"

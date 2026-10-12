@@ -1,0 +1,30 @@
+description: Switch between kubectl contexts
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -c: {description: "Show the current context"}
+  --current: {description: "Show the current context"}
+  -d: {value: {exec: "kubectl config get-contexts -o name 2>/dev/null"}, description: "Delete a context ('.' = current)"}
+  -u: {description: "Unset the current context"}
+  --unset: {description: "Unset the current context"}
+  -V: {description: "Show version"}
+  --version: {description: "Show version"}
+args: {exec: "kubectl config get-contexts -o name 2>/dev/null; echo -"}
+snippets:
+  - key: s
+    mark: pin
+    command: "kubectx -"
+    description: "back to the previous context"
+  - key: c
+    mark: pin
+    command: "kubectx -c"
+    description: "print the active context"
+  - key: r
+    command: "kubectx short=long-context-name"
+    description: "rename a context"
+  - key: d
+    command: "kubectx -d old-context"
+    description: "drop a context"
+  - key: u
+    command: "kubectx -u"
+    description: "clear the active context"

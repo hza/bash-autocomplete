@@ -516,3 +516,34 @@ commands:
       -o: {value: any, description: "Prints the output in the specified format (json, yaml)"}
       --output: {value: any, description: "Prints the output in the specified format (json, yaml)"}
       --help: {description: "Show help"}
+snippets:
+  - key: u
+    mark: pin
+    command: "helm upgrade --install my-release ./chart -n my-ns --create-namespace -f values.yaml"
+    description: "install or upgrade in one step"
+  - key: t
+    mark: pin
+    command: "helm template my-release ./chart -f values.yaml | less"
+    description: "render manifests without touching the cluster"
+  - key: l
+    mark: pin
+    command: "helm list -A"
+    description: "releases in every namespace"
+  - key: v
+    command: "helm get values my-release -n my-ns"
+    description: "values a release was deployed with"
+  - key: h
+    command: "helm history my-release -n my-ns"
+    description: "revisions of a release"
+  - key: r
+    command: "helm rollback my-release 1 -n my-ns"
+    description: "go back to revision 1"
+  - key: s
+    command: "helm search repo nginx --versions"
+    description: "chart versions in added repos"
+  - key: d
+    command: "helm upgrade --install my-release ./chart --dry-run --debug"
+    description: "show what would change, with the rendered output"
+  - key: p
+    command: "helm repo update"
+    description: "fetch latest chart indexes"

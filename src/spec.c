@@ -126,6 +126,8 @@ int save_cache(const char *name, const ynode *n, const char *src, char *out, siz
 #define MTIME(st) (st).st_mtim
 #endif
 
+char g_spec_real[256];
+
 /* Load a spec; a big one from its compiled cache when that is newer than the YAML. */
 ynode *load_spec(const char *name) {
     char path[PATH_MAX], bin[PATH_MAX], err[256];
@@ -135,7 +137,10 @@ ynode *load_spec(const char *name) {
     if (!find_spec(name, path, sizeof path)) return NULL;
     /* exec commands find helper files next to the (symlink-resolved) spec */
     if (realpath(path, bin)) {
-        *strrchr(bin, '/') = 0;
+        char *b = strrchr(bin, '/'), *dot;
+        snprintf(g_spec_real, sizeof g_spec_real, "%s", b + 1);
+        if ((dot = strrchr(g_spec_real, '.'))) *dot = 0;
+        *b = 0;
         setenv("AUTOCOMPLETE_SPEC_DIR", bin, 1);
     }
     big = stat(path, &ys) == 0 && ys.st_size > CACHE_MIN;

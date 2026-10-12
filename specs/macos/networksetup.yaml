@@ -1,0 +1,354 @@
+description: "Configure network settings (services, DNS, proxies, Wi-Fi, locations)"
+flags:
+  -listnetworkserviceorder:
+    description: "List services in connection order with port and device"
+    show: always
+  -listallnetworkservices:
+    description: "List all network services (* = disabled)"
+    show: always
+  -listallhardwareports:
+    description: "List hardware ports with device and MAC address"
+    show: always
+  -detectnewhardware:
+    description: "Detect new hardware and create default services"
+  -getmacaddress:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show the MAC address of a port or device"
+  -getcomputername:
+    description: "Show the computer name"
+  -setcomputername:
+    value: any
+    description: "Set the computer name"
+  -getinfo:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show IP, subnet, router and MAC of a service"
+    show: always
+  -setmanual:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Static IPv4: service ip subnet router"
+  -setdhcp:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Use DHCP: service [clientid]"
+  -setbootp:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Use BOOTP for a service"
+  -setmanualwithdhcprouter:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Manual IP with DHCP router: service ip"
+  -getadditionalroutes:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show extra IPv4 routes of a service"
+  -setadditionalroutes:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set extra IPv4 routes: service [dest mask gate]..."
+  -setv4off:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn IPv4 off for a service"
+  -setv6off:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn IPv6 off for a service"
+  -setv6automatic:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Get IPv6 addresses automatically"
+  -setv6LinkLocal:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Use link-local IPv6 only"
+  -setv6manual:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Static IPv6: service ip prefixlength router"
+  -getv6additionalroutes:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show extra IPv6 routes of a service"
+  -setv6additionalroutes:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set extra IPv6 routes: service [dest prefixlen gate]..."
+  -getdnsservers:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show DNS servers of a service"
+    show: always
+  -setdnsservers:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set DNS servers: service dns... (Empty = clear)"
+    show: always
+  -getsearchdomains:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show search domains of a service"
+  -setsearchdomains:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set search domains: service domain... (Empty = clear)"
+  -create6to4service:
+    value: any
+    description: "Create a 6to4 service"
+  -set6to4automatic:
+    value: any
+    description: "6to4 service gets relay address automatically"
+  -set6to4manual:
+    value: any
+    description: "6to4 service with manual relay address"
+  -getwebproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show HTTP proxy of a service"
+  -setwebproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set HTTP proxy: service host port [on"
+  -setwebproxystate:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn HTTP proxy on/off: service on"
+  -getsecurewebproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show HTTPS proxy of a service"
+  -setsecurewebproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set HTTPS proxy: service host port [on"
+  -setsecurewebproxystate:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn HTTPS proxy on/off: service on"
+  -getsocksfirewallproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show SOCKS proxy of a service"
+  -setsocksfirewallproxy:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set SOCKS proxy: service host port [on"
+  -setsocksfirewallproxystate:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn SOCKS proxy on/off: service on"
+  -getproxybypassdomains:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show proxy bypass domains of a service"
+  -setproxybypassdomains:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set proxy bypass domains: service domain... (Empty = clear)"
+  -getproxyautodiscovery:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show proxy auto-discovery state"
+  -setproxyautodiscovery:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Proxy auto-discovery on/off: service on"
+  -setautoproxyurl:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set PAC file URL and enable it: service url"
+  -getautoproxyurl:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show PAC file URL of a service"
+  -setautoproxystate:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Turn PAC proxy on/off: service on"
+  -getairportnetwork:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show the current Wi-Fi network of a device"
+    show: always
+  -setairportnetwork:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Join a Wi-Fi network: device network [password]"
+  -getairportpower:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show Wi-Fi power state of a device"
+  -setairportpower:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Turn Wi-Fi power on/off: device on"
+  -listpreferredwirelessnetworks:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "List preferred Wi-Fi networks of a device"
+  -addpreferredwirelessnetworkatindex:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Add a preferred network: device network index security [password]"
+  -removepreferredwirelessnetwork:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Remove a preferred network: device network"
+  -removeallpreferredwirelessnetworks:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Remove all preferred networks of a device"
+  -getnetworkserviceenabled:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Show whether a service is enabled"
+  -setnetworkserviceenabled:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Enable/disable a service: service on"
+  -createnetworkservice:
+    value: any
+    description: "Create a service: name hardwareport"
+  -renamenetworkservice:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Rename a service: service newname"
+  -duplicatenetworkservice:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Duplicate a service: service newname"
+  -removenetworkservice:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Delete a service"
+  -ordernetworkservices:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Set service order: service1 service2 ..."
+  -setMTUAndMediaAutomatically:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Automatic MTU and media for a port"
+  -getMTU:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show the MTU of a port"
+  -setMTU:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Set the MTU: port value"
+  -listvalidMTUrange:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show the valid MTU range of a port"
+  -getmedia:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Show media settings of a port"
+  -setmedia:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Set media: port subtype [option]..."
+  -listvalidmedia:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "List valid media of a port"
+  -createVLAN:
+    value: any
+    description: "Create a VLAN: name parentdevice tag"
+  -deleteVLAN:
+    value: any
+    description: "Delete a VLAN: name parentdevice tag"
+  -listVLANs:
+    description: "List VLANs"
+  -listdevicesthatsupportVLAN:
+    description: "List devices that support VLANs"
+  -isBondSupported:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Can the device join a bond"
+  -createBond:
+    value: any
+    description: "Create a bond: name [device]..."
+  -deleteBond:
+    value: any
+    description: "Delete a bond"
+  -addDeviceToBond:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Add a device to a bond: device bond"
+  -removeDeviceFromBond:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Remove a device from a bond: device bond"
+  -listBonds:
+    description: "List bonds"
+  -showBondStatus:
+    value: any
+    description: "Show the status of a bond"
+  -listpppoeservices:
+    description: "List PPPoE services"
+  -showpppoestatus:
+    value: any
+    description: "Show the status of a PPPoE service"
+  -createpppoeservice:
+    value: {exec: "networksetup -listallhardwareports 2>/dev/null | awk -F': ' -v 'OFS=\\t' '/^Hardware Port/ {p=$2} /^Device/ {print $2, p}'"}
+    description: "Create a PPPoE service: device name account password [name]"
+  -deletepppoeservice:
+    value: any
+    description: "Delete a PPPoE service"
+  -setpppoeaccountname:
+    value: any
+    description: "Set PPPoE account: service account"
+  -setpppoepassword:
+    value: any
+    description: "Set PPPoE password: service password"
+  -connectpppoeservice:
+    value: any
+    description: "Connect a PPPoE service"
+  -disconnectpppoeservice:
+    value: any
+    description: "Disconnect a PPPoE service"
+  -listlocations:
+    description: "List network locations"
+  -getcurrentlocation:
+    description: "Show the current network location"
+  -createlocation:
+    value: any
+    description: "Create a location: name [populate]"
+  -deletelocation:
+    value: {exec: "networksetup -listlocations 2>/dev/null"}
+    description: "Delete a network location"
+  -switchtolocation:
+    value: {exec: "networksetup -listlocations 2>/dev/null"}
+    description: "Switch to a network location"
+    show: always
+  -version:
+    description: "Show the version"
+  -help:
+    description: "Show all commands with explanations"
+  -printcommands:
+    description: "Show all commands"
+  -listalluserprofiles:
+    description: "List 802.1X user profiles"
+  -listloginprofiles:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "List 802.1X login profiles of a service"
+  -enablesystemprofile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "802.1X system profile on/off: service on"
+  -enableloginprofile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "802.1X login profile on/off: service profile on"
+  -enableuserprofile:
+    value: any
+    description: "802.1X user profile on/off: profile on"
+  -import8021xProfiles:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Import 802.1X profiles: service file"
+  -export8021xProfiles:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Export 802.1X profiles: service file yes"
+  -export8021xUserProfiles:
+    value: file
+    description: "Export 802.1X user profiles: file yes"
+  -export8021xLoginProfiles:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Export 802.1X login profiles: service file yes"
+  -export8021xSystemProfile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Export 802.1X system profile: service file yes"
+  -settlsidentityonsystemprofile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "TLS identity for system profile: service file passphrase"
+  -settlsidentityonuserprofile:
+    value: any
+    description: "TLS identity for user profile: profile file passphrase"
+  -deletesystemprofile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Delete the 802.1X system profile of a service"
+  -deleteloginprofile:
+    value: {exec: "networksetup -listallnetworkservices 2>/dev/null | tail -n +2 | sed 's/^[*]//'"}
+    description: "Delete an 802.1X login profile: service profile"
+  -deleteuserprofile:
+    value: any
+    description: "Delete an 802.1X user profile"
+snippets:
+  - key: i
+    mark: pin
+    command: "networksetup -getinfo Wi-Fi"
+    description: "IP address, router and MAC of the Wi-Fi service"
+  - key: d
+    mark: pin
+    command: "networksetup -getdnsservers Wi-Fi"
+    description: "DNS servers set on Wi-Fi"
+  - key: c
+    command: "networksetup -setdnsservers Wi-Fi 1.1.1.1 8.8.8.8"
+    description: "use public DNS resolvers on Wi-Fi"
+  - key: e
+    command: "networksetup -setdnsservers Wi-Fi Empty"
+    description: "back to the DHCP-provided DNS servers"
+  - key: w
+    mark: pin
+    command: "networksetup -getairportnetwork en0"
+    description: "name of the joined Wi-Fi network"
+  - key: o
+    command: "networksetup -setairportpower en0 off && networksetup -setairportpower en0 on"
+    description: "power-cycle Wi-Fi"
+  - key: s
+    mark: pin
+    command: "networksetup -listnetworkserviceorder"
+    description: "services in priority order with their devices"
+  - key: h
+    command: "networksetup -listallhardwareports"
+    description: "hardware ports with device names and MACs"
+  - key: p
+    command: "networksetup -getwebproxy Wi-Fi; networksetup -getsecurewebproxy Wi-Fi"
+    description: "HTTP and HTTPS proxy of Wi-Fi"
+  - key: l
+    command: "networksetup -getcurrentlocation"
+    description: "active network location"
