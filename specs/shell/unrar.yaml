@@ -1,0 +1,77 @@
+description: "Extract, test and list RAR archives"
+flags:
+  "-o+": {description: "Overwrite existing files"}
+  "-o-": {description: "Skip existing files"}
+  -or: {description: "Rename extracted files automatically if the name exists"}
+  -y: {description: "Assume Yes on all queries"}
+  -r: {description: "Recurse subdirectories"}
+  -p: {description: "Ask for the password (-pPASS sets it, -p- skips)"}
+  "-p-": {description: "Do not query the password"}
+  -inul: {description: "Disable all messages"}
+  -idq: {description: "Quiet: disable messages except errors"}
+  -kb: {description: "Keep broken extracted files"}
+  -ad1: {description: "Extract each archive into its own folder"}
+  -ad2: {description: "Extract into the archive's own folder"}
+  -ep: {description: "Exclude paths from names"}
+  -f: {description: "Freshen: only files that already exist"}
+  -u: {description: "Update: new and newer files"}
+  -v: {description: "List all volumes"}
+  -c-: {description: "Disable comments show"}
+  -ierr: {description: "Send all messages to stderr"}
+  -ts: {description: "Restore modification, creation and access times"}
+commands:
+  x: {description: "Extract files with full path", positional: [{file: "*.rar *.r00"}], args: dir}
+  e: {description: "Extract files without archived paths", positional: [{file: "*.rar *.r00"}], args: dir}
+  l: {description: "List archive contents", args: {file: "*.rar *.r00"}}
+  lt: {description: "List archive contents, technical", args: {file: "*.rar *.r00"}}
+  lb: {description: "List archive contents, bare names", args: {file: "*.rar *.r00"}}
+  v: {description: "Verbosely list archive contents", args: {file: "*.rar *.r00"}}
+  t: {description: "Test archive files", args: {file: "*.rar *.r00"}}
+  p: {description: "Print file to stdout", args: {file: "*.rar *.r00"}}
+snippets:
+  - key: x
+    pin: true
+    command: "unrar x archive.rar"
+    description: "extract with folders"
+  - key: d
+    pin: true
+    command: "unrar x archive.rar out/"
+    description: "extract into a folder (trailing / required)"
+  - key: l
+    pin: true
+    command: "unrar l archive.rar"
+    description: "list contents"
+  - key: e
+    command: "unrar e archive.rar"
+    description: "extract all files here, dropping folders"
+  - key: m
+    pin: true
+    command: "unrar x movie.part1.rar"
+    description: "multi-part: start from the first part, the rest follow"
+  - key: o
+    command: "unrar x -o+ archive.rar"
+    description: "overwrite existing files without asking"
+  - key: n
+    command: "unrar x -o- archive.rar"
+    description: "skip existing files"
+  - key: w
+    command: "unrar x -p archive.rar"
+    description: "ask for the password up front"
+  - key: f
+    command: "unrar x archive.rar '*.pdf'"
+    description: "extract only matching files"
+  - key: a
+    command: "unrar x -ad1 '*.rar'"
+    description: "extract every archive into its own folder"
+  - key: b
+    command: "unrar lb archive.rar"
+    description: "bare names, one per line"
+  - key: p
+    command: "unrar p -inul archive.rar notes.txt"
+    description: "print one file to stdout"
+  - key: t
+    command: "unrar t archive.rar"
+    description: "test the archive"
+  - key: k
+    command: "unrar x -kb archive.rar"
+    description: "keep files even if broken (damaged archive)"

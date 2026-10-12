@@ -67,6 +67,8 @@ Bundled snippets cover the commands whose flags are hard to remember:
 - **ps**, **lsof**: top CPU/memory processes, who listens on a port, open files of a process
 - **find**, **grep**: recently changed files, large files, recursive search with excludes
 - **tar**: create, extract, list, exclude folders, strip the top folder
+- **zip**, **unzip**, **unrar**: zip a folder without macOS junk, exclude folders, passwords,
+  split archives, `.app` bundles with symlinks, extract into a folder, multi-part RARs
 - **ssh**: port forwarding, jump hosts, SOCKS proxy, remote commands
 - **jq**: pretty-print, pick and filter fields, CSV, shell variables
 - **jfr**: hot methods, GC pauses, allocations from a Java flight recording
@@ -88,7 +90,7 @@ prompt you're already typing on.
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**, **jfr**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
-  **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **tar**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **code** (VS Code),
+  **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **tar**, **zip**, **unzip**, **unrar**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
   **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
