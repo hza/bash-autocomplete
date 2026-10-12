@@ -1,0 +1,201 @@
+description: Azure command line interface
+flags:
+  --output: {value: {exec: "printf 'json\\njsonc\\ntable\\ntsv\\nyaml\\nyamlc\\nnone\\n'"}, description: "Output format", show: always}
+  -o: {value: {exec: "printf 'json\\njsonc\\ntable\\ntsv\\nyaml\\nyamlc\\nnone\\n'"}, description: "Output format"}
+  --query: {value: any, description: "JMESPath query string", show: always}
+  --subscription: {value: {exec: "az account list --query '[].name' -o tsv 2>/dev/null", cache: 300}, description: "Name or ID of subscription", show: always}
+  --resource-group: {value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group", show: always}
+  -g: {value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group"}
+  --name: {value: any, description: "Name of the resource"}
+  -n: {value: any, description: "Name of the resource"}
+  --location: {value: {exec: "az account list-locations --query '[].name' -o tsv 2>/dev/null", cache: 86400}, description: "Azure region", show: always}
+  -l: {value: {exec: "az account list-locations --query '[].name' -o tsv 2>/dev/null", cache: 86400}, description: "Azure region"}
+  --help: {description: "Show help message"}
+  -h: {description: "Show help message"}
+  --debug: {description: "Increase logging verbosity to show all debug logs"}
+  --verbose: {description: "Increase logging verbosity"}
+  --only-show-errors: {description: "Only show errors, suppressing warnings"}
+  --yes: {description: "Do not prompt for confirmation"}
+  -y: {description: "Do not prompt for confirmation"}
+  --no-wait: {description: "Do not wait for the long-running operation to finish"}
+commands:
+  login:
+    description: Log in to Azure
+    flags:
+      --use-device-code: {description: "Use device code flow"}
+      --tenant: {value: any, description: "Tenant ID or domain"}
+      --service-principal: {description: "Log in with a service principal"}
+      --identity: {description: "Log in with a managed identity"}
+      --username: {value: any, description: "User name or app ID"}
+      -u: {value: any, description: "User name or app ID"}
+      --password: {value: any, description: "Password or client secret"}
+      -p: {value: any, description: "Password or client secret"}
+  logout: {description: "Log out to remove access to Azure subscriptions"}
+  version: {description: "Show the versions of Azure CLI modules and extensions"}
+  upgrade: {description: "Upgrade Azure CLI and extensions"}
+  find: {description: "Find Azure CLI commands", args: any}
+  interactive: {description: "Start interactive mode"}
+  configure: {description: "Manage Azure CLI configuration"}
+  account:
+    description: Manage Azure subscription information
+    commands:
+      list: {description: "Get a list of subscriptions for the logged in account"}
+      show: {description: "Get the details of a subscription"}
+      set: {description: "Set a subscription to be the current active subscription"}
+      list-locations: {description: "List supported regions for the current subscription"}
+      get-access-token: {description: "Get a token for utilities to access Azure"}
+      clear: {description: "Clear all subscriptions from the CLI's local cache"}
+  group:
+    description: Manage resource groups
+    commands:
+      list: {description: "List resource groups"}
+      show: {description: "Get a resource group"}
+      create: {description: "Create a new resource group"}
+      delete: {description: "Delete a resource group"}
+      exists: {description: "Check if a resource group exists"}
+      update: {description: "Update a resource group"}
+      wait: {description: "Wait until a condition of the resource group is met"}
+  resource:
+    description: Manage Azure resources
+    commands:
+      list: {description: "List resources"}
+      show: {description: "Get the details of a resource"}
+      delete: {description: "Delete a resource"}
+      tag: {description: "Tag a resource"}
+      update: {description: "Update a resource"}
+      move: {description: "Move resources from one resource group to another"}
+  vm:
+    description: Manage Linux or Windows virtual machines
+    commands:
+      list: {description: "List details of virtual machines"}
+      show: {description: "Get the details of a VM"}
+      create: {description: "Create an Azure virtual machine"}
+      delete: {description: "Delete a VM"}
+      start: {description: "Start a stopped VM"}
+      stop: {description: "Power off (stop) a running VM"}
+      deallocate: {description: "Deallocate a VM so that computing resources are no longer allocated"}
+      restart: {description: "Restart VMs"}
+      resize: {description: "Update a VM's size"}
+      list-ip-addresses: {description: "List IP addresses associated with a VM"}
+      list-sizes: {description: "List available sizes for VMs"}
+      open-port: {description: "Open a VM to inbound traffic on specified ports"}
+      run-command: {description: "Manage run commands on a VM"}
+      image: {description: "Information on available virtual machine images"}
+  vmss: {description: "Manage groupings of virtual machines in a scale set"}
+  aks:
+    description: Manage Azure Kubernetes Services
+    commands:
+      list: {description: "List managed Kubernetes clusters"}
+      show: {description: "Show the details for a managed Kubernetes cluster"}
+      create: {description: "Create a new managed Kubernetes cluster"}
+      delete: {description: "Delete a managed Kubernetes cluster"}
+      get-credentials: {description: "Get access credentials for a managed Kubernetes cluster"}
+      scale: {description: "Scale the node pool in a managed Kubernetes cluster"}
+      upgrade: {description: "Upgrade a managed Kubernetes cluster to a newer version"}
+      get-upgrades: {description: "Get the upgrade versions available for a cluster"}
+      start: {description: "Start a previously stopped managed cluster"}
+      stop: {description: "Stop a managed cluster"}
+      nodepool: {description: "Commands to manage node pools"}
+      browse: {description: "Show the dashboard for a Kubernetes cluster"}
+  acr:
+    description: Manage private registries with Azure Container Registries
+    commands:
+      list: {description: "List container registries"}
+      show: {description: "Get the details of a container registry"}
+      create: {description: "Create an Azure Container Registry"}
+      delete: {description: "Delete a container registry"}
+      login: {description: "Log in to an Azure Container Registry through the Docker CLI"}
+      build: {description: "Queue a quick build"}
+      repository: {description: "Manage repositories (image names)"}
+  storage:
+    description: Manage Azure Cloud Storage resources
+    commands:
+      account: {description: "Manage storage accounts"}
+      container: {description: "Manage blob storage containers"}
+      blob: {description: "Manage object storage for unstructured data (blobs)"}
+      share: {description: "Manage file shares"}
+      queue: {description: "Manage storage queues"}
+      table: {description: "Manage NoSQL key-value storage"}
+  webapp:
+    description: Manage web apps
+    commands:
+      list: {description: "List web apps"}
+      show: {description: "Get the details of a web app"}
+      create: {description: "Create a web app"}
+      delete: {description: "Delete a web app"}
+      up: {description: "Create a webapp and deploy code from a local workspace"}
+      deploy: {description: "Deploy a provided artifact to Azure Web Apps"}
+      restart: {description: "Restart a web app"}
+      start: {description: "Start a web app"}
+      stop: {description: "Stop a web app"}
+      browse: {description: "Open a web app in a browser"}
+      log: {description: "Manage web app logs"}
+      config: {description: "Configure a web app"}
+  functionapp: {description: "Manage function apps"}
+  containerapp: {description: "Manage Azure Container Apps"}
+  keyvault:
+    description: Manage KeyVault keys, secrets, and certificates
+    commands:
+      list: {description: "List vaults"}
+      show: {description: "Show details of a vault"}
+      create: {description: "Create a vault"}
+      delete: {description: "Delete a vault"}
+      secret: {description: "Manage secrets"}
+      key: {description: "Manage keys"}
+      certificate: {description: "Manage certificates"}
+  network: {description: "Manage Azure Network resources"}
+  sql: {description: "Manage Azure SQL Databases and Data Warehouses"}
+  postgres: {description: "Manage Azure Database for PostgreSQL"}
+  mysql: {description: "Manage Azure Database for MySQL"}
+  cosmosdb: {description: "Manage Azure Cosmos DB database accounts"}
+  monitor: {description: "Manage the Azure Monitor Service"}
+  role: {description: "Manage Azure role-based access control (RBAC)"}
+  ad: {description: "Manage Microsoft Entra ID (Azure Active Directory)"}
+  deployment: {description: "Manage Azure Resource Manager template deployments"}
+  bicep: {description: "Bicep CLI command group"}
+  extension: {description: "Manage and update CLI extensions"}
+  devops: {description: "Manage Azure DevOps organization level operations"}
+  rest: {description: "Invoke a custom request"}
+  tag: {description: "Tag Management on a resource"}
+  config: {description: "Manage Azure CLI configuration"}
+snippets:
+  - key: s
+    mark: pin
+    command: "az account show -o table"
+    description: "which subscription am I using"
+  - key: a
+    command: "az account list --query '[].{name:name, id:id, default:isDefault}' -o table"
+    description: "all subscriptions, current one marked"
+  - key: u
+    command: "az account set --subscription MySubscription"
+    description: "switch the active subscription"
+  - key: g
+    mark: pin
+    command: "az group list -o table"
+    description: "resource groups in the subscription"
+  - key: r
+    command: "az resource list -g mygroup -o table"
+    description: "everything inside one resource group"
+  - key: v
+    mark: pin
+    command: "az vm list -d --query '[].{name:name, state:powerState, ip:publicIps}' -o table"
+    description: "VMs with power state and public IP"
+  - key: k
+    mark: pin
+    command: "az aks get-credentials -g mygroup -n mycluster"
+    description: "merge an AKS cluster into ~/.kube/config"
+  - key: c
+    command: "az acr login -n myregistry"
+    description: "docker login to a container registry"
+  - key: t
+    command: "az account get-access-token --query accessToken -o tsv"
+    description: "bearer token for curl"
+  - key: d
+    command: "az login --use-device-code"
+    description: "log in from a machine without a browser"
+  - key: x
+    command: "az group delete -n mygroup --yes --no-wait"
+    description: "delete a resource group and all it holds"
+  - key: l
+    command: "az webapp log tail -g mygroup -n myapp"
+    description: "stream a web app's logs"

@@ -99,10 +99,10 @@ prompt you're already typing on.
 
 - Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**, **jfr**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
-  **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
+  **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**, **az**, **gcloud**,
   **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **tar**, **zip**, **unzip**, **unrar**, **gzip**, **gunzip**, **xz**, **unxz**, **bzip2**, **bunzip2**, **compress**, **uncompress**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
-  **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
+  **pbpaste**, **sips**, **screencapture**, **duti**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
   that command's own completion (`sudo git chec<TAB>` → `checkout`).
 - Live values from your environment:
@@ -130,7 +130,7 @@ prompt you're already typing on.
   - bun: scripts, dependencies (`remove`, `why`, `update`), `node_modules/.bin` for `bun x`
   - python: module names for `-m` (`python3 -m http<TAB>` → `http.server`)
   - java: source files to run (`java <TAB>`: `*.java` files under the cwd declaring `main`), module names (`-m`, `--add-modules`), jars and class paths
-  - aws: profiles, regions, S3 buckets; tmux: sessions and buffers
+  - aws: profiles, regions, S3 buckets; az: subscriptions, resource groups, locations; gcloud: projects, configurations, regions, zones, GCS buckets; tmux: sessions and buffers
   - open: app names (`-a`) and bundle ids (`-b`); launchctl: services and LaunchAgent plists
 - Descriptions next to subcommands and flags when several match
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).

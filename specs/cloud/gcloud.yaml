@@ -1,0 +1,193 @@
+description: Google Cloud command line interface
+flags:
+  --project: {value: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}, description: "Google Cloud project ID to use", show: always}
+  --account: {value: {exec: "gcloud auth list --format='value(account)' 2>/dev/null", cache: 300}, description: "Google Cloud user account to use"}
+  --configuration: {value: {exec: "gcloud config configurations list --format='value(name)' 2>/dev/null", cache: 60}, description: "Named configuration to use"}
+  --format: {value: {exec: "printf 'json\\nyaml\\ntable\\ncsv\\nvalue\\nlist\\nflattened\\nnone\\n'", nospace: true}, description: "Output format (json, yaml, table(...), value(...))", show: always}
+  --filter: {value: any, description: "Filter expression for list output", show: always}
+  --limit: {value: any, description: "Maximum number of resources to list"}
+  --sort-by: {value: any, description: "Comma-separated list of resource field keys to sort by"}
+  --region: {value: {exec: "gcloud compute regions list --format='value(name)' 2>/dev/null", cache: 86400}, description: "Region of the resource", show: always}
+  --zone: {value: {exec: "gcloud compute zones list --format='value(name)' 2>/dev/null", cache: 86400}, description: "Zone of the resource", show: always}
+  --quiet: {description: "Disable all interactive prompts"}
+  -q: {description: "Disable all interactive prompts"}
+  --verbosity: {value: {exec: "printf 'debug\\ninfo\\nwarning\\nerror\\ncritical\\nnone\\n'"}, description: "Override the default verbosity"}
+  --log-http: {description: "Log all HTTP server requests and responses to stderr"}
+  --impersonate-service-account: {value: any, description: "Impersonate this service account"}
+  --help: {description: "Display detailed help"}
+  -h: {description: "Print a summary help"}
+commands:
+  init: {description: "Initialize or reinitialize gcloud"}
+  info: {description: "Display information about the current gcloud environment"}
+  version: {description: "Print version information for Cloud SDK components"}
+  help: {description: "Search gcloud help text", args: "@subcommands"}
+  auth:
+    description: Manage oauth2 credentials for the Google Cloud CLI
+    commands:
+      login: {description: "Authorize gcloud to access Google Cloud with user credentials"}
+      list: {description: "Lists credentialed accounts"}
+      revoke: {description: "Revoke access credentials for an account"}
+      print-access-token: {description: "Print an access token for the active account"}
+      print-identity-token: {description: "Print an identity token for the active account"}
+      activate-service-account: {description: "Authorize access with a service account key", args: file}
+      configure-docker: {description: "Register gcloud as a Docker credential helper"}
+      application-default:
+        description: Manage your active Application Default Credentials
+        commands:
+          login: {description: "Acquire new user credentials to use for ADC"}
+          print-access-token: {description: "Print an access token for your current ADC"}
+          revoke: {description: "Revoke previously generated ADC"}
+  config:
+    description: View and edit Google Cloud CLI properties
+    commands:
+      list: {description: "List Google Cloud CLI properties for the active configuration"}
+      get: {description: "Print the value of a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
+      set: {description: "Set a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
+      unset: {description: "Unset a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
+      configurations:
+        description: Manage the set of gcloud named configurations
+        commands:
+          list: {description: "Lists existing named configurations"}
+          create: {description: "Creates a new named configuration"}
+          activate: {description: "Activates an existing named configuration", args: {exec: "gcloud config configurations list --format='value(name)' 2>/dev/null"}}
+          describe: {description: "Describes a named configuration", args: {exec: "gcloud config configurations list --format='value(name)' 2>/dev/null"}}
+          delete: {description: "Deletes a named configuration", args: {exec: "gcloud config configurations list --format='value(name)' 2>/dev/null"}}
+  projects:
+    description: Create and manage project access policies
+    commands:
+      list: {description: "List projects accessible by the active account"}
+      describe: {description: "Show metadata for a project", args: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}}
+      create: {description: "Create a new project"}
+      delete: {description: "Delete a project", args: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}}
+      get-iam-policy: {description: "Get IAM policy for a project", args: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}}
+      add-iam-policy-binding: {description: "Add IAM policy binding for a project"}
+      remove-iam-policy-binding: {description: "Remove IAM policy binding for a project"}
+  compute:
+    description: Create and manipulate Compute Engine resources
+    commands:
+      instances:
+        description: Read and manipulate Compute Engine virtual machine instances
+        commands:
+          list: {description: "List Compute Engine instances"}
+          describe: {description: "Describe a virtual machine instance"}
+          create: {description: "Create Compute Engine virtual machine instances"}
+          delete: {description: "Delete Compute Engine virtual machine instances"}
+          start: {description: "Start a stopped virtual machine instance"}
+          stop: {description: "Stop a virtual machine instance"}
+          reset: {description: "Reset a virtual machine instance"}
+          get-serial-port-output: {description: "Read output from a virtual machine instance's serial port"}
+      ssh: {description: "SSH into a virtual machine instance"}
+      scp: {description: "Copy files to and from Google Compute Engine virtual machines"}
+      disks: {description: "Read and manipulate Compute Engine disks"}
+      images: {description: "List, create, and delete Compute Engine images"}
+      networks: {description: "List, create, and delete Compute Engine networks"}
+      firewall-rules: {description: "List, create, update, and delete firewall rules"}
+      addresses: {description: "Read and manipulate Compute Engine addresses"}
+      regions: {description: "List Compute Engine regions"}
+      zones: {description: "List Compute Engine zones"}
+      machine-types: {description: "Read Compute Engine virtual machine types"}
+  container:
+    description: Deploy and manage clusters of machines for running containers (GKE)
+    commands:
+      clusters:
+        description: Deploy and teardown Google Kubernetes Engine clusters
+        commands:
+          list: {description: "List existing clusters"}
+          describe: {description: "Describe an existing cluster"}
+          create: {description: "Create a cluster"}
+          create-auto: {description: "Create an Autopilot cluster"}
+          delete: {description: "Delete an existing cluster"}
+          get-credentials: {description: "Fetch credentials for a running cluster"}
+          resize: {description: "Resize an existing cluster"}
+          upgrade: {description: "Upgrade the Kubernetes version of a cluster"}
+      node-pools: {description: "Create and delete operations for node pools"}
+      images: {description: "List and manipulate Google Container Registry images"}
+  run:
+    description: Manage your Cloud Run applications
+    commands:
+      deploy: {description: "Create or update a Cloud Run service"}
+      services: {description: "View and manage your Cloud Run services"}
+      jobs: {description: "View and manage your Cloud Run jobs"}
+      revisions: {description: "View and manage your Cloud Run revisions"}
+      domain-mappings: {description: "View and manage your Cloud Run domain mappings"}
+  functions:
+    description: Manage Google Cloud Functions
+    commands:
+      list: {description: "List Google Cloud Functions"}
+      describe: {description: "Display details of a Google Cloud Function"}
+      deploy: {description: "Create or update a Google Cloud Function"}
+      delete: {description: "Delete a Google Cloud Function"}
+      call: {description: "Trigger execution of a Google Cloud Function"}
+      logs: {description: "Display log entries produced by Google Cloud Functions"}
+  storage:
+    description: Create and manage Cloud Storage buckets and objects
+    commands:
+      ls: {description: "List buckets or objects", args: {exec: "gcloud storage ls 2>/dev/null", nospace: true, cache: 120}}
+      cp: {description: "Upload, download, and copy Cloud Storage objects", args: [{exec: "gcloud storage ls 2>/dev/null", nospace: true, cache: 120}, file]}
+      mv: {description: "Move or rename objects", args: [{exec: "gcloud storage ls 2>/dev/null", nospace: true, cache: 120}, file]}
+      rm: {description: "Delete objects and buckets", args: {exec: "gcloud storage ls 2>/dev/null", nospace: true, cache: 120}}
+      rsync: {description: "Synchronize content of two buckets/directories", args: [{exec: "gcloud storage ls 2>/dev/null", nospace: true, cache: 120}, dir]}
+      cat: {description: "Output Cloud Storage objects to stdout"}
+      du: {description: "Display object size usage"}
+      buckets: {description: "Manage Cloud Storage buckets"}
+      objects: {description: "Manage Cloud Storage objects"}
+      sign-url: {description: "Generate a signed URL for an object"}
+  sql: {description: "Create and manage Google Cloud SQL databases"}
+  iam: {description: "Manage IAM service accounts, roles and policies"}
+  secrets: {description: "Manage secrets on Google Cloud"}
+  logging: {description: "Manage Cloud Logging"}
+  pubsub: {description: "Manage Cloud Pub/Sub topics, subscriptions, and snapshots"}
+  artifacts: {description: "Manage Artifact Registry resources"}
+  builds: {description: "Create and manage builds for Google Cloud Build"}
+  app: {description: "Manage your App Engine deployments"}
+  services: {description: "List, enable and disable APIs and services"}
+  components: {description: "List, install, update, or remove Google Cloud CLI components"}
+  dns: {description: "Manage your Cloud DNS managed-zones and record-sets"}
+  kms: {description: "Manage cryptographic keys in the cloud"}
+  monitoring: {description: "Manage Cloud Monitoring dashboards"}
+  scheduler: {description: "Manage Cloud Scheduler jobs and schedules"}
+  billing: {description: "Manage billing accounts and associate them with projects"}
+  organizations: {description: "Create and manage Google Cloud Platform Organizations"}
+  alpha: {description: "Alpha versions of gcloud commands"}
+  beta: {description: "Beta versions of gcloud commands"}
+snippets:
+  - key: p
+    mark: pin
+    command: "gcloud config set project my-project"
+    description: "switch the active project"
+  - key: c
+    command: "gcloud config list"
+    description: "current account, project, region"
+  - key: l
+    command: "gcloud auth login --update-adc"
+    description: "log in, also refresh application default credentials"
+  - key: t
+    command: "gcloud auth print-access-token"
+    description: "bearer token for curl"
+  - key: i
+    mark: pin
+    command: "gcloud compute instances list --format='table(name, zone.basename(), status, networkInterfaces[0].accessConfigs[0].natIP)'"
+    description: "VMs with zone, status and external IP"
+  - key: s
+    command: "gcloud compute ssh my-vm --zone europe-west1-b --tunnel-through-iap"
+    description: "SSH to a VM without a public IP"
+  - key: k
+    mark: pin
+    command: "gcloud container clusters get-credentials my-cluster --region europe-west1"
+    description: "merge a GKE cluster into ~/.kube/config"
+  - key: r
+    mark: pin
+    command: "gcloud run deploy my-service --source . --region europe-west1 --allow-unauthenticated"
+    description: "build and deploy the current dir to Cloud Run"
+  - key: g
+    command: "gcloud logging read 'severity>=ERROR' --freshness 1h --limit 50"
+    description: "errors logged in the last hour"
+  - key: e
+    command: "gcloud services enable run.googleapis.com"
+    description: "turn on an API for the project"
+  - key: d
+    command: "gcloud auth configure-docker europe-west1-docker.pkg.dev"
+    description: "let docker push to Artifact Registry"
+  - key: b
+    command: "gcloud storage cp -r ./dist gs://my-bucket/"
+    description: "upload a folder to a bucket"
