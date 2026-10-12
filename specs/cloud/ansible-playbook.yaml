@@ -53,15 +53,15 @@ flags:
 args: {file: "*.yml *.yaml"}
 snippets:
   - key: r
-    mark: pin
+    mark: pushpin
     command: "ansible-playbook -i inventory.ini site.yml"
     description: "plain run"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "ansible-playbook -i inventory.ini site.yml --check --diff"
     description: "preview changes"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "ansible-playbook -i inventory.ini site.yml -l web01"
     description: "only one host"
   - key: t

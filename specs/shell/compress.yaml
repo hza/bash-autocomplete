@@ -14,11 +14,11 @@ flags:
 args: file
 snippets:
   - key: f
-    mark: pin
+    mark: pushpin
     command: "compress big.log"
     description: "replace the file with big.log.Z (skipped if it wouldn't shrink)"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "compress -c big.log > big.log.Z"
     description: "keep the original, write to stdout"
   - key: o
@@ -28,7 +28,7 @@ snippets:
     command: "compress -v *.log"
     description: "several files, print the reduction of each"
   - key: d
-    mark: pin
+    mark: pushpin
     command: "compress -d big.log.Z"
     description: "decompress (same as uncompress)"
   - key: t

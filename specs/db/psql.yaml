@@ -71,22 +71,22 @@ flags:
 args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
 snippets:
   - key: u
-    mark: pin
+    mark: pushpin
     command: "psql postgresql://user:secret@localhost:5432/mydb"
     description: "connect with a connection URL"
   - key: f
-    mark: pin
+    mark: pushpin
     command: "psql -d mydb -v ON_ERROR_STOP=1 -1 -f script.sql"
     description: "run a SQL file in one transaction, stop on error"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "psql -d mydb -c '\\copy (SELECT * FROM users) TO users.csv CSV HEADER'"
     description: "export a query to a local CSV file"
   - key: i
     command: "psql -d mydb -c '\\copy users FROM users.csv CSV HEADER'"
     description: "load a local CSV file into a table"
   - key: t
-    mark: pin
+    mark: pushpin
     command: "psql -d mydb -c '\\dt+'"
     description: "list tables with sizes"
   - key: l

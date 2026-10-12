@@ -34,14 +34,14 @@ flags:
 args: any
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "say 'build finished'"
     description: "speak a phrase"
   - key: d
     command: "make; say done"
     description: "announce when a command ends"
   - key: v
-    mark: pin
+    mark: pushpin
     command: "say -v '?'"
     description: "list voices"
   - key: r

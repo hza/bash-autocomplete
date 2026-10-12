@@ -138,19 +138,19 @@ commands:
       validate: {description: "Check an attached ticket", args: file}
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "xcrun --show-sdk-path"
     description: "path of the default SDK"
   - key: f
-    mark: pin
+    mark: pushpin
     command: "xcrun -f clang"
     description: "which clang xcrun would run"
   - key: n
-    mark: pin
+    mark: pushpin
     command: "xcrun notarytool submit MyApp.zip -p notary --wait"
     description: "notarize with a saved profile and wait"
   - key: s
-    mark: pin
+    mark: pushpin
     command: "xcrun stapler staple MyApp.dmg"
     description: "attach the notarization ticket"
   - key: l

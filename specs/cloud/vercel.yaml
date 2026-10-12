@@ -130,15 +130,15 @@ commands:
   help: {description: "Show help for a command", args: "@subcommands"}
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "vercel deploy --prod"
     description: "ship to production"
   - key: d
-    mark: pin
+    mark: pushpin
     command: "vercel dev"
     description: "local dev server"
   - key: e
-    mark: pin
+    mark: pushpin
     command: "vercel env pull .env.local"
     description: "fetch dev env vars into a file"
   - key: l

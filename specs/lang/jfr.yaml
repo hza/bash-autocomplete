@@ -66,15 +66,15 @@ snippets:
   - key: s
     command: "jfr summary recording.jfr"
     description: "duration, JVM and event counts"
-    mark: pin
+    mark: pushpin
   - key: h
     command: "jfr view hot-methods recording.jfr"
     description: "methods where the CPU time goes"
-    mark: pin
+    mark: pushpin
   - key: g
     command: "jfr view gc-pauses recording.jfr"
     description: "garbage collection pause times"
-    mark: pin
+    mark: pushpin
   - key: a
     command: "jfr view allocation-by-class recording.jfr"
     description: "which classes allocate the most memory"
@@ -87,7 +87,7 @@ snippets:
   - key: j
     command: "jfr print --json --events jdk.GarbageCollection recording.jfr > gc.json"
     description: "GC events as JSON for scripts"
-    mark: pin
+    mark: pushpin
   - key: p
     command: "jfr configure method-profiling=max gc=detailed --output profile.jfc"
     description: "settings file for -XX:StartFlightRecording:settings=profile.jfc"

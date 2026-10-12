@@ -70,22 +70,22 @@ snippets:
   - key: a
     command: "ps aux"
     description: "every process with user, CPU, memory and full command"
-    mark: pin
+    mark: pushpin
   - key: c
     command: "ps -Ao pid,%cpu,time,comm -r | head -15"
     description: "top CPU users"
-    mark: pin
+    mark: pushpin
   - key: m
     command: "ps -Ao pid,%mem,rss,comm -m | head -15"
     description: "top memory users (rss in KB)"
-    mark: pin
+    mark: pushpin
   - key: u
     command: "ps -U \"$USER\" -o pid,etime,command"
     description: "my processes with elapsed time"
   - key: j
     command: "ps -Ao pid,etime,command | grep '[j]ava'"
     description: "find Java processes (the [j] hides the grep itself)"
-    mark: pin
+    mark: pushpin
   - key: t
     command: "ps -Ao pid,ppid,user,comm"
     description: "parent PIDs, to trace who started what"

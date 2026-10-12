@@ -29,18 +29,18 @@ snippets:
     command: "duti -s com.microsoft.VSCode public.plain-text all"
     description: "open plain text files with VS Code"
   - key: m
-    mark: pin
+    mark: pushpin
     command: "duti -s com.microsoft.VSCode net.daringfireball.markdown all"
     description: "open .md files with VS Code (use 📎 mdls to get the UTI)"
   - key: e
     command: "duti -s com.apple.mail mailto"
     description: "handle mailto: links with Mail"
   - key: x
-    mark: pin
+    mark: pushpin
     command: "duti -x md"
     description: "show which app opens .md files"
   - key: d
-    mark: pin
+    mark: pushpin
     command: "duti -d com.adobe.pdf"
     description: "print the default app for PDFs"
   - key: l

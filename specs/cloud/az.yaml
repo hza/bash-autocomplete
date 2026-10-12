@@ -160,7 +160,7 @@ commands:
   config: {description: "Manage Azure CLI configuration"}
 snippets:
   - key: s
-    mark: pin
+    mark: pushpin
     command: "az account show -o table"
     description: "which subscription am I using"
   - key: a
@@ -170,18 +170,18 @@ snippets:
     command: "az account set --subscription MySubscription"
     description: "switch the active subscription"
   - key: g
-    mark: pin
+    mark: pushpin
     command: "az group list -o table"
     description: "resource groups in the subscription"
   - key: r
     command: "az resource list -g mygroup -o table"
     description: "everything inside one resource group"
   - key: v
-    mark: pin
+    mark: pushpin
     command: "az vm list -d --query '[].{name:name, state:powerState, ip:publicIps}' -o table"
     description: "VMs with power state and public IP"
   - key: k
-    mark: pin
+    mark: pushpin
     command: "az aks get-credentials -g mygroup -n mycluster"
     description: "merge an AKS cluster into ~/.kube/config"
   - key: c

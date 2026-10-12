@@ -61,15 +61,15 @@ args:
   exec: "printf '%s\\n' host net port portrange src dst tcp udp icmp icmp6 arp ip ip6 ether vlan and or not less greater"
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "tcpdump -i any -n port 443"
     description: "HTTPS traffic on all interfaces"
   - key: h
-    mark: pin
+    mark: pushpin
     command: "tcpdump -i en0 -n host 192.168.1.10"
     description: "everything to/from one host"
   - key: w
-    mark: pin
+    mark: pushpin
     command: "tcpdump -i en0 -n -w capture.pcap"
     description: "save to a file for Wireshark"
   - key: r

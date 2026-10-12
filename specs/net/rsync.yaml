@@ -133,18 +133,18 @@ flags:
 args: [file, {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null", suffix: ":", nospace: true}]
 snippets:
   - key: c
-    mark: pin
+    mark: pushpin
     command: "rsync -avh src/ dest/"
     description: "copy a tree locally (trailing / = contents)"
   - key: u
-    mark: pin
+    mark: pushpin
     command: "rsync -avzP ./site/ user@host:/var/www/site/"
     description: "upload with progress, resumable"
   - key: d
     command: "rsync -avzP user@host:/var/log/app/ ./logs/"
     description: "download from a remote host"
   - key: m
-    mark: pin
+    mark: pushpin
     command: "rsync -avh --delete src/ backup/"
     description: "mirror: also delete what's gone from src"
   - key: n

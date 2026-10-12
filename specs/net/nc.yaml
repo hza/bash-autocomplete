@@ -37,14 +37,14 @@ flags:
 args: "@hosts"
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "nc -vz example.org 443"
     description: "is this TCP port open?"
   - key: r
     command: "nc -vz example.org 20-25"
     description: "scan a port range"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "nc -l 9000"
     description: "listen on port 9000, print what arrives"
   - key: k
@@ -57,7 +57,7 @@ snippets:
     command: "nc -w 3 host 9000 < file.bin"
     description: "send a file to a listener"
   - key: h
-    mark: pin
+    mark: pushpin
     command: "printf 'GET / HTTP/1.0\\r\\nHost: example.org\\r\\n\\r\\n' | nc example.org 80"
     description: "raw HTTP request by hand"
   - key: u

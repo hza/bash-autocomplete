@@ -31,6 +31,20 @@ int snippet_key(const ynode *k) {
     return k && k->type == Y_STR && k->str[0] && !k->str[1] && (isdigit((unsigned char)k->str[0]) || islower((unsigned char)k->str[0]));
 }
 
+/* A snippet's `mark` icon: "pushpin" (📌) or one emoji of a single 4-byte
+ * code point in U+1F300..U+1FAFF (no U+FE0F / ZWJ sequences, whose drawn
+ * width varies by terminal; these are 2 columns, as dwidth counts). NULL if
+ * invalid. */
+const char *snippet_mark(const char *m) {
+    const unsigned char *u = (const unsigned char *)m;
+    unsigned cp;
+    if (!strcmp(m, "pushpin")) return "\xf0\x9f\x93\x8c";
+    if (strlen(m) != 4 || (u[0] & 0xF8) != 0xF0 || (u[1] & 0xC0) != 0x80 ||
+        (u[2] & 0xC0) != 0x80 || (u[3] & 0xC0) != 0x80) return NULL;
+    cp = (u[0] & 7u) << 18 | (u[1] & 63u) << 12 | (u[2] & 63u) << 6 | (u[3] & 63u);
+    return cp >= 0x1F300 && cp <= 0x1FAFF ? m : NULL;
+}
+
 int check_groups(const ynode *n, const ynode *root, const char *path) {
     const ynode *g, *c;
     const char *p;
@@ -56,8 +70,8 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
                 fprintf(stderr, "%s: duplicate snippet key %s\n", path, k->str);
                 bad = 1;
             }
-            if ((k = yaml_get(g, "mark")) && (k->type != Y_STR || strcmp(k->str, "pin"))) {
-                fprintf(stderr, "%s: snippet \"%s\": mark must be pin\n", path,
+            if ((k = yaml_get(g, "mark")) && (k->type != Y_STR || !snippet_mark(k->str))) {
+                fprintf(stderr, "%s: snippet \"%s\": mark must be pushpin or one emoji (U+1F300..U+1FAFF, no U+FE0F)\n", path,
                         yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
                 bad = 1;
             }
@@ -257,7 +271,7 @@ static int exec_cached(const char *ex, long ttl, char *shell, size_t size) {
 
 static int is_true(const ynode *n) { return n && n->type == Y_BOOL && n->b; }
 
-/* `snippets: true` on an exec value: its "key<TAB>value<TAB>desc[<TAB>pin]" lines
+/* `snippets: true` on an exec value: its "key<TAB>value<TAB>desc[<TAB>mark]" lines
  * become snippets (add_snippets with an empty g_snippets_name: "@key" is
  * replaced by the whole value, single-quoted). */
 static void exec_snippets(const char *shell) {
@@ -267,7 +281,7 @@ static void exec_snippets(const char *shell) {
     if (!f) return;
     if (!arr) arr = yaml_new(NULL, Y_ARR, NULL, NULL);
     while (fgets(line, sizeof line, f)) {
-        char *val, *desc, *pin = NULL, *nl = strchr(line, '\n');
+        char *val, *desc, *mark = NULL, *nl = strchr(line, '\n');
         ynode *e;
         if (nl) *nl = 0;
         if (!(val = strchr(line, '\t'))) continue;
@@ -276,9 +290,9 @@ static void exec_snippets(const char *shell) {
         e = yaml_new(arr, Y_OBJ, NULL, NULL);
         yaml_new(e, Y_STR, "key", line);
         yaml_new(e, Y_STR, "command", val);
-        if (desc && (pin = strchr(desc, '\t'))) *pin++ = 0;
+        if (desc && (mark = strchr(desc, '\t'))) *mark++ = 0;
         if (desc && *desc) yaml_new(e, Y_STR, "description", desc);
-        if (pin && !strcmp(pin, "pin")) yaml_new(e, Y_STR, "mark", "pin");
+        if (mark && *mark) yaml_new(e, Y_STR, "mark", mark);
     }
     pclose(f);
     g_snippets = arr;

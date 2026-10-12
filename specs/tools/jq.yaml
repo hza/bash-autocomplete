@@ -46,19 +46,19 @@ flags:
 args: file
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "jq . data.json"
     description: "pretty-print"
   - key: f
-    mark: pin
+    mark: pushpin
     command: "jq -r '.name' data.json"
     description: "one field as raw text (no quotes)"
   - key: a
-    mark: pin
+    mark: pushpin
     command: "jq '.items[] | {id, name}' data.json"
     description: "pick fields from every array element"
   - key: s
-    mark: pin
+    mark: pushpin
     command: "jq '.items[] | select(.status == \"active\")' data.json"
     description: "filter array elements"
   - key: l

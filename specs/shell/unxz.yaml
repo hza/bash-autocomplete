@@ -167,15 +167,15 @@ flags:
 args: {file: "*.xz *.txz *.lzma"}
 snippets:
   - key: 'u'
-    mark: pin
+    mark: pushpin
     command: 'unxz big.log.xz'
     description: 'restore big.log, removing the .xz'
   - key: 'k'
-    mark: pin
+    mark: pushpin
     command: 'unxz -k big.log.xz'
     description: 'keep the .xz'
   - key: 'c'
-    mark: pin
+    mark: pushpin
     command: 'unxz -c big.log.xz | less'
     description: 'read without unpacking (or xzless)'
   - key: 't'

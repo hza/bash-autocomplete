@@ -203,19 +203,19 @@ commands:
   completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
 snippets:
   - key: d
-    mark: pin
+    mark: pushpin
     command: "flyctl deploy --remote-only"
     description: "build remotely and deploy"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "flyctl logs -a my-app"
     description: "tail logs of an app"
   - key: s
-    mark: pin
+    mark: pushpin
     command: "flyctl ssh console -a my-app -s"
     description: "shell on a chosen machine"
   - key: t
-    mark: pin
+    mark: pushpin
     command: "flyctl status -a my-app"
     description: "app and machine status"
   - key: e

@@ -9,11 +9,11 @@ flags:
     description: "Data type to look for first"
 snippets:
   - key: f
-    mark: pin
+    mark: pushpin
     command: "pbpaste > notes.txt"
     description: "save the clipboard to a file"
   - key: j
-    mark: pin
+    mark: pushpin
     command: "pbpaste | jq ."
     description: "pretty-print copied JSON"
   - key: d

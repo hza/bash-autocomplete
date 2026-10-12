@@ -21,18 +21,18 @@ args:
   - exec: "printf '%s\\t%s\\n' +short 'Terse answer only' +noall 'Clear all display flags' +answer 'Show the answer section' +trace 'Trace delegation from the root' +tcp 'Use TCP' +dnssec 'Request DNSSEC records' +multiline 'Verbose multi-line records' +norecurse 'No recursion desired' +nocmd 'No initial comment line' +nocomments 'No comment lines' +nostats 'No statistics' +noquestion 'No question section' +authority 'Show the authority section' +additional 'Show the additional section' +nssearch 'SOA from every authoritative server' +search 'Use the resolv.conf search list' +time= 'Timeout in seconds' +tries= 'Number of tries' +retry= 'Number of retries' +bufsize= 'EDNS buffer size' +subnet= 'EDNS client subnet' +nsid 'Request the name server ID' +ttlid 'Show TTLs' +identify 'Show the answering server (with +short)' +cd 'Set the CD (checking disabled) bit'"
 snippets:
   - key: s
-    mark: pin
+    mark: pushpin
     command: "dig +short example.org"
     description: "just the addresses"
   - key: m
-    mark: pin
+    mark: pushpin
     command: "dig +short MX example.org"
     description: "mail servers"
   - key: a
     command: "dig +noall +answer example.org ANY"
     description: "answer section only, all types"
   - key: x
-    mark: pin
+    mark: pushpin
     command: "dig -x 8.8.8.8 +short"
     description: "reverse lookup of an IP"
   - key: r

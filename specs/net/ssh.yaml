@@ -36,14 +36,14 @@ flags:
 args: "@hosts"
 snippets:
   - key: l
-    mark: pin
+    mark: pushpin
     command: "ssh -L 8080:localhost:80 myhost"
     description: "local forward: localhost:8080 reaches port 80 on myhost"
   - key: r
     command: "ssh -R 9000:localhost:3000 myhost"
     description: "remote forward: myhost:9000 reaches your port 3000"
   - key: j
-    mark: pin
+    mark: pushpin
     command: "ssh -J bastion myhost"
     description: "connect through a jump host"
   - key: d
@@ -53,7 +53,7 @@ snippets:
     command: "ssh -N -f -L 5432:db.internal:5432 myhost"
     description: "tunnel to a host behind myhost, in the background"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "ssh myhost 'df -h; uptime'"
     description: "run commands and return"
   - key: t

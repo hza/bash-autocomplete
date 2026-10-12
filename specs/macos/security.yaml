@@ -476,15 +476,15 @@ commands:
     args: any
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "security find-generic-password -s my-service -a \"$USER\" -w"
     description: "read a stored password (stdout, scripts)"
   - key: a
-    mark: pin
+    mark: pushpin
     command: "security add-generic-password -s my-service -a \"$USER\" -U -w"
     description: "store/update a password (prompted, not in history)"
   - key: i
-    mark: pin
+    mark: pushpin
     command: "security find-identity -v -p codesigning"
     description: "signing identities usable by codesign"
   - key: d
@@ -497,7 +497,7 @@ snippets:
     command: "security find-certificate -a -p /Library/Keychains/System.keychain > system-certs.pem"
     description: "export System keychain certificates as PEM"
   - key: t
-    mark: pin
+    mark: pushpin
     command: "sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ca.crt"
     description: "trust a root CA system-wide"
   - key: v

@@ -84,11 +84,11 @@ flags:
 args: file
 snippets:
   - key: 'f'
-    mark: pin
+    mark: pushpin
     command: 'gzip big.log'
     description: 'replace big.log with big.log.gz'
   - key: 'k'
-    mark: pin
+    mark: pushpin
     command: 'gzip -k big.log'
     description: 'keep the original'
   - key: 'c'
@@ -101,7 +101,7 @@ snippets:
     command: 'gzip -r logs/'
     description: 'every file in a folder, each on its own (not one archive: use tar)'
   - key: 'd'
-    mark: pin
+    mark: pushpin
     command: 'gzip -d big.log.gz'
     description: 'decompress (same as gunzip)'
   - key: 'l'

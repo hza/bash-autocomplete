@@ -6,11 +6,11 @@ flags:
     description: "Pasteboard to use"
 snippets:
   - key: f
-    mark: pin
+    mark: pushpin
     command: "pbcopy < ~/.ssh/id_ed25519.pub"
     description: "copy a file's contents"
   - key: o
-    mark: pin
+    mark: pushpin
     command: "git rev-parse HEAD | pbcopy"
     description: "copy a command's output"
   - key: n

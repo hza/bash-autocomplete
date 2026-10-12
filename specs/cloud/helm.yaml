@@ -518,15 +518,15 @@ commands:
       --help: {description: "Show help"}
 snippets:
   - key: u
-    mark: pin
+    mark: pushpin
     command: "helm upgrade --install my-release ./chart -n my-ns --create-namespace -f values.yaml"
     description: "install or upgrade in one step"
   - key: t
-    mark: pin
+    mark: pushpin
     command: "helm template my-release ./chart -f values.yaml | less"
     description: "render manifests without touching the cluster"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "helm list -A"
     description: "releases in every namespace"
   - key: v

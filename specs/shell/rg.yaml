@@ -144,19 +144,19 @@ flags:
   --version: {description: "Print ripgrep's version"}
 snippets:
   - key: t
-    mark: pin
+    mark: pushpin
     command: "rg -t py 'def main'"
     description: "search only one file type"
   - key: g
-    mark: pin
+    mark: pushpin
     command: "rg -g '!*.min.js' fetch"
     description: "exclude files by glob"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "rg -l TODO"
     description: "names of files with a match"
   - key: h
-    mark: pin
+    mark: pushpin
     command: "rg -uu --hidden secret"
     description: "include hidden and ignored files"
   - key: w

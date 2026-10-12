@@ -411,12 +411,13 @@ static void group_flags(void) {
 }
 
 /* On an empty word or "@", the spec's "snippets" ({key, command,
- * description?, mark?}) are listed as display-only "📌 @key" (mark: pin,
- * the most used ones) or "🔥 @key" entries described by
- * "command   📚 description". The two icons differ in the first byte, so
- * bash lists instead of inserting a common prefix (verified in pty); when
- * all entries are of one kind, one gets the other icon (the smallest key
- * is pinned, or the largest unpinned). 🔥 (U+1F525) sorts after 📌 (U+1F4CC).
+ * description?, mark?}) are listed as display-only "<icon> @key" entries
+ * described by "command   📚 description"; icon = the mark (snippet_mark:
+ * "pushpin" = 📌, the most used ones, or an emoji), else 🔥. Differing icons
+ * make bash list instead of inserting a common prefix (verified in pty);
+ * when all entries share one icon, one gets another (the smallest key 📌,
+ * or the largest 🔥 if all are 📌). bash sorts the list, so icons order by
+ * code point: 📌 (U+1F4CC) before 🔥 (U+1F525).
  * "@key" typed in full is replaced by the snippet's command after
  * "<name> "; bash keeps a leading "@" in the replaced text (readline
  * special prefix, verified in pty). Snippets not starting with "<name> "
@@ -427,15 +428,20 @@ static void group_flags(void) {
 const ynode *g_snippets;
 const char *g_snippets_name;
 
-static int pinned(const ynode *e) {
+#define PUSHPIN "\xf0\x9f\x93\x8c"
+#define FIRE "\xf0\x9f\x94\xa5"
+
+static const char *icon(const ynode *e) {
     const ynode *m = yaml_get(e, "mark");
-    return m && m->type == Y_STR && !strcmp(m->str, "pin");
+    const char *i = m && m->type == Y_STR ? snippet_mark(m->str) : NULL;
+    return i ? i : FIRE;
 }
 
 static void add_snippets(void) {
     const ynode *e;
-    int want, npin = 0, nall = 0;
+    int want, same = 1;
     char first = 0, last = 0;
+    const char *one = NULL;
     size_t nl;
     char name[32], desc[1024];
     if (!g_snippets || g_snippets->type != Y_ARR) return;
@@ -448,15 +454,15 @@ static void add_snippets(void) {
     for (e = g_snippets->child; e; e = e->next) {
         const ynode *k = yaml_get(e, "key");
         if (!snippet_key(k)) continue;
-        nall++;
-        npin += pinned(e);
+        if (!one) one = icon(e);
+        else if (strcmp(one, icon(e))) same = 0;
         if (!first || k->str[0] < first) first = k->str[0];
         if (k->str[0] > last) last = k->str[0];
     }
     for (e = g_snippets->child; e; e = e->next) {
         const ynode *cmd = yaml_get(e, "command"), *k = yaml_get(e, "key");
         const char *d = spec_desc(e);
-        int pin;
+        const char *ic;
         if (!cmd || cmd->type != Y_STR || !snippet_key(k)) continue;
         if (want) {
             if (k->str[0] != g_cur[1]) continue;
@@ -479,8 +485,10 @@ static void add_snippets(void) {
             }
             break; /* not substitutable: list nothing */
         }
-        pin = !npin ? k->str[0] == first : npin == nall ? k->str[0] != last : pinned(e);
-        snprintf(name, sizeof name, "%s\xc2\xa0@%s", pin ? "📌" : "🔥", k->str);
+        ic = icon(e);
+        if (same && !strcmp(ic, PUSHPIN)) ic = k->str[0] == last ? FIRE : ic;
+        else if (same && k->str[0] == first) ic = PUSHPIN;
+        snprintf(name, sizeof name, "%s\xc2\xa0@%s", ic, k->str);
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);
     }

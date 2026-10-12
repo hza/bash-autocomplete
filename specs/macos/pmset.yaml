@@ -148,15 +148,15 @@ commands:
   spindown: {description: "Deprecated name of disksleep", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/pmset.sh\" minutes"}], args: "@subcommands"}
 snippets:
   - key: b
-    mark: pin
+    mark: pushpin
     command: "pmset -g batt"
     description: "battery charge and power source"
   - key: a
-    mark: pin
+    mark: pushpin
     command: "pmset -g assertions"
     description: "which processes keep the Mac or display awake"
   - key: g
-    mark: pin
+    mark: pushpin
     command: "pmset -g"
     description: "power settings currently in use"
   - key: l
@@ -178,6 +178,6 @@ snippets:
     command: "sudo pmset repeat cancel"
     description: "drop the repeating power-on/off schedule"
   - key: n
-    mark: pin
+    mark: pushpin
     command: "pmset displaysleepnow"
     description: "turn the display off right now"

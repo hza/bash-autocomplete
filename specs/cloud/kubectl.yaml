@@ -222,19 +222,19 @@ commands:
     args: "@subcommands"
 snippets:
   - key: p
-    mark: pin
+    mark: pushpin
     command: "kubectl get pods -A -o wide"
     description: "pods in every namespace with node and IP"
   - key: r
-    mark: pin
+    mark: pushpin
     command: "kubectl rollout restart deployment/my-app"
     description: "restart all pods of a deployment"
   - key: f
-    mark: pin
+    mark: pushpin
     command: "kubectl port-forward svc/my-service 8080:80"
     description: "localhost:8080 reaches the service's port 80"
   - key: l
-    mark: pin
+    mark: pushpin
     command: "kubectl logs -f deployment/my-app --since=10m"
     description: "follow logs of a deployment"
   - key: e

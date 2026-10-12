@@ -61,15 +61,15 @@ flags:
 args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
 snippets:
   - key: c
-    mark: pin
+    mark: pushpin
     command: "mysql -h 127.0.0.1 -P 3306 -u root -p mydb"
     description: "connect over TCP with password prompt"
   - key: f
-    mark: pin
+    mark: pushpin
     command: "mysql -u root -p mydb < script.sql"
     description: "run a SQL file"
   - key: e
-    mark: pin
+    mark: pushpin
     command: "mysql -u root -p -e 'SHOW TABLES' mydb"
     description: "run one statement and quit"
   - key: t

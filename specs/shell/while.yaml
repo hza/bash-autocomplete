@@ -2,18 +2,18 @@ description: "Repeat while a command succeeds (bash keyword)"
 args: "@command"
 snippets:
   - key: l
-    mark: pin
+    mark: pushpin
     command: 'while read -r h; do ssh -n "$h" uptime; done < hosts.txt'
     description: "each line of a file (-n: ssh must not eat stdin)"
   - key: o
-    mark: pin
+    mark: pushpin
     command: 'while read -r b; do git log -1 --format="$b  %cr" "$b"; done < <(git branch --format="%(refname:short)")'
     description: "each line of a command's output"
   - key: c
     command: 'while true; do clear; date; docker ps; sleep 2; done'
     description: "refresh a view every 2 s (Ctrl-C stops)"
   - key: w
-    mark: pin
+    mark: pushpin
     command: 'while pgrep -x make >/dev/null; do sleep 5; done; say "make finished"'
     description: "wait for a process to exit"
   - key: s

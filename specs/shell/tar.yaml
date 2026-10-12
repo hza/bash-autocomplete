@@ -284,15 +284,15 @@ flags:
 args: file
 snippets:
   - key: c
-    mark: pin
+    mark: pushpin
     command: "tar -czf backup.tar.gz project/"
     description: "create a gzip archive of a folder"
   - key: x
-    mark: pin
+    mark: pushpin
     command: "tar -xzf backup.tar.gz"
     description: "extract a gzip archive here (-x auto-detects compression too)"
   - key: t
-    mark: pin
+    mark: pushpin
     command: "tar -tzf backup.tar.gz"
     description: "list the contents without extracting"
   - key: d

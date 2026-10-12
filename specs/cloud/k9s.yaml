@@ -32,15 +32,15 @@ commands:
   completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
 snippets:
   - key: a
-    mark: pin
+    mark: pushpin
     command: "k9s -A"
     description: "every namespace"
   - key: n
-    mark: pin
+    mark: pushpin
     command: "k9s -n my-ns -c pods"
     description: "pods of one namespace"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "k9s --context my-ctx"
     description: "open another cluster"
   - key: r

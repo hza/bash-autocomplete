@@ -12,11 +12,11 @@ flags:
 args: {exec: "kubectl config get-contexts -o name 2>/dev/null; echo -"}
 snippets:
   - key: s
-    mark: pin
+    mark: pushpin
     command: "kubectx -"
     description: "back to the previous context"
   - key: c
-    mark: pin
+    mark: pushpin
     command: "kubectx -c"
     description: "print the active context"
   - key: r

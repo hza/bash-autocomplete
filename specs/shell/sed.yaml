@@ -16,22 +16,22 @@ flags:
   --debug: {description: "Annotate program execution"}
 snippets:
   - key: i
-    mark: pin
+    mark: pushpin
     command: "sed -i '' 's/foo/bar/g' file.txt"
     description: "replace everywhere in place, no backup"
   - key: b
     command: "sed -i .bak 's/foo/bar/g' file.txt"
     description: "replace in place, keep file.txt.bak"
   - key: s
-    mark: pin
+    mark: pushpin
     command: "sed 's/foo/bar/g' file.txt"
     description: "replace all, print result"
   - key: r
-    mark: pin
+    mark: pushpin
     command: "sed -n '10,20p' file.txt"
     description: "print a line range"
   - key: d
-    mark: pin
+    mark: pushpin
     command: "sed '/^[[:space:]]*$/d' file.txt"
     description: "delete blank lines"
   - key: c
