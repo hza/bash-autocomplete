@@ -5,11 +5,11 @@ snippets:
     command: 'case "$(git branch --show-current)" in main|master) echo "on main, not pushing";; *) git push;; esac'
     description: "guard a command by branch"
   - key: o
-    pin: true
+    mark: pin
     command: 'case "$(uname -s)" in Darwin) open .;; Linux) xdg-open .;; esac'
     description: "per-OS command"
   - key: p
-    pin: true
+    mark: pin
     command: 'case "$PWD" in */frontend*) npm test;; *) make test;; esac'
     description: "per-project command"
   - key: u
@@ -22,7 +22,7 @@ snippets:
     command: 'case "$f" in *.tar.gz|*.tgz) tar xzf "$f";; *.tar.bz2) tar xjf "$f";; *.zip) unzip "$f";; *.gz) gunzip "$f";; esac'
     description: "extract any archive"
   - key: y
-    pin: true
+    mark: pin
     command: 'read -p "Continue? [y/N] " a; case "$a" in [yY]*) echo go;; *) echo stop;; esac'
     description: "yes/no prompt"
   - key: a

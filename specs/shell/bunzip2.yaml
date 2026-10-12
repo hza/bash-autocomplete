@@ -30,15 +30,15 @@ flags:
 args: {file: "*.bz2 *.tbz *.tbz2"}
 snippets:
   - key: 'u'
-    pin: true
+    mark: pin
     command: 'bunzip2 big.log.bz2'
     description: 'restore big.log, removing the .bz2'
   - key: 'k'
-    pin: true
+    mark: pin
     command: 'bunzip2 -k big.log.bz2'
     description: 'keep the .bz2'
   - key: 'c'
-    pin: true
+    mark: pin
     command: 'bunzip2 -c big.log.bz2 | less'
     description: 'read without unpacking (or bzless)'
   - key: 't'

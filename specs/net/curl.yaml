@@ -345,22 +345,22 @@ snippets:
     command: "curl -sS https://api.github.com/zen"
     description: "quiet GET (s), errors still shown (S)"
   - key: l
-    pin: true
+    mark: pin
     command: "curl -L -o page.html https://example.org"
     description: "follow redirects, save to file"
   - key: i
-    pin: true
+    mark: pin
     command: "curl -I https://example.org"
     description: "headers only (HEAD)"
   - key: f
     command: "curl -fsSL https://example.org/setup.sh -o setup.sh"
     description: "fail on HTTP errors (-f -S)"
   - key: j
-    pin: true
+    mark: pin
     command: "curl --json '{\"id\":1}' https://httpbin.org/post"
     description: "POST JSON (sets Content-Type and Accept)"
   - key: d
-    pin: true
+    mark: pin
     command: "curl -d 'name=ann&age=30' https://httpbin.org/post"
     description: "POST form fields (-d implies POST, urlencoded)"
   - key: x
@@ -370,7 +370,7 @@ snippets:
     command: "curl -F 'file=@photo.jpg' https://httpbin.org/post"
     description: "upload a file (multipart)"
   - key: h
-    pin: true
+    mark: pin
     command: "curl -H 'Authorization: Bearer $TOKEN' https://api.example.org/me"
     description: "send a header"
   - key: r
@@ -389,7 +389,7 @@ snippets:
     command: "curl -x http://proxy.local:3128 https://example.org"
     description: "go through a proxy"
   - key: v
-    pin: true
+    mark: pin
     command: "curl -v https://example.org"
     description: "verbose: show request, response headers, TLS"
   - key: k

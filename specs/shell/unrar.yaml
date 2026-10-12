@@ -30,22 +30,22 @@ commands:
   p: {description: "Print file to stdout", args: {file: "*.rar *.r00"}}
 snippets:
   - key: x
-    pin: true
+    mark: pin
     command: "unrar x archive.rar"
     description: "extract with folders"
   - key: d
-    pin: true
+    mark: pin
     command: "unrar x archive.rar out/"
     description: "extract into a folder (trailing / required)"
   - key: l
-    pin: true
+    mark: pin
     command: "unrar l archive.rar"
     description: "list contents"
   - key: e
     command: "unrar e archive.rar"
     description: "extract all files here, dropping folders"
   - key: m
-    pin: true
+    mark: pin
     command: "unrar x movie.part1.rar"
     description: "multi-part: start from the first part, the rest follow"
   - key: o

@@ -91,19 +91,19 @@ flags:
 args: file
 snippets:
   - key: l
-    pin: true
+    mark: pin
     command: "unzip -l archive.zip"
     description: "list contents without extracting"
   - key: d
-    pin: true
+    mark: pin
     command: "unzip archive.zip -d out/"
     description: "extract into a folder (created if missing)"
   - key: x
-    pin: true
+    mark: pin
     command: "unzip archive.zip -x '__MACOSX/*' '*.DS_Store'"
     description: "extract skipping macOS junk"
   - key: o
-    pin: true
+    mark: pin
     command: "unzip -o archive.zip"
     description: "overwrite existing files without asking"
   - key: n

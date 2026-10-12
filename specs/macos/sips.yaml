@@ -81,15 +81,15 @@ flags:
 args: file
 snippets:
   - key: z
-    pin: true
+    mark: pin
     command: "sips -Z 1600 photo.jpg --out small.jpg"
     description: "fit within 1600 px, keeping the aspect ratio"
   - key: c
-    pin: true
+    mark: pin
     command: "sips -s format jpeg photo.heic --out photo.jpg"
     description: "convert HEIC to JPEG (png, tiff, heic, …)"
   - key: g
-    pin: true
+    mark: pin
     command: "sips -g pixelWidth -g pixelHeight photo.jpg"
     description: "image size in pixels"
   - key: r

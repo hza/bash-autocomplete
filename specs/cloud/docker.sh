@@ -1,7 +1,7 @@
 #!/bin/sh
 # docker value suggestions: sh docker.sh log-level|pull|filter|filter-label|container|image|network|volume|ps|images|stats|networks|volumes|ps-filter|compose-ps
 # Prints "key<TAB>value<TAB>description<TAB>[pin]" lines (spec: snippets: true, typed as @key;
-# pin = most used, listed with 📌).
+# pin = mark: pin, most used, listed with 📌).
 row() { printf '%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4"; }
 inspect() {
     row j json "whole object as JSON"

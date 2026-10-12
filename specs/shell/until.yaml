@@ -2,18 +2,18 @@ description: "Repeat until a command succeeds (bash keyword)"
 args: "@command"
 snippets:
   - key: r
-    pin: true
+    mark: pin
     command: 'until git push; do sleep 5; done'
     description: "retry a flaky command"
   - key: n
-    pin: true
+    mark: pin
     command: 'until ping -c1 -t1 example.com >/dev/null; do sleep 2; done; say "back online"'
     description: "wait for the network or a host"
   - key: s
     command: 'until ssh -o ConnectTimeout=3 host true; do sleep 5; done; ssh host'
     description: "reconnect once a rebooted server is back"
   - key: h
-    pin: true
+    mark: pin
     command: 'until curl -sf -o /dev/null http://localhost:8080/health; do sleep 1; done; say ready'
     description: "wait for a service health check"
   - key: e

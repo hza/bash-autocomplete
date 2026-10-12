@@ -61,36 +61,36 @@ flags:
   -f: {value: dir, description: "Add a starting path (allows names starting with -)"}
 snippets:
   - key: n
-    pin: true
+    mark: pin
     command: "find . -name '*.log'"
     description: "files by name pattern"
   - key: i
-    pin: true
+    mark: pin
     command: "find . -iname '*readme*'"
     description: "name match ignoring case"
   - key: p
     command: "find . -type d -name node_modules -prune"
     description: "node_modules dirs without descending into them"
   - key: m
-    pin: true
+    mark: pin
     command: "find . -type f -mmin -30"
     description: "files modified in the last 30 minutes"
   - key: o
     command: "find . -type f -mtime +90"
     description: "files not modified for 90 days"
   - key: s
-    pin: true
+    mark: pin
     command: "find . -type f -size +100M"
     description: "files larger than 100 MB"
   - key: e
-    pin: true
+    mark: pin
     command: "find . -empty -type d -delete"
     description: "remove empty directories"
   - key: d
     command: "find . -name .DS_Store -delete"
     description: "remove Finder metadata files"
   - key: t
-    pin: true
+    mark: pin
     command: "find . -type f -name '*.java' -exec grep -l TODO {} +"
     description: "Java files containing TODO"
   - key: x

@@ -56,6 +56,11 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
                 fprintf(stderr, "%s: duplicate snippet key %s\n", path, k->str);
                 bad = 1;
             }
+            if ((k = yaml_get(g, "mark")) && (k->type != Y_STR || strcmp(k->str, "pin"))) {
+                fprintf(stderr, "%s: snippet \"%s\": mark must be pin\n", path,
+                        yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
+                bad = 1;
+            }
         }
     }
     for (c = yaml_get(n, "commands") ? yaml_get(n, "commands")->child : NULL; c; c = c->next) {
@@ -273,7 +278,7 @@ static void exec_snippets(const char *shell) {
         yaml_new(e, Y_STR, "command", val);
         if (desc && (pin = strchr(desc, '\t'))) *pin++ = 0;
         if (desc && *desc) yaml_new(e, Y_STR, "description", desc);
-        if (pin && !strcmp(pin, "pin")) yaml_new(e, Y_BOOL, "pin", NULL)->b = 1;
+        if (pin && !strcmp(pin, "pin")) yaml_new(e, Y_STR, "mark", "pin");
     }
     pclose(f);
     g_snippets = arr;

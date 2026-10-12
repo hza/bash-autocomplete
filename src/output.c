@@ -411,7 +411,7 @@ static void group_flags(void) {
 }
 
 /* On an empty word or "@", the spec's "snippets" ({key, command,
- * description?, pin?}) are listed as display-only "📌 @key" (pin: true,
+ * description?, mark?}) are listed as display-only "📌 @key" (mark: pin,
  * the most used ones) or "🔥 @key" entries described by
  * "command   📚 description". The two icons differ in the first byte, so
  * bash lists instead of inserting a common prefix (verified in pty); when
@@ -428,8 +428,8 @@ const ynode *g_snippets;
 const char *g_snippets_name;
 
 static int pinned(const ynode *e) {
-    const ynode *p = yaml_get(e, "pin");
-    return p && p->type == Y_BOOL && p->b;
+    const ynode *m = yaml_get(e, "mark");
+    return m && m->type == Y_STR && !strcmp(m->str, "pin");
 }
 
 static void add_snippets(void) {

@@ -84,15 +84,15 @@ flags:
 args: {file: "*.gz *.tgz *.z"}
 snippets:
   - key: 'u'
-    pin: true
+    mark: pin
     command: 'gunzip big.log.gz'
     description: 'restore big.log, removing the .gz'
   - key: 'k'
-    pin: true
+    mark: pin
     command: 'gunzip -k big.log.gz'
     description: 'keep the .gz'
   - key: 'c'
-    pin: true
+    mark: pin
     command: 'gunzip -c big.log.gz | less'
     description: 'read without unpacking (or zless)'
   - key: 'g'

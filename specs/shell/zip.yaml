@@ -309,19 +309,19 @@ flags:
 args: file
 snippets:
   - key: r
-    pin: true
+    mark: pin
     command: "zip -r archive.zip folder/"
     description: "zip a folder (without -r only the empty folder goes in)"
   - key: m
-    pin: true
+    mark: pin
     command: "zip -r -X clean.zip folder/ -x '*.DS_Store' '*/__MACOSX/*'"
     description: "no macOS junk: .DS_Store, extended attributes"
   - key: x
-    pin: true
+    mark: pin
     command: "zip -r src.zip project/ -x '*/node_modules/*' '*/.git/*'"
     description: "exclude folders (patterns match the stored path)"
   - key: e
-    pin: true
+    mark: pin
     command: "zip -er secret.zip folder/"
     description: "password-protect (prompted, not shown in history)"
   - key: c
