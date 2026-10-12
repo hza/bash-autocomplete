@@ -42,10 +42,10 @@ autocomplete works with the bash already on your Mac:
 
 ## Features
 
-- Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**,
+- Bundled completions for **docker**, **git**, **kubectl**, **make**, **mvn**, **java**, **jfr**,
   **python**, **node**, **npx**, **bun**, **bunx**, **npm**, **yarn**, **pnpm**, **pip**, **go**,
   **cargo**, **gradle**, **brew**, **gh**, **ssh**, **scp**, **terraform**, **helm**, **aws**,
-  **tmux**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **code** (VS Code),
+  **tmux**, **ps**, **kill**, **pkill**, **killall**, **lsof**, **find**, **grep**, **help** (bash builtins), **man** (page names from `manpath`), **jq**, **curl**, **wget**, **code** (VS Code),
   macOS **open**, **launchctl**, **defaults**, **diskutil**, **say**, **caffeinate**, **pbcopy**,
   **pbpaste**, **sips**, **screencapture**, **duti**, **dutix**, **mdls**, and `autocomplete` itself.
 - Wrapper commands **sudo**, **env**, **time**, **xargs** complete the command after them with
@@ -81,7 +81,7 @@ autocomplete works with the bash already on your Mac:
   (`git stash <TAB>` → `pop  -- Apply a stash and remove it`).
 - Usage examples for commands with hundreds of flags: `curl <TAB>` and `wget <TAB>` list
   common recipes (`07  @7  -- curl -X DELETE https://httpbin.org/delete   📚 any other
-  method: PUT, PATCH, DELETE`) instead of nothing, and `curl @7<TAB>` inserts it; `for`, `while`, `until`, `case` and `if <TAB>` show practical one-liners; `if git <TAB>` completes git, and so do `then`/`do`/`else`/`elif git <TAB>`.
+  method: PUT, PATCH, DELETE`) instead of nothing, and `curl @7<TAB>` inserts it; `ps @<TAB>` and `jfr @<TAB>` list recipes too (top CPU/memory, hot methods, GC pauses); `for`, `while`, `until`, `case` and `if <TAB>` show practical one-liners; `if git <TAB>` completes git, and so do `then`/`do`/`else`/`elif git <TAB>`.
 - Handles `--flag=value`, `image:tag`, quoted words and file names with spaces.
 - Add a command by writing a small YAML file, with no rebuild
   ([how](docs/adding-commands.md)).
@@ -94,10 +94,33 @@ autocomplete works with the bash already on your Mac:
 
 ## Requirements
 
-- macOS with the Xcode Command Line Tools (`xcode-select --install`) for `cc` and `make`.
+- To build from source: the Xcode Command Line Tools (`xcode-select --install`) on macOS, or gcc/clang and make on Linux.
 - bash 3.2 (the macOS `/bin/bash`) or any newer bash.
 
 ## Installation
+
+Prebuilt binaries are published for macOS (Apple silicon and Intel) and Linux (x86_64, arm64).
+
+**Homebrew** (macOS, Linux):
+
+```sh
+brew install hza/tap/autocomplete
+echo 'eval "$(autocomplete bash)"' >> ~/.bashrc
+```
+
+**Install script** (no sudo; installs to `~/.local` and adds the `eval` line to `~/.bashrc`):
+
+```sh
+curl -fsSL https://github.com/hza/bash-autocomplete/releases/latest/download/install.sh | sh
+# or
+wget -qO- https://github.com/hza/bash-autocomplete/releases/latest/download/install.sh | sh
+```
+
+Set `PREFIX=/usr/local`, `PROFILE=~/.bash_profile` or `VERSION=v0.1.0` for `sh` to change the
+defaults (e.g. `... | PREFIX=$HOME/bin sh`). The script verifies the download's SHA-256
+checksum. Uninstall with `... | sh -s -- --uninstall` (same `PREFIX`/`PROFILE`).
+
+### From source
 
 ```sh
 git clone https://github.com/hza/bash-autocomplete.git autocomplete
