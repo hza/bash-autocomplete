@@ -34,3 +34,43 @@ flags:
   -w: {value: any, description: "Tunnel device forwarding"}
   -Y: {description: "Enable trusted X11 forwarding"}
 args: "@hosts"
+snippets:
+  - key: l
+    pin: true
+    command: "ssh -L 8080:localhost:80 myhost"
+    description: "local forward: localhost:8080 reaches port 80 on myhost"
+  - key: r
+    command: "ssh -R 9000:localhost:3000 myhost"
+    description: "remote forward: myhost:9000 reaches your port 3000"
+  - key: j
+    pin: true
+    command: "ssh -J bastion myhost"
+    description: "connect through a jump host"
+  - key: d
+    command: "ssh -D 1080 -N myhost"
+    description: "SOCKS proxy on localhost:1080, no shell"
+  - key: n
+    command: "ssh -N -f -L 5432:db.internal:5432 myhost"
+    description: "tunnel to a host behind myhost, in the background"
+  - key: c
+    pin: true
+    command: "ssh myhost 'df -h; uptime'"
+    description: "run commands and return"
+  - key: t
+    command: "ssh -t myhost htop"
+    description: "run an interactive program (forces a tty)"
+  - key: p
+    command: "ssh -p 2222 user@myhost"
+    description: "non-default port and user"
+  - key: i
+    command: "ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes myhost"
+    description: "use only this key"
+  - key: a
+    command: "ssh -A myhost"
+    description: "forward your agent (trusted hosts only)"
+  - key: v
+    command: "ssh -v myhost"
+    description: "debug a failing login (-vvv for more)"
+  - key: g
+    command: "ssh -G myhost | grep -iE '^(hostname|user|port|identityfile) '"
+    description: "show the effective config for a host"

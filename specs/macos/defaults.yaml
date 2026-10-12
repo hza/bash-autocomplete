@@ -103,3 +103,44 @@ commands:
       -container: {value: any, description: "Container identifier"}
     args:
       exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
+snippets:
+  - key: h
+    pin: true
+    command: "defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    description: "show hidden files in Finder (Cmd-Shift-. toggles too)"
+  - key: e
+    command: "defaults write NSGlobalDomain AppleShowAllExtensions -bool true && killall Finder"
+    description: "show all file extensions"
+  - key: p
+    command: "defaults write com.apple.finder ShowPathbar -bool true && killall Finder"
+    description: "path bar at the bottom of Finder windows"
+  - key: d
+    pin: true
+    command: "defaults write com.apple.dock autohide-delay -float 0 && killall Dock"
+    description: "Dock appears instantly when auto-hidden"
+  - key: s
+    pin: true
+    command: "defaults write com.apple.screencapture location ~/Desktop/Screenshots && killall SystemUIServer"
+    description: "screenshot folder (create it first)"
+  - key: f
+    command: "defaults write com.apple.screencapture type jpg"
+    description: "screenshot format: png jpg pdf heic"
+  - key: n
+    command: "defaults write com.apple.screencapture disable-shadow -bool true"
+    description: "window screenshots without shadow"
+  - key: k
+    command: "defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false"
+    description: "key repeat instead of the accent popup (relaunch apps)"
+  - key: r
+    command: "defaults write NSGlobalDomain KeyRepeat -int 2"
+    description: "faster key repeat (log out to apply)"
+  - key: x
+    command: "defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true"
+    description: "no .DS_Store files on network shares"
+  - key: u
+    command: "defaults delete com.apple.dock autohide-delay && killall Dock"
+    description: "undo a tweak: delete the key to restore the default"
+  - key: g
+    pin: true
+    command: "defaults read com.apple.dock | grep -i autohide"
+    description: "inspect a domain's current values"
