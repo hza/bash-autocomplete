@@ -13,11 +13,11 @@ flags:
 args: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'; echo -", cache: 30}
 snippets:
   - key: s
-    mark: pushpin
+    mark: pin
     command: "kubens -"
     description: "back to the previous namespace"
   - key: c
-    mark: pushpin
+    mark: pin
     command: "kubens -c"
     description: "print the active namespace"
   - key: k

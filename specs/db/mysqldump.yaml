@@ -75,15 +75,15 @@ flags:
 args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
 snippets:
   - key: s
-    mark: pushpin
+    mark: pin
     command: "mysqldump -u root -p --single-transaction --routines mydb > mydb.sql"
     description: "consistent dump of one database"
   - key: z
-    mark: pushpin
+    mark: pin
     command: "mysqldump -u root -p --single-transaction mydb | gzip > mydb.sql.gz"
     description: "compressed dump"
   - key: d
-    mark: pushpin
+    mark: pin
     command: "mysqldump -u root -p -d mydb > schema.sql"
     description: "schema only"
   - key: a

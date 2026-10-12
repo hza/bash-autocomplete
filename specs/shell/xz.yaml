@@ -167,15 +167,15 @@ flags:
 args: file
 snippets:
   - key: 'f'
-    mark: pushpin
+    mark: pin
     command: 'xz big.log'
     description: 'replace big.log with big.log.xz'
   - key: 'k'
-    mark: pushpin
+    mark: pin
     command: 'xz -k big.log'
     description: 'keep the original'
   - key: 't'
-    mark: pushpin
+    mark: pin
     command: 'xz -T0 -k big.iso'
     description: 'all CPU cores (much faster)'
   - key: '9'
@@ -188,7 +188,7 @@ snippets:
     command: 'xz -c big.log > big.log.xz'
     description: 'write to stdout'
   - key: 'd'
-    mark: pushpin
+    mark: pin
     command: 'xz -d big.log.xz'
     description: 'decompress (same as unxz)'
   - key: 'l'

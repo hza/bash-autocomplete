@@ -413,7 +413,7 @@ static void group_flags(void) {
 /* On an empty word or "@", the spec's "snippets" ({key, command,
  * description?, mark?}) are listed as display-only "<icon> @key" entries
  * described by "command   📚 description"; icon = the mark (snippet_mark:
- * "pushpin" = 📌, the most used ones, or an emoji), else 🔥. Differing icons
+ * "pin" = 📌, the most used ones, or an emoji), else 🔥. Differing icons
  * make bash list instead of inserting a common prefix (verified in pty);
  * when all entries share one icon, one gets another (the smallest key 📌,
  * or the largest 🔥 if all are 📌). bash sorts the list, so icons order by

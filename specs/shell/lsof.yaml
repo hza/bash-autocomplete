@@ -38,11 +38,11 @@ flags:
 args: file
 snippets:
   - key: p
-    mark: pushpin
+    mark: pin
     command: "lsof -nP -iTCP:8080 -sTCP:LISTEN"
     description: "who is listening on port 8080"
   - key: l
-    mark: pushpin
+    mark: pin
     command: "lsof -nP -iTCP -sTCP:LISTEN"
     description: "all listening TCP ports"
   - key: i
@@ -58,7 +58,7 @@ snippets:
     command: "lsof -nP -iUDP"
     description: "UDP sockets"
   - key: o
-    mark: pushpin
+    mark: pin
     command: "lsof -p 1234"
     description: "everything a process has open"
   - key: c
@@ -68,7 +68,7 @@ snippets:
     command: "lsof -a -u $USER -i"
     description: "my network connections (-a: AND)"
   - key: f
-    mark: pushpin
+    mark: pin
     command: "lsof +D ~/Downloads"
     description: "what holds files in a folder open"
   - key: v

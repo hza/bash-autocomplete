@@ -56,15 +56,15 @@ flags:
 args: {exec: "echo all; { ansible-inventory --graph 2>/dev/null | sed -n 's/^[ |-]*@\\([^:]*\\):$/\\1/p'; ansible all --list-hosts 2>/dev/null | sed -n 's/^ *//; /^hosts (/d; p'; } | sort -u", cache: 60}
 snippets:
   - key: p
-    mark: pushpin
+    mark: pin
     command: "ansible all -m ping"
     description: "can we reach everyone?"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "ansible web -b -m shell -a 'uptime'"
     description: "shell command on a group"
   - key: f
-    mark: pushpin
+    mark: pin
     command: "ansible myhost -m setup -a 'filter=ansible_distribution*'"
     description: "peek at host facts"
   - key: l

@@ -48,18 +48,18 @@ commands:
   version: {description: "Show kind version"}
 snippets:
   - key: c
-    mark: pushpin
+    mark: pin
     command: "kind create cluster --name dev"
     description: "fresh single-node cluster"
   - key: f
     command: "kind create cluster --name dev --config kind.yaml"
     description: "cluster from a config file"
   - key: l
-    mark: pushpin
+    mark: pin
     command: "kind load docker-image my-app:dev --name dev"
     description: "make a local image available"
   - key: g
-    mark: pushpin
+    mark: pin
     command: "kind get clusters"
     description: "what clusters exist"
   - key: d

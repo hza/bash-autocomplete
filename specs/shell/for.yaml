@@ -14,7 +14,7 @@ snippets:
     command: 'for f in *.log; do echo "$f: $(grep -c ERROR "$f")"; done'
     description: "count matches per file"
   - key: s
-    mark: pushpin
+    mark: pin
     command: 'for d in */; do (cd "$d" && git pull); done'
     description: "run a command in each subfolder"
   - key: h
@@ -24,7 +24,7 @@ snippets:
     command: "for i in {1..5}; do curl -s -o /dev/null -w '%{http_code}\\n' https://example.com; done"
     description: "repeat a command N times"
   - key: o
-    mark: pushpin
+    mark: pin
     command: 'for p in $(pgrep -f myapp); do ps -o pid,etime,command -p "$p"; done'
     description: "each word of a command's output"
   - key: x

@@ -324,11 +324,11 @@ commands:
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
         snippets:
           - key: f
-            mark: pushpin
+            mark: pin
             command: "docker container prune -f"
             description: "remove stopped containers, no prompt"
           - key: u
-            mark: pushpin
+            mark: pin
             command: "docker container prune --filter until=24h"
             description: "only those created more than a day ago"
           - key: l
@@ -385,11 +385,11 @@ commands:
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
         snippets:
           - key: f
-            mark: pushpin
+            mark: pin
             command: "docker network prune -f"
             description: "remove unused networks, no prompt"
           - key: u
-            mark: pushpin
+            mark: pin
             command: "docker network prune --filter until=24h"
             description: "only those created more than a day ago"
           - key: l
@@ -487,15 +487,15 @@ commands:
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"until=<timestamp>\")"}
         snippets:
           - key: a
-            mark: pushpin
+            mark: pin
             command: "docker image prune -a"
             description: "all unused images, not just dangling ones"
           - key: f
-            mark: pushpin
+            mark: pin
             command: "docker image prune -f"
             description: "dangling images, no prompt"
           - key: u
-            mark: pushpin
+            mark: pin
             command: "docker image prune -a --filter until=168h"
             description: "unused images created more than a week ago"
           - key: x
@@ -548,11 +548,11 @@ commands:
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter-label"}, description: "Provide filter values (e.g. \"label=<label>\")"}
         snippets:
           - key: a
-            mark: pushpin
+            mark: pin
             command: "docker volume prune -a"
             description: "also unused named volumes"
           - key: f
-            mark: pushpin
+            mark: pin
             command: "docker volume prune -f"
             description: "anonymous ones, no prompt"
           - key: x
@@ -582,15 +582,15 @@ commands:
           --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/docker.sh\" filter"}, description: "Provide filter values (e.g. \"label=<key>=<value>\")", show: always}
         snippets:
           - key: a
-            mark: pushpin
+            mark: pin
             command: "docker system prune -a"
             description: "also unused images, not just dangling ones"
           - key: v
-            mark: pushpin
+            mark: pin
             command: "docker system prune --volumes"
             description: "also anonymous volumes"
           - key: f
-            mark: pushpin
+            mark: pin
             command: "docker system prune -f"
             description: "no prompt"
           - key: x
@@ -790,15 +790,15 @@ commands:
           exec: docker compose config --services
         snippets:
           - key: q
-            mark: pushpin
+            mark: pin
             command: "docker compose config -q"
             description: "validate only: no output, exit code tells"
           - key: s
-            mark: pushpin
+            mark: pin
             command: "docker compose config --services"
             description: "service names"
           - key: i
-            mark: pushpin
+            mark: pin
             command: "docker compose config --images"
             description: "image names"
           - key: e

@@ -105,7 +105,7 @@ commands:
       exec: "defaults domains 2>/dev/null | tr ',' '\\n' | tr -d ' '"
 snippets:
   - key: h
-    mark: pushpin
+    mark: pin
     command: "defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
     description: "show hidden files in Finder (Cmd-Shift-. toggles too)"
   - key: e
@@ -115,11 +115,11 @@ snippets:
     command: "defaults write com.apple.finder ShowPathbar -bool true && killall Finder"
     description: "path bar at the bottom of Finder windows"
   - key: d
-    mark: pushpin
+    mark: pin
     command: "defaults write com.apple.dock autohide-delay -float 0 && killall Dock"
     description: "Dock appears instantly when auto-hidden"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "defaults write com.apple.screencapture location ~/Desktop/Screenshots && killall SystemUIServer"
     description: "screenshot folder (create it first)"
   - key: f
@@ -141,6 +141,6 @@ snippets:
     command: "defaults delete com.apple.dock autohide-delay && killall Dock"
     description: "undo a tweak: delete the key to restore the default"
   - key: g
-    mark: pushpin
+    mark: pin
     command: "defaults read com.apple.dock | grep -i autohide"
     description: "inspect a domain's current values"

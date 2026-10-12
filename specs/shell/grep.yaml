@@ -76,19 +76,19 @@ flags:
   --version: {description: "Version information"}
 snippets:
   - key: t
-    mark: pushpin
+    mark: pin
     command: "grep -rn TODO ."
     description: "TODO lines with file and line number"
   - key: w
-    mark: pushpin
+    mark: pin
     command: "grep -rnw main --include='*.c' ."
     description: "whole word in C sources only"
   - key: f
-    mark: pushpin
+    mark: pin
     command: "grep -ril password --exclude-dir=.git ."
     description: "files mentioning a word, skipping .git"
   - key: v
-    mark: pushpin
+    mark: pin
     command: "grep -v '^#' config.txt"
     description: "drop comment lines"
   - key: e
@@ -98,11 +98,11 @@ snippets:
     command: "grep -c ERROR app.log"
     description: "count matching lines"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "grep -C 3 Exception app.log"
     description: "3 lines of context around matches"
   - key: o
-    mark: pushpin
+    mark: pin
     command: "grep -E 'error|warn' app.log"
     description: "either word (extended regex)"
   - key: i

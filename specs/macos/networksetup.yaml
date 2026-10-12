@@ -319,11 +319,11 @@ flags:
     description: "Delete an 802.1X user profile"
 snippets:
   - key: i
-    mark: pushpin
+    mark: pin
     command: "networksetup -getinfo Wi-Fi"
     description: "IP address, router and MAC of the Wi-Fi service"
   - key: d
-    mark: pushpin
+    mark: pin
     command: "networksetup -getdnsservers Wi-Fi"
     description: "DNS servers set on Wi-Fi"
   - key: c
@@ -333,14 +333,14 @@ snippets:
     command: "networksetup -setdnsservers Wi-Fi Empty"
     description: "back to the DHCP-provided DNS servers"
   - key: w
-    mark: pushpin
+    mark: pin
     command: "networksetup -getairportnetwork en0"
     description: "name of the joined Wi-Fi network"
   - key: o
     command: "networksetup -setairportpower en0 off && networksetup -setairportpower en0 on"
     description: "power-cycle Wi-Fi"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "networksetup -listnetworkserviceorder"
     description: "services in priority order with their devices"
   - key: h

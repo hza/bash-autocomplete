@@ -8,18 +8,18 @@ snippets:
     command: 'if make; then say "build ok"; else say "build failed"; fi'
     description: "announce the result of a long command"
   - key: e
-    mark: pushpin
+    mark: pin
     command: 'if [ -f .env ]; then set -a; . ./.env; set +a; fi'
     description: "load .env into the shell"
   - key: d
     command: 'if [ -d node_modules ]; then npm test; else npm ci && npm test; fi'
     description: "set up only when missing"
   - key: c
-    mark: pushpin
+    mark: pin
     command: 'if grep -q "^127.0.0.1.*myapp" /etc/hosts; then echo present; else echo missing; fi'
     description: "check a file contains something"
   - key: i
-    mark: pushpin
+    mark: pin
     command: 'if command -v brew >/dev/null; then brew upgrade; fi'
     description: "only if a tool is installed"
   - key: h

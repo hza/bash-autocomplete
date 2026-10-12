@@ -556,6 +556,7 @@ int main(int argc, char **argv) {
         return g_cache_failed;
     }
     if (argc >= 2 && !strcmp(argv[1], "alias")) return alias_cmds(argc - 2, argv + 2);
+    if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "emoji")) return emoji_cmd(argv[2]);
     if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         int i;
@@ -582,6 +583,7 @@ int main(int argc, char **argv) {
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"
+            "       autocomplete emoji [NAME|EMOJI]   snippet mark names (NAME -> emoji, emoji -> NAME)\n"
             "       autocomplete _complete LINE [WORDBREAKS]\n");
     return 2;
 }

@@ -31,18 +31,77 @@ int snippet_key(const ynode *k) {
     return k && k->type == Y_STR && k->str[0] && !k->str[1] && (isdigit((unsigned char)k->str[0]) || islower((unsigned char)k->str[0]));
 }
 
-/* A snippet's `mark` icon: "pushpin" (📌) or one emoji of a single 4-byte
- * code point in U+1F300..U+1FAFF (no U+FE0F / ZWJ sequences, whose drawn
- * width varies by terminal; these are 2 columns, as dwidth counts). NULL if
- * invalid. */
+/* A snippet's `mark` icon: a name from the table below or one emoji of a
+ * single 4-byte code point in U+1F300..U+1FAFF (no U+FE0F / ZWJ sequences,
+ * whose drawn width varies by terminal; these are 2 columns, as dwidth
+ * counts). NULL if invalid. Table entries are East Asian Width W (2 cols
+ * everywhere) except the keycaps 1..9, 1 column (dwidth): their extra
+ * U+00A0 keeps "@key" aligned. 📚 🔎 🧩 are left out (engine markers). */
+static const struct { const char *name, *icon; } mark_names[] = {
+    {"1", "\x31\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 1️⃣ */
+    {"2", "\x32\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 2️⃣ */
+    {"3", "\x33\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 3️⃣ */
+    {"4", "\x34\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 4️⃣ */
+    {"5", "\x35\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 5️⃣ */
+    {"6", "\x36\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 6️⃣ */
+    {"7", "\x37\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 7️⃣ */
+    {"8", "\x38\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 8️⃣ */
+    {"9", "\x39\xef\xb8\x8f\xe2\x83\xa3\xc2\xa0"}, /* 9️⃣ */
+    {"bell", "\xf0\x9f\x94\x94"},                  /* 🔔 */
+    {"bulb", "\xf0\x9f\x92\xa1"},                  /* 💡 */
+    {"calendar", "\xf0\x9f\x93\x85"},              /* 📅 */
+    {"chart", "\xf0\x9f\x93\x88"},                 /* 📈 */
+    {"clock", "\xf0\x9f\x95\x90"},                 /* 🕐 */
+    {"eyes", "\xf0\x9f\x91\x80"},                  /* 👀 */
+    {"fire", "\xf0\x9f\x94\xa5"},                  /* 🔥 */
+    {"globe", "\xf0\x9f\x8c\x90"},                 /* 🌐 */
+    {"key", "\xf0\x9f\x94\x91"},                   /* 🔑 */
+    {"link", "\xf0\x9f\x94\x97"},                  /* 🔗 */
+    {"lock", "\xf0\x9f\x94\x92"},                  /* 🔒 */
+    {"memo", "\xf0\x9f\x93\x9d"},                  /* 📝 */
+    {"package", "\xf0\x9f\x93\xa6"},               /* 📦 */
+    {"pin", "\xf0\x9f\x93\x8c"},                   /* 📌 */
+    {"pumpkin", "\xf0\x9f\x8e\x83"},               /* 🎃 */
+    {"rocket", "\xf0\x9f\x9a\x80"},                /* 🚀 */
+    {"siren", "\xf0\x9f\x9a\xa8"},                 /* 🚨 */
+    {"skull", "\xf0\x9f\x92\x80"},                 /* 💀 */
+    {"star", "\xf0\x9f\x8c\x9f"},                  /* 🌟 */
+    {"target", "\xf0\x9f\x8e\xaf"},                /* 🎯 */
+    {"test", "\xf0\x9f\xa7\xaa"},                  /* 🧪 */
+    {"whale", "\xf0\x9f\x90\xb3"},                 /* 🐳 */
+};
+#define NMARKS (sizeof mark_names / sizeof *mark_names)
+
 const char *snippet_mark(const char *m) {
     const unsigned char *u = (const unsigned char *)m;
     unsigned cp;
-    if (!strcmp(m, "pushpin")) return "\xf0\x9f\x93\x8c";
+    size_t i;
+    char d[2] = {0};
+    /* a literal keycap "1️⃣" (U+FE0F optional) -> its name "1" */
+    if (m[0] >= '1' && m[0] <= '9' &&
+        (!strcmp(m + 1, "\xef\xb8\x8f\xe2\x83\xa3") || !strcmp(m + 1, "\xe2\x83\xa3")))
+        d[0] = m[0], m = d;
+    for (i = 0; i < NMARKS; i++)
+        if (!strcmp(m, mark_names[i].name)) return mark_names[i].icon;
     if (strlen(m) != 4 || (u[0] & 0xF8) != 0xF0 || (u[1] & 0xC0) != 0x80 ||
         (u[2] & 0xC0) != 0x80 || (u[3] & 0xC0) != 0x80) return NULL;
     cp = (u[0] & 7u) << 18 | (u[1] & 63u) << 12 | (u[2] & 63u) << 6 | (u[3] & 63u);
     return cp >= 0x1F300 && cp <= 0x1FAFF ? m : NULL;
+}
+
+/* `autocomplete emoji [X]`: no X -> "icon name" lines; a name -> its icon;
+ * an icon (keycaps with or without U+FE0F) -> its name. 1 if unknown. */
+int emoji_cmd(const char *x) {
+    const char *ic = x ? snippet_mark(x) : NULL;
+    size_t i;
+    for (i = 0; i < NMARKS; i++) {
+        const char *n = mark_names[i].name, *k = mark_names[i].icon;
+        int len = (int)strcspn(k, "\xc2"); /* without the keycaps' U+00A0 */
+        if (!x) printf("%s %s\n", k, n);
+        else if (!strcmp(x, n)) return printf("%.*s\n", len, k), 0;
+        else if (ic && !strcmp(ic, k)) return printf("%s\n", n), 0;
+    }
+    return x ? 1 : 0;
 }
 
 int check_groups(const ynode *n, const ynode *root, const char *path) {
@@ -71,7 +130,7 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
                 bad = 1;
             }
             if ((k = yaml_get(g, "mark")) && (k->type != Y_STR || !snippet_mark(k->str))) {
-                fprintf(stderr, "%s: snippet \"%s\": mark must be pushpin or one emoji (U+1F300..U+1FAFF, no U+FE0F)\n", path,
+                fprintf(stderr, "%s: snippet \"%s\": mark must be an icon name (see docs/writing-specs.md) or one emoji (U+1F300..U+1FAFF, no U+FE0F)\n", path,
                         yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
                 bad = 1;
             }

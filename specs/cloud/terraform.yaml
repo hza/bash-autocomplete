@@ -319,15 +319,15 @@ commands:
       --help: {description: "Show help"}
 snippets:
   - key: p
-    mark: pushpin
+    mark: pin
     command: "terraform plan -out=tfplan"
     description: "save a plan to apply exactly later"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "terraform apply tfplan"
     description: "apply the saved plan, no prompt"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "terraform state list"
     description: "resources tracked in state"
   - key: t

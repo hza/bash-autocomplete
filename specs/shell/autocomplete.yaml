@@ -21,6 +21,9 @@ commands:
         description: "Use only this source"
         value: {exec: "printf 'cobra\\tcobra (Go) program completion\\nman\\tthe man page\\nhelp\\tCMD --help output\\n'"}
     args: {exec: "compgen -c | sort -u"}
+  emoji:
+    description: "List snippet mark names; NAME -> emoji, emoji -> NAME"
+    args: {exec: "autocomplete emoji | awk '{print $2 \"\\t\" $1}'"}
   alias:
     description: "Complete NAME like CMD (CMD NAME..., symlinks its spec)"
     flags:

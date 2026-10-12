@@ -14,14 +14,14 @@ flags:
 args: file
 snippets:
   - key: t
-    mark: pushpin
+    mark: pin
     command: "mdls -name kMDItemContentType -raw README.md"
     description: "file's type identifier, e.g. for duti -s"
   - key: r
     command: "mdls -name kMDItemContentTypeTree README.md"
     description: "the type and all types it conforms to"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "mdls photo.jpg"
     description: "every metadata attribute of a file"
   - key: s

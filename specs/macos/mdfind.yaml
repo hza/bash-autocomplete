@@ -13,15 +13,15 @@ flags:
 args: any
 snippets:
   - key: n
-    mark: pushpin
+    mark: pin
     command: "mdfind -name report.pdf"
     description: "files whose name contains report.pdf"
   - key: o
-    mark: pushpin
+    mark: pin
     command: "mdfind -onlyin ~/Documents invoice"
     description: "anything mentioning invoice under ~/Documents"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "mdfind \"kMDItemCFBundleIdentifier == 'com.apple.Safari'\""
     description: "locate an app by bundle id"
   - key: t

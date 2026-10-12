@@ -308,18 +308,18 @@ commands:
       -a: {description: "All information"}
 snippets:
   - key: c
-    mark: pushpin
+    mark: pin
     command: "openssl x509 -in cert.pem -noout -subject -issuer -dates -ext subjectAltName"
     description: "who, by whom, valid when, for which names"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "openssl s_client -connect example.org:443 -servername example.org -showcerts </dev/null"
     description: "fetch the TLS chain a server presents"
   - key: e
     command: "openssl s_client -connect example.org:443 -servername example.org </dev/null 2>/dev/null | openssl x509 -noout -enddate"
     description: "expiry date of a live server cert"
   - key: k
-    mark: pushpin
+    mark: pin
     command: "openssl req -x509 -newkey rsa:2048 -noenc -keyout key.pem -out cert.pem -days 365 -subj /CN=localhost -addext subjectAltName=DNS:localhost"
     description: "self-signed cert + key for localhost"
   - key: r
@@ -329,7 +329,7 @@ snippets:
     command: "openssl genpkey -algorithm ED25519 -out ed25519.pem"
     description: "new Ed25519 private key"
   - key: p
-    mark: pushpin
+    mark: pin
     command: "openssl rand -base64 32"
     description: "random password / secret"
   - key: h

@@ -10,6 +10,7 @@ int do_complete(const char *line, const char *wbreaks);
 /* `check`: report "groups" letters without a "-x" flag; 1 if any. */
 int snippet_key(const ynode *k);
 const char *snippet_mark(const char *m);
+int emoji_cmd(const char *x);
 int check_groups(const ynode *n, const ynode *root, const char *path);
 
 #endif

@@ -9,19 +9,19 @@ flags:
   -version: {description: "Version information"}
 snippets:
   - key: s
-    mark: pushpin
+    mark: pin
     command: "awk '{ s += $1 } END { print s }' file.txt"
     description: "sum the first column"
   - key: f
-    mark: pushpin
+    mark: pin
     command: "awk -F, '{ print $2 }' data.csv"
     description: "second field of comma-separated lines"
   - key: u
-    mark: pushpin
+    mark: pin
     command: "awk '!seen[$0]++' file.txt"
     description: "unique lines, keep order"
   - key: p
-    mark: pushpin
+    mark: pin
     command: "awk '{ print $1, $NF }' file.txt"
     description: "first and last field"
   - key: a

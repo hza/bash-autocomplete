@@ -152,7 +152,7 @@ commands:
   beta: {description: "Beta versions of gcloud commands"}
 snippets:
   - key: p
-    mark: pushpin
+    mark: pin
     command: "gcloud config set project my-project"
     description: "switch the active project"
   - key: c
@@ -165,18 +165,18 @@ snippets:
     command: "gcloud auth print-access-token"
     description: "bearer token for curl"
   - key: i
-    mark: pushpin
+    mark: pin
     command: "gcloud compute instances list --format='table(name, zone.basename(), status, networkInterfaces[0].accessConfigs[0].natIP)'"
     description: "VMs with zone, status and external IP"
   - key: s
     command: "gcloud compute ssh my-vm --zone europe-west1-b --tunnel-through-iap"
     description: "SSH to a VM without a public IP"
   - key: k
-    mark: pushpin
+    mark: pin
     command: "gcloud container clusters get-credentials my-cluster --region europe-west1"
     description: "merge a GKE cluster into ~/.kube/config"
   - key: r
-    mark: pushpin
+    mark: pin
     command: "gcloud run deploy my-service --source . --region europe-west1 --allow-unauthenticated"
     description: "build and deploy the current dir to Cloud Run"
   - key: g

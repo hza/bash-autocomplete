@@ -30,18 +30,18 @@ flags:
 args: file
 snippets:
   - key: 'f'
-    mark: pushpin
+    mark: pin
     command: 'bzip2 big.log'
     description: 'replace big.log with big.log.bz2'
   - key: 'k'
-    mark: pushpin
+    mark: pin
     command: 'bzip2 -k big.log'
     description: 'keep the original'
   - key: 'c'
     command: 'bzip2 -c big.log > big.log.bz2'
     description: 'write to stdout'
   - key: 'd'
-    mark: pushpin
+    mark: pin
     command: 'bzip2 -d big.log.bz2'
     description: 'decompress (same as bunzip2)'
   - key: 't'

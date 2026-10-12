@@ -63,15 +63,15 @@ flags:
 args: {exec: "printf '%s\\n' PING INFO GET SET DEL KEYS SCAN EXISTS EXPIRE TTL TYPE INCR HGET HSET HGETALL LPUSH RPUSH LRANGE SADD SMEMBERS ZADD ZRANGE PUBLISH SUBSCRIBE MONITOR DBSIZE FLUSHDB FLUSHALL CONFIG CLIENT SLOWLOG MEMORY SAVE BGSAVE"}
 snippets:
   - key: s
-    mark: pushpin
+    mark: pin
     command: "redis-cli --scan --pattern 'user:*'"
     description: "list keys matching a pattern (safe, uses SCAN)"
   - key: m
-    mark: pushpin
+    mark: pin
     command: "redis-cli monitor"
     description: "watch every command the server receives"
   - key: i
-    mark: pushpin
+    mark: pin
     command: "redis-cli info memory"
     description: "memory usage details"
   - key: d

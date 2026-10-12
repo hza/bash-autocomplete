@@ -78,15 +78,15 @@ flags:
 args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
 snippets:
   - key: c
-    mark: pushpin
+    mark: pin
     command: "pg_dump -Fc -f mydb.dump mydb"
     description: "custom-format archive for pg_restore"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "pg_dump -s -f schema.sql mydb"
     description: "schema only, as SQL"
   - key: p
-    mark: pushpin
+    mark: pin
     command: "pg_dump -O -x mydb | gzip > mydb.sql.gz"
     description: "portable compressed SQL, no owners/grants"
   - key: t

@@ -298,22 +298,22 @@ commands:
   completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
 snippets:
   - key: l
-    mark: pushpin
+    mark: pin
     command: "doctl compute droplet list --format Name,PublicIPv4,Status,Region"
     description: "droplets with IP and status"
   - key: k
-    mark: pushpin
+    mark: pin
     command: "doctl kubernetes cluster kubeconfig save my-cluster"
     description: "add a cluster to kubeconfig"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "doctl compute ssh my-droplet --ssh-user root"
     description: "shell into a droplet"
   - key: c
     command: "doctl compute droplet create my-droplet --image ubuntu-24-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys KEY_ID --wait"
     description: "new small Ubuntu droplet"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "doctl apps logs APP_ID --type run --follow"
     description: "tail runtime logs of an app"
   - key: d

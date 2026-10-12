@@ -231,15 +231,15 @@ snippets:
     command: "wget --method=DELETE -O - https://httpbin.org/delete"
     description: "any other method: PUT, PATCH, DELETE"
   - key: o
-    mark: pushpin
+    mark: pin
     command: "wget -O latest.tgz https://example.org/download?v=latest"
     description: "save under another name"
   - key: c
-    mark: pushpin
+    mark: pin
     command: "wget -c https://example.org/big.iso"
     description: "resume a download"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "wget -q -O - https://example.org"
     description: "print to stdout"
   - key: i

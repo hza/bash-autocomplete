@@ -167,19 +167,19 @@ commands:
   gen-completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish"}}
 snippets:
   - key: u
-    mark: pushpin
+    mark: pin
     command: "pulumi up -y -s dev"
     description: "apply without the prompt"
   - key: p
-    mark: pushpin
+    mark: pin
     command: "pulumi preview --diff"
     description: "full diff of planned changes"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "pulumi stack select dev"
     description: "change the active stack"
   - key: o
-    mark: pushpin
+    mark: pin
     command: "pulumi stack output --json"
     description: "all outputs as JSON"
   - key: c

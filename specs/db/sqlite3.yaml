@@ -47,22 +47,22 @@ flags:
 args: {file: "*.db *.sqlite *.sqlite3"}
 snippets:
   - key: t
-    mark: pushpin
+    mark: pin
     command: "sqlite3 app.db .tables"
     description: "list tables"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "sqlite3 app.db '.schema users'"
     description: "CREATE statement of a table"
   - key: c
-    mark: pushpin
+    mark: pin
     command: "sqlite3 -header -csv app.db 'SELECT * FROM users' > users.csv"
     description: "query to CSV with header"
   - key: i
     command: "sqlite3 app.db -cmd '.import --csv users.csv users' .quit"
     description: "import a CSV file into a table"
   - key: j
-    mark: pushpin
+    mark: pin
     command: "sqlite3 -json app.db 'SELECT * FROM users LIMIT 5'"
     description: "query results as JSON"
   - key: d

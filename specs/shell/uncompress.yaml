@@ -11,18 +11,18 @@ flags:
 args: {file: "*.Z"}
 snippets:
   - key: u
-    mark: pushpin
+    mark: pin
     command: "uncompress big.log.Z"
     description: "restore big.log, removing the .Z"
   - key: c
-    mark: pushpin
+    mark: pin
     command: "uncompress -c big.log.Z | less"
     description: "read without unpacking, keep the .Z"
   - key: o
     command: "uncompress -f big.log.Z"
     description: "overwrite an existing big.log"
   - key: t
-    mark: pushpin
+    mark: pin
     command: "uncompress -c folder.tar.Z | tar -xf -"
     description: "unpack a .tar.Z (tar -xf folder.tar.Z works too)"
   - key: z

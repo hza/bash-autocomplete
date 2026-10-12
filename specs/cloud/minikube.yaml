@@ -91,15 +91,15 @@ commands:
   completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
 snippets:
   - key: s
-    mark: pushpin
+    mark: pin
     command: "minikube start --driver=docker --cpus=4 --memory=8g"
     description: "roomier docker-backed cluster"
   - key: d
-    mark: pushpin
+    mark: pin
     command: "minikube dashboard --url"
     description: "dashboard link, no browser"
   - key: e
-    mark: pushpin
+    mark: pin
     command: "eval \"$(minikube docker-env)\""
     description: "build straight into the cluster"
   - key: u
@@ -115,6 +115,6 @@ snippets:
     command: "minikube addons enable ingress"
     description: "turn on the ingress controller"
   - key: x
-    mark: pushpin
+    mark: pin
     command: "minikube delete --all"
     description: "wipe every profile"

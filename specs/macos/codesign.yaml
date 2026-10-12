@@ -58,19 +58,19 @@ flags:
 args: [file, "@pids"]
 snippets:
   - key: v
-    mark: pushpin
+    mark: pin
     command: "codesign -vvv --deep --strict MyApp.app"
     description: "verify a bundle and everything nested in it"
   - key: d
-    mark: pushpin
+    mark: pin
     command: "codesign -dvvv MyApp.app"
     description: "who signed it: identifier, team, authority, flags"
   - key: a
-    mark: pushpin
+    mark: pin
     command: "codesign -s - -f ./mytool"
     description: "ad-hoc sign a local binary"
   - key: s
-    mark: pushpin
+    mark: pin
     command: "codesign -s 'Developer ID Application' -f --options runtime --timestamp MyApp.app"
     description: "release signing with hardened runtime + timestamp"
   - key: e
