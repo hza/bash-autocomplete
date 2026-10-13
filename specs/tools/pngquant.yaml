@@ -1,0 +1,50 @@
+version: '20261013'
+description: "Lossy PNG compressor (quantizes to an 8-bit palette)"
+flags:
+  -f: {description: "Overwrite existing output files"}
+  --force: {description: "Overwrite existing output files"}
+  --skip-if-larger: {description: "Only save files smaller than the original"}
+  -o: {value: {file: "*.png"}, description: "Output file (- = stdout)"}
+  --output: {value: {file: "*.png"}, description: "Output file (- = stdout)"}
+  --ext:
+    value: {enum: {.png: "replace the original (with --force)", -fs8.png: "default suffix", -min.png: "custom suffix"}}
+    description: "Output filename suffix"
+  --quality:
+    value: {enum: {65-80: "good balance", 65-85: "smaller files, still good", 80-95: "high quality", 0-100: "never refuse"}}
+    description: "min-max quality 0-100 (exit 99 below min)"
+  --speed:
+    value: {enum: {'1': "slowest, best", '4': "default", '11': "fastest, rough"}}
+    description: "Speed/quality trade-off 1-11"
+  --nofs: {description: "Disable Floyd-Steinberg dithering"}
+  --floyd: {value: any, description: "Dithering level 0-1 (--floyd=0.5)"}
+  --ordered: {description: "Ordered dithering"}
+  --posterize: {value: {enum: ['1', '2', '3', '4']}, description: "Drop low bits (4 = ARGB4444)"}
+  --strip: {description: "Remove optional metadata (default on Mac)"}
+  -v: {description: "Print status messages"}
+  --verbose: {description: "Print status messages"}
+  -V: {description: "Print version"}
+  --version: {description: "Print version"}
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+args: {file: "*.png"}
+snippets:
+  - key: d
+    mark: pin
+    command: "pngquant --quality 65-85 --skip-if-larger --strip --ext .png --force -- images/*.png"
+    description: "compress every PNG in a dir in place (skips ones that would grow)"
+  - key: c
+    mark: pin
+    command: "pngquant --quality 65-85 --skip-if-larger -- image.png"
+    description: "compress one image to image-fs8.png"
+  - key: o
+    command: "pngquant --quality 65-85 --output small.png -- image.png"
+    description: "compress to a named output file"
+  - key: i
+    command: "pngquant --quality 65-85 --skip-if-larger --ext .png --force -- image.png"
+    description: "compress one image in place"
+  - key: s
+    command: "pngquant 256 - < image.png > small.png"
+    description: "stdin to stdout, 256 colors"
+  - key: f
+    command: "pngquant --speed 1 --quality 80-95 --ext .png --force -- *.png"
+    description: "best quality, slowest, PNGs in the current dir in place"

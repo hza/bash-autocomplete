@@ -55,3 +55,6 @@ snippets:
   - key: a
     command: 'for f in "$@"; do echo "arg: $f"; done'
     description: "each script argument (in a script)"
+  - key: n
+    command: 'for f in *.png; do mv -n "$f" "image$((++n)).png"; done; unset n'
+    description: "number files: image1.png, image2.png … (name order)"
