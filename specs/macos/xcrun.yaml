@@ -9,7 +9,7 @@ flags:
   -k: {description: "Remove the lookup cache"}
   --kill-cache: {description: "Remove the lookup cache"}
   --sdk:
-    value: {exec: "printf '%s\\n' macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator xros xrsimulator driverkit"}
+    value: {enum: [macosx, iphoneos, iphonesimulator, appletvos, appletvsimulator, watchos, watchsimulator, xros, xrsimulator, driverkit]}
     description: "SDK to look the tool up in"
     show: always
   --toolchain: {value: {exec: "ls /Library/Developer/Toolchains ~/Library/Developer/Toolchains 2>/dev/null | sed -n 's/[.]xctoolchain$//p'"}, description: "Toolchain to look the tool up in"}
@@ -38,13 +38,13 @@ commands:
           -j: {description: "JSON output"}
           --json: {description: "JSON output"}
           -v: {description: "More detail"}
-        positional: [{exec: "printf '%s\\n' devices devicetypes runtimes pairs"}, {exec: "printf '%s\\n' available booted"}]
+        positional: [{enum: [devices, devicetypes, runtimes, pairs]}, {enum: [available, booted]}]
       boot: {description: "Boot a device", args: {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}}
-      shutdown: {description: "Shut down a device (or all)", args: [{exec: "echo all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
-      erase: {description: "Erase a device's content and settings (or all)", args: [{exec: "echo all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      shutdown: {description: "Shut down a device (or all)", args: [{enum: [all]}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      erase: {description: "Erase a device's content and settings (or all)", args: [{enum: [all]}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       create: {description: "Create a device: name devicetype [runtime]", args: any}
       clone: {description: "Clone a device: device newname", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
-      delete: {description: "Delete devices (or unavailable / all)", args: [{exec: "printf '%s\\n' unavailable all"}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
+      delete: {description: "Delete devices (or unavailable / all)", args: [{enum: [unavailable, all]}, {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       rename: {description: "Rename a device: device newname", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       install: {description: "Install an app: device app-path", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {file: "*.app"}]}
       uninstall: {description: "Uninstall an app: device bundle-id", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
@@ -63,17 +63,17 @@ commands:
       listapps: {description: "List installed apps", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       io:
         description: "Screenshot / record video: device screenshot|recordVideo file"
-        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' screenshot recordVideo"}, file]
+        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {enum: [screenshot, recordVideo]}, file]
       spawn: {description: "Run a process inside a device", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       privacy:
         description: "Grant/revoke/reset privacy permissions: device action service [bundle-id]"
-        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' grant revoke reset"}, {exec: "printf '%s\\n' all calendar contacts-limited contacts location location-always photos-add photos media-library microphone motion reminders siri"}]
+        positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {enum: [grant, revoke, reset]}, {enum: [all, calendar, contacts-limited, contacts, location, location-always, photos-add, photos, media-library, microphone, motion, reminders, siri]}]
       push: {description: "Send a push notification: device bundle-id payload.json", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, any, {file: "*.json *.apns"}]}
-      status_bar: {description: "Override the status bar: device override|clear|list", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' override clear list"}]}
-      ui: {description: "Get/set UI options: device appearance [light|dark]", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' appearance content_size increase_contrast"}, {exec: "printf '%s\\n' light dark"}]}
+      status_bar: {description: "Override the status bar: device override|clear|list", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {enum: [override, clear, list]}]}
+      ui: {description: "Get/set UI options: device appearance [light|dark]", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {enum: [appearance, content_size, increase_contrast]}, {enum: [light, dark]}]}
       pbcopy: {description: "Copy stdin to a device's pasteboard", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
       pbpaste: {description: "Print a device's pasteboard", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}]}
-      keychain: {description: "Add certificates or reset a device's keychain", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {exec: "printf '%s\\n' add-root-cert add-cert reset"}, file]}
+      keychain: {description: "Add certificates or reset a device's keychain", positional: [{exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}, {enum: [add-root-cert, add-cert, reset]}, file]}
       diagnose: {description: "Collect diagnostic information"}
       spawn_logs: {description: "Device log stream (see: spawn device log stream)"}
       runtime: {description: "Manage simulator runtimes", commands: {list: {description: "List runtimes"}, add: {description: "Add a runtime image", args: file}, delete: {description: "Delete a runtime", args: any}}}
@@ -93,8 +93,8 @@ commands:
       --password: {value: any, description: "App-specific password"}
       --team-id: {value: any, description: "Developer team ID"}
       --keychain: {value: file, description: "Keychain file to read credentials from"}
-      -f: {value: {exec: "printf '%s\\n' text json plist"}, description: "Output format"}
-      --output-format: {value: {exec: "printf '%s\\n' text json plist"}, description: "Output format"}
+      -f: {value: {enum: [text, json, plist]}, description: "Output format"}
+      --output-format: {value: {enum: [text, json, plist]}, description: "Output format"}
       --progress: {description: "Show progress"}
       --no-progress: {description: "Hide progress"}
       -v: {description: "Verbose output"}

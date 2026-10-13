@@ -8,8 +8,8 @@ commands:
       -out: {value: file, description: "Output file", show: always}
       -noout: {description: "Don't print the encoded certificate", show: always}
       -text: {description: "Print the certificate in text form", show: always}
-      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
-      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -inform: {value: {enum: [PEM, DER]}, description: "Input format"}
+      -outform: {value: {enum: [PEM, DER]}, description: "Output format"}
       -subject: {description: "Print the subject name"}
       -issuer: {description: "Print the issuer name"}
       -dates: {description: "Print notBefore and notAfter"}
@@ -39,14 +39,14 @@ commands:
       -set_serial: {value: any, description: "Serial number to use"}
       -extfile: {value: file, description: "File with extensions to add"}
       -extensions: {value: any, description: "Section of -extfile to use"}
-      -copy_extensions: {value: {exec: "printf '%s\\n' none copy copyall"}, description: "Copy extensions from the CSR"}
+      -copy_extensions: {value: {enum: [none, copy, copyall]}, description: "Copy extensions from the CSR"}
       -passin: {value: any, description: "Key password source (pass:x, env:VAR, file:path)"}
   req:
     description: "Create and process certificate requests (CSR)"
     flags:
       -new: {description: "Generate a new CSR", show: always}
       -x509: {description: "Output a self-signed certificate instead of a CSR", show: always}
-      -newkey: {value: {exec: "printf '%s\\n' rsa:2048 rsa:4096 ec ed25519"}, description: "Generate a new key (rsa:BITS, ec, ed25519)", show: always}
+      -newkey: {value: {enum: ['rsa:2048', 'rsa:4096', ec, ed25519]}, description: "Generate a new key (rsa:BITS, ec, ed25519)", show: always}
       -key: {value: file, description: "Private key to use"}
       -keyout: {value: file, description: "File to write the new private key to", show: always}
       -in: {value: file, description: "Input CSR"}
@@ -64,8 +64,8 @@ commands:
       -reqexts: {value: any, description: "CSR extension section"}
       -pkeyopt: {value: any, description: "Key generation option (opt:value)"}
       -batch: {description: "Don't ask for subject fields"}
-      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
-      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -inform: {value: {enum: [PEM, DER]}, description: "Input format"}
+      -outform: {value: {enum: [PEM, DER]}, description: "Output format"}
       -sha256: {description: "Sign with SHA-256"}
       -passin: {value: any, description: "Key password source"}
       -passout: {value: any, description: "Output key password source"}
@@ -77,7 +77,7 @@ commands:
       -showcerts: {description: "Show the whole certificate chain", show: always}
       -brief: {description: "Print only a connection summary"}
       -quiet: {description: "No session/cert info; implies -ign_eof"}
-      -starttls: {value: {exec: "printf '%s\\n' smtp pop3 imap ftp xmpp xmpp-server irc postgres mysql lmtp nntp sieve ldap"}, description: "Upgrade a plain-text protocol to TLS"}
+      -starttls: {value: {enum: [smtp, pop3, imap, ftp, xmpp, xmpp-server, irc, postgres, mysql, lmtp, nntp, sieve, ldap]}, description: "Upgrade a plain-text protocol to TLS"}
       -CAfile: {value: file, description: "Trusted CA certificates file"}
       -CApath: {value: dir, description: "Trusted CA certificates directory"}
       -cert: {value: file, description: "Client certificate"}
@@ -109,11 +109,11 @@ commands:
   genpkey:
     description: "Generate a private key"
     flags:
-      -algorithm: {value: {exec: "printf '%s\\n' RSA EC ED25519 ED448 X25519 X448 RSA-PSS DSA DH"}, description: "Key algorithm", show: always}
-      -pkeyopt: {value: {exec: "printf '%s\\n' rsa_keygen_bits:2048 rsa_keygen_bits:4096 ec_paramgen_curve:P-256 ec_paramgen_curve:P-384"}, description: "Algorithm option (opt:value)", show: always}
+      -algorithm: {value: {enum: [RSA, EC, ED25519, ED448, X25519, X448, RSA-PSS, DSA, DH]}, description: "Key algorithm", show: always}
+      -pkeyopt: {value: {enum: ['rsa_keygen_bits:2048', 'rsa_keygen_bits:4096', 'ec_paramgen_curve:P-256', 'ec_paramgen_curve:P-384']}, description: "Algorithm option (opt:value)", show: always}
       -out: {value: file, description: "Output key file", show: always}
       -outpubkey: {value: file, description: "Also write the public key"}
-      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -outform: {value: {enum: [PEM, DER]}, description: "Output format"}
       -pass: {value: any, description: "Output password source"}
       -paramfile: {value: file, description: "Parameters file"}
       -genparam: {description: "Generate parameters, not a key"}
@@ -133,8 +133,8 @@ commands:
       -text: {description: "Print the key in text form"}
       -noout: {description: "Don't print the encoded key"}
       -check: {description: "Check key consistency"}
-      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
-      -outform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Output format"}
+      -inform: {value: {enum: [PEM, DER]}, description: "Input format"}
+      -outform: {value: {enum: [PEM, DER]}, description: "Output format"}
       -passin: {value: any, description: "Input password source"}
       -passout: {value: any, description: "Output password source"}
   pkeyutl:
@@ -234,7 +234,7 @@ commands:
       -untrusted: {value: file, description: "Intermediate certificates", show: always}
       -show_chain: {description: "Print the verified chain"}
       -verify_hostname: {value: "@hosts", description: "Check the certificate matches this host"}
-      -purpose: {value: {exec: "printf '%s\\n' sslclient sslserver nssslserver smimesign smimeencrypt crlsign any ocsphelper timestampsign codesign"}, description: "Required certificate purpose"}
+      -purpose: {value: {enum: [sslclient, sslserver, nssslserver, smimesign, smimeencrypt, crlsign, any, ocsphelper, timestampsign, codesign]}, description: "Required certificate purpose"}
       -crl_check: {description: "Check the leaf against CRLs"}
       -CRLfile: {value: file, description: "CRL file"}
       -partial_chain: {description: "Accept chains anchored at a non-root trusted cert"}
@@ -247,13 +247,13 @@ commands:
       -out: {value: file, description: "Output file"}
       -text: {description: "Print in text form"}
       -noout: {description: "Don't print the encoded CRL"}
-      -inform: {value: {exec: "printf '%s\\n' PEM DER"}, description: "Input format"}
+      -inform: {value: {enum: [PEM, DER]}, description: "Input format"}
   ec:
     description: "Process EC keys (legacy; use pkey)"
   ecparam:
     description: "EC parameters and key generation"
     flags:
-      -name: {value: {exec: "printf '%s\\n' prime256v1 secp384r1 secp521r1 secp256k1"}, description: "Curve name"}
+      -name: {value: {enum: [prime256v1, secp384r1, secp521r1, secp256k1]}, description: "Curve name"}
       -genkey: {description: "Generate a key"}
       -list_curves: {description: "List supported curves"}
       -out: {value: file, description: "Output file"}

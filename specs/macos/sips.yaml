@@ -41,16 +41,16 @@ flags:
   --matchToWithIntent: {value: file, description: "Color match to profile with intent"}
   --deleteColorManagementProperties: {description: "Remove color management properties", show: always}
   -r:
-    value: {exec: "printf '%s\\n' 90 180 270"}
+    value: {enum: ['90', '180', '270']}
     description: "Rotate clockwise by degrees"
   --rotate:
-    value: {exec: "printf '%s\\n' 90 180 270"}
+    value: {enum: ['90', '180', '270']}
     description: "Rotate clockwise by degrees"
   -f:
-    value: {exec: "printf '%s\\n' horizontal vertical"}
+    value: {enum: [horizontal, vertical]}
     description: "Flip image"
   --flip:
-    value: {exec: "printf '%s\\n' horizontal vertical"}
+    value: {enum: [horizontal, vertical]}
     description: "Flip image"
   -c: {value: any, description: "Crop to pixelsH pixelsW"}
   --cropToHeightWidth: {value: any, description: "Crop to pixelsH pixelsW"}

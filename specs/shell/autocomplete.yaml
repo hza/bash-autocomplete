@@ -21,7 +21,7 @@ commands:
       --force: {description: "Replace an existing CMD spec"}
       --from:
         description: "Use only this source"
-        value: {exec: "printf 'cobra\\tcobra (Go) program completion\\nman\\tthe man page\\nhelp\\tCMD --help output\\n'"}
+        value: {enum: {cobra: 'cobra (Go) program completion', man: 'the man page', help: 'CMD --help output'}}
     args: {exec: "compgen -c | sort -u"}
   edit:
     description: "Open your copy of a spec in $VISUAL/$EDITOR (copies the shipped one first)"

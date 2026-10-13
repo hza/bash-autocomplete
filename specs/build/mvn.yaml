@@ -13,7 +13,7 @@ flags:
   --strict-checksums: {description: "Fail the build if checksums don't match"}
   -c: {description: "Warn if checksums don't match"}
   --lax-checksums: {description: "Warn if checksums don't match"}
-  --color: {value: {exec: "printf 'auto\\nalways\\nnever\\n'"}, description: "Output color mode"}
+  --color: {value: {enum: [auto, always, never]}, description: "Output color mode"}
   -D: {value: any, description: "Define a user property", show: always}
   --define: {value: any, description: "Define a user property", show: always}
   -DskipTests: {description: "Compile tests but don't run them"}
@@ -46,7 +46,7 @@ flags:
     value: {exec: "ls src/main/resources/application-* */src/main/resources/application-* 2>/dev/null | sed -nE 's#.*/application-(.*)[.](properties|yml|yaml)$#\\1#p' | sort -u"}
   '-Dspring-boot.run.jvmArguments=':
     description: "JVM args for spring-boot:run"
-    value: {exec: "printf '%s\\t%s\\n' -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 'Debug on port 5005' -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 'Debug on 5005, wait for debugger' -Xmx512m 'Max heap 512 MB' -Xmx1g 'Max heap 1 GB' -Xmx2g 'Max heap 2 GB' -XX:+HeapDumpOnOutOfMemoryError 'Heap dump on OOM'"}
+    value: {enum: {'-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005': 'Debug on port 5005', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005': 'Debug on 5005, wait for debugger', '-Xmx512m': 'Max heap 512 MB', '-Xmx1g': 'Max heap 1 GB', '-Xmx2g': 'Max heap 2 GB', '-XX:+HeapDumpOnOutOfMemoryError': 'Heap dump on OOM'}}
   '-Dexec.mainClass=':
     description: "Main class for exec:java"
     value: {exec: 'sh "$AUTOCOMPLETE_SPEC_DIR/../lang/java.sh" classes'}

@@ -32,7 +32,7 @@ flags:
   -dsa: {description: disable system assertions}
   -agentlib:jdwp=: {description: load the debugger agent with these options}
   --enable-preview: {description: allow preview language features}
-  --source: {value: {exec: "printf '%s\\n' 25 21 17 11 8"}, description: Java version of a source-file program}
+  --source: {value: {enum: ['25', '21', '17', '11', '8']}, description: Java version of a source-file program}
   -XX:+UseG1GC: {description: use the G1 garbage collector}
   -XX:+UseZGC: {description: use the Z garbage collector}
   -XX:+HeapDumpOnOutOfMemoryError: {description: dump the heap on OutOfMemoryError}

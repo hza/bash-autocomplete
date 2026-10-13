@@ -25,9 +25,9 @@ flags:
   --disable-slash-commands: {description: "Disable all skills"}
   --disallowedTools: {value: any, description: "Tool names to deny"}
   --disallowed-tools: {value: any, description: "Tool names to deny"}
-  --effort: {value: {exec: "printf '%s\\n' low medium high xhigh max"}, description: "Effort level for the session"}
+  --effort: {value: {enum: [low, medium, high, xhigh, max]}, description: "Effort level for the session"}
   --exclude-dynamic-system-prompt-sections: {description: "Move per-machine prompt sections into the first message"}
-  --fallback-model: {value: {exec: "printf '%s\\n' fable opus sonnet haiku"}, description: "Fallback model(s) when overloaded (--print only)"}
+  --fallback-model: {value: {enum: [fable, opus, sonnet, haiku]}, description: "Fallback model(s) when overloaded (--print only)"}
   --file: {value: any, description: "File resources to download: file_id:relative_path"}
   --fork-session: {description: "New session ID when resuming (with -r/-c)"}
   --from-pr: {value: any, description: "Resume a session linked to a PR number/URL"}
@@ -36,21 +36,21 @@ flags:
   --ide: {description: "Connect to the IDE on startup"}
   --include-hook-events: {description: "Hook events in stream-json output"}
   --include-partial-messages: {description: "Partial message chunks in stream-json output"}
-  --input-format: {value: {exec: "printf '%s\\n' text stream-json"}, description: "Input format (--print only)"}
+  --input-format: {value: {enum: [text, stream-json]}, description: "Input format (--print only)"}
   --json-schema: {value: any, description: "JSON Schema for structured output"}
   --max-budget-usd: {value: any, description: "Maximum dollars to spend (--print only)"}
   --mcp-config: {value: {file: "*.json"}, description: "Load MCP servers from JSON files or strings"}
-  --model: {value: {exec: "printf '%s\\n' fable opus sonnet haiku claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5"}, description: "Model for the session"}
+  --model: {value: {enum: [fable, opus, sonnet, haiku, claude-fable-5-1, claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5]}, description: "Model for the session"}
   -n: {value: any, description: "Display name for this session"}
   --name: {value: any, description: "Display name for this session"}
   --no-session-persistence: {description: "Don't save the session (--print only)"}
-  --output-format: {value: {exec: "printf '%s\\n' text json stream-json"}, description: "Output format (--print only)"}
-  --permission-mode: {value: {exec: "printf '%s\\n' acceptEdits auto bypassPermissions default dontAsk plan"}, description: "Permission mode for the session"}
+  --output-format: {value: {enum: [text, json, stream-json]}, description: "Output format (--print only)"}
+  --permission-mode: {value: {enum: [acceptEdits, auto, bypassPermissions, default, dontAsk, plan]}, description: "Permission mode for the session"}
   --plugin-dir: {value: dir, description: "Load a plugin from a directory or .zip", repeat: true}
   --plugin-url: {value: any, description: "Fetch a plugin .zip from a URL", repeat: true}
   -p: {description: "Print response and exit (non-interactive)", show: always}
   --print: {description: "Print response and exit (non-interactive)"}
-  --prompt-suggestions: {value: {exec: "printf '%s\\n' true false"}, description: "Enable prompt suggestions"}
+  --prompt-suggestions: {value: {enum: ['true', 'false']}, description: "Enable prompt suggestions"}
   --remote-control: {value: any, description: "Interactive session with Remote Control"}
   --remote-control-session-name-prefix: {value: any, description: "Prefix for Remote Control session names"}
   --replay-user-messages: {description: "Re-emit user messages on stdout (stream-json)"}
@@ -58,7 +58,7 @@ flags:
   --resume: {value: any, description: "Resume a conversation by ID, or open the picker"}
   --safe-mode: {description: "Start with all customizations disabled"}
   --session-id: {value: any, description: "Use a specific session UUID"}
-  --setting-sources: {value: {exec: "printf '%s\\n' user project local user,project user,project,local"}, description: "Setting sources to load"}
+  --setting-sources: {value: {enum: [user, project, local, 'user,project', 'user,project,local']}, description: "Setting sources to load"}
   --settings: {value: {file: "*.json"}, description: "Settings JSON file or string"}
   --strict-mcp-config: {description: "Only use MCP servers from --mcp-config"}
   --system-prompt: {value: any, description: "System prompt for the session"}
@@ -87,7 +87,7 @@ commands:
   doctor: {description: "Check the health of the installation and auto-updater"}
   install:
     description: "Install Claude Code native build"
-    args: {exec: "printf '%s\\n' stable latest"}
+    args: {enum: [stable, latest]}
     flags:
       --force: {description: "Force reinstall"}
   mcp:
@@ -103,21 +103,21 @@ commands:
           --env: {value: any, description: "Set environment variables (KEY=value)", repeat: true}
           -H: {value: any, description: "Set headers (\"X-Api-Key: abc\")", repeat: true}
           --header: {value: any, description: "Set headers (\"X-Api-Key: abc\")", repeat: true}
-          -s: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope (default local)"}
-          --scope: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope (default local)"}
-          -t: {value: {exec: "printf '%s\\n' stdio sse http"}, description: "Transport type (default stdio)"}
-          --transport: {value: {exec: "printf '%s\\n' stdio sse http"}, description: "Transport type (default stdio)"}
+          -s: {value: {enum: [local, user, project]}, description: "Configuration scope (default local)"}
+          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope (default local)"}
+          -t: {value: {enum: [stdio, sse, http]}, description: "Transport type (default stdio)"}
+          --transport: {value: {enum: [stdio, sse, http]}, description: "Transport type (default stdio)"}
         args: any
       add-from-claude-desktop:
         description: "Import MCP servers from Claude Desktop"
         flags:
-          -s: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
-          --scope: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
+          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
       add-json:
         description: "Add an MCP server with a JSON string"
         flags:
-          -s: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
-          --scope: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
+          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
       get: {description: "Details about an MCP server"}
       list: {description: "List configured MCP servers (health-checked)"}
       login: {description: "Authenticate with an MCP server"}
@@ -125,8 +125,8 @@ commands:
       remove:
         description: "Remove an MCP server"
         flags:
-          -s: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
-          --scope: {value: {exec: "printf '%s\\n' local user project"}, description: "Configuration scope"}
+          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
       reset-project-choices: {description: "Reset approved/rejected .mcp.json servers"}
       serve: {description: "Start Claude Code as an MCP server"}
   plugin:

@@ -37,8 +37,8 @@ flags:
   -W: {value: any, description: "Max number of rotated files"}
   -z: {value: any, description: "Command to run on each rotated file"}
   -Z: {value: "@users", description: "Drop privileges to this user"}
-  -Q: {value: {exec: "printf '%s\\n' in out inout"}, description: "Capture direction (or a metadata filter)"}
-  -T: {value: {exec: "printf '%s\\n' aodv carp cnfp lmp pgm pgm_zmtp1 radius resp rpc rtcp rtp snmp tftp vat vxlan wb zmtp1"}, description: "Interpret selected packets as this type"}
+  -Q: {value: {enum: [in, out, inout]}, description: "Capture direction (or a metadata filter)"}
+  -T: {value: {enum: [aodv, carp, cnfp, lmp, pgm, pgm_zmtp1, radius, resp, rpc, rtcp, rtp, snmp, tftp, vat, vxlan, wb, zmtp1]}, description: "Interpret selected packets as this type"}
   -y: {value: any, description: "Data link type"}
   -L: {description: "List data link types of the interface"}
   -B: {value: any, description: "Capture buffer size (KiB)"}
@@ -57,9 +57,9 @@ flags:
   --number: {description: "Number the packets"}
   --print: {description: "Print packets even when writing with -w"}
   --version: {description: "Print version strings"}
-  --time-stamp-precision: {value: {exec: "printf '%s\\n' micro nano"}, description: "Timestamp precision"}
+  --time-stamp-precision: {value: {enum: [micro, nano]}, description: "Timestamp precision"}
 args:
-  exec: "printf '%s\\n' host net port portrange src dst tcp udp icmp icmp6 arp ip ip6 ether vlan and or not less greater"
+  enum: [host, net, port, portrange, src, dst, tcp, udp, icmp, icmp6, arp, ip, ip6, ether, vlan, and, or, not, less, greater]
 snippets:
   - key: p
     mark: pin

@@ -20,7 +20,7 @@ flags:
   --test-name-pattern: {value: any, description: run only tests whose name matches}
   --test-only: {description: run only tests marked only}
   --test-reporter:
-    value: {exec: "printf '%s\\n' spec tap dot junit lcov"}
+    value: {enum: [spec, tap, dot, junit, lcov]}
     description: test reporter
   --experimental-test-coverage: {description: collect test coverage}
   --watch: {description: restart when files change, show: always}
@@ -28,7 +28,7 @@ flags:
   --env-file: {value: file, description: load environment variables from a file}
   --env-file-if-exists: {value: file, description: load environment variables from a file if it exists}
   --input-type:
-    value: {exec: "printf '%s\\n' module commonjs module-typescript commonjs-typescript"}
+    value: {enum: [module, commonjs, module-typescript, commonjs-typescript]}
     description: module type for string input
   --inspect: {description: enable the inspector}
   --inspect-brk: {description: enable the inspector and break at start, show: always}
@@ -40,7 +40,7 @@ flags:
   --trace-deprecation: {description: show stack traces for deprecations}
   --trace-uncaught: {description: show stack traces for uncaught throws}
   --unhandled-rejections:
-    value: {exec: "printf '%s\\n' throw strict warn none warn-with-error-code"}
+    value: {enum: [throw, strict, warn, none, warn-with-error-code]}
     description: how to handle unhandled promise rejections
   --max-old-space-size: {value: any, description: max old-generation heap size in MB}
   --stack-size: {value: any, description: max stack size in KB}

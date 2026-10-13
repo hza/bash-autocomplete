@@ -8,13 +8,13 @@ flags:
   --context: {value: {exec: "doctl auth list 2>/dev/null | sed 's/ (current)//'"}, description: "Authentication context name"}
   -c: {value: file, description: "Path to config file"}
   --config: {value: file, description: "Path to config file"}
-  -o: {value: {exec: "printf '%s\\n' text json"}, description: "Output format", show: always}
-  --output: {value: {exec: "printf '%s\\n' text json"}, description: "Output format"}
+  -o: {value: {enum: [text, json]}, description: "Output format", show: always}
+  --output: {value: {enum: [text, json]}, description: "Output format"}
   --format: {value: any, description: "Columns to show, comma separated"}
   --no-header: {description: "Omit the header row"}
   -u: {value: any, description: "Override the default API endpoint"}
   --api-url: {value: any, description: "Override the default API endpoint"}
-  --interactive: {value: {exec: "printf '%s\\n' true false"}, description: "Enable interactive prompts"}
+  --interactive: {value: {enum: ['true', 'false']}, description: "Enable interactive prompts"}
   --trace: {description: "Show a log of network activity"}
   -v: {description: "Verbose output"}
   --verbose: {description: "Verbose output"}
@@ -120,7 +120,7 @@ commands:
         description: Manage block storage volumes
         commands:
           list: {description: "List volumes", aliases: [ls]}
-          create: {description: "Create a volume", flags: {--size: {value: any, description: "Size, e.g. 100GiB"}, --region: {value: any, description: "Region slug"}, --fs-type: {value: {exec: "printf '%s\\n' ext4 xfs"}, description: "Filesystem"}}, args: any}
+          create: {description: "Create a volume", flags: {--size: {value: any, description: "Size, e.g. 100GiB"}, --region: {value: any, description: "Region slug"}, --fs-type: {value: {enum: [ext4, xfs]}, description: "Filesystem"}}, args: any}
           delete: {description: "Delete a volume", aliases: [rm], args: any}
           snapshot: {description: "Snapshot a volume", args: any}
       volume-action:
@@ -154,7 +154,7 @@ commands:
             description: Manage DNS records
             commands:
               list: {description: "List records of a domain", args: {exec: "doctl compute domain list --format Domain --no-header 2>/dev/null", cache: 300}}
-              create: {description: "Create a record", flags: {--record-type: {value: {exec: "printf '%s\\n' A AAAA CNAME MX TXT NS SRV CAA"}, description: "Record type"}, --record-name: {value: any, description: "Record name"}, --record-data: {value: any, description: "Record data"}, --record-ttl: {value: any, description: "TTL in seconds"}}, args: any}
+              create: {description: "Create a record", flags: {--record-type: {value: {enum: [A, AAAA, CNAME, MX, TXT, NS, SRV, CAA]}, description: "Record type"}, --record-name: {value: any, description: "Record name"}, --record-data: {value: any, description: "Record data"}, --record-ttl: {value: any, description: "TTL in seconds"}}, args: any}
               update: {description: "Update a record", args: any}
               delete: {description: "Delete records", args: any}
       image: {description: "Manage images", commands: {list: {description: "List images"}, list-distribution: {description: "List distribution images"}, list-application: {description: "List 1-Click app images"}, list-user: {description: "List your images"}, delete: {description: "Delete an image", args: any}}}
@@ -193,7 +193,7 @@ commands:
           kubeconfig:
             description: Manage cluster kubeconfig
             commands:
-              save: {description: "Merge cluster credentials into kubeconfig", flags: {--set-current-context: {value: {exec: "printf '%s\\n' true false"}, description: "Switch to the new context"}}, args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
+              save: {description: "Merge cluster credentials into kubeconfig", flags: {--set-current-context: {value: {enum: ['true', 'false']}, description: "Switch to the new context"}}, args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
               show: {description: "Print the kubeconfig", args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
               remove: {description: "Remove cluster from kubeconfig", args: {exec: "doctl kubernetes cluster list --format Name --no-header 2>/dev/null", cache: 120}}
           node-pool:
@@ -222,7 +222,7 @@ commands:
       logs:
         description: Show app logs
         flags:
-          --type: {value: {exec: "printf '%s\\n' build deploy run run_restarted"}, description: "Log type", show: always}
+          --type: {value: {enum: [build, deploy, run, run_restarted]}, description: "Log type", show: always}
           -f: {description: "Follow logs"}
           --follow: {description: "Follow logs"}
           --deployment: {value: any, description: "Deployment ID"}
@@ -239,7 +239,7 @@ commands:
       create:
         description: Create a database cluster
         flags:
-          --engine: {value: {exec: "printf '%s\\n' pg mysql redis valkey mongodb kafka opensearch"}, description: "Database engine", show: always}
+          --engine: {value: {enum: [pg, mysql, redis, valkey, mongodb, kafka, opensearch]}, description: "Database engine", show: always}
           --region: {value: any, description: "Region slug"}
           --size: {value: any, description: "Node size slug"}
           --num-nodes: {value: any, description: "Number of nodes"}
@@ -271,7 +271,7 @@ commands:
     commands:
       list: {description: "List projects"}
       get: {description: "Show a project", args: any}
-      create: {description: "Create a project", flags: {--name: {value: any, description: "Project name"}, --purpose: {value: any, description: "Project purpose"}, --environment: {value: {exec: "printf '%s\\n' Development Staging Production"}, description: "Environment"}}}
+      create: {description: "Create a project", flags: {--name: {value: any, description: "Project name"}, --purpose: {value: any, description: "Project purpose"}, --environment: {value: {enum: [Development, Staging, Production]}, description: "Environment"}}}
       delete: {description: "Delete a project", args: any}
       resources: {description: "Manage project resources", commands: {list: {description: "List resources", args: any}, assign: {description: "Assign resources", args: any}}}
   serverless:
@@ -296,7 +296,7 @@ commands:
       keys: {description: "Manage Spaces keys", commands: {list: {description: "List keys"}, create: {description: "Create a key", args: any}, delete: {description: "Delete a key", args: any}}}
   1-click: {description: "List 1-Click applications", commands: {list: {description: "List 1-Click apps"}}}
   version: {description: "Show doctl version"}
-  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, powershell]}}
 snippets:
   - key: l
     mark: pin

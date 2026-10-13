@@ -15,7 +15,7 @@ flags:
   --execute: {value: any, description: "Execute statement and quit"}
   -S: {value: file, description: "Socket file for connection"}
   --socket: {value: file, description: "Socket file for connection"}
-  --protocol: {value: {exec: "printf '%s\\t%s\\n' tcp 'TCP/IP' socket 'Unix socket file' pipe 'named pipe (Windows)' memory 'shared memory (Windows)'"}, description: "Transport protocol"}
+  --protocol: {value: {enum: {tcp: TCP/IP, socket: 'Unix socket file', pipe: 'named pipe (Windows)', memory: 'shared memory (Windows)'}}, description: "Transport protocol"}
   -B: {description: "Batch mode: tab-separated output, no history"}
   --batch: {description: "Batch mode: tab-separated output, no history"}
   -N: {description: "Do not write column names in results"}
@@ -44,8 +44,8 @@ flags:
   --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
   --no-defaults: {description: "Do not read any option files"}
   --login-path: {value: any, description: "Read options from this login path (.mylogin.cnf)"}
-  --default-character-set: {value: {exec: "printf '%s\\n' utf8mb4 utf8 latin1 ascii binary"}, description: "Default character set"}
-  --ssl-mode: {value: {exec: "printf '%s\\n' DISABLED PREFERRED REQUIRED VERIFY_CA VERIFY_IDENTITY"}, description: "TLS mode for the connection"}
+  --default-character-set: {value: {enum: [utf8mb4, utf8, latin1, ascii, binary]}, description: "Default character set"}
+  --ssl-mode: {value: {enum: [DISABLED, PREFERRED, REQUIRED, VERIFY_CA, VERIFY_IDENTITY]}, description: "TLS mode for the connection"}
   --ssl-ca: {value: file, description: "CA certificate file"}
   --ssl-cert: {value: file, description: "Client certificate file"}
   --ssl-key: {value: file, description: "Client key file"}

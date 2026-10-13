@@ -58,8 +58,8 @@ flags:
   -a: {description: "Treat binary files as text"}
   --text: {description: "Treat binary files as text"}
   -I: {description: "Skip binary files"}
-  -D: {value: {exec: "printf '%s\\t%s\\n' read 'read devices and FIFOs' skip 'skip them'"}, description: "Devices and FIFOs: read or skip"}
-  -d: {value: {exec: "printf '%s\\t%s\\n' read 'read as files' recurse 'like -r' skip 'skip them'"}, description: "Directories: read, recurse or skip"}
+  -D: {value: {enum: {read: 'read devices and FIFOs', skip: 'skip them'}}, description: "Devices and FIFOs: read or skip"}
+  -d: {value: {enum: {read: 'read as files', recurse: 'like -r', skip: 'skip them'}}, description: "Directories: read, recurse or skip"}
   -z: {description: "Input lines end with NUL, not newline"}
   --null-data: {description: "Input lines end with NUL, not newline"}
   --null: {description: "NUL after file names (for xargs -0 with -l)"}

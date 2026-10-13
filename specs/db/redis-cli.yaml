@@ -34,7 +34,7 @@ flags:
   --csv: {description: "Output in CSV format"}
   --json: {description: "Output in JSON format"}
   --quoted-json: {description: "JSON output with ASCII-safe quoting"}
-  --show-pushes: {value: {exec: "printf '%s\\n' yes no"}, description: "Print RESP3 push messages"}
+  --show-pushes: {value: {enum: ['yes', 'no']}, description: "Print RESP3 push messages"}
   --stat: {description: "Rolling stats about the server"}
   --latency: {description: "Continuously sample latency"}
   --latency-history: {description: "Latency samples, reset every 15 s"}
@@ -56,12 +56,12 @@ flags:
   --eval: {value: {file: "*.lua"}, description: "Run a Lua script file"}
   --ldb: {description: "Debug the --eval script with the Lua debugger"}
   --ldb-sync-mode: {description: "Synchronous Lua debugger (blocks server)"}
-  --cluster: {value: {exec: "printf '%s\\n' create check info fix reshard rebalance add-node del-node call set-timeout import backup help"}, description: "Cluster manager subcommand"}
+  --cluster: {value: {enum: [create, check, info, fix, reshard, rebalance, add-node, del-node, call, set-timeout, import, backup, help]}, description: "Cluster manager subcommand"}
   --verbose: {description: "Verbose mode"}
   --no-auth-warning: {description: "Hide warning about passwords on the command line"}
   --help: {description: "Show help and exit"}
   --version: {description: "Print version and exit"}
-args: {exec: "printf '%s\\n' PING INFO GET SET DEL KEYS SCAN EXISTS EXPIRE TTL TYPE INCR HGET HSET HGETALL LPUSH RPUSH LRANGE SADD SMEMBERS ZADD ZRANGE PUBLISH SUBSCRIBE MONITOR DBSIZE FLUSHDB FLUSHALL CONFIG CLIENT SLOWLOG MEMORY SAVE BGSAVE"}
+args: {enum: [PING, INFO, GET, SET, DEL, KEYS, SCAN, EXISTS, EXPIRE, TTL, TYPE, INCR, HGET, HSET, HGETALL, LPUSH, RPUSH, LRANGE, SADD, SMEMBERS, ZADD, ZRANGE, PUBLISH, SUBSCRIBE, MONITOR, DBSIZE, FLUSHDB, FLUSHALL, CONFIG, CLIENT, SLOWLOG, MEMORY, SAVE, BGSAVE]}
 snippets:
   - key: s
     mark: pin

@@ -18,10 +18,10 @@ flags:
   -s: {description: "Only allow mouse selection"}
   -S: {description: "Window mode: capture the screen, not the window"}
   -J:
-    value: {exec: "printf '%s\\n' selection window video"}
+    value: {enum: [selection, window, video]}
     description: "Starting interactive mode"
   -t:
-    value: {exec: "printf '%s\\n' png jpg pdf tiff heic gif bmp"}
+    value: {enum: [png, jpg, pdf, tiff, heic, gif, bmp]}
     description: "Image format (default png)"
   -T: {value: any, description: "Delay in seconds", show: always}
   -w: {description: "Only allow window selection"}

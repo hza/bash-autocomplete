@@ -20,8 +20,8 @@ commands:
   get:
     description: Display one or many resources
     flags:
-      -o: {value: {exec: "printf '%s\\n' json yaml wide name custom-columns= jsonpath= go-template="}, description: "Output format", show: always}
-      --output: {value: {exec: "printf '%s\\n' json yaml wide name custom-columns= jsonpath= go-template="}, description: "Output format", show: always}
+      -o: {value: {enum: [json, yaml, wide, name, 'custom-columns=', 'jsonpath=', 'go-template=']}, description: "Output format", show: always}
+      --output: {value: {enum: [json, yaml, wide, name, 'custom-columns=', 'jsonpath=', 'go-template=']}, description: "Output format", show: always}
       -l: {value: any, description: "Selector (label query) to filter on"}
       --selector: {value: any, description: "Selector (label query) to filter on"}
       --field-selector: {value: any, description: "Selector (field query) to filter on"}
@@ -63,7 +63,7 @@ commands:
       --kustomize: {value: dir, description: "Process a kustomization directory", show: always}
       -R: {description: "Process the directory used in -f recursively"}
       --recursive: {description: "Process the directory used in -f recursively"}
-      --dry-run: {value: {exec: "printf '%s\\n' none client server"}, description: "Only print the object that would be sent"}
+      --dry-run: {value: {enum: [none, client, server]}, description: "Only print the object that would be sent"}
       --server-side: {description: "Run apply on the server instead of the client"}
       --prune: {description: "Automatically delete resource objects that do not appear in the configs"}
   create:
@@ -71,7 +71,7 @@ commands:
     flags:
       -f: {value: file, description: "File that contains the configuration to create", show: always}
       --filename: {value: file, description: "File that contains the configuration to create", show: always}
-      --dry-run: {value: {exec: "printf '%s\\n' none client server"}, description: "Only print the object that would be sent"}
+      --dry-run: {value: {enum: [none, client, server]}, description: "Only print the object that would be sent"}
     args:
       exec: printf '%s\n' deployment namespace secret configmap service serviceaccount job cronjob role rolebinding clusterrole clusterrolebinding ingress quota priorityclass poddisruptionbudget
   edit:
@@ -164,7 +164,7 @@ commands:
       --stdin: {description: "Keep stdin open on the container"}
       -t: {description: "Allocate a TTY"}
       --tty: {description: "Allocate a TTY"}
-      --restart: {value: {exec: "printf '%s\\n' Always OnFailure Never"}, description: "The restart policy for this Pod", show: always}
+      --restart: {value: {enum: [Always, OnFailure, Never]}, description: "The restart policy for this Pod", show: always}
       --env: {value: any, description: "Environment variables to set in the container", show: always}
       --port: {value: any, description: "The port that this container exposes", show: always}
   expose:
@@ -172,7 +172,7 @@ commands:
     flags:
       --port: {value: any, description: "The port that the service should serve on", show: always}
       --target-port: {value: any, description: "Port on the container that the service should direct traffic to", show: always}
-      --type: {value: {exec: "printf '%s\\n' ClusterIP NodePort LoadBalancer ExternalName"}, description: "Type for this service"}
+      --type: {value: {enum: [ClusterIP, NodePort, LoadBalancer, ExternalName]}, description: "Type for this service"}
       --name: {value: any, description: "The name for the newly created object", show: always}
     args:
       exec: kubectl get deployments,pods,services,replicasets -o name

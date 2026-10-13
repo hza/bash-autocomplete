@@ -3,10 +3,10 @@ description: "Print the pasteboard contents"
 flags:
   -help: {description: "Show usage"}
   -pboard:
-    value: {exec: "printf '%s\\n' general ruler find font"}
+    value: {enum: [general, ruler, find, font]}
     description: "Pasteboard to use"
   -Prefer:
-    value: {exec: "printf '%s\\n' txt rtf ps public.html"}
+    value: {enum: [txt, rtf, ps, public.html]}
     description: "Data type to look for first"
 snippets:
   - key: f

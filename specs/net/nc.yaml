@@ -14,7 +14,7 @@ flags:
   -b: {value: {exec: "ifconfig -l | tr ' ' '\\n'"}, description: "Bind the socket to this interface"}
   -U: {description: "Use Unix domain sockets"}
   -x: {value: any, description: "Connect through a proxy (address[:port])"}
-  -X: {value: {exec: "printf '%s\\t%s\\n' 4 'SOCKS v4' 5 'SOCKS v5' connect 'HTTPS proxy'"}, description: "Proxy protocol"}
+  -X: {value: {enum: {'4': 'SOCKS v4', '5': 'SOCKS v5', connect: 'HTTPS proxy'}}, description: "Proxy protocol"}
   -c: {description: "Send CRLF as line ending"}
   -d: {description: "Do not read from stdin"}
   -i: {value: any, description: "Delay between lines sent/received (seconds)"}
@@ -34,7 +34,7 @@ flags:
   --apple-delegate-uuid: {value: any, description: "Delegate the socket for this UUID"}
   --apple-ext-bk-idle: {description: "Extended background idle time when suspended"}
   --apple-nowakefromsleep: {value: any, description: "Exclude the local port from wake-on-sleep checks (n > 0)"}
-  --apple-ecn: {value: {exec: "printf '%s\\n' default enable disable"}, description: "TCP ECN mode"}
+  --apple-ecn: {value: {enum: [default, enable, disable]}, description: "TCP ECN mode"}
 args: "@hosts"
 snippets:
   - key: p

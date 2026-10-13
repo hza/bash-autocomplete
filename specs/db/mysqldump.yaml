@@ -11,7 +11,7 @@ flags:
   --password: {description: "Prompt for password (or --password=SECRET)"}
   -S: {value: file, description: "Socket file for connection"}
   --socket: {value: file, description: "Socket file for connection"}
-  --protocol: {value: {exec: "printf '%s\\t%s\\n' tcp 'TCP/IP' socket 'Unix socket file' pipe 'named pipe (Windows)' memory 'shared memory (Windows)'"}, description: "Transport protocol"}
+  --protocol: {value: {enum: {tcp: TCP/IP, socket: 'Unix socket file', pipe: 'named pipe (Windows)', memory: 'shared memory (Windows)'}}, description: "Transport protocol"}
   -B: {description: "Dump several databases (names as args)", show: always}
   --databases: {description: "Dump several databases (names as args)"}
   -A: {description: "Dump all databases", show: always}
@@ -51,19 +51,19 @@ flags:
   --quick: {description: "Stream rows instead of buffering (default on)"}
   --compact: {description: "Less verbose output (no comments etc.)"}
   --skip-comments: {description: "Do not write comments"}
-  --set-gtid-purged: {value: {exec: "printf '%s\\n' OFF ON AUTO COMMENTED"}, description: "Write SET @@GLOBAL.GTID_PURGED"}
-  --source-data: {value: {exec: "printf '%s\\t%s\\n' 1 'CHANGE REPLICATION SOURCE statement' 2 'same, commented out'"}, description: "Include binary log position"}
-  --master-data: {value: {exec: "printf '%s\\t%s\\n' 1 'CHANGE MASTER statement' 2 'same, commented out'"}, description: "Include binary log position (older name)"}
+  --set-gtid-purged: {value: {enum: ['OFF', 'ON', AUTO, COMMENTED]}, description: "Write SET @@GLOBAL.GTID_PURGED"}
+  --source-data: {value: {enum: {'1': 'CHANGE REPLICATION SOURCE statement', '2': 'same, commented out'}}, description: "Include binary log position"}
+  --master-data: {value: {enum: {'1': 'CHANGE MASTER statement', '2': 'same, commented out'}}, description: "Include binary log position (older name)"}
   -T: {value: dir, description: "Write tab-separated data files to dir"}
   --tab: {value: dir, description: "Write tab-separated data files to dir"}
   -X: {description: "Produce XML output"}
   --xml: {description: "Produce XML output"}
-  --default-character-set: {value: {exec: "printf '%s\\n' utf8mb4 utf8 latin1 binary"}, description: "Default character set"}
+  --default-character-set: {value: {enum: [utf8mb4, utf8, latin1, binary]}, description: "Default character set"}
   --defaults-file: {value: file, description: "Read options only from this file"}
   --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
   --no-defaults: {description: "Do not read any option files"}
   --login-path: {value: any, description: "Read options from this login path (.mylogin.cnf)"}
-  --ssl-mode: {value: {exec: "printf '%s\\n' DISABLED PREFERRED REQUIRED VERIFY_CA VERIFY_IDENTITY"}, description: "TLS mode for the connection"}
+  --ssl-mode: {value: {enum: [DISABLED, PREFERRED, REQUIRED, VERIFY_CA, VERIFY_IDENTITY]}, description: "TLS mode for the connection"}
   --column-statistics: {description: "Write ANALYZE TABLE statements (0 to disable)"}
   --no-tablespaces: {description: "Do not write tablespace info"}
   -f: {description: "Continue even on SQL errors"}

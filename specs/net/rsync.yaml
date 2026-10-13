@@ -15,7 +15,7 @@ flags:
   --partial-dir: {value: dir, description: "Put partial files in this directory"}
   -h: {description: "Human-readable numbers"}
   --human-readable: {description: "Human-readable numbers"}
-  -e: {value: {exec: "printf '%s\\n' ssh 'ssh -p 2222' 'ssh -i ~/.ssh/id_ed25519'"}, description: "Remote shell to use (e.g. 'ssh -p 2222')"}
+  -e: {value: {enum: [ssh, 'ssh -p 2222', 'ssh -i ~/.ssh/id_ed25519']}, description: "Remote shell to use (e.g. 'ssh -p 2222')"}
   --rsh: {value: any, description: "Remote shell to use"}
   --delete: {description: "Delete extraneous files on the receiver", show: always}
   --del: {description: "Delete during transfer (--delete-during)"}

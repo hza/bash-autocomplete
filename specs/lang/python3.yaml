@@ -24,13 +24,13 @@ flags:
   -V: {description: print the version and exit}
   --version: {description: print the version and exit}
   -W:
-    value: {exec: "printf '%s\\n' default error ignore always module once"}
+    value: {enum: [default, error, ignore, always, module, once]}
     description: warning control (action:message:category:module:lineno)
   -x: {description: skip the first line of the source}
   -X:
-    value: {exec: "printf '%s\\n' dev utf8 importtime faulthandler tracemalloc showrefcount frozen_modules=off warn_default_encoding"}
+    value: {enum: [dev, utf8, importtime, faulthandler, tracemalloc, showrefcount, 'frozen_modules=off', warn_default_encoding]}
     description: implementation-specific option
   --check-hash-based-pycs:
-    value: {exec: "printf '%s\\n' default always never"}
+    value: {enum: [default, always, never]}
     description: control validation of hash-based .pyc files
 args: file

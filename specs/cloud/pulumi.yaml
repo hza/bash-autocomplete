@@ -8,7 +8,7 @@ flags:
   -v: {value: any, description: "Log verbosity level"}
   --verbose: {value: any, description: "Log verbosity level"}
   --logtostderr: {description: "Log to stderr"}
-  --color: {value: {exec: "printf '%s\\n' always never raw auto"}, description: "Colorize output"}
+  --color: {value: {enum: [always, never, raw, auto]}, description: "Colorize output"}
   --non-interactive: {description: "Disable interactive prompts"}
   --disable-integrity-checking: {description: "Skip checkpoint integrity checks"}
   -e: {description: "Emulate a TTY"}
@@ -34,7 +34,7 @@ commands:
       --yes: {description: "Accept defaults"}
       --force: {description: "Overwrite existing files"}
       --ai: {value: any, description: "Generate the program from a prompt"}
-    args: {exec: "printf '%s\\n' typescript javascript python go csharp java yaml aws-typescript aws-python aws-go azure-typescript azure-python gcp-typescript gcp-python kubernetes-typescript kubernetes-python"}
+    args: {enum: [typescript, javascript, python, go, csharp, java, yaml, aws-typescript, aws-python, aws-go, azure-typescript, azure-python, gcp-typescript, gcp-python, kubernetes-typescript, kubernetes-python]}
   up:
     description: Create or update the stack's resources
     aliases: [update]
@@ -148,24 +148,24 @@ commands:
       edit: {description: "Edit the state in an editor"}
       repair: {description: "Fix invalid state"}
       upgrade: {description: "Upgrade the state format"}
-  import: {description: "Bring an existing cloud resource under management", flags: {-f: {value: {file: "*.json"}, description: "Bulk import file"}, --file: {value: {file: "*.json"}, description: "Bulk import file"}, -o: {value: file, description: "Write generated code to a file"}, --out: {value: file, description: "Write generated code to a file"}, --protect: {value: {exec: "printf '%s\\n' true false"}, description: "Protect imported resources"}, -y: {description: "Skip confirmation"}}, positional: [any, any, any]}
+  import: {description: "Bring an existing cloud resource under management", flags: {-f: {value: {file: "*.json"}, description: "Bulk import file"}, --file: {value: {file: "*.json"}, description: "Bulk import file"}, -o: {value: file, description: "Write generated code to a file"}, --out: {value: file, description: "Write generated code to a file"}, --protect: {value: {enum: ['true', 'false']}, description: "Protect imported resources"}, -y: {description: "Skip confirmation"}}, positional: [any, any, any]}
   logs: {description: "Show aggregated resource logs", flags: {-f: {description: "Follow"}, --follow: {description: "Follow"}, -r: {value: any, description: "Resource name filter"}, --resource: {value: any, description: "Resource name filter"}, --since: {value: any, description: "Only logs newer than, e.g. 1h"}, --json: {description: "JSON output"}}}
-  login: {description: "Log in to a backend", flags: {--local: {description: "Use the local file backend"}, -c: {description: "Use cloud defaults"}, --cloud-url: {value: any, description: "Backend URL"}}, args: {exec: "printf '%s\\n' file:// s3:// azblob:// gs:// https://", nospace: true}}
+  login: {description: "Log in to a backend", flags: {--local: {description: "Use the local file backend"}, -c: {description: "Use cloud defaults"}, --cloud-url: {value: any, description: "Backend URL"}}, args: {enum: ['file://', 's3://', 'azblob://', 'gs://', 'https://'], nospace: true}}
   logout: {description: "Log out of the backend", flags: {--all: {description: "Log out of all backends"}, --local: {description: "Log out of the local backend"}}}
   whoami: {description: "Show the current user", flags: {-v: {description: "Show backend and orgs"}, --verbose: {description: "Show backend and orgs"}, --json: {description: "JSON output"}}}
   cancel: {description: "Cancel a running update", flags: {-y: {description: "Skip confirmation"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
   install: {description: "Install plugins and dependencies", flags: {--reinstall: {description: "Reinstall even if present"}}}
-  plugin: {description: "Manage plugins", commands: {ls: {description: "List plugins"}, install: {description: "Install a plugin", positional: [{exec: "printf '%s\\n' resource language analyzer converter tool"}, any, any]}, rm: {description: "Remove plugins", args: any}}}
+  plugin: {description: "Manage plugins", commands: {ls: {description: "List plugins"}, install: {description: "Install a plugin", positional: [{enum: [resource, language, analyzer, converter, tool]}, any, any]}, rm: {description: "Remove plugins", args: any}}}
   package: {description: "Work with Pulumi packages", commands: {add: {description: "Add a package to the project", args: any}, gen-sdk: {description: "Generate SDKs", args: any}, get-schema: {description: "Print a package schema", args: any}}}
   env: {description: "Manage Pulumi ESC environments", commands: {ls: {description: "List environments"}, init: {description: "Create an environment", args: any}, get: {description: "Show a value", args: any}, set: {description: "Set a value", args: any}, open: {description: "Resolve an environment", args: any}, run: {description: "Run a command with an environment", args: any}, edit: {description: "Edit an environment", args: any}, rm: {description: "Remove an environment", args: any}}}
-  convert: {description: "Convert a program to another language", flags: {--from: {value: {exec: "printf '%s\\n' yaml terraform arm bicep kubernetes"}, description: "Source format"}, --language: {value: {exec: "printf '%s\\n' typescript python go csharp java yaml"}, description: "Target language"}, --out: {value: dir, description: "Output directory"}}}
+  convert: {description: "Convert a program to another language", flags: {--from: {value: {enum: [yaml, terraform, arm, bicep, kubernetes]}, description: "Source format"}, --language: {value: {enum: [typescript, python, go, csharp, java, yaml]}, description: "Target language"}, --out: {value: dir, description: "Output directory"}}}
   console: {description: "Open the stack in the web console", flags: {-s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack"}}}
   org: {description: "Manage organization defaults", commands: {get-default: {description: "Show the default org"}, set-default: {description: "Set the default org", args: any}, search: {description: "Search org resources"}}}
   watch: {description: "Update continuously on file changes", flags: {-s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack"}, --path: {value: dir, description: "Watch this path"}}}
   schema: {description: "Analyze package schemas", commands: {check: {description: "Validate a schema", args: file}}}
   about: {description: "Show environment and project info"}
   version: {description: "Show version"}
-  gen-completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish"}}
+  gen-completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish]}}
 snippets:
   - key: u
     mark: pin

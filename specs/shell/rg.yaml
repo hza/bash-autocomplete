@@ -13,9 +13,9 @@ flags:
   --case-sensitive: {description: "Search case sensitively (default)"}
   --crlf: {description: "Use CRLF line terminators (nice for Windows)"}
   --dfa-size-limit: {value: any, description: "The upper size limit of the regex DFA"}
-  -E: {value: {exec: "printf '%s\\t%s\\n' utf-8 'UTF-8' utf-16le 'UTF-16 little endian' latin1 'ISO-8859-1' none 'raw bytes, no transcoding' auto 'detect BOM (default)'"}, description: "Specify the text encoding of files to search"}
-  --encoding: {value: {exec: "printf '%s\\t%s\\n' utf-8 'UTF-8' utf-16le 'UTF-16 little endian' latin1 'ISO-8859-1' none 'raw bytes, no transcoding' auto 'detect BOM (default)'"}, description: "Specify the text encoding of files to search"}
-  --engine: {value: {exec: "printf '%s\\t%s\\n' default 'Rust regex engine' pcre2 'PCRE2 (lookaround, backrefs)' auto 'PCRE2 only when needed'"}, description: "Specify which regex engine to use"}
+  -E: {value: {enum: {utf-8: UTF-8, utf-16le: 'UTF-16 little endian', latin1: ISO-8859-1, none: 'raw bytes, no transcoding', auto: 'detect BOM (default)'}}, description: "Specify the text encoding of files to search"}
+  --encoding: {value: {enum: {utf-8: UTF-8, utf-16le: 'UTF-16 little endian', latin1: ISO-8859-1, none: 'raw bytes, no transcoding', auto: 'detect BOM (default)'}}, description: "Specify the text encoding of files to search"}
+  --engine: {value: {enum: {default: 'Rust regex engine', pcre2: 'PCRE2 (lookaround, backrefs)', auto: 'PCRE2 only when needed'}}, description: "Specify which regex engine to use"}
   -F: {description: "Treat all patterns as literals", show: always}
   --fixed-strings: {description: "Treat all patterns as literals"}
   -i: {description: "Case insensitive search", show: always}
@@ -82,7 +82,7 @@ flags:
   --block-buffered: {description: "Force block buffering"}
   -b: {description: "Print the byte offset for each matching line"}
   --byte-offset: {description: "Print the byte offset for each matching line"}
-  --color: {value: {exec: "printf '%s\\t%s\\n' auto 'when stdout is a terminal' always 'always colorize' never 'no color' ansi 'ANSI escapes even on Windows'"}, description: "When to use color"}
+  --color: {value: {enum: {auto: 'when stdout is a terminal', always: 'always colorize', never: 'no color', ansi: 'ANSI escapes even on Windows'}}, description: "When to use color"}
   --colors: {value: any, description: "Configure color settings and styles"}
   --column: {description: "Show column numbers"}
   -C: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Show NUM lines before and after each match", show: always}
@@ -116,8 +116,8 @@ flags:
   --quiet: {description: "Do not print anything to stdout"}
   -r: {value: any, description: "Replace matches with the given text"}
   --replace: {value: any, description: "Replace matches with the given text"}
-  --sort: {value: {exec: "printf '%s\\t%s\\n' path 'by file path' modified 'by modification time' accessed 'by access time' created 'by creation time' none 'no sorting (parallel)'"}, description: "Sort results in ascending order"}
-  --sortr: {value: {exec: "printf '%s\\t%s\\n' path 'by file path' modified 'by modification time' accessed 'by access time' created 'by creation time' none 'no sorting (parallel)'"}, description: "Sort results in descending order"}
+  --sort: {value: {enum: {path: 'by file path', modified: 'by modification time', accessed: 'by access time', created: 'by creation time', none: 'no sorting (parallel)'}}, description: "Sort results in ascending order"}
+  --sortr: {value: {enum: {path: 'by file path', modified: 'by modification time', accessed: 'by access time', created: 'by creation time', none: 'no sorting (parallel)'}}, description: "Sort results in descending order"}
   --trim: {description: "Trim prefix whitespace from matches"}
   --vimgrep: {description: "Print results im a vim compatible format"}
   -H: {description: "Print the file path with each matching line"}
@@ -137,7 +137,7 @@ flags:
   --stats: {description: "Print statistics about the search"}
   --trace: {description: "Show trace messages"}
   --files: {description: "Print each file that would be searched"}
-  --generate: {value: {exec: "printf '%s\\t%s\\n' man 'roff man page' complete-bash 'bash completion' complete-zsh 'zsh completion' complete-fish 'fish completion' complete-powershell 'PowerShell completion'"}, description: "Generate man pages and completion scripts"}
+  --generate: {value: {enum: {man: 'roff man page', complete-bash: 'bash completion', complete-zsh: 'zsh completion', complete-fish: 'fish completion', complete-powershell: 'PowerShell completion'}}, description: "Generate man pages and completion scripts"}
   --no-config: {description: "Never read configuration files"}
   --pcre2-version: {description: "Print the version of PCRE2 that ripgrep uses"}
   --type-list: {description: "Show all supported file types"}

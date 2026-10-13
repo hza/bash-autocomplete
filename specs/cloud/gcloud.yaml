@@ -4,7 +4,7 @@ flags:
   --project: {value: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}, description: "Google Cloud project ID to use", show: always}
   --account: {value: {exec: "gcloud auth list --format='value(account)' 2>/dev/null", cache: 300}, description: "Google Cloud user account to use"}
   --configuration: {value: {exec: "gcloud config configurations list --format='value(name)' 2>/dev/null", cache: 60}, description: "Named configuration to use"}
-  --format: {value: {exec: "printf 'json\\nyaml\\ntable\\ncsv\\nvalue\\nlist\\nflattened\\nnone\\n'", nospace: true}, description: "Output format (json, yaml, table(...), value(...))", show: always}
+  --format: {value: {enum: [json, yaml, table, csv, value, list, flattened, none], nospace: true}, description: "Output format (json, yaml, table(...), value(...))", show: always}
   --filter: {value: any, description: "Filter expression for list output", show: always}
   --limit: {value: any, description: "Maximum number of resources to list"}
   --sort-by: {value: any, description: "Comma-separated list of resource field keys to sort by"}
@@ -12,7 +12,7 @@ flags:
   --zone: {value: {exec: "gcloud compute zones list --format='value(name)' 2>/dev/null", cache: 86400}, description: "Zone of the resource", show: always}
   --quiet: {description: "Disable all interactive prompts"}
   -q: {description: "Disable all interactive prompts"}
-  --verbosity: {value: {exec: "printf 'debug\\ninfo\\nwarning\\nerror\\ncritical\\nnone\\n'"}, description: "Override the default verbosity"}
+  --verbosity: {value: {enum: [debug, info, warning, error, critical, none]}, description: "Override the default verbosity"}
   --log-http: {description: "Log all HTTP server requests and responses to stderr"}
   --impersonate-service-account: {value: any, description: "Impersonate this service account"}
   --help: {description: "Display detailed help"}
@@ -42,9 +42,9 @@ commands:
     description: View and edit Google Cloud CLI properties
     commands:
       list: {description: "List Google Cloud CLI properties for the active configuration"}
-      get: {description: "Print the value of a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
-      set: {description: "Set a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
-      unset: {description: "Unset a property", args: {exec: "printf 'project\\naccount\\ncompute/region\\ncompute/zone\\ncore/disable_prompts\\nrun/region\\n'"}}
+      get: {description: "Print the value of a property", args: {enum: [project, account, compute/region, compute/zone, core/disable_prompts, run/region]}}
+      set: {description: "Set a property", args: {enum: [project, account, compute/region, compute/zone, core/disable_prompts, run/region]}}
+      unset: {description: "Unset a property", args: {enum: [project, account, compute/region, compute/zone, core/disable_prompts, run/region]}}
       configurations:
         description: Manage the set of gcloud named configurations
         commands:

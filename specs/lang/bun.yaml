@@ -15,7 +15,7 @@ flags:
   -c: {value: file, description: path to bunfig.toml, show: always}
   --config: {value: file, description: path to bunfig.toml, show: always}
   --install:
-    value: {exec: "printf '%s\\n' auto fallback force"}
+    value: {enum: [auto, fallback, force]}
     description: auto-install mode
   --no-install: {description: disable auto-install, show: always}
   --port: {value: any, description: default port for Bun.serve}
@@ -46,7 +46,7 @@ commands:
       --no-exit-on-error: {description: keep running other scripts after a failure}
       --if-present: {description: no error if the entry point is missing}
       --shell:
-        value: {exec: "printf '%s\\n' bun system"}
+        value: {enum: [bun, system]}
         description: shell for package.json scripts
     args:
       - exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
@@ -64,11 +64,11 @@ commands:
       --bail: {value: any, description: stop after this many failures}
       --coverage: {description: collect coverage, show: always}
       --coverage-reporter:
-        value: {exec: "printf '%s\\n' text lcov"}
+        value: {enum: [text, lcov]}
         description: coverage format
       --coverage-dir: {value: dir, description: coverage output directory}
       --reporter:
-        value: {exec: "printf '%s\\n' junit dots"}
+        value: {enum: [junit, dots]}
         description: output format
       --reporter-outfile: {value: file, description: reporter output file}
       --dots: {description: dots reporter}
@@ -115,14 +115,14 @@ commands:
       -g: {description: install globally}
       --global: {description: install globally}
       --backend:
-        value: {exec: "printf '%s\\n' clonefile hardlink symlink copyfile"}
+        value: {enum: [clonefile, hardlink, symlink, copyfile]}
         description: how files are installed
       --registry: {value: any, description: registry URL}
       --omit:
-        value: {exec: "printf '%s\\n' dev optional peer"}
+        value: {enum: [dev, optional, peer]}
         description: dependency type to skip
       --linker:
-        value: {exec: "printf '%s\\n' isolated hoisted"}
+        value: {enum: [isolated, hoisted]}
         description: linker strategy
       --lockfile-only: {description: only write the lockfile}
       --filter: {value: any, description: install for matching workspaces}
@@ -187,7 +187,7 @@ commands:
       --dry-run: {description: do not publish, show: always}
       --access:
         show: always
-        value: {exec: "printf '%s\\n' public restricted"}
+        value: {enum: [public, restricted]}
         description: package access level
       --tag: {value: any, description: dist-tag to publish under, show: always}
       --otp: {value: any, description: one-time password, show: always}
@@ -213,7 +213,7 @@ commands:
         args: any
       version:
         description: bump the version and create a git tag
-        args: {exec: "printf '%s\\n' patch minor major prepatch preminor premajor prerelease from-git"}
+        args: {enum: [patch, minor, major, prepatch, preminor, premajor, prerelease, from-git]}
       pkg: {description: manage data in package.json}
       hash: {description: hash the lockfile}
       hash-string: {description: print the string hashed for the lockfile}
@@ -240,23 +240,23 @@ commands:
       --watch: {description: rebuild on file change, show: always}
       --target:
         show: always
-        value: {exec: "printf '%s\\n' browser bun node"}
+        value: {enum: [browser, bun, node]}
         description: runtime the bundle targets
       --outdir: {value: dir, description: output directory, show: always}
       --outfile: {value: file, description: output file, show: always}
       --sourcemap:
         show: always
-        value: {exec: "printf '%s\\n' linked inline external none"}
+        value: {enum: [linked, inline, external, none]}
         description: source map mode
       --format:
-        value: {exec: "printf '%s\\n' esm cjs iife"}
+        value: {enum: [esm, cjs, iife]}
         description: module format
       --root: {value: dir, description: root of multiple entry points}
       --splitting: {description: enable code splitting}
       -e: {value: any, description: module to keep external, show: always}
       --external: {value: any, description: module to keep external, show: always}
       --packages:
-        value: {exec: "printf '%s\\n' bundle external"}
+        value: {enum: [bundle, external]}
         description: bundle or externalize dependencies
       --public-path: {value: any, description: prefix for import paths}
       --minify: {description: enable all minification, show: always}

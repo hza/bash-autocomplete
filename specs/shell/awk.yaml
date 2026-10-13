@@ -1,7 +1,7 @@
 version: '20261013'
 description: "Pattern scanning and processing language (BSD awk)"
 flags:
-  -F: {value: {exec: "printf '%s\\t%s\\n' , comma ':' colon '\\t' tab ';' semicolon '|' pipe '=' 'equals sign'"}, description: "Input field separator (regex)", show: always}
+  -F: {value: {enum: {',': comma, ':': colon, '\t': tab, ';': semicolon, '|': pipe, '=': 'equals sign'}}, description: "Input field separator (regex)", show: always}
   -v: {value: any, description: "Assign var=value before the program runs (repeatable)", repeat: true, show: always}
   -f: {value: file, description: "Read the program from a file", repeat: true}
   -d: {description: "Debug output"}

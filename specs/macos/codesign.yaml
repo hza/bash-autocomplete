@@ -12,8 +12,8 @@ flags:
   --hosting: {description: "Show the hosting chain of running code (pids)"}
   -f: {description: "Replace an existing signature", show: always}
   --force: {description: "Replace an existing signature"}
-  -a: {value: {exec: "printf '%s\\n' arm64 x86_64 arm64e i386"}, description: "Select a Mach-O architecture"}
-  --architecture: {value: {exec: "printf '%s\\n' arm64 x86_64 arm64e i386"}, description: "Select a Mach-O architecture"}
+  -a: {value: {enum: [arm64, x86_64, arm64e, i386]}, description: "Select a Mach-O architecture"}
+  --architecture: {value: {enum: [arm64, x86_64, arm64e, i386]}, description: "Select a Mach-O architecture"}
   --all-architectures: {description: "Verify each architecture of a universal binary"}
   --bundle-version: {value: any, description: "Bundle version (Versions/x) to sign or check"}
   --check-notarization: {description: "Also check notarization (with --verify)"}
@@ -25,8 +25,8 @@ flags:
   --generate-entitlement-der: {description: "Add DER-encoded entitlements"}
   -i: {value: any, description: "Signing identifier, e.g. com.example.tool"}
   --identifier: {value: any, description: "Signing identifier, e.g. com.example.tool"}
-  -o: {value: {exec: "printf '%s\\n' runtime kill hard host expires library linker-signed"}, description: "Option flags, comma-separated (runtime = hardened runtime)", show: always}
-  --options: {value: {exec: "printf '%s\\n' runtime kill hard host expires library linker-signed"}, description: "Option flags, comma-separated (runtime = hardened runtime)"}
+  -o: {value: {enum: [runtime, kill, hard, host, expires, library, linker-signed]}, description: "Option flags, comma-separated (runtime = hardened runtime)", show: always}
+  --options: {value: {enum: [runtime, kill, hard, host, expires, library, linker-signed]}, description: "Option flags, comma-separated (runtime = hardened runtime)"}
   -P: {value: any, description: "Page size for signing (bytes, power of two)"}
   --pagesize: {value: any, description: "Page size for signing (bytes, power of two)"}
   --remove-signature: {description: "Remove the signature"}
@@ -43,10 +43,10 @@ flags:
   --ignore-resources: {description: "Skip resource checks when verifying"}
   --keychain: {value: file, description: "Keychain to look up the identity in"}
   --prefix: {value: any, description: "Prefix for an implicit identifier, e.g. com.example."}
-  '--preserve-metadata=': {value: {exec: "printf '%s\\n' identifier entitlements requirements flags runtime launch-constraints library-constraints"}, description: "Keep parts of the old signature (comma list)"}
-  '--strict=': {value: {exec: "printf '%s\\n' all symlinks sideband"}, description: "Extra validation checks (plain --strict = all)"}
+  '--preserve-metadata=': {value: {enum: [identifier, entitlements, requirements, flags, runtime, launch-constraints, library-constraints]}, description: "Keep parts of the old signature (comma list)"}
+  '--strict=': {value: {enum: [all, symlinks, sideband]}, description: "Extra validation checks (plain --strict = all)"}
   --strict: {description: "All extra validation checks"}
-  '--timestamp=': {value: {exec: "printf '%s\\n' none"}, description: "Timestamp server URL (none = no timestamp)"}
+  '--timestamp=': {value: {enum: [none]}, description: "Timestamp server URL (none = no timestamp)"}
   --timestamp: {description: "Timestamp the signature (Apple's server)", show: always}
   --runtime-version: {value: any, description: "Hardened runtime version to record"}
   --launch-constraint-self: {value: {file: "*.plist"}, description: "Launch constraint on this executable"}

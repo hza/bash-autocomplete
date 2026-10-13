@@ -32,8 +32,8 @@ commands:
       --with-cache: {description: "Keep build cache with --force"}
       -y: {description: "Skip questions, use defaults"}
       --yes: {description: "Skip questions, use defaults"}
-      --archive: {value: {exec: "printf '%s\\n' tgz"}, description: "Upload as an archive"}
-      --target: {value: {exec: "printf '%s\\n' production preview"}, description: "Target environment"}
+      --archive: {value: {enum: [tgz]}, description: "Upload as an archive"}
+      --target: {value: {enum: [production, preview]}, description: "Target environment"}
       --skip-domain: {description: "Don't assign production domains"}
       -l: {description: "Print build logs"}
       --logs: {description: "Print build logs"}
@@ -46,7 +46,7 @@ commands:
     description: Build the project locally into .vercel/output
     flags:
       --prod: {description: "Build for production", show: always}
-      --target: {value: {exec: "printf '%s\\n' production preview"}, description: "Target environment"}
+      --target: {value: {enum: [production, preview]}, description: "Target environment"}
       --output: {value: dir, description: "Output directory"}
       -y: {description: "Skip questions"}
       --yes: {description: "Skip questions"}
@@ -61,16 +61,16 @@ commands:
   env:
     description: Manage environment variables
     commands:
-      ls: {description: "List environment variables", args: {exec: "printf '%s\\n' production preview development"}}
-      add: {description: "Add an environment variable", flags: {--sensitive: {description: "Mark as sensitive"}, --force: {description: "Overwrite existing"}}, positional: [any, {exec: "printf '%s\\n' production preview development"}]}
-      rm: {description: "Remove an environment variable", flags: {-y: {description: "No confirmation"}}, positional: [any, {exec: "printf '%s\\n' production preview development"}]}
-      pull: {description: "Write variables to a .env file", flags: {--environment: {value: {exec: "printf '%s\\n' production preview development"}, description: "Environment to pull", show: always}, --git-branch: {value: any, description: "Preview branch"}, -y: {description: "Overwrite without asking"}}, args: file}
-      update: {description: "Update an environment variable", positional: [any, {exec: "printf '%s\\n' production preview development"}]}
-      run: {description: "Run a command with the variables set", flags: {-e: {value: {exec: "printf '%s\\n' production preview development"}, description: "Environment"}, --environment: {value: {exec: "printf '%s\\n' production preview development"}, description: "Environment"}}, args: "@command"}
+      ls: {description: "List environment variables", args: {enum: [production, preview, development]}}
+      add: {description: "Add an environment variable", flags: {--sensitive: {description: "Mark as sensitive"}, --force: {description: "Overwrite existing"}}, positional: [any, {enum: [production, preview, development]}]}
+      rm: {description: "Remove an environment variable", flags: {-y: {description: "No confirmation"}}, positional: [any, {enum: [production, preview, development]}]}
+      pull: {description: "Write variables to a .env file", flags: {--environment: {value: {enum: [production, preview, development]}, description: "Environment to pull", show: always}, --git-branch: {value: any, description: "Preview branch"}, -y: {description: "Overwrite without asking"}}, args: file}
+      update: {description: "Update an environment variable", positional: [any, {enum: [production, preview, development]}]}
+      run: {description: "Run a command with the variables set", flags: {-e: {value: {enum: [production, preview, development]}, description: "Environment"}, --environment: {value: {enum: [production, preview, development]}, description: "Environment"}}, args: "@command"}
   pull:
     description: Pull project settings and env into .vercel
     flags:
-      --environment: {value: {exec: "printf '%s\\n' production preview development"}, description: "Environment to pull", show: always}
+      --environment: {value: {enum: [production, preview, development]}, description: "Environment to pull", show: always}
       --git-branch: {value: any, description: "Preview branch"}
       -y: {description: "Skip questions"}
       --yes: {description: "Skip questions"}
@@ -102,14 +102,14 @@ commands:
     aliases: [ls]
     flags:
       --prod: {description: "Only production deployments"}
-      --environment: {value: {exec: "printf '%s\\n' production preview"}, description: "Filter by environment"}
+      --environment: {value: {enum: [production, preview]}, description: "Filter by environment"}
       -m: {value: any, description: "Filter by metadata KEY=value"}
       --meta: {value: any, description: "Filter by metadata KEY=value"}
       --status: {value: any, description: "Filter by state"}
     args: any
   promote: {description: "Promote a deployment to production", flags: {--timeout: {value: any, description: "Wait timeout"}}, args: any}
   rollback: {description: "Roll production back to an earlier deployment", flags: {--timeout: {value: any, description: "Wait timeout"}}, args: any}
-  redeploy: {description: "Rebuild and deploy a previous deployment", flags: {--no-wait: {description: "Don't wait"}, --target: {value: {exec: "printf '%s\\n' production preview"}, description: "Target environment"}}, args: any}
+  redeploy: {description: "Rebuild and deploy a previous deployment", flags: {--no-wait: {description: "Don't wait"}, --target: {value: {enum: [production, preview]}, description: "Target environment"}}, args: any}
   remove: {description: "Remove deployments or projects", aliases: [rm], flags: {-y: {description: "No confirmation"}, --yes: {description: "No confirmation"}, -s: {description: "Remove only deployments without an alias"}, --safe: {description: "Remove only deployments without an alias"}}, args: any}
   alias: {description: "Manage deployment aliases", commands: {set: {description: "Assign an alias to a deployment", args: any}, ls: {description: "List aliases"}, rm: {description: "Remove an alias", args: any}}}
   domains: {description: "Manage domains", commands: {ls: {description: "List domains"}, add: {description: "Add a domain to a project", args: any}, inspect: {description: "Show domain details", args: any}, rm: {description: "Remove a domain", args: any}, buy: {description: "Buy a domain", args: any}, move: {description: "Move a domain to another scope", args: any}, transfer-in: {description: "Transfer a domain in", args: any}}}

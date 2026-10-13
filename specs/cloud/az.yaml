@@ -1,8 +1,8 @@
 version: '20261013'
 description: Azure command line interface
 flags:
-  --output: {value: {exec: "printf 'json\\njsonc\\ntable\\ntsv\\nyaml\\nyamlc\\nnone\\n'"}, description: "Output format", show: always}
-  -o: {value: {exec: "printf 'json\\njsonc\\ntable\\ntsv\\nyaml\\nyamlc\\nnone\\n'"}, description: "Output format"}
+  --output: {value: {enum: [json, jsonc, table, tsv, yaml, yamlc, none]}, description: "Output format", show: always}
+  -o: {value: {enum: [json, jsonc, table, tsv, yaml, yamlc, none]}, description: "Output format"}
   --query: {value: any, description: "JMESPath query string", show: always}
   --subscription: {value: {exec: "az account list --query '[].name' -o tsv 2>/dev/null", cache: 300}, description: "Name or ID of subscription", show: always}
   --resource-group: {value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group", show: always}

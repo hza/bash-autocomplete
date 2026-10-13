@@ -7,7 +7,7 @@ flags:
   -ipath: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" path"}, description: "Like -path, case insensitive"}
   -regex: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" regex"}, description: "Whole path matches a regular expression"}
   -iregex: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" regex"}, description: "Like -regex, case insensitive"}
-  -type: {value: {exec: "printf '%s\\t%s\\n' f file d directory l symlink p fifo s socket b block c character"}, description: "File type: f file, d dir, l symlink, p fifo, s socket"}
+  -type: {value: {enum: {f: file, d: directory, l: symlink, p: fifo, s: socket, b: block, c: character}}, description: "File type: f file, d dir, l symlink, p fifo, s socket"}
   -size: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" size"}, description: "Size in 512-byte blocks, or with k/M/G suffix; +n more, -n less"}
   -empty: {description: "Empty file or directory"}
   -mtime: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" time"}, description: "Modified n days ago (+n more, -n less; units s/m/h/d/w)"}

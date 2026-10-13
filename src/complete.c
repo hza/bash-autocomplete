@@ -368,7 +368,8 @@ static void exec_snippets(const char *shell) {
 }
 
 /* Complete a <value> from a spec: null, "any"/"file"/"dir", "@builtin",
- * {"exec": ..., "suffix": ..., "nospace": ...}, or an array (union). */
+ * {"exec": ..., "suffix": ..., "nospace": ...}, {"enum": [..] | {name: desc}},
+ * or an array (union). */
 static void complete_value(const ynode *v, const ynode *parent) {
     if (!v) return;
     switch (v->type) {
@@ -394,8 +395,22 @@ static void complete_value(const ynode *v, const ynode *parent) {
         const ynode *ex = yaml_get(v, "exec"), *sx = yaml_get(v, "suffix"), *ns = yaml_get(v, "nospace"),
                     *tr = yaml_get(v, "tree"), *fl = yaml_get(v, "filter"), *gl = yaml_get(v, "file"),
                     *ca = yaml_get(v, "cache");
+        const ynode *en = yaml_get(v, "enum"), *e;
         char shell[8192];
         if (gl && gl->type == Y_STR) { g_kind = "file"; complete_paths(0, gl->str); break; }
+        if (en && (en->type == Y_OBJ || en->type == Y_ARR)) {
+            /* fixed values: [name] or {name: desc}; "label=" gets no space */
+            g_kind = NULL;
+            for (e = en->child; e; e = e->next) {
+                const char *name = en->type == Y_OBJ ? e->key : e->type == Y_STR ? e->str : NULL;
+                const char *desc = en->type == Y_OBJ && e->type == Y_STR && *e->str ? e->str : NULL;
+                char buf[1100];
+                if (!name || !*name) continue;
+                snprintf(buf, sizeof buf, "%s%s", name, sx && sx->type == Y_STR ? sx->str : "");
+                emit_desc(buf, !(ns && ns->type == Y_BOOL && ns->b) && (sx || name[strlen(name) - 1] != '='), desc);
+            }
+            break;
+        }
         if (!ex || ex->type != Y_STR) break;
         if (!(ca && ca->type == Y_STR && exec_cached(ex->str, atol(ca->str), shell, sizeof shell)))
             snprintf(shell, sizeof shell, "{ %s\n} 2>/dev/null", ex->str);

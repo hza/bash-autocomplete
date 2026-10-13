@@ -93,6 +93,8 @@ A value can be:
 | `"@pids"` | process IDs of your processes, with the program name |
 | `"@processes"` | names of your running programs |
 | `"@signals"` | signal names: `HUP`, `INT`, `KILL`, … |
+| `enum: [json, yaml]` | these fixed words; no command is run |
+| `enum: {f: file, d: directory}` | the same, with a description for each (`name:` with nothing after it has none). Quote keys YAML would read as numbers or booleans (`'1'`, `'yes'`). A word ending in `=` gets no space; `suffix` and `nospace` work as for `exec` |
 | `exec: <shell command>` | one suggestion per output line; `name<TAB>description` shows the description next to it (e.g. `printf '%s\t%s\n' "$pid" "$name"`); a line ending in `=` (`label=`) gets no space so you can type its value |
 | &nbsp;&nbsp;`suffix: ":"` | appended to each suggestion |
 | &nbsp;&nbsp;`nospace: true` | don't add a space after accepting it |
@@ -111,7 +113,7 @@ Notes:
 
 - Items in a list are value *types*, not literal words: `[pods, deployments]` looks for
   types named `pods` and `deployments`. To offer fixed words, either list them as
-  subcommands (`commands: {pods: {}, deployments: {}}`) or use `exec: printf '%s\n' pods deployments`.
+  subcommands (`commands: {pods: {}, deployments: {}}`) or use `enum: [pods, deployments]`.
 - Run `autocomplete check <file>` to validate a spec; errors include line numbers.
 - Flags defined at the top level are recognised after any subcommand.
 - Descriptions appear when more than one command or flag matches:

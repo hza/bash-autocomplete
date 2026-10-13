@@ -52,7 +52,7 @@ commands:
   eraseDisk:
     description: "Erase a disk and reformat"
     args:
-      - exec: "printf 'APFS\nHFS+\nHFS+J\nexFAT\nFAT32\nfree\n'"
+      - enum: [APFS, HFS+, HFS+J, exFAT, FAT32, free]
   eraseVolume:
     description: "Erase a volume and reformat"
     args: {exec: "diskutil list 2>/dev/null | grep '/dev/' | awk '{print $NF}' | grep '^/dev/'"}
@@ -77,7 +77,7 @@ commands:
   secureErase:
     description: "Securely erase a disk or freespace"
     args:
-      - exec: "printf '0\n1\n2\n3\n4\n'"
+      - enum: ['0', '1', '2', '3', '4']
   zeroDisk:
     description: "Zero a disk"
     args: {exec: "diskutil list 2>/dev/null | grep '^/dev/' | awk '{print $1}'"}

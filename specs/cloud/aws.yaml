@@ -5,10 +5,10 @@ flags:
   --endpoint-url: {value: any, description: "Override command's default URL with the given URL"}
   --no-verify-ssl: {description: "By default, the AWS CLI uses SSL when communicating with AWS services. For each SSL connection, the AWS CLI will verify SSL certificates"}
   --no-paginate: {description: "Disable automatic pagination"}
-  --output: {value: {exec: "printf 'json\\ntext\\ntable\\nyaml\\nyaml-stream\\n'"}, description: "The formatting style for command output", show: always}
+  --output: {value: {enum: [json, text, table, yaml, yaml-stream]}, description: "The formatting style for command output", show: always}
   --query: {value: any, description: "A JMESPath query to use in filtering the response data", show: always}
   --profile: {value: {exec: "aws configure list-profiles 2>/dev/null"}, description: "Use a specific profile from your credential file", show: always}
-  --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The region to use", show: always}
+  --region: {value: {enum: [us-east-1, us-east-2, us-west-1, us-west-2, af-south-1, ap-east-1, ap-south-1, ap-south-2, ap-southeast-1, ap-southeast-2, ap-southeast-3, ap-southeast-4, ap-northeast-1, ap-northeast-2, ap-northeast-3, ca-central-1, ca-west-1, eu-central-1, eu-central-2, eu-west-1, eu-west-2, eu-west-3, eu-south-1, eu-south-2, eu-north-1, il-central-1, me-south-1, me-central-1, sa-east-1]}, description: "The region to use", show: always}
   -v: {description: "Display the version of this tool"}
   --version: {description: "Display the version of this tool"}
   --color: {value: any, description: "Turn on/off color output (on, off, auto)"}
@@ -232,10 +232,10 @@ commands:
     commands:
       get:
         description: Get a configuration value
-        args: {exec: "printf 'aws_access_key_id\\naws_secret_access_key\\naws_session_token\\nregion\\noutput\\nsso_session\\nsso_account_id\\nsso_role_name\\nsso_start_url\\nsso_region\\nrole_arn\\nsource_profile\\nmfa_serial\\ncli_pager\\n'"}
+        args: {enum: [aws_access_key_id, aws_secret_access_key, aws_session_token, region, output, sso_session, sso_account_id, sso_role_name, sso_start_url, sso_region, role_arn, source_profile, mfa_serial, cli_pager]}
       set:
         description: Set a configuration value
-        args: {exec: "printf 'aws_access_key_id\\naws_secret_access_key\\naws_session_token\\nregion\\noutput\\nsso_session\\nsso_account_id\\nsso_role_name\\nsso_start_url\\nsso_region\\nrole_arn\\nsource_profile\\nmfa_serial\\ncli_pager\\n'"}
+        args: {enum: [aws_access_key_id, aws_secret_access_key, aws_session_token, region, output, sso_session, sso_account_id, sso_role_name, sso_start_url, sso_region, role_arn, source_profile, mfa_serial, cli_pager]}
       list:
         description: List configuration data
       list-profiles:
@@ -259,7 +259,7 @@ commands:
       get-login-password:
         description: Retrieves and displays a password for the specified registry
         flags:
-          --region: {value: {exec: "printf 'us-east-1\\nus-east-2\\nus-west-1\\nus-west-2\\naf-south-1\\nap-east-1\\nap-south-1\\nap-south-2\\nap-southeast-1\\nap-southeast-2\\nap-southeast-3\\nap-southeast-4\\nap-northeast-1\\nap-northeast-2\\nap-northeast-3\\nca-central-1\\nca-west-1\\neu-central-1\\neu-central-2\\neu-west-1\\neu-west-2\\neu-west-3\\neu-south-1\\neu-south-2\\neu-north-1\\nil-central-1\\nme-south-1\\nme-central-1\\nsa-east-1\\n'"}, description: "The AWS region to use"}
+          --region: {value: {enum: [us-east-1, us-east-2, us-west-1, us-west-2, af-south-1, ap-east-1, ap-south-1, ap-south-2, ap-southeast-1, ap-southeast-2, ap-southeast-3, ap-southeast-4, ap-northeast-1, ap-northeast-2, ap-northeast-3, ca-central-1, ca-west-1, eu-central-1, eu-central-2, eu-west-1, eu-west-2, eu-west-3, eu-south-1, eu-south-2, eu-north-1, il-central-1, me-south-1, me-central-1, sa-east-1]}, description: "The AWS region to use"}
 snippets:
   - key: w
     mark: pin

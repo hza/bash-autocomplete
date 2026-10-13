@@ -16,8 +16,8 @@ flags:
   --role: {value: any, description: "Run SET ROLE before dump"}
   -f: {value: file, description: "Output file or directory name", show: always}
   --file: {value: file, description: "Output file or directory name"}
-  -F: {value: {exec: "printf '%s\\t%s\\n' p 'plain SQL script (default)' c 'custom archive (pg_restore)' d 'directory archive (parallel dump)' t 'tar archive'"}, description: "Output format", show: always}
-  --format: {value: {exec: "printf '%s\\t%s\\n' plain 'SQL script (default)' custom 'archive for pg_restore' directory 'archive dir (parallel dump)' tar 'tar archive'"}, description: "Output format"}
+  -F: {value: {enum: {p: 'plain SQL script (default)', c: 'custom archive (pg_restore)', d: 'directory archive (parallel dump)', t: 'tar archive'}}, description: "Output format", show: always}
+  --format: {value: {enum: {plain: 'SQL script (default)', custom: 'archive for pg_restore', directory: 'archive dir (parallel dump)', tar: 'tar archive'}}, description: "Output format"}
   -j: {value: any, description: "Parallel jobs (directory format)"}
   --jobs: {value: any, description: "Parallel jobs (directory format)"}
   -v: {description: "Verbose mode"}

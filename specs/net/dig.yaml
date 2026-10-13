@@ -2,10 +2,10 @@ version: '20261013'
 description: DNS lookup utility
 flags:
   -x: {value: any, description: "Reverse lookup of an IP address", show: always}
-  -t: {value: {exec: "printf '%s\\n' A AAAA CNAME MX NS TXT SOA PTR SRV CAA DS DNSKEY HTTPS SVCB ANY AXFR"}, description: "Record type to query", show: always}
+  -t: {value: {enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, PTR, SRV, CAA, DS, DNSKEY, HTTPS, SVCB, ANY, AXFR]}, description: "Record type to query", show: always}
   -p: {value: any, description: "Server port (default 53)"}
   -q: {value: "@hosts", description: "Domain name to query"}
-  -c: {value: {exec: "printf '%s\\n' IN CH HS ANY"}, description: "Query class"}
+  -c: {value: {enum: [IN, CH, HS, ANY]}, description: "Query class"}
   -f: {value: file, description: "Batch mode: read queries from a file"}
   -b: {value: any, description: "Source address (address[#port])"}
   -k: {value: file, description: "TSIG key file"}
@@ -18,8 +18,8 @@ flags:
   -h: {description: "Print help and exit"}
 args:
   - "@hosts"
-  - {exec: "printf '%s\\n' A AAAA CNAME MX NS TXT SOA PTR SRV CAA DS DNSKEY HTTPS SVCB ANY AXFR"}
-  - exec: "printf '%s\\t%s\\n' +short 'Terse answer only' +noall 'Clear all display flags' +answer 'Show the answer section' +trace 'Trace delegation from the root' +tcp 'Use TCP' +dnssec 'Request DNSSEC records' +multiline 'Verbose multi-line records' +norecurse 'No recursion desired' +nocmd 'No initial comment line' +nocomments 'No comment lines' +nostats 'No statistics' +noquestion 'No question section' +authority 'Show the authority section' +additional 'Show the additional section' +nssearch 'SOA from every authoritative server' +search 'Use the resolv.conf search list' +time= 'Timeout in seconds' +tries= 'Number of tries' +retry= 'Number of retries' +bufsize= 'EDNS buffer size' +subnet= 'EDNS client subnet' +nsid 'Request the name server ID' +ttlid 'Show TTLs' +identify 'Show the answering server (with +short)' +cd 'Set the CD (checking disabled) bit'"
+  - {enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, PTR, SRV, CAA, DS, DNSKEY, HTTPS, SVCB, ANY, AXFR]}
+  - enum: {'+short': 'Terse answer only', '+noall': 'Clear all display flags', '+answer': 'Show the answer section', '+trace': 'Trace delegation from the root', '+tcp': 'Use TCP', '+dnssec': 'Request DNSSEC records', '+multiline': 'Verbose multi-line records', '+norecurse': 'No recursion desired', '+nocmd': 'No initial comment line', '+nocomments': 'No comment lines', '+nostats': 'No statistics', '+noquestion': 'No question section', '+authority': 'Show the authority section', '+additional': 'Show the additional section', '+nssearch': 'SOA from every authoritative server', '+search': 'Use the resolv.conf search list', '+time=': 'Timeout in seconds', '+tries=': 'Number of tries', '+retry=': 'Number of retries', '+bufsize=': 'EDNS buffer size', '+subnet=': 'EDNS client subnet', '+nsid': 'Request the name server ID', '+ttlid': 'Show TTLs', '+identify': 'Show the answering server (with +short)', '+cd': 'Set the CD (checking disabled) bit'}
 snippets:
   - key: s
     mark: pin

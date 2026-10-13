@@ -44,8 +44,8 @@ commands:
   build:
     description: Build node images
     commands:
-      node-image: {description: "Build a node image from Kubernetes sources", flags: {--image: {value: any, description: "Resulting image name"}, --type: {value: {exec: "printf '%s\\n' release url file source"}, description: "Source type"}, --arch: {value: {exec: "printf '%s\\n' amd64 arm64"}, description: "Architecture"}}, args: any}
-  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish"}}
+      node-image: {description: "Build a node image from Kubernetes sources", flags: {--image: {value: any, description: "Resulting image name"}, --type: {value: {enum: [release, url, file, source]}, description: "Source type"}, --arch: {value: {enum: [amd64, arm64]}, description: "Architecture"}}, args: any}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish]}}
   version: {description: "Show kind version"}
 snippets:
   - key: c

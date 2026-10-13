@@ -6,14 +6,14 @@ flags:
   --version: {description: "Show version"}
   -i: {value: [file, dir], description: "Inventory file, dir or host list", show: always}
   --inventory: {value: [file, dir], description: "Inventory file, dir or host list"}
-  -m: {value: {exec: "printf '%s\\n' ping command shell raw script copy fetch file template lineinfile apt yum dnf package pip service systemd user group setup gather_facts debug reboot cron git get_url unarchive stat uri wait_for"}, description: "Module name (default command)", show: always}
-  --module-name: {value: {exec: "printf '%s\\n' ping command shell raw script copy fetch file template lineinfile apt yum dnf package pip service systemd user group setup gather_facts debug reboot cron git get_url unarchive stat uri wait_for"}, description: "Module name (default command)"}
+  -m: {value: {enum: [ping, command, shell, raw, script, copy, fetch, file, template, lineinfile, apt, yum, dnf, package, pip, service, systemd, user, group, setup, gather_facts, debug, reboot, cron, git, get_url, unarchive, stat, uri, wait_for]}, description: "Module name (default command)", show: always}
+  --module-name: {value: {enum: [ping, command, shell, raw, script, copy, fetch, file, template, lineinfile, apt, yum, dnf, package, pip, service, systemd, user, group, setup, gather_facts, debug, reboot, cron, git, get_url, unarchive, stat, uri, wait_for]}, description: "Module name (default command)"}
   -a: {value: any, description: "Module arguments", show: always}
   --args: {value: any, description: "Module arguments"}
   -b: {description: "Become (sudo)", show: always}
   --become: {description: "Become (sudo)"}
   --become-user: {value: any, description: "User to become (default root)"}
-  --become-method: {value: {exec: "printf '%s\\n' sudo su doas pbrun pfexec runas machinectl"}, description: "Privilege escalation method"}
+  --become-method: {value: {enum: [sudo, su, doas, pbrun, pfexec, runas, machinectl]}, description: "Privilege escalation method"}
   -K: {description: "Ask for the become password"}
   --ask-become-pass: {description: "Ask for the become password"}
   -u: {value: any, description: "Remote user"}
@@ -22,8 +22,8 @@ flags:
   --ask-pass: {description: "Ask for the SSH password"}
   --private-key: {value: file, description: "SSH private key"}
   --key-file: {value: file, description: "SSH private key"}
-  -c: {value: {exec: "printf '%s\\n' ssh paramiko local docker winrm psrp"}, description: "Connection type"}
-  --connection: {value: {exec: "printf '%s\\n' ssh paramiko local docker winrm psrp"}, description: "Connection type"}
+  -c: {value: {enum: [ssh, paramiko, local, docker, winrm, psrp]}, description: "Connection type"}
+  --connection: {value: {enum: [ssh, paramiko, local, docker, winrm, psrp]}, description: "Connection type"}
   -T: {value: any, description: "Connection timeout in seconds"}
   --timeout: {value: any, description: "Connection timeout in seconds"}
   -l: {value: any, description: "Limit to a host pattern"}

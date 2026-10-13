@@ -42,8 +42,8 @@ commands:
       --env: {value: any, description: "Set environment variable NAME=VALUE"}
       --remote-only: {description: "Build on a remote builder", show: always}
       --local-only: {description: "Build with local Docker"}
-      --strategy: {value: {exec: "printf '%s\\n' canary rolling bluegreen immediate"}, description: "Deployment strategy", show: always}
-      --ha: {value: {exec: "printf '%s\\n' true false"}, description: "Create spare machines"}
+      --strategy: {value: {enum: [canary, rolling, bluegreen, immediate]}, description: "Deployment strategy", show: always}
+      --ha: {value: {enum: ['true', 'false']}, description: "Create spare machines"}
       --detach: {description: "Return immediately"}
       --no-cache: {description: "Don't use the build cache"}
       --wait-timeout: {value: any, description: "Time to wait for machines"}
@@ -131,7 +131,7 @@ commands:
     description: Scale app resources
     commands:
       count: {description: "Change the number of machines", flags: {--region: {value: any, description: "Region to scale in"}, --process-group: {value: any, description: "Process group"}, -y: {description: "No confirmation"}, --yes: {description: "No confirmation"}}, args: any}
-      vm: {description: "Change the machine size", flags: {--vm-memory: {value: any, description: "Memory in MB"}, --process-group: {value: any, description: "Process group"}}, args: {exec: "printf '%s\\n' shared-cpu-1x shared-cpu-2x shared-cpu-4x shared-cpu-8x performance-1x performance-2x performance-4x performance-8x performance-16x"}}
+      vm: {description: "Change the machine size", flags: {--vm-memory: {value: any, description: "Memory in MB"}, --process-group: {value: any, description: "Process group"}}, args: {enum: [shared-cpu-1x, shared-cpu-2x, shared-cpu-4x, shared-cpu-8x, performance-1x, performance-2x, performance-4x, performance-8x, performance-16x]}}
       memory: {description: "Change machine memory", args: any}
       show: {description: "Show current scaling"}
   secrets:
@@ -201,7 +201,7 @@ commands:
   doctor: {description: "Check the local environment"}
   image: {description: "Manage app images", commands: {show: {description: "Show the current image"}, update: {description: "Update to the latest image"}}}
   version: {description: "Show flyctl version", commands: {upgrade: {description: "Upgrade flyctl"}}}
-  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, powershell]}}
 snippets:
   - key: d
     mark: pin

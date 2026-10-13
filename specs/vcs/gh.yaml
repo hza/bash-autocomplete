@@ -763,13 +763,13 @@ commands:
         flags:
           -h: {value: any, description: "Get per-host setting"}
           --host: {value: any, description: "Get per-host setting"}
-        args: {exec: "printf 'git_protocol\\neditor\\nprompt\\nprefer_editor_prompt\\npager\\nhttp_unix_socket\\nbrowser\\ncolor_labels\\naccessible_colors\\naccessible_prompter\\nspinner\\n'"}
+        args: {enum: [git_protocol, editor, prompt, prefer_editor_prompt, pager, http_unix_socket, browser, color_labels, accessible_colors, accessible_prompter, spinner]}
       set:
         description: Update configuration with a value for the given key
         flags:
           -h: {value: any, description: "Set per-host setting"}
           --host: {value: any, description: "Set per-host setting"}
-        args: {exec: "printf 'git_protocol\\neditor\\nprompt\\nprefer_editor_prompt\\npager\\nhttp_unix_socket\\nbrowser\\ncolor_labels\\naccessible_colors\\naccessible_prompter\\nspinner\\n'"}
+        args: {enum: [git_protocol, editor, prompt, prefer_editor_prompt, pager, http_unix_socket, browser, color_labels, accessible_colors, accessible_prompter, spinner]}
       list:
         description: Print a list of configuration keys and values
         flags:

@@ -6,8 +6,8 @@ flags:
   -n: {description: "Print nothing unless asked (p command)", show: always}
   -e: {value: any, description: "Add an editing command (repeatable)", repeat: true, show: always}
   -f: {value: file, description: "Read editing commands from a file"}
-  -i: {value: {exec: "printf '%s\\t%s\\n' .bak 'backup as FILE.bak' .orig 'backup as FILE.orig'"}, description: "Edit files in place; argument = backup suffix ('' for none)", show: always}
-  -I: {value: {exec: "printf '%s\\t%s\\n' .bak 'backup as FILE.bak' .orig 'backup as FILE.orig'"}, description: "Edit in place, files form one continuous stream"}
+  -i: {value: {enum: {.bak: 'backup as FILE.bak', .orig: 'backup as FILE.orig'}}, description: "Edit files in place; argument = backup suffix ('' for none)", show: always}
+  -I: {value: {enum: {.bak: 'backup as FILE.bak', .orig: 'backup as FILE.orig'}}, description: "Edit in place, files form one continuous stream"}
   -a: {description: "Create w-command files before processing starts"}
   -H: {description: "Enhanced regex features"}
   -l: {description: "Line-buffered output"}

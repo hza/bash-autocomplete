@@ -15,7 +15,7 @@ commands:
     flags:
       --verbose: {description: "Also show the query behind the view"}
       --width: {value: any, description: "View width in characters"}
-      --truncate: {value: {exec: "printf 'beginning\\nend\\n'"}, description: "Where to cut text that doesn't fit a cell"}
+      --truncate: {value: {enum: [beginning, end]}, description: "Where to cut text that doesn't fit a cell"}
       --cell-height: {value: any, description: "Max rows per table cell"}
     positional:
       - {exec: "jfr help view 2>&1 | awk '/views:$/ {f = 1; next} /^$/ {f = 0} f {for (i = 1; i <= NF; i++) print $i}'; printf 'types\\nall-views\\nall-events\\n'", cache: "86400"}

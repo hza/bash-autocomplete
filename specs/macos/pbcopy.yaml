@@ -3,7 +3,7 @@ description: "Copy standard input to the pasteboard"
 flags:
   -help: {description: "Show usage"}
   -pboard:
-    value: {exec: "printf '%s\\n' general ruler find font"}
+    value: {enum: [general, ruler, find, font]}
     description: "Pasteboard to use"
 snippets:
   - key: f

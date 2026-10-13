@@ -14,12 +14,12 @@ commands:
   start:
     description: Start a cluster
     flags:
-      --driver: {value: {exec: "printf '%s\\n' docker podman qemu2 vfkit hyperkit virtualbox vmware parallels kvm2 hyperv ssh none"}, description: "Driver to use", show: always}
+      --driver: {value: {enum: [docker, podman, qemu2, vfkit, hyperkit, virtualbox, vmware, parallels, kvm2, hyperv, ssh, none]}, description: "Driver to use", show: always}
       --cpus: {value: any, description: "Number of CPUs or 'max'", show: always}
       --memory: {value: any, description: "Memory, e.g. 4g or 'max'", show: always}
       --disk-size: {value: any, description: "Disk size, e.g. 20g"}
-      --kubernetes-version: {value: {exec: "printf '%s\\n' stable latest"}, description: "Kubernetes version (e.g. v1.30.0)"}
-      --container-runtime: {value: {exec: "printf '%s\\n' docker containerd cri-o"}, description: "Container runtime"}
+      --kubernetes-version: {value: {enum: [stable, latest]}, description: "Kubernetes version (e.g. v1.30.0)"}
+      --container-runtime: {value: {enum: [docker, containerd, cri-o]}, description: "Container runtime"}
       -n: {value: any, description: "Number of nodes"}
       --nodes: {value: any, description: "Number of nodes"}
       --addons: {value: any, description: "Addons to enable"}
@@ -30,21 +30,21 @@ commands:
       --insecure-registry: {value: any, description: "Insecure registries"}
       --network: {value: any, description: "Network to use"}
       --force: {description: "Force start ignoring checks"}
-      --wait: {value: {exec: "printf '%s\\n' all none apiserver system_pods default_sa apps_running node_ready kubelet"}, description: "Components to wait for"}
+      --wait: {value: {enum: [all, none, apiserver, system_pods, default_sa, apps_running, node_ready, kubelet]}, description: "Components to wait for"}
   stop: {description: "Stop a cluster", flags: {--all: {description: "Stop all profiles"}, --keep-context-active: {description: "Keep the kubectl context"}}}
   delete: {description: "Delete a cluster", flags: {--all: {description: "Delete all profiles", show: always}, --purge: {description: "Also delete ~/.minikube"}}}
   pause: {description: "Pause Kubernetes", flags: {-A: {description: "All namespaces"}, --all-namespaces: {description: "All namespaces"}}}
   unpause: {description: "Unpause Kubernetes"}
-  status: {description: "Show cluster status", flags: {-o: {value: {exec: "printf '%s\\n' text json"}, description: "Output format"}, --output: {value: {exec: "printf '%s\\n' text json"}, description: "Output format"}, -l: {description: "Show layout"}}}
+  status: {description: "Show cluster status", flags: {-o: {value: {enum: [text, json]}, description: "Output format"}, --output: {value: {enum: [text, json]}, description: "Output format"}, -l: {description: "Show layout"}}}
   profile:
     description: Show or switch the current profile
     commands:
-      list: {description: "List profiles", flags: {-o: {value: {exec: "printf '%s\\n' table json"}, description: "Output format"}, --output: {value: {exec: "printf '%s\\n' table json"}, description: "Output format"}}}
+      list: {description: "List profiles", flags: {-o: {value: {enum: [table, json]}, description: "Output format"}, --output: {value: {enum: [table, json]}, description: "Output format"}}}
     args: {exec: "minikube profile list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^\"Name\":\"\\([^\"]*\\)\".*/\\1/p' | sort -u", cache: 60}
   addons:
     description: Manage addons
     commands:
-      list: {description: "List addons and status", flags: {-o: {value: {exec: "printf '%s\\n' list json"}, description: "Output format"}}}
+      list: {description: "List addons and status", flags: {-o: {value: {enum: [list, json]}, description: "Output format"}}}
       enable: {description: "Enable an addon", args: {exec: "minikube addons list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^ *\"\\([a-z0-9-]*\\)\": *$/\\1/p'", cache: 3600}}
       disable: {description: "Disable an addon", args: {exec: "minikube addons list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^ *\"\\([a-z0-9-]*\\)\": *$/\\1/p'", cache: 3600}}
       configure: {description: "Configure an addon", args: any}
@@ -64,11 +64,11 @@ commands:
     args: {exec: "kubectl get svc -o name 2>/dev/null | sed 's|service/||'"}
   tunnel: {description: "Route LoadBalancer services to the host", flags: {-c: {description: "Clean up orphaned routes"}, --cleanup: {description: "Clean up orphaned routes"}, --bind-address: {value: any, description: "Bind address"}}}
   mount: {description: "Mount a host directory into the cluster (host:vm)", args: any}
-  ssh: {description: "SSH into the node", flags: {-n: {value: any, description: "Node name"}, --node: {value: any, description: "Node name"}, --native-ssh: {value: {exec: "printf '%s\\n' true false"}, description: "Use the Go SSH client"}}, args: any}
+  ssh: {description: "SSH into the node", flags: {-n: {value: any, description: "Node name"}, --node: {value: any, description: "Node name"}, --native-ssh: {value: {enum: ['true', 'false']}, description: "Use the Go SSH client"}}, args: any}
   ssh-key: {description: "Print the SSH key path"}
   ip: {description: "Print the node IP", flags: {-n: {value: any, description: "Node name"}}}
   kubectl: {description: "Run the matching kubectl version", args: any}
-  docker-env: {description: "Print env to use the cluster's Docker", flags: {-u: {description: "Print unset commands"}, --unset: {description: "Print unset commands"}, --shell: {value: {exec: "printf '%s\\n' bash zsh fish powershell cmd"}, description: "Shell syntax"}}}
+  docker-env: {description: "Print env to use the cluster's Docker", flags: {-u: {description: "Print unset commands"}, --unset: {description: "Print unset commands"}, --shell: {value: {enum: [bash, zsh, fish, powershell, cmd]}, description: "Shell syntax"}}}
   podman-env: {description: "Print env to use the cluster's Podman", flags: {-u: {description: "Print unset commands"}}}
   image:
     description: Manage images in the cluster
@@ -81,15 +81,15 @@ commands:
       push: {description: "Push images", args: any}
       tag: {description: "Tag an image", args: any}
   cp: {description: "Copy a file into the node", args: file}
-  node: {description: "Manage nodes", commands: {add: {description: "Add a node", flags: {--control-plane: {description: "Add a control-plane node"}, --worker: {value: {exec: "printf '%s\\n' true false"}, description: "Worker node"}}}, list: {description: "List nodes"}, start: {description: "Start a node", args: any}, stop: {description: "Stop a node", args: any}, delete: {description: "Delete a node", args: any}}}
-  config: {description: "Manage persistent config", commands: {set: {description: "Set a value", positional: [{exec: "printf '%s\\n' driver cpus memory disk-size kubernetes-version container-runtime profile WantUpdateNotification"}, any]}, get: {description: "Get a value", args: {exec: "printf '%s\\n' driver cpus memory disk-size kubernetes-version container-runtime profile"}}, unset: {description: "Unset a value", args: {exec: "printf '%s\\n' driver cpus memory disk-size kubernetes-version container-runtime profile"}}, view: {description: "Show config"}, defaults: {description: "List default values", args: any}}}
+  node: {description: "Manage nodes", commands: {add: {description: "Add a node", flags: {--control-plane: {description: "Add a control-plane node"}, --worker: {value: {enum: ['true', 'false']}, description: "Worker node"}}}, list: {description: "List nodes"}, start: {description: "Start a node", args: any}, stop: {description: "Stop a node", args: any}, delete: {description: "Delete a node", args: any}}}
+  config: {description: "Manage persistent config", commands: {set: {description: "Set a value", positional: [{enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile, WantUpdateNotification]}, any]}, get: {description: "Get a value", args: {enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile]}}, unset: {description: "Unset a value", args: {enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile]}}, view: {description: "Show config"}, defaults: {description: "List default values", args: any}}}
   logs: {description: "Show cluster logs", flags: {-f: {description: "Follow"}, --follow: {description: "Follow"}, -n: {value: any, description: "Number of lines"}, --length: {value: any, description: "Number of lines"}, --file: {value: file, description: "Write logs to a file"}, --problems: {description: "Show only problems"}}}
   update-context: {description: "Fix the kubeconfig context after an IP change"}
   update-check: {description: "Check for a newer version"}
   cache: {description: "Manage cached images", commands: {add: {description: "Cache an image", args: any}, delete: {description: "Remove a cached image", args: any}, list: {description: "List cached images"}, reload: {description: "Reload cached images"}}}
-  version: {description: "Show version", flags: {--short: {description: "Version only"}, -o: {value: {exec: "printf '%s\\n' json yaml"}, description: "Output format"}}}
+  version: {description: "Show version", flags: {--short: {description: "Version only"}, -o: {value: {enum: [json, yaml]}, description: "Output format"}}}
   options: {description: "Show global options"}
-  completion: {description: "Generate shell completion", args: {exec: "printf '%s\\n' bash zsh fish powershell"}}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, powershell]}}
 snippets:
   - key: s
     mark: pin

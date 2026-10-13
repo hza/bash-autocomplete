@@ -1,8 +1,8 @@
 version: '20261013'
 description: "apply a diff file to an original (BSD patch)"
 flags:
-  -p: {value: {exec: "printf '%s\\n' 0 1 2 3"}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)", show: always}
-  --strip: {value: {exec: "printf '%s\\n' 0 1 2 3"}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)"}
+  -p: {value: {enum: ['0', '1', '2', '3']}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)", show: always}
+  --strip: {value: {enum: ['0', '1', '2', '3']}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)"}
   -i: {value: file, description: "Read the patch from this file instead of stdin", show: always}
   --input: {value: file, description: "Read the patch from this file instead of stdin"}
   -o: {value: any, description: "Write the patched file to this name", show: always}
@@ -24,8 +24,8 @@ flags:
   --prefix: {value: any, description: "Backup file name prefix"}
   -Y: {value: any, description: "Prepend this to the basename of the backup file"}
   --basename-prefix: {value: any, description: "Prepend this to the basename of the backup file"}
-  -V: {value: {exec: "printf '%s\\t%s\\n' t 'numbered backups' nil 'numbered if they exist' never 'simple backups' none 'no backups'"}, description: "Backup naming: numbered, existing, simple, none"}
-  --version-control: {value: {exec: "printf '%s\\t%s\\n' t 'numbered backups' nil 'numbered if they exist' never 'simple backups' none 'no backups'"}, description: "Backup naming: numbered, existing, simple, none"}
+  -V: {value: {enum: {t: 'numbered backups', nil: 'numbered if they exist', never: 'simple backups', none: 'no backups'}}, description: "Backup naming: numbered, existing, simple, none"}
+  --version-control: {value: {enum: {t: 'numbered backups', nil: 'numbered if they exist', never: 'simple backups', none: 'no backups'}}, description: "Backup naming: numbered, existing, simple, none"}
   -r: {value: any, description: "Write rejected hunks to this file (default FILE.rej)"}
   --reject-file: {value: any, description: "Write rejected hunks to this file (default FILE.rej)"}
   -N: {description: "Skip hunks that look reversed or already applied", show: always}
@@ -61,7 +61,7 @@ flags:
   --ifdef: {value: any, description: "Wrap changes in #ifdef SYMBOL ... #endif"}
   -x: {value: any, description: "Internal debugging flags"}
   --debug: {value: any, description: "Internal debugging flags"}
-  --quoting-style: {value: {exec: "printf '%s\\n' literal shell shell-always c escape"}, description: "How file names are quoted in messages"}
+  --quoting-style: {value: {enum: [literal, shell, shell-always, c, escape]}, description: "How file names are quoted in messages"}
   --posix: {description: "Strict POSIX behaviour (no default backups, POSIX file name choice)"}
   --help: {description: "Print a help message"}
   -v: {description: "Print the patch version"}

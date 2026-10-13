@@ -657,7 +657,7 @@ commands:
           -v: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
           --volumes: {description: "Remove named volumes declared in the \"volumes\" section of the Compose file and anonymous volumes attached to containers", show: always}
           --remove-orphans: {description: "Remove containers for services not defined in the Compose file", show: always}
-          --rmi: {value: {exec: "printf 'local\\tonly images without a custom tag\\nall\\tall images used by services\\n'"}, description: "Remove images used by services", show: always}
+          --rmi: {value: {enum: {local: 'only images without a custom tag', all: 'all images used by services'}}, description: "Remove images used by services", show: always}
           -t: {value: any, description: "Specify a shutdown timeout in seconds"}
           --timeout: {value: any, description: "Specify a shutdown timeout in seconds"}
           --dry-run: {description: "Execute command in dry run mode"}
@@ -769,7 +769,7 @@ commands:
           --quiet: {description: "Only validate the configuration, don't print anything"}
           -o: {value: file, description: "Save to file (default to stdout)"}
           --output: {value: file, description: "Save to file (default to stdout)"}
-          --format: {value: {exec: "printf 'yaml\\tYAML (default)\\njson\\tJSON\\n'"}, description: "Format the output"}
+          --format: {value: {enum: {yaml: 'YAML (default)', json: JSON}}, description: "Format the output"}
           --services: {description: "Print the service names, one per line"}
           --images: {description: "Print the image names, one per line"}
           --volumes: {description: "Print the volume names, one per line"}
