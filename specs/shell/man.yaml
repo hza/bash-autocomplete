@@ -16,3 +16,27 @@ flags:
   -p: {value: any, description: "Preprocessors to run (e, p, r, t, v)"}
 args:
   exec: "IFS=:; for d in ${MANPATH:-$(manpath 2>/dev/null)}; do for f in \"$d\"/man[1-9n]*/\"$AUTOCOMPLETE_CUR\"*; do [ -e \"$f\" ] && echo \"${f##*/}\"; done; done | sed -E 's/\\.gz$//; s/\\.[^.]*$//' | sort -u"
+snippets:
+  - key: k
+    command: "man -k KEYWORD"
+    description: "search page names and descriptions (apropos)"
+    mark: pin
+  - key: f
+    command: "man -f NAME"
+    description: "one-line description of a page (whatis)"
+    mark: pin
+  - key: w
+    command: "man -w NAME"
+    description: "print the path of the page file"
+  - key: a
+    command: "man -a NAME"
+    description: "show every section's page for NAME"
+  - key: b
+    command: "man bash"
+    description: "bash manual (search builtins with /^ +NAME)"
+  - key: t
+    command: "man -t NAME | open -fa Preview"
+    description: "render a page as PDF in Preview"
+  - key: p
+    command: "man -P cat NAME | col -b > NAME.txt"
+    description: "save a page as plain text"

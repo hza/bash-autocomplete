@@ -1,0 +1,59 @@
+version: '20261013'
+description: "Directory Service command line utility (users, groups, records)"
+flags:
+  -p: {description: "Prompt for password"}
+  -u: {value: "@users", description: "Authenticate as user"}
+  -P: {value: any, description: "Authentication password"}
+  -f: {value: file, description: "Local node database file"}
+  -raw: {description: "Keep DirectoryService constant prefixes"}
+  -plist: {description: "Output as XML plist"}
+  -url: {description: "URL-style value encoding"}
+  -q: {description: "Quiet: no interactive prompt"}
+  -read: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Show a record's attributes (path [key ...])", show: always}
+  -readall: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Show all records under a path"}
+  -readpl: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Read a plist value (path key plist_path)"}
+  -list: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\" dirs", tree: true}, description: "List records under a path [key]", show: always}
+  -search: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\" dirs", tree: true}, description: "Search records (path key val)"}
+  -create: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Create a record or attribute (path [key [val ...]])", show: always}
+  -append: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Append a value (path key val ...)"}
+  -merge: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Merge values (path key val ...)"}
+  -delete: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Delete a record, attribute or value", show: always}
+  -change: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Change a value (path key old new)"}
+  -changei: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Change a value by index (path key index new)"}
+  -diff: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\"", tree: true}, description: "Compare two records (path1 path2 [key ...])"}
+  -passwd: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/dscl.sh\" users", tree: true}, description: "Change a user's password"}
+  -authonly: {value: "@users", description: "Check a user's password"}
+positional:
+  - {enum: {".": "local directory node", localhost: "local node by host", "/Search": "search node", "/Local/Default": "local default node"}}
+args: any
+snippets:
+  - key: u
+    mark: pin
+    command: "dscl . -list /Users | grep -v '^_'"
+    description: "list regular users"
+  - key: r
+    mark: pin
+    command: "dscl . -read /Users/$USER"
+    description: "show my user record"
+  - key: s
+    command: "dscl . -read /Users/$USER UserShell"
+    description: "my login shell"
+  - key: g
+    mark: pin
+    command: "dscl . -read /Groups/admin GroupMembership"
+    description: "members of the admin group"
+  - key: i
+    command: "dscl . -list /Users UniqueID | sort -nk2"
+    description: "users with their UIDs"
+  - key: c
+    command: "dscl . -create /Users/$USER UserShell /bin/zsh"
+    description: "change a login shell (sudo)"
+  - key: a
+    command: "dscl . -append /Groups/admin GroupMembership someuser"
+    description: "add a user to admin (sudo)"
+  - key: d
+    command: "dscl . -delete /Groups/admin GroupMembership someuser"
+    description: "remove a user from admin (sudo)"
+  - key: h
+    command: "dscl . -read /Users/$USER NFSHomeDirectory"
+    description: "my home directory"

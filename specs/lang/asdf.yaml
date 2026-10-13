@@ -1,0 +1,85 @@
+version: '20261013'
+description: Multiple runtime version manager
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+commands:
+  plugin:
+    description: Manage plugins
+    commands:
+      add: {description: "Add a plugin (NAME [GIT-URL])", positional: [{exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" plugins-all", cache: '86400'}, any]}
+      list:
+        description: List installed plugins
+        flags:
+          --urls: {description: "Show repository URLs"}
+          --refs: {description: "Show git refs"}
+        commands:
+          all: {description: "List all plugins in the plugin index"}
+      remove: {description: "Remove a plugin and its versions", args: {exec: "asdf plugin list 2>/dev/null"}}
+      update:
+        description: Update a plugin (or all)
+        args: {exec: "asdf plugin list 2>/dev/null"}
+        flags:
+          --all: {description: "Update all plugins", show: always}
+  install: {description: "Install a version (or all from .tool-versions)", positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" all"}]}
+  uninstall: {description: "Remove a version", positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}]}
+  set:
+    description: Set versions in .tool-versions (PLUGIN VERSION...)
+    positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}]
+    args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}
+    flags:
+      -u: {description: "Write to $HOME/.tool-versions"}
+      -p: {description: "Write to the closest existing .tool-versions in a parent dir"}
+  current: {description: "Show current versions", args: {exec: "asdf plugin list 2>/dev/null"}}
+  latest:
+    description: Show the latest stable version
+    args: {exec: "asdf plugin list 2>/dev/null"}
+    flags:
+      --all: {description: "Latest of every installed plugin"}
+  list:
+    description: List installed versions
+    args: {exec: "asdf plugin list 2>/dev/null"}
+    commands:
+      all: {description: "List all available versions", positional: [{exec: "asdf plugin list 2>/dev/null"}, any]}
+  where: {description: "Show the install path of a version", positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}]}
+  which: {description: "Show the path of an executable", args: {exec: "ls \"${ASDF_DATA_DIR:-$HOME/.asdf}/shims\" 2>/dev/null"}}
+  exec: {description: "Run an executable shim", args: "@command"}
+  env: {description: "Show the environment for a command", args: {exec: "ls \"${ASDF_DATA_DIR:-$HOME/.asdf}/shims\" 2>/dev/null"}}
+  shimversions: {description: "List versions that provide a command", args: {exec: "ls \"${ASDF_DATA_DIR:-$HOME/.asdf}/shims\" 2>/dev/null"}}
+  reshim: {description: "Recreate shims", positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}]}
+  info: {description: "Show OS, shell and asdf debug info"}
+  version: {description: "Show the asdf version"}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, elvish, nushell]}}
+  help: {description: "Help about a plugin", positional: [{exec: "asdf plugin list 2>/dev/null"}, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/asdf.sh\" installed"}]}
+snippets:
+  - key: p
+    mark: pin
+    command: "asdf plugin add nodejs"
+    description: "add a plugin from the index"
+  - key: i
+    mark: pin
+    command: "asdf install nodejs latest"
+    description: "install the newest version"
+  - key: a
+    command: "asdf install"
+    description: "install everything in .tool-versions"
+  - key: s
+    mark: pin
+    command: "asdf set nodejs latest"
+    description: "pin a version in ./.tool-versions"
+  - key: h
+    command: "asdf set -u python 3.12.4"
+    description: "user-wide default in ~/.tool-versions"
+  - key: c
+    mark: pin
+    command: "asdf current"
+    description: "active version of every tool"
+  - key: l
+    command: "asdf list all nodejs 22"
+    description: "available versions with a prefix"
+  - key: u
+    command: "asdf plugin update --all"
+    description: "update all plugins"
+  - key: r
+    command: "asdf reshim nodejs"
+    description: "rebuild shims after a global npm install"

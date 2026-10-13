@@ -1,0 +1,55 @@
+version: '20261013'
+description: "Mac App Store command-line interface"
+flags:
+  --help: {description: "Show help"}
+  --version: {description: "Show the mas version"}
+commands:
+  list: {description: "List installed App Store apps"}
+  outdated: {description: "List apps with pending updates", flags: {--verbose: {description: "Show why apps are skipped"}}}
+  search:
+    description: "Search the store by name"
+    args: any
+    flags:
+      --price: {description: "Show prices"}
+  info: {description: "Show app details (ID)", args: {exec: "mas list 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}}
+  home: {description: "Open the app's web page", args: {exec: "mas list 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}}
+  open: {description: "Open the app's App Store page", args: {exec: "mas list 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}}
+  vendor: {description: "Open the developer's web page", args: {exec: "mas list 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}}
+  install: {description: "Install apps by ID (once owned)", args: any, flags: {--force: {description: "Reinstall even if installed"}}}
+  get: {description: "Get and install apps by ID (free apps too)", args: any, flags: {--force: {description: "Reinstall even if installed"}}}
+  lucky: {description: "Install the first search result", args: any, flags: {--force: {description: "Reinstall even if installed"}}}
+  upgrade: {description: "Upgrade outdated apps (all, or these IDs)", args: {exec: "mas outdated 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}}
+  uninstall: {description: "Uninstall apps by ID (needs sudo)", args: {exec: "mas list 2>/dev/null | sed -n 's/^ *\\([0-9][0-9]*\\)  *\\(.*[^ ]\\)  *(.*$/\\1\t\\2/p'"}, flags: {--dry-run: {description: "Only show what would be removed"}}}
+  reset: {description: "Reset the App Store download state", flags: {--debug: {description: "Debug output"}}}
+  account: {description: "Show the signed-in Apple ID"}
+  signout: {description: "Sign out of the App Store"}
+  config: {description: "Show mas configuration"}
+  version: {description: "Show the mas version"}
+snippets:
+  - key: l
+    mark: pin
+    command: "mas list"
+    description: "installed store apps with IDs"
+  - key: o
+    mark: pin
+    command: "mas outdated"
+    description: "pending updates"
+  - key: u
+    mark: pin
+    command: "mas upgrade"
+    description: "update all store apps"
+  - key: s
+    command: "mas search Xcode"
+    description: "find an app ID by name"
+  - key: i
+    command: "mas install 497799835"
+    description: "install by ID (Xcode here)"
+  - key: x
+    command: "sudo mas uninstall 497799835"
+    description: "remove a store app"
+  - key: b
+    command: "mas list | awk '{print $1}' > mas-apps.txt"
+    description: "back up the app ID list"
+  - key: r
+    command: "xargs mas install < mas-apps.txt"
+    description: "reinstall from that list"

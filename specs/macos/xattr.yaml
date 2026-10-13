@@ -1,0 +1,41 @@
+version: '20261013'
+description: "Display and manipulate extended attributes"
+flags:
+  -l: {description: "Long format: names with values", show: always}
+  -r: {description: "Act recursively on directories", show: always}
+  -s: {description: "Act on symlinks themselves"}
+  -v: {description: "Also print the file name"}
+  -x: {description: "Values as hex"}
+  -h: {description: "Show help"}
+  -p:
+    value: {enum: {com.apple.quarantine: "downloaded-file flag (Gatekeeper)", com.apple.provenance: "app provenance tracking", "com.apple.metadata:kMDItemWhereFroms": "download source URLs", com.apple.FinderInfo: "Finder flags", com.apple.ResourceFork: "resource fork", "com.apple.metadata:_kMDItemUserTags": "Finder tags", "com.apple.lastuseddate#PS": "last opened date", com.apple.macl: "app sandbox access list"}}
+    description: "Print the value of an attribute"
+  -w:
+    value: any
+    description: "Write an attribute: NAME VALUE FILE..."
+  -d:
+    show: always
+    value: {enum: {com.apple.quarantine: "downloaded-file flag (Gatekeeper)", com.apple.provenance: "app provenance tracking", "com.apple.metadata:kMDItemWhereFroms": "download source URLs", com.apple.FinderInfo: "Finder flags", com.apple.ResourceFork: "resource fork", "com.apple.metadata:_kMDItemUserTags": "Finder tags", "com.apple.lastuseddate#PS": "last opened date", com.apple.macl: "app sandbox access list"}}
+    description: "Delete an attribute"
+  -c: {description: "Clear all attributes", show: always}
+args:
+  - file
+  - dir
+snippets:
+  - key: q
+    mark: pin
+    command: "xattr -dr com.apple.quarantine /Applications/Example.app"
+    description: "fix 'app is damaged / can't be opened'"
+  - key: l
+    mark: pin
+    command: "xattr -l file"
+    description: "attributes with values"
+  - key: w
+    command: "xattr -p com.apple.metadata:kMDItemWhereFroms file | xxd -r -p | plutil -p -"
+    description: "where a download came from"
+  - key: c
+    command: "xattr -cr ./dir"
+    description: "strip all attributes recursively"
+  - key: t
+    command: "xattr -w com.apple.metadata:kMDItemComment 'note' file"
+    description: "set an attribute to a string"

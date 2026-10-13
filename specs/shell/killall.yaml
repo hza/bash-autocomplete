@@ -31,3 +31,27 @@ flags:
   -USR2: {description: "Send SIGUSR2"}
   '-9': {description: "Send SIGKILL", show: always}
 args: "@processes"
+snippets:
+  - key: f
+    command: "killall Finder"
+    description: "restart Finder"
+    mark: pin
+  - key: d
+    command: "killall Dock"
+    description: "restart the Dock (applies defaults changes)"
+    mark: pin
+  - key: u
+    command: "killall SystemUIServer"
+    description: "restart the menu bar"
+  - key: k
+    command: "killall -9 NAME"
+    description: "force-kill every process named NAME"
+  - key: n
+    command: "killall -d NAME"
+    description: "dry run: show what would be signalled"
+  - key: h
+    command: "killall -HUP mDNSResponder"
+    description: "flush the DNS cache"
+  - key: c
+    command: "killall cfprefsd"
+    description: "make defaults re-read preference files"

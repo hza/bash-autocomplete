@@ -1,0 +1,113 @@
+version: '20261013'
+description: OrbStack command-line tool (Docker and Linux machines on macOS)
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+commands:
+  start: {description: "Start OrbStack, or the given machines", args: {exec: "orbctl list -q 2>/dev/null"}}
+  stop: {description: "Stop OrbStack, or the given machines", args: {exec: "orbctl list -q 2>/dev/null"}}
+  restart: {description: "Restart machines", args: {exec: "orbctl list -q 2>/dev/null"}}
+  status: {description: "Show whether OrbStack is running"}
+  list:
+    description: List machines
+    aliases: [ls]
+    flags:
+      -q: {description: "Only print names"}
+      --quiet: {description: "Only print names"}
+      -r: {description: "Only running machines"}
+      --running: {description: "Only running machines"}
+      -f: {value: {enum: [text, json]}, description: "Output format"}
+      --format: {value: {enum: [text, json]}, description: "Output format"}
+  info: {description: "Show machine details", args: {exec: "orbctl list -q 2>/dev/null"}}
+  create:
+    description: Create a Linux machine (DISTRO[:VERSION] [NAME])
+    aliases: [new]
+    positional: [{enum: [alma, alpine, arch, centos, debian, devuan, fedora, gentoo, kali, nixos, openeuler, opensuse, oracle, rocky, ubuntu, void]}, any]
+    flags:
+      -a: {value: {enum: [amd64, arm64]}, description: "Architecture"}
+      --arch: {value: {enum: [amd64, arm64]}, description: "Architecture", show: always}
+      -u: {value: any, description: "Default username"}
+      --user: {value: any, description: "Default username"}
+      -c: {value: {file: "*.yaml *.yml"}, description: "cloud-init user data file"}
+      --user-data: {value: {file: "*.yaml *.yml"}, description: "cloud-init user data file"}
+  delete:
+    description: Delete machines
+    aliases: [rm]
+    args: {exec: "orbctl list -q 2>/dev/null"}
+    flags:
+      -f: {description: "Do not prompt for confirmation"}
+      --force: {description: "Do not prompt for confirmation"}
+  clone: {description: "Clone a machine", positional: [{exec: "orbctl list -q 2>/dev/null"}, any]}
+  rename: {description: "Rename a machine", positional: [{exec: "orbctl list -q 2>/dev/null"}, any]}
+  default: {description: "Get or set the default machine", args: {exec: "orbctl list -q 2>/dev/null"}}
+  run:
+    description: Run a command in a machine
+    args: "@command"
+    flags:
+      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
+      -u: {value: any, description: "Run as this user"}
+      --user: {value: any, description: "Run as this user"}
+      -w: {value: dir, description: "Working directory"}
+      --workdir: {value: dir, description: "Working directory"}
+  shell:
+    description: Open a shell in a machine
+    flags:
+      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
+      -u: {value: any, description: "Log in as this user"}
+      --user: {value: any, description: "Log in as this user"}
+  push:
+    description: Copy files from macOS to a machine
+    args: file
+    flags:
+      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+  pull:
+    description: Copy files from a machine to macOS
+    args: any
+    flags:
+      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+  logs: {description: "Show machine logs", args: {exec: "orbctl list -q 2>/dev/null"}}
+  config:
+    description: Show or change OrbStack settings
+    commands:
+      show: {description: "Show all settings"}
+      get: {description: "Get a setting", args: any}
+      set: {description: "Set a setting (KEY VALUE)", args: any}
+      reset: {description: "Reset settings to defaults"}
+  docker: {description: "Docker-related commands", commands: {migrate: {description: "Migrate data from Docker Desktop"}}}
+  update: {description: "Update OrbStack"}
+  reset: {description: "Delete all data and reset OrbStack"}
+  version: {description: "Show the version"}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, powershell]}}
+  help: {description: "Help about a command", args: "@subcommands"}
+snippets:
+  - key: u
+    mark: pin
+    command: "orbctl create ubuntu dev"
+    description: "new Ubuntu machine named dev"
+  - key: a
+    command: "orbctl create --arch amd64 debian x86"
+    description: "x86-64 Debian machine (Rosetta)"
+  - key: s
+    mark: pin
+    command: "orbctl shell -m dev"
+    description: "shell into machine dev"
+  - key: r
+    command: "orbctl run -m dev uname -a"
+    description: "one-off command in a machine"
+  - key: l
+    mark: pin
+    command: "orbctl list --running"
+    description: "running machines"
+  - key: p
+    command: "orbctl push -m dev ./file.txt"
+    description: "copy a file into the machine"
+  - key: x
+    command: "orbctl stop"
+    description: "stop OrbStack entirely"
+  - key: d
+    command: "orbctl delete -f dev"
+    description: "remove machine dev without prompting"

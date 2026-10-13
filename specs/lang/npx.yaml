@@ -20,3 +20,27 @@ flags:
   --include-workspace-root: {description: also run in the root project}
 args:
   exec: d=$PWD; while :; do [ -d "$d/node_modules/.bin" ] && ls "$d/node_modules/.bin"; [ "$d" = / ] && break; d=$(dirname "$d"); done
+snippets:
+  - key: t
+    mark: pin
+    command: 'npx tsc --noEmit'
+    description: 'type-check the project'
+  - key: p
+    mark: pin
+    command: 'npx prettier --write .'
+    description: 'format all files'
+  - key: e
+    command: 'npx eslint .'
+    description: 'lint the project'
+  - key: c
+    command: 'npx create-vite@latest'
+    description: 'scaffold a Vite app'
+  - key: s
+    command: 'npx serve .'
+    description: 'serve the current dir over HTTP'
+  - key: y
+    command: 'npx -y '
+    description: 'run without the install prompt'
+  - key: u
+    command: 'npx npm-check-updates -u'
+    description: 'bump package.json versions'

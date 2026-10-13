@@ -1,0 +1,89 @@
+version: '20261013'
+description: "Check, print, convert, and edit property list files"
+flags:
+  -help: {description: "Show usage and exit"}
+  -lint: {description: "Check files for syntax errors (default)", show: always}
+  -p: {description: "Print in human-readable form (not stable)", show: always}
+  -convert:
+    show: always
+    value: {enum: {xml1: "XML plist", binary1: "binary plist", json: "JSON", swift: "Swift literal", objc: "Objective-C literal"}}
+    description: "Rewrite files in the given format"
+  -header: {description: "With -convert objc: also write a header"}
+  -insert:
+    value: any
+    description: "Insert value at keypath (then -type value)"
+  -replace:
+    value: any
+    description: "Replace value at keypath (then -type value)"
+  -remove:
+    value: any
+    description: "Remove value at keypath"
+  -extract:
+    show: always
+    value: any
+    description: "Print value at keypath as xml1|binary1|json|raw"
+  -type:
+    value: any
+    description: "Print the type of the value at keypath"
+  -expect:
+    value: {enum: [bool, integer, float, string, date, data, dictionary, array]}
+    description: "Fail if the value at keypath is not this type"
+  -create:
+    value: {enum: [xml1, binary1, json]}
+    description: "Create an empty plist in the given format"
+  -append: {description: "With -insert: append to the array at keypath"}
+  -bool: {description: "Value type: YES/true or NO"}
+  -integer: {description: "Value type: 64-bit integer"}
+  -float: {description: "Value type: 64-bit float"}
+  -string: {description: "Value type: UTF-8 string"}
+  -date: {description: "Value type: XML plist date"}
+  -data: {description: "Value type: base64 data"}
+  -xml: {description: "Value type: XML plist fragment"}
+  -json: {description: "Value type: JSON fragment"}
+  -array: {description: "Value type: empty array (no value)"}
+  -dictionary: {description: "Value type: empty dictionary (no value)"}
+  -n: {description: "With -extract raw: no trailing newline"}
+  -s: {description: "Silent on success"}
+  -r: {description: "Human-readable JSON output"}
+  -o:
+    value: file
+    description: "Output path ('-' = stdout)"
+  -e:
+    value: any
+    description: "Extension for converted files"
+  --: {description: "All further arguments are files"}
+args: {file: "*.plist *.strings *.json *.entitlements *.mobileconfig *.xml"}
+snippets:
+  - key: p
+    mark: pin
+    command: "plutil -p ~/Library/Preferences/com.apple.finder.plist"
+    description: "readable dump of a plist (binary too)"
+  - key: l
+    command: "plutil -lint Info.plist"
+    description: "syntax check"
+  - key: j
+    mark: pin
+    command: "plutil -convert json -r -o - Info.plist"
+    description: "plist as pretty JSON on stdout"
+  - key: x
+    command: "plutil -convert xml1 Settings.plist"
+    description: "binary plist to editable XML, in place"
+  - key: b
+    command: "plutil -convert binary1 Settings.plist"
+    description: "back to binary, in place"
+  - key: v
+    mark: pin
+    command: "plutil -extract CFBundleShortVersionString raw -o - /Applications/Safari.app/Contents/Info.plist"
+    description: "an app's version string"
+  - key: r
+    command: "plutil -replace CFBundleVersion -string 42 Info.plist"
+    description: "set a string value"
+  - key: i
+    command: "plutil -insert LSUIElement -bool YES Info.plist"
+    description: "add a boolean key"
+  - key: d
+    command: "plutil -remove LSUIElement Info.plist"
+    description: "delete a key"
+  - key: k
+    command: "plutil -extract CFBundleURLTypes raw -o - Info.plist"
+    description: "keys of a dict / count of an array"

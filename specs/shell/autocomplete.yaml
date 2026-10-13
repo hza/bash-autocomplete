@@ -41,3 +41,40 @@ commands:
         value: {exec: "autocomplete alias --list | cut -d' ' -f1"}
       --list: {description: "List aliases (NAME -> CMD)"}
     args: {exec: "autocomplete list --tsv"}
+snippets:
+  - key: l
+    mark: pin
+    command: "autocomplete list"
+    description: "commands with a spec"
+  - key: u
+    command: "autocomplete list --user"
+    description: "your own / generated specs"
+  - key: e
+    mark: pin
+    command: "autocomplete edit git"
+    description: "edit your copy of a spec"
+  - key: a
+    mark: pin
+    command: "autocomplete add mytool"
+    description: "generate a spec (cobra, man or --help)"
+  - key: h
+    command: "autocomplete add --from help --force mytool"
+    description: "regenerate from --help output"
+  - key: m
+    command: "autocomplete add --from man mytool"
+    description: "generate from the man page"
+  - key: k
+    command: "autocomplete alias kubectl k"
+    description: "complete k like kubectl"
+  - key: s
+    command: "autocomplete alias --list"
+    description: "list aliases"
+  - key: c
+    command: "autocomplete cache"
+    description: "rebuild the cache of big specs"
+  - key: o
+    command: "autocomplete updates"
+    description: "edited specs with a newer shipped version"
+  - key: v
+    command: "autocomplete check ~/.config/autocomplete/mytool.yaml"
+    description: "validate a spec"

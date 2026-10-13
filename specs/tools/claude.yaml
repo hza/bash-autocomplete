@@ -241,7 +241,7 @@ snippets:
   - key: x
     command: "claude --allowedTools \"Bash(git *) Edit Read\" -p \"\""
     description: "pre-approve specific tools"
-  - key: m
+  - key: q
     command: "claude --bare -p \"\""
     description: "minimal mode: no hooks, plugins or CLAUDE.md"
   - key: i

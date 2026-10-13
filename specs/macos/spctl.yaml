@@ -1,0 +1,69 @@
+version: '20261013'
+description: "Gatekeeper: assess and manage the system security policy"
+flags:
+  -a: {description: "Assess files against the policy (--assess)", show: always}
+  --assess: {description: "Assess files against the policy"}
+  -t:
+    show: always
+    value: {enum: {execute: "apps and tools (default)", install: "installer packages", open: "documents"}}
+    description: "Assessment type (--type)"
+  --type:
+    value: {enum: {execute: "apps and tools (default)", install: "installer packages", open: "documents"}}
+    description: "Assessment type"
+  -v: {description: "Verbose: show source and origin", show: always, repeat: true}
+  --verbose: {description: "Verbose output", repeat: true}
+  --status: {description: "Is assessment (Gatekeeper) enabled", show: always}
+  --global-enable: {description: "Enable Gatekeeper (sudo)"}
+  --global-disable: {description: "Disable Gatekeeper (sudo; confirm in Settings)"}
+  --disable-status: {description: "Why assessment is disabled"}
+  --raw: {description: "Show the assessment result as raw XML"}
+  --continue: {description: "Continue with remaining files after a failure"}
+  --ignore-cache: {description: "Do not use the assessment cache"}
+  --no-cache: {description: "Do not store the outcome in the cache"}
+  --context:
+    value: any
+    description: "Assessment context key:value"
+  --add: {description: "Add rules (sudo)"}
+  --remove: {description: "Remove rules (sudo)"}
+  --enable: {description: "Enable rules"}
+  --disable: {description: "Disable rules"}
+  --reset-default: {description: "Restore the default rule database"}
+  --list: {description: "List rules"}
+  --anchor: {description: "Arguments are anchors"}
+  --hash: {description: "Arguments are code directory hashes"}
+  --path: {description: "Arguments are file paths"}
+  --rule: {description: "Arguments are rule numbers"}
+  --requirement: {description: "Argument is a code requirement"}
+  --label:
+    value: any
+    description: "Label for added rules / select rules by label"
+  --priority:
+    value: any
+    description: "Rule priority"
+args:
+  - file
+  - dir
+snippets:
+  - key: a
+    mark: pin
+    command: "spctl -a -vv /Applications/Example.app"
+    description: "would Gatekeeper launch this app? (who signed it)"
+  - key: p
+    command: "spctl -a -t install -vv package.pkg"
+    description: "assess an installer package"
+  - key: o
+    command: "spctl -a -t open --context context:primary-signature -vv file.dmg"
+    description: "assess a downloaded disk image"
+  - key: s
+    mark: pin
+    command: "spctl --status"
+    description: "is Gatekeeper on"
+  - key: l
+    command: "spctl --list"
+    description: "policy rules"
+  - key: d
+    command: "sudo spctl --global-disable"
+    description: "allow apps from anywhere (confirm in Settings)"
+  - key: e
+    command: "sudo spctl --global-enable"
+    description: "turn Gatekeeper back on"

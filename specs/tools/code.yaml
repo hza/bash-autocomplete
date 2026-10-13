@@ -70,3 +70,34 @@ commands:
   serve-web: {"description": "Run a server that displays the editor UI in browsers"}
   agent: {"description": "Start and interact with AI agent hosts"}
   tunnel: {"description": "Make this machine accessible from vscode.dev"}
+snippets:
+  - key: d
+    mark: pin
+    command: "code ."
+    description: "current folder"
+  - key: r
+    mark: pin
+    command: "code -r ."
+    description: "current folder in the last active window"
+  - key: g
+    mark: pin
+    command: "code -g file.c:42"
+    description: "open a file at line 42"
+  - key: c
+    command: "code -d old.txt new.txt"
+    description: "diff two files"
+  - key: n
+    command: "code -n"
+    description: "new empty window"
+  - key: w
+    command: "code --wait file.txt"
+    description: "edit and wait for close (EDITOR use)"
+  - key: e
+    command: "code --list-extensions --show-versions"
+    description: "installed extensions with versions"
+  - key: i
+    command: "code --install-extension ms-python.python"
+    description: "install an extension"
+  - key: s
+    command: "code - < notes.txt"
+    description: "read stdin into a new editor"

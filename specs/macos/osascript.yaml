@@ -1,0 +1,47 @@
+version: '20261013'
+description: "Execute AppleScript and other OSA language scripts"
+flags:
+  -e: {value: any, description: "Run one line of script (repeat for several lines)", show: always, repeat: true}
+  -l:
+    value: {enum: {AppleScript: "default OSA language", JavaScript: "JavaScript for Automation (JXA)"}}
+    description: "Script language"
+    show: always
+  -i: {description: "Interactive mode: read and run statements line by line"}
+  -s:
+    value: {enum: {h: "human-readable results (default)", s: "recompilable source form", e: "errors to stderr (default)", o: "errors to stdout"}, nospace: true}
+    description: "Output style flags (e, h, o, s)"
+args: {file: "*.scpt *.applescript *.scptd *.js"}
+snippets:
+  - key: n
+    mark: pin
+    command: "osascript -e 'display notification \"done\" with title \"Terminal\"'"
+    description: "show a notification"
+  - key: d
+    command: "osascript -e 'display dialog \"Continue?\"'"
+    description: "show a dialog"
+  - key: v
+    mark: pin
+    command: "osascript -e 'set volume output volume 30'"
+    description: "set output volume (0-100)"
+  - key: m
+    command: "osascript -e 'set volume with output muted'"
+    description: "mute audio"
+  - key: a
+    mark: pin
+    command: "osascript -e 'tell application \"System Events\" to get name of every process whose background only is false'"
+    description: "list running GUI apps"
+  - key: q
+    command: "osascript -e 'quit app \"Safari\"'"
+    description: "quit an app gracefully"
+  - key: f
+    command: "osascript -e 'tell application \"Finder\" to get POSIX path of (target of front window as alias)'"
+    description: "path of the front Finder window"
+  - key: c
+    command: "osascript -e 'the clipboard as text'"
+    description: "read the clipboard"
+  - key: j
+    command: "osascript -l JavaScript -e 'Application(\"Music\").currentTrack.name()'"
+    description: "JXA: current Music track"
+  - key: l
+    command: "osascript -e 'tell application \"System Events\" to keystroke \"q\" using command down'"
+    description: "send a keystroke"

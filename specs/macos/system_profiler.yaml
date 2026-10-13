@@ -1,0 +1,44 @@
+version: '20261013'
+description: "Report system hardware and software configuration"
+flags:
+  -json: {description: "JSON output", show: always}
+  -xml: {description: "XML (plist) output"}
+  -detailLevel:
+    value: {enum: {mini: "no personal information", basic: "basic hardware and network info", full: "everything"}}
+    description: "Amount of detail"
+    show: always
+  -timeout: {value: any, description: "Seconds to wait for data (0 = no limit)"}
+  -listDataTypes: {description: "List available data types", show: always}
+  -usage: {description: "Show usage"}
+  -nospawn: {description: "Gather data in-process"}
+args: {exec: "system_profiler -listDataTypes | grep DataType", cache: '3600'}
+snippets:
+  - key: h
+    mark: pin
+    command: "system_profiler SPHardwareDataType"
+    description: "model, chip, memory, serial"
+  - key: s
+    mark: pin
+    command: "system_profiler SPSoftwareDataType"
+    description: "macOS version, uptime, user"
+  - key: u
+    command: "system_profiler SPUSBDataType"
+    description: "USB devices"
+  - key: d
+    command: "system_profiler SPDisplaysDataType"
+    description: "GPU and displays"
+  - key: p
+    command: "system_profiler SPPowerDataType | grep -E 'Cycle Count|Condition|Maximum Capacity'"
+    description: "battery health"
+  - key: b
+    command: "system_profiler SPBluetoothDataType"
+    description: "Bluetooth devices"
+  - key: a
+    command: "system_profiler -json SPApplicationsDataType > apps.json"
+    description: "installed apps as JSON"
+  - key: j
+    command: "system_profiler -json SPHardwareDataType | jq -r '.SPHardwareDataType[0].serial_number'"
+    description: "serial number via jq"
+  - key: r
+    command: "system_profiler -detailLevel mini > report.txt"
+    description: "full report without personal info"

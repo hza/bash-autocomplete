@@ -9,3 +9,24 @@ flags:
   --silent: {description: no output}
 args:
   exec: d=$PWD; while :; do [ -d "$d/node_modules/.bin" ] && ls "$d/node_modules/.bin"; [ "$d" = / ] && break; d=$(dirname "$d"); done
+snippets:
+  - key: t
+    mark: pin
+    command: 'bunx tsc --noEmit'
+    description: 'type-check the project'
+  - key: p
+    mark: pin
+    command: 'bunx prettier --write .'
+    description: 'format all files'
+  - key: e
+    command: 'bunx eslint .'
+    description: 'lint the project'
+  - key: c
+    command: 'bunx create-vite@latest'
+    description: 'scaffold a Vite app'
+  - key: s
+    command: 'bunx serve .'
+    description: 'serve the current dir over HTTP'
+  - key: v
+    command: 'bunx vitest'
+    description: 'run Vitest'

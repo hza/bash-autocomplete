@@ -242,3 +242,37 @@ commands:
   dlx:
     description: Run a package in a temporary, ephemeral environment
     args: any
+snippets:
+  - key: i
+    mark: pin
+    command: 'yarn install'
+    description: 'install dependencies'
+  - key: f
+    command: 'yarn install --frozen-lockfile'
+    description: 'CI install, lockfile must match'
+  - key: a
+    command: 'yarn add '
+    description: 'add a dependency'
+  - key: d
+    command: 'yarn add -D '
+    description: 'add a dev dependency'
+  - key: r
+    mark: pin
+    command: 'yarn run dev'
+    description: 'run the dev script'
+  - key: t
+    mark: pin
+    command: 'yarn test'
+    description: 'run tests'
+  - key: o
+    command: 'yarn outdated'
+    description: 'show outdated packages'
+  - key: u
+    command: 'yarn upgrade-interactive'
+    description: 'pick packages to upgrade'
+  - key: w
+    command: 'yarn why '
+    description: 'why a package is installed'
+  - key: c
+    command: 'yarn cache clean'
+    description: 'clear the cache'

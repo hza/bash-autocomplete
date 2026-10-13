@@ -1,0 +1,196 @@
+version: '20261013'
+description: "Manipulate disk images (attach, create, convert, verify)"
+flags:
+  -help: {description: "Show help for the verb"}
+  -quiet: {description: "Minimize output"}
+  -verbose: {description: "Verbose output"}
+  -debug: {description: "Debug output"}
+  -plist: {description: "Output as plist"}
+commands:
+  attach:
+    description: "Attach (mount) an image"
+    flags:
+      -readonly: {description: "Attach read-only", show: always}
+      -nobrowse: {description: "Hide the volume in Finder", show: always}
+      -mountpoint:
+        show: always
+        value: dir
+        description: "Mount at this directory"
+      -mountroot:
+        value: dir
+        description: "Mount under this directory"
+      -nomount: {description: "Attach device without mounting"}
+      -noverify: {description: "Skip checksum verification"}
+      -noautoopen: {description: "Do not open the volume in Finder"}
+      -shadow:
+        value: file
+        description: "Write changes to a shadow file"
+      -stdinpass: {description: "Read the passphrase from stdin"}
+      -owners:
+        value: {enum: ["on", "off"]}
+        description: "Honour file ownership"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage *.iso *.img *.cdr"}
+  mount:
+    description: "Same as attach"
+    flags:
+      -readonly: {description: "Attach read-only"}
+      -nobrowse: {description: "Hide the volume in Finder"}
+      -mountpoint:
+        value: dir
+        description: "Mount at this directory"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage *.iso *.img *.cdr"}
+  detach:
+    description: "Detach a device or mounted volume"
+    aliases: [eject]
+    flags:
+      -force: {description: "Force detach even if in use", show: always}
+    args:
+      - {exec: "ls -d /Volumes/* 2>/dev/null"}
+      - {exec: "hdiutil info 2>/dev/null | awk '/^\\/dev\\/disk[0-9]+[ \\t]/ {print $1}'"}
+  unmount:
+    description: "Unmount a volume, leave the device attached"
+    flags:
+      -force: {description: "Force unmount"}
+    args: {exec: "ls -d /Volumes/* 2>/dev/null"}
+  create:
+    description: "Create a new image"
+    flags:
+      -size:
+        show: always
+        value: {enum: {100m: "100 MB", 1g: "1 GB", 10g: "10 GB"}}
+        description: "Image size (b, k, m, g, t)"
+      -srcfolder:
+        show: always
+        value: dir
+        description: "Copy this folder into the image"
+      -volname:
+        value: any
+        description: "Volume name"
+      -fs:
+        value: {enum: [APFS, "HFS+", "HFS+J", "Case-sensitive APFS", ExFAT, MS-DOS, UDF]}
+        description: "Filesystem"
+      -format:
+        show: always
+        value: {enum: {UDZO: "zlib compressed, read-only", UDBZ: "bzip2 compressed", ULFO: "lzfse compressed", ULMO: "lzma compressed", UDRW: "read/write", UDRO: "read-only", UDSP: "sparse image", UDSB: "sparse bundle", UDTO: "DVD/CD master (.cdr)"}}
+        description: "Image format"
+      -type:
+        value: {enum: [UDIF, SPARSE, SPARSEBUNDLE]}
+        description: "Image type for empty images"
+      -layout:
+        value: {enum: [GPTSPUD, SPUD, MBRSPUD, NONE]}
+        description: "Partition layout"
+      -encryption:
+        value: {enum: [AES-128, AES-256]}
+        description: "Encrypt the image"
+      -stdinpass: {description: "Read the passphrase from stdin"}
+      -ov: {description: "Overwrite an existing file"}
+      -attach: {description: "Attach after creating"}
+    args: file
+  convert:
+    description: "Convert an image to another format"
+    flags:
+      -format:
+        show: always
+        value: {enum: {UDZO: "zlib compressed, read-only", UDBZ: "bzip2 compressed", ULFO: "lzfse compressed", ULMO: "lzma compressed", UDRW: "read/write", UDRO: "read-only", UDSP: "sparse image", UDSB: "sparse bundle", UDTO: "DVD/CD master (.cdr)"}}
+        description: "Target format"
+      -o:
+        show: always
+        value: file
+        description: "Output file"
+      -ov: {description: "Overwrite an existing file"}
+    args: {file: "*.dmg *.sparsebundle *.sparseimage *.iso *.img *.cdr"}
+  verify:
+    description: "Verify the image checksum"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage"}
+  imageinfo:
+    description: "Show image properties"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage *.iso"}
+  isencrypted:
+    description: "Tell whether an image is encrypted"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage"}
+  info:
+    description: "List attached images"
+  resize:
+    description: "Resize an image"
+    flags:
+      -size:
+        value: any
+        description: "New size (b, k, m, g, t)"
+      -sectors:
+        value: {enum: [min, max]}
+        description: "Size in sectors or min/max"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage"}
+  compact:
+    description: "Reclaim free space in a sparse image"
+    args: {file: "*.sparsebundle *.sparseimage"}
+  chpass:
+    description: "Change an encrypted image's passphrase"
+    args: {file: "*.dmg *.sparsebundle *.sparseimage"}
+  checksum:
+    description: "Compute an image checksum"
+    flags:
+      -type:
+        value: {enum: [UDIF-CRC32, UDIF-MD5, CRC32, MD5, SHA, SHA1, SHA256, SHA384, SHA512]}
+        description: "Checksum type"
+    args: {file: "*.dmg *.iso"}
+  makehybrid:
+    description: "Make a hybrid ISO/HFS image from a folder"
+    flags:
+      -o:
+        value: file
+        description: "Output file"
+      -iso: {description: "Include ISO9660"}
+      -joliet: {description: "Include Joliet extensions"}
+      -udf: {description: "Include UDF"}
+      -hfs: {description: "Include HFS+"}
+      -default-volume-name:
+        value: any
+        description: "Volume name"
+    args: dir
+  pmap:
+    description: "Show the partition map"
+    args: {file: "*.dmg *.iso"}
+  segment:
+    description: "Split an image into segments"
+    args: {file: "*.dmg"}
+  burn:
+    description: "Burn an image to optical media"
+    args: {file: "*.dmg *.iso *.cdr"}
+  plugins:
+    description: "List image plugins"
+  help:
+    description: "Detailed help"
+snippets:
+  - key: a
+    mark: pin
+    command: "hdiutil attach -nobrowse -readonly image.dmg"
+    description: "mount quietly, read-only, no Finder window"
+  - key: d
+    mark: pin
+    command: "hdiutil detach /Volumes/Name"
+    description: "eject a mounted image"
+  - key: f
+    command: "hdiutil detach -force /dev/disk4"
+    description: "force-eject a busy image"
+  - key: c
+    mark: pin
+    command: "hdiutil create -volname MyApp -srcfolder ./dist -format UDZO -ov MyApp.dmg"
+    description: "compressed .dmg from a folder"
+  - key: e
+    command: "hdiutil create -size 1g -fs APFS -encryption AES-256 -volname Vault vault.dmg"
+    description: "encrypted 1 GB container"
+  - key: s
+    command: "hdiutil create -size 10g -type SPARSEBUNDLE -fs APFS -volname Work work.sparsebundle"
+    description: "growing sparse bundle"
+  - key: i
+    command: "hdiutil info"
+    description: "attached images and their /dev/disk devices"
+  - key: v
+    command: "hdiutil verify image.dmg"
+    description: "check a download is intact"
+  - key: o
+    command: "hdiutil convert image.dmg -format UDTO -o image && mv image.cdr image.iso"
+    description: "dmg to iso"
+  - key: k
+    command: "hdiutil compact work.sparsebundle"
+    description: "shrink a sparse bundle"

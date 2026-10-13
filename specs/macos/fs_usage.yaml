@@ -1,0 +1,38 @@
+version: '20261013'
+description: "Report system calls and page faults related to filesystem activity (needs root)"
+flags:
+  -e: {description: "Exclude the given processes (and fs_usage itself)"}
+  -w: {description: "Wide, detailed output", show: always}
+  -f:
+    value: {enum: {network: "network events", filesys: "filesystem events", pathname: "pathname events only", exec: "exec and spawn events", diskio: "disk I/O events", cachehit: "include cache hits"}}
+    description: "Filter mode"
+    show: always
+    repeat: true
+  -b: {description: "Annotate disk I/O with the bootstrap info"}
+  -t: {value: any, description: "Run for this many seconds"}
+  -R: {value: file, description: "Read events from a raw trace file"}
+  -S: {value: any, description: "Start time for -R"}
+  -E: {value: any, description: "End time for -R"}
+  -F: {description: "Ignore page faults"}
+args: "@processes"
+snippets:
+  - key: p
+    mark: pin
+    command: "fs_usage -w -f filesys Finder"
+    description: "file activity of one app (sudo)"
+  - key: x
+    command: "fs_usage -w -f exec"
+    description: "watch process launches (sudo)"
+  - key: n
+    command: "fs_usage -w -f network"
+    description: "network-related calls (sudo)"
+  - key: d
+    command: "fs_usage -w -f diskio -t 10"
+    description: "disk I/O for 10 seconds (sudo)"
+  - key: g
+    mark: pin
+    command: "fs_usage -w -f pathname | grep -i plist"
+    description: "who touches plist files (sudo)"
+  - key: e
+    command: "fs_usage -w -e mds mds_stores Terminal"
+    description: "everything except noisy processes (sudo)"

@@ -562,3 +562,31 @@ commands:
       -p: {value: any, description: "Comma-separated list of prompts"}
       '-1': {description: "Only accept a single key press"}
       -F: {description: "Expand formats in the initial text"}
+snippets:
+  - key: n
+    mark: pin
+    command: "tmux new -s work"
+    description: "new session named work"
+  - key: a
+    mark: pin
+    command: "tmux attach -t work"
+    description: "attach to session work"
+  - key: l
+    mark: pin
+    command: "tmux ls"
+    description: "list sessions"
+  - key: d
+    command: "tmux new -A -s work"
+    description: "attach to work, create it if missing"
+  - key: k
+    command: "tmux kill-session -t work"
+    description: "kill session work"
+  - key: s
+    command: "tmux kill-server"
+    description: "kill all sessions"
+  - key: r
+    command: "tmux source-file ~/.tmux.conf"
+    description: "reload the config"
+  - key: c
+    command: "tmux capture-pane -p -S -1000"
+    description: "print the last 1000 lines of the pane"

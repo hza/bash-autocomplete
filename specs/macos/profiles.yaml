@@ -1,0 +1,48 @@
+version: '20261013'
+description: "Configuration and provisioning profile tool"
+commands:
+  status: {description: "Show whether profiles are installed"}
+  list: {description: "List profile information"}
+  show: {description: "Show expanded profile information"}
+  remove: {description: "Remove a profile"}
+  sync: {description: "Sync configuration profiles with known users"}
+  renew: {description: "Renew a profile's installed certificate"}
+  validate: {description: "Validate a provisioning profile or DEP enrollment"}
+  version: {description: "Show the tool version"}
+  help: {description: "Show help"}
+flags:
+  -type:
+    value: {enum: {configuration: "configuration profiles", provisioning: "provisioning profiles", enrollment: "MDM/DEP enrollment", bootstraptoken: "bootstrap token"}}
+    description: "Profile type"
+    show: always
+  -user: {value: "@users", description: "Short user name"}
+  -password: {value: any, description: "Password"}
+  -identifier: {value: any, description: "Profile identifier", show: always}
+  -path: {value: file, description: "File path"}
+  -uuid: {value: any, description: "Profile UUID"}
+  -enrolledUser: {value: "@users", description: "Enrolled user name"}
+  -verbose: {description: "Verbose"}
+  -forced: {description: "Don't ask for confirmation when removing"}
+  -all: {description: "All profiles"}
+  -quiet: {description: "Quiet"}
+snippets:
+  - key: s
+    mark: pin
+    command: "profiles status -type enrollment"
+    description: "is this Mac MDM/DEP enrolled?"
+  - key: l
+    mark: pin
+    command: "profiles list -all"
+    description: "all installed profiles (sudo)"
+  - key: c
+    command: "profiles show -type configuration"
+    description: "configuration profile details"
+  - key: r
+    command: "profiles remove -identifier com.example.profile"
+    description: "remove a profile by identifier (sudo)"
+  - key: e
+    command: "profiles show -type enrollment"
+    description: "DEP enrollment info from Apple (sudo)"
+  - key: v
+    command: "profiles validate -type enrollment"
+    description: "validate DEP enrollment (sudo)"

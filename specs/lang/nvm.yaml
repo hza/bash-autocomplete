@@ -1,0 +1,74 @@
+version: '20261013'
+description: Node Version Manager (shell function)
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  --version: {description: "Show the nvm version"}
+  --no-colors: {description: "Disable colored output"}
+commands:
+  install:
+    description: Download and install a Node version
+    args: {enum: {node: "latest release", "lts/*": "latest LTS", --lts: "latest LTS"}}
+    flags:
+      --lts: {description: "Latest LTS release", show: always}
+      -s: {description: "Build from source"}
+      -b: {description: "Use binaries only, never build"}
+      --reinstall-packages-from: {value: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}, description: "Copy global npm packages from this version", show: always}
+      --default: {description: "Make it the default alias"}
+      --latest-npm: {description: "Upgrade npm to the latest compatible"}
+      --skip-default-packages: {description: "Skip default-packages file"}
+      --no-progress: {description: "Disable the progress bar"}
+  uninstall: {description: "Uninstall a version", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  use:
+    description: Use a version in this shell
+    args: [{exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" \"${NVM_DIR:-$HOME/.nvm}/alias\" 2>/dev/null | grep -v '^$' | grep -v ':$'"}, {enum: [node, system, "lts/*"]}]
+    flags:
+      --lts: {description: "Latest installed LTS"}
+      --silent: {description: "Silence output"}
+  exec: {description: "Run a command with a version (VERSION CMD...)", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  run: {description: "Run node with a version (VERSION ARGS...)", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  current: {description: "Show the active version"}
+  ls: {description: "List installed versions", aliases: [list], flags: {--no-alias: {description: "Hide aliases"}}}
+  ls-remote:
+    description: List versions available to install
+    aliases: [list-remote]
+    flags:
+      --lts: {description: "Only LTS versions", show: always}
+  version: {description: "Resolve a version description", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  version-remote: {description: "Resolve a remote version description", flags: {--lts: {description: "Only LTS"}}}
+  deactivate: {description: "Undo nvm's PATH changes in this shell"}
+  alias: {description: "Show or set an alias (NAME VERSION)", positional: [{exec: "ls \"${NVM_DIR:-$HOME/.nvm}/alias\" 2>/dev/null | grep -v '^lts$'; echo default"}, {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}]}
+  unalias: {description: "Delete an alias", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/alias\" 2>/dev/null | grep -v '^lts$'"}}
+  install-latest-npm: {description: "Upgrade npm in the current version"}
+  reinstall-packages: {description: "Reinstall global packages from a version", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  unload: {description: "Remove nvm from the shell"}
+  which: {description: "Path of a version's node", args: {exec: "ls \"${NVM_DIR:-$HOME/.nvm}/versions/node\" 2>/dev/null"}}
+  cache: {description: "Manage the download cache", commands: {dir: {description: "Show the cache directory"}, clear: {description: "Empty the cache"}}}
+snippets:
+  - key: i
+    mark: pin
+    command: "nvm install --lts"
+    description: "install the latest LTS"
+  - key: u
+    mark: pin
+    command: "nvm use"
+    description: "switch to the version in .nvmrc"
+  - key: d
+    mark: pin
+    command: "nvm alias default lts/*"
+    description: "new shells start on the latest LTS"
+  - key: m
+    command: "nvm install --lts --reinstall-packages-from=current"
+    description: "upgrade LTS, keep global packages"
+  - key: l
+    command: "nvm ls"
+    description: "installed versions and aliases"
+  - key: r
+    command: "nvm ls-remote --lts"
+    description: "LTS releases available to install"
+  - key: w
+    command: "nvm current > .nvmrc"
+    description: "record the current version in .nvmrc"
+  - key: s
+    command: "nvm use system"
+    description: "fall back to the system node"

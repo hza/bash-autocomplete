@@ -39,3 +39,34 @@ flags:
 args:
   - file
   - dir
+snippets:
+  - key: d
+    mark: pin
+    command: "open ."
+    description: "current directory in Finder"
+  - key: r
+    mark: pin
+    command: "open -R file.txt"
+    description: "reveal a file in Finder"
+  - key: a
+    mark: pin
+    command: "open -a TextEdit file.txt"
+    description: "open a file with a given app"
+  - key: e
+    command: "open -e file.txt"
+    description: "open in TextEdit"
+  - key: t
+    command: "open -t file.txt"
+    description: "open in the default text editor"
+  - key: u
+    command: "open https://example.org"
+    description: "URL in the default browser"
+  - key: n
+    command: "open -n -a Safari"
+    description: "new instance of an app"
+  - key: w
+    command: "open -W -a Preview image.png"
+    description: "wait until the app quits"
+  - key: x
+    command: "open x-apple.systempreferences:"
+    description: "System Settings"

@@ -24,3 +24,27 @@ flags:
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
 args: "@processes"
+snippets:
+  - key: f
+    command: "pkill -f PATTERN"
+    description: "signal processes whose full command line matches"
+    mark: pin
+  - key: k
+    command: "pkill -9 -f PATTERN"
+    description: "force-kill by full command line"
+    mark: pin
+  - key: u
+    command: "pkill -u $USER NAME"
+    description: "only your own processes named NAME"
+  - key: x
+    command: "pkill -x NAME"
+    description: "exact process name match only"
+  - key: n
+    command: "pkill -n NAME"
+    description: "only the newest matching process"
+  - key: h
+    command: "pkill -HUP NAME"
+    description: "ask matching daemons to reload"
+  - key: o
+    command: "pkill -o NAME"
+    description: "only the oldest matching process"

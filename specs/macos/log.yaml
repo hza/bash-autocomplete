@@ -1,0 +1,128 @@
+version: '20261013'
+description: "Access system wide log messages created by os_log, os_trace and other logging systems"
+flags:
+  -q: {description: "Quiet"}
+  --quiet: {description: "Quiet"}
+  -v: {description: "Verbose"}
+  --verbose: {description: "Verbose"}
+  --help: {description: "Show help"}
+commands:
+  show:
+    description: "View/search system logs"
+    flags:
+      --predicate: {value: any, description: "Filter with an NSPredicate (log help predicates)", show: always}
+      --process: {value: "@processes", description: "Only this process (name or pid)", show: always}
+      --last: {value: {enum: {5m: "5 minutes", 30m: "30 minutes", 1h: "1 hour", 1d: "1 day"}}, description: "Recent events up to the limit (num[m|h|d])", show: always}
+      --start: {value: any, description: "From date ('Y-M-D H:m:s', 'Y-M-D', '@unixtime')"}
+      --end: {value: any, description: "Up to date ('Y-M-D H:m:s', 'Y-M-D', '@unixtime')"}
+      --style: {value: {enum: [default, compact, json, ndjson, syslog]}, description: "Output format"}
+      --color: {value: {enum: [auto, always, none]}, description: "Color output"}
+      --info: {description: "Show Info events"}
+      --no-info: {description: "Hide Info events"}
+      --debug: {description: "Show Debug events"}
+      --no-debug: {description: "Hide Debug events"}
+      --signpost: {description: "Show signposts"}
+      --no-signpost: {description: "Hide signposts"}
+      --backtrace: {description: "Show backtraces"}
+      --no-backtrace: {description: "Hide backtraces"}
+      --loss: {description: "Show message loss events"}
+      --no-loss: {description: "Hide message loss events"}
+      --pager: {description: "Paginate with less"}
+      --no-pager: {description: "Don't paginate"}
+      --source: {description: "Annotate with source file and line"}
+      --timezone: {value: any, description: "Timezone for timestamps (local or a tz name)"}
+      --mach-continuous-time: {description: "Mach continuous time timestamps"}
+      --unreliable: {description: "Annotate unreliably emitted messages"}
+      --archive: {value: dir, description: "Read a .logarchive"}
+      --file: {value: file, description: "Read a .tracev3 file"}
+    args: {file: "*.logarchive"}
+  stream:
+    description: "Watch live system logs"
+    flags:
+      --predicate: {value: any, description: "Filter with an NSPredicate (log help predicates)", show: always}
+      --process: {value: "@processes", description: "Only this process (name or pid)", show: always}
+      --level: {value: {enum: {default: "default messages", info: "default + info", debug: "everything"}}, description: "Minimum level to show", show: always}
+      --style: {value: {enum: [default, compact, json, ndjson, syslog]}, description: "Output format"}
+      --color: {value: {enum: [auto, always, none]}, description: "Color output"}
+      --type: {value: {enum: [activity, log, trace]}, description: "Event type", repeat: true}
+      --timeout: {value: any, description: "Stop after a time (num[m|h|d])"}
+      --source: {description: "Annotate with source file and line"}
+      --backtrace: {description: "Show backtraces"}
+      --signpost: {description: "Show signposts"}
+      --mach-continuous-time: {description: "Mach continuous time timestamps"}
+  collect:
+    description: "Gather system logs into a log archive"
+    flags:
+      --output: {value: file, description: "Archive path (.logarchive)", show: always}
+      --last: {value: any, description: "Only recent events (num[m|h|d])", show: always}
+      --start: {value: any, description: "From date"}
+      --size: {value: any, description: "Size limit (num[k|m])"}
+      --predicate: {value: any, description: "Filter with an NSPredicate"}
+      --device: {description: "Collect from a connected device"}
+      --device-name: {value: any, description: "Device by name"}
+      --device-udid: {value: any, description: "Device by UDID"}
+  config:
+    description: "View/change logging system settings"
+    flags:
+      --status: {description: "Show the current settings", show: always}
+      --reset: {description: "Reset settings"}
+      --mode: {value: {enum: {"level:default": "level", "level:info": "level", "level:debug": "level", "level:off": "level", "persist:default": "persistence", "persist:info": "persistence", "persist:debug": "persistence", "persist:off": "persistence"}}, description: "Mode(s) to set"}
+      --subsystem: {value: any, description: "Subsystem name"}
+      --category: {value: any, description: "Category within the subsystem"}
+      --process: {value: "@pids", description: "Process id"}
+  erase:
+    description: "Delete system logging data"
+    flags:
+      --all: {description: "Delete everything"}
+      --ttl: {description: "Only data past its time-to-live"}
+  repack:
+    description: "Repack a log archive using a predicate"
+    flags:
+      --predicate: {value: any, description: "Filter with an NSPredicate"}
+    args: {file: "*.logarchive"}
+  stats:
+    description: "Show system logging statistics"
+    flags:
+      --archive: {value: dir, description: "Read a .logarchive"}
+      --sort: {value: {enum: [events, bytes]}, description: "Sort key"}
+      --count: {value: any, description: "Number of entries (or all)"}
+      --start: {value: any, description: "From date"}
+      --end: {value: any, description: "Up to date"}
+      --last: {value: any, description: "Recent events (num[m|h|d])"}
+      --overview: {description: "Overview"}
+      --per-book: {description: "Per book"}
+      --per-file: {description: "Per file"}
+      --sender: {value: any, description: "Stats for a sender"}
+      --process: {value: "@processes", description: "Stats for a process"}
+      --predicate: {value: any, description: "Filter with an NSPredicate"}
+  help:
+    description: "Show help for a command"
+    args: {enum: [collect, config, erase, repack, show, stream, stats, predicates]}
+snippets:
+  - key: s
+    mark: pin
+    command: "log stream --process Finder --level info"
+    description: "live logs of one process"
+  - key: l
+    mark: pin
+    command: "log show --last 10m --style compact"
+    description: "last 10 minutes, compact"
+  - key: e
+    mark: pin
+    command: "log show --last 1h --predicate 'messageType == error'"
+    description: "errors from the last hour"
+  - key: u
+    command: "log stream --predicate 'subsystem == \"com.apple.TimeMachine\"' --style compact"
+    description: "follow one subsystem"
+  - key: g
+    command: "log show --last 30m --predicate 'eventMessage CONTAINS[c] \"denied\"'"
+    description: "search messages for text"
+  - key: b
+    command: "log show --start \"$(date +%Y-%m-%d)\" --predicate 'process == \"kernel\"' --no-pager"
+    description: "kernel messages since midnight"
+  - key: c
+    command: "log collect --last 1h --output ~/Desktop/last-hour.logarchive"
+    description: "save an archive to share (sudo)"
+  - key: j
+    command: "log show --last 5m --style ndjson | jq -r .eventMessage"
+    description: "JSON output into jq"

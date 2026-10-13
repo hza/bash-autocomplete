@@ -1,0 +1,94 @@
+version: '20261013'
+description: Container runtimes on macOS with minimal setup
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -p: {value: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, description: "Profile name"}
+  --profile: {value: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, description: "Profile name", show: always}
+  -v: {description: "Verbose output"}
+  --verbose: {description: "Verbose output"}
+  --very-verbose: {description: "Very verbose output"}
+commands:
+  start:
+    description: Start the VM (creates it on first run)
+    args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}
+    flags:
+      -c: {value: any, description: "Number of CPUs"}
+      --cpu: {value: any, description: "Number of CPUs", show: always}
+      -m: {value: any, description: "Memory in GiB"}
+      --memory: {value: any, description: "Memory in GiB", show: always}
+      -d: {value: any, description: "Disk size in GiB"}
+      --disk: {value: any, description: "Disk size in GiB"}
+      -r: {value: {enum: [docker, containerd, incus]}, description: "Container runtime"}
+      --runtime: {value: {enum: [docker, containerd, incus]}, description: "Container runtime", show: always}
+      -t: {value: {enum: [qemu, vz]}, description: "VM type"}
+      --vm-type: {value: {enum: [qemu, vz]}, description: "VM type"}
+      -a: {value: {enum: [aarch64, x86_64, host]}, description: "VM architecture"}
+      --arch: {value: {enum: [aarch64, x86_64, host]}, description: "VM architecture"}
+      --vz-rosetta: {description: "Use Rosetta for amd64 emulation (vz only)"}
+      --mount-type: {value: {enum: [sshfs, 9p, virtiofs]}, description: "Volume driver for mounts"}
+      -V: {value: dir, description: "Directory to mount (repeatable)", repeat: true}
+      --mount: {value: dir, description: "Directory to mount (repeatable)", repeat: true}
+      -k: {description: "Start with Kubernetes"}
+      --kubernetes: {description: "Start with Kubernetes"}
+      --kubernetes-version: {value: any, description: "Kubernetes version"}
+      --network-address: {description: "Assign a reachable IP address to the VM"}
+      --dns: {value: any, description: "DNS servers for the VM", repeat: true}
+      -e: {description: "Edit the configuration before starting"}
+      --edit: {description: "Edit the configuration before starting"}
+      -f: {description: "Run in the foreground"}
+      --foreground: {description: "Run in the foreground"}
+      --ssh-agent: {description: "Forward the SSH agent"}
+  stop: {description: "Stop the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Force stop"}, --force: {description: "Force stop"}}}
+  restart: {description: "Restart the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Force restart"}, --force: {description: "Force restart"}}}
+  status: {description: "Show the VM status", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-e: {description: "Extended status"}, --extended: {description: "Extended status"}, -j: {description: "JSON output"}, --json: {description: "JSON output"}}}
+  delete: {description: "Delete the VM and its settings", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Do not prompt for confirmation"}, --force: {description: "Do not prompt for confirmation"}, --data: {description: "Also delete container data"}}}
+  list: {description: "List profiles", aliases: [ls], flags: {-j: {description: "JSON output"}, --json: {description: "JSON output"}}}
+  ssh: {description: "SSH into the VM (or run a command after --)", args: "@command"}
+  ssh-config: {description: "Show the SSH connection config", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}}
+  prune: {description: "Prune cached downloaded assets", flags: {-a: {description: "Prune all assets"}, --all: {description: "Prune all assets"}, -f: {description: "Do not prompt"}, --force: {description: "Do not prompt"}}}
+  kubernetes:
+    description: Manage the Kubernetes cluster
+    aliases: [k8s, k3s, k]
+    commands:
+      start: {description: "Start Kubernetes"}
+      stop: {description: "Stop Kubernetes"}
+      delete: {description: "Delete the Kubernetes cluster"}
+      reset: {description: "Reset the Kubernetes cluster"}
+  nerdctl: {description: "Run nerdctl (containerd runtime)", args: any, commands: {install: {description: "Install a nerdctl alias script"}}}
+  template: {description: "Edit the default config template", flags: {--editor: {value: "@command", description: "Editor to use"}}}
+  update: {description: "Update the container runtime", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}}
+  completion: {description: "Generate shell completion", args: {enum: [bash, zsh, fish, powershell]}}
+  version: {description: "Show the version"}
+  help: {description: "Help about a command", args: "@subcommands"}
+snippets:
+  - key: s
+    mark: pin
+    command: "colima start --cpu 4 --memory 8"
+    description: "start the default VM with 4 CPUs, 8 GiB"
+  - key: v
+    mark: pin
+    command: "colima start --vm-type vz --vz-rosetta --mount-type virtiofs"
+    description: "Apple VZ VM with Rosetta and virtiofs mounts"
+  - key: k
+    command: "colima start --kubernetes"
+    description: "start with a k3s cluster"
+  - key: c
+    command: "colima start --runtime containerd"
+    description: "containerd instead of docker"
+  - key: p
+    command: "colima start --profile work"
+    description: "start a second, named profile"
+  - key: t
+    mark: pin
+    command: "colima status --extended"
+    description: "VM state, runtime, resources"
+  - key: r
+    command: "colima restart"
+    description: "restart after a hang"
+  - key: x
+    command: "colima stop --force"
+    description: "force-stop the VM"
+  - key: d
+    command: "colima delete --data"
+    description: "remove the VM including container data"

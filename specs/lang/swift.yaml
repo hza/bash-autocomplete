@@ -1,0 +1,141 @@
+version: '20261013'
+description: "Swift toolchain and package manager"
+flags:
+  --version: {description: "Show the Swift version"}
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+args: {file: "*.swift"}
+commands:
+  build:
+    description: "Build sources into binary products"
+    flags:
+      -c: {value: {enum: [debug, release]}, description: "Build configuration", show: always}
+      --configuration: {value: {enum: [debug, release]}, description: "Build configuration"}
+      --product: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" products"}, description: "Build the specified product", show: always}
+      --target: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets"}, description: "Build the specified target"}
+      --build-tests: {description: "Build both source and test targets"}
+      --show-bin-path: {description: "Print the binary output path"}
+      --package-path: {value: dir, description: "Package directory"}
+      --scratch-path: {value: dir, description: "Build directory (default .build)"}
+      -j: {value: any, description: "Parallel jobs"}
+      --jobs: {value: any, description: "Parallel jobs"}
+      -v: {description: "Verbose output"}
+      --verbose: {description: "Verbose output"}
+      -q: {description: "Only errors"}
+      --quiet: {description: "Only errors"}
+      --arch: {value: {enum: [arm64, x86_64]}, description: "Target architecture (repeatable)", repeat: true}
+      --swift-sdk: {value: any, description: "Swift SDK to build with"}
+      --sanitize: {value: {enum: [address, thread, undefined, scudo]}, description: "Runtime sanitizer"}
+      -Xswiftc: {value: any, description: "Pass a flag to swiftc"}
+      -Xcc: {value: any, description: "Pass a flag to the C compiler"}
+      -Xlinker: {value: any, description: "Pass a flag to the linker"}
+      --disable-sandbox: {description: "Don't sandbox subprocesses"}
+      --skip-update: {description: "Don't update dependencies from remotes"}
+  run:
+    description: "Build and run an executable product"
+    args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" executables"}
+    flags:
+      -c: {value: {enum: [debug, release]}, description: "Build configuration", show: always}
+      --configuration: {value: {enum: [debug, release]}, description: "Build configuration"}
+      --skip-build: {description: "Skip building the executable", show: always}
+      --build-tests: {description: "Build test targets too"}
+      --repl: {description: "Launch a REPL with the package's modules"}
+      --debugger: {description: "Run under the debugger"}
+      --package-path: {value: dir, description: "Package directory"}
+      -v: {description: "Verbose output"}
+      -q: {description: "Only errors"}
+  test:
+    description: "Build and run tests"
+    flags:
+      --filter: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets | grep testTarget", nospace: true}, description: "Run tests matching a regex (Target.Class/method)", show: always}
+      --skip: {value: any, description: "Skip tests matching a regex"}
+      --parallel: {description: "Run tests in parallel", show: always}
+      --num-workers: {value: any, description: "Parallel test workers"}
+      --skip-build: {description: "Skip building the tests"}
+      --enable-code-coverage: {description: "Collect code coverage"}
+      --list-tests: {description: "List test names"}
+      -l: {description: "List test names"}
+      --xunit-output: {value: file, description: "Write an xUnit XML report"}
+      --enable-swift-testing: {description: "Run swift-testing tests"}
+      --disable-xctest: {description: "Don't run XCTest tests"}
+      -c: {value: {enum: [debug, release]}, description: "Build configuration"}
+      --package-path: {value: dir, description: "Package directory"}
+      -v: {description: "Verbose output"}
+  repl: {description: "Interactive Swift REPL"}
+  sdk: {description: "Manage Swift SDKs", commands: {list: {description: "List installed SDKs"}, install: {description: "Install an SDK bundle", args: any}, remove: {description: "Remove an SDK", args: any}}}
+  package:
+    description: "Package operations"
+    flags:
+      --package-path: {value: dir, description: "Package directory"}
+    commands:
+      init:
+        description: "Create a new package in the current directory"
+        flags:
+          --type: {value: {enum: {library: "Library product", executable: "Executable product", tool: "Command-line tool using ArgumentParser", empty: "Empty package", macro: "Swift macro", build-tool-plugin: "Build tool plugin", command-plugin: "Command plugin"}}, description: "Package type", show: always}
+          --name: {value: any, description: "Package name (default: directory name)", show: always}
+          --enable-swift-testing: {description: "Add swift-testing support"}
+          --enable-xctest: {description: "Add XCTest support"}
+      resolve: {description: "Resolve package dependencies", args: any}
+      update: {description: "Update package dependencies", flags: {--dry-run: {description: "Only show what would change"}}}
+      show-dependencies:
+        description: "Print the resolved dependency graph"
+        flags:
+          --format: {value: {enum: [text, dot, json, flatlist]}, description: "Output format", show: always}
+      show-executables: {description: "List executables in the package"}
+      describe: {description: "Describe the package", flags: {--type: {value: {enum: [text, json, mermaid]}, description: "Output format"}}}
+      dump-package: {description: "Print Package.swift as JSON"}
+      clean: {description: "Delete build artifacts"}
+      reset: {description: "Reset the cache and build directory"}
+      purge-cache: {description: "Purge the global repository cache"}
+      add-dependency:
+        description: "Add a package dependency to the manifest"
+        args: any
+        flags:
+          --from: {value: any, description: "Minimum version (up to next major)", show: always}
+          --exact: {value: any, description: "Exact version"}
+          --branch: {value: any, description: "Branch"}
+          --revision: {value: any, description: "Revision"}
+          --up-to-next-minor-from: {value: any, description: "Minimum version (up to next minor)"}
+      add-product: {description: "Add a product to the manifest", args: any, flags: {--type: {value: {enum: [executable, library, static-library, dynamic-library, plugin]}, description: "Product type"}, --targets: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets"}, description: "Targets in the product"}}}
+      add-target: {description: "Add a target to the manifest", args: any, flags: {--type: {value: {enum: [library, executable, test, macro]}, description: "Target type"}, --dependencies: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets"}, description: "Target dependencies"}}}
+      add-target-dependency: {description: "Add a dependency to a target", positional: [any, {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets"}], flags: {--package: {value: any, description: "Package of the dependency"}}}
+      edit: {description: "Put a package in editable mode", args: any, flags: {--path: {value: dir, description: "Local checkout"}, --branch: {value: any, description: "Branch to check out"}}}
+      unedit: {description: "Remove a package from editable mode", args: any}
+      compute-checksum: {description: "Checksum of a binary artifact", args: {file: "*.zip"}}
+      archive-source: {description: "Create a source archive", flags: {-o: {value: file, description: "Output path"}}}
+      tools-version: {description: "Show or set the tools version", flags: {--set: {value: any, description: "Set the tools version"}, --set-current: {description: "Set to the current toolchain version"}}}
+      plugin: {description: "Invoke or list command plugins", flags: {--list: {description: "List plugins"}}, args: any}
+snippets:
+  - key: b
+    mark: pin
+    command: "swift build -c release"
+    description: "optimized build"
+  - key: t
+    mark: pin
+    command: "swift test --parallel"
+    description: "all tests in parallel"
+  - key: f
+    command: "swift test --filter MyTests.FooTests/testBar"
+    description: "one test class or method"
+  - key: r
+    mark: pin
+    command: "swift run -c release my-tool --help"
+    description: "build and run an executable"
+  - key: n
+    command: "swift package init --type executable --name hello"
+    description: "new executable package here"
+  - key: u
+    command: "swift package update"
+    description: "bump dependencies within their ranges"
+  - key: d
+    command: "swift package show-dependencies --format dot | dot -Tpng -o deps.png"
+    description: "dependency graph picture (graphviz)"
+  - key: p
+    command: "swift build -c release --show-bin-path"
+    description: "where the release binary lands"
+  - key: c
+    command: "swift package clean"
+    description: "drop build artifacts"
+  - key: a
+    command: "swift package add-dependency https://github.com/apple/swift-argument-parser --from 1.3.0"
+    description: "add a package dependency"

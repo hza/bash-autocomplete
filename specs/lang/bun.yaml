@@ -288,3 +288,34 @@ commands:
   feedback:
     description: send feedback to the Bun team
     args: file
+snippets:
+  - key: i
+    mark: pin
+    command: 'bun install'
+    description: 'install dependencies from package.json'
+  - key: a
+    command: 'bun add '
+    description: 'add a dependency'
+  - key: d
+    command: 'bun add -d '
+    description: 'add a dev dependency'
+  - key: r
+    mark: pin
+    command: 'bun run dev'
+    description: 'run the dev script'
+  - key: t
+    mark: pin
+    command: 'bun test'
+    description: 'run tests'
+  - key: w
+    command: 'bun --watch index.ts'
+    description: 'run a file, restart on change'
+  - key: b
+    command: 'bun build ./index.ts --outdir ./dist'
+    description: 'bundle for the browser'
+  - key: u
+    command: 'bun update'
+    description: 'update dependencies'
+  - key: x
+    command: 'bunx '
+    description: 'run a package binary'

@@ -148,3 +148,34 @@ commands:
         description: "Convert a partition to CoreStorage"
   quiet: {description: "Suppress most output"}
   help: {description: "Show help"}
+snippets:
+  - key: l
+    mark: pin
+    command: "diskutil list"
+    description: "all disks and partitions"
+  - key: x
+    command: "diskutil list external"
+    description: "external disks only"
+  - key: i
+    mark: pin
+    command: "diskutil info disk2"
+    description: "details of one disk"
+  - key: u
+    mark: pin
+    command: "diskutil unmountDisk disk2"
+    description: "unmount every volume of a disk"
+  - key: e
+    command: "diskutil eject disk2"
+    description: "unmount and eject a disk"
+  - key: m
+    command: "diskutil mount disk2s1"
+    description: "mount a volume"
+  - key: a
+    command: "diskutil apfs list"
+    description: "APFS containers and volumes"
+  - key: f
+    command: "diskutil eraseDisk ExFAT USB GPT disk2"
+    description: "erase a disk as exFAT named USB (destroys data)"
+  - key: v
+    command: "diskutil verifyVolume /"
+    description: "check the startup volume"

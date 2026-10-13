@@ -65,3 +65,27 @@ flags:
   --v8-options: {description: print the V8 options}
   --completion-bash: {description: print a bash completion script}
 args: file
+snippets:
+  - key: v
+    mark: pin
+    command: 'node --version'
+    description: 'show the Node.js version'
+  - key: w
+    mark: pin
+    command: 'node --watch index.js'
+    description: 'run, restart on file change'
+  - key: e
+    command: 'node -e ''console.log(process.versions)'''
+    description: 'print runtime component versions'
+  - key: p
+    command: 'node -p ''require("./package.json").version'''
+    description: 'print the package version'
+  - key: i
+    command: 'node --inspect-brk index.js'
+    description: 'debug, break on first line'
+  - key: t
+    command: 'node --test'
+    description: 'run the built-in test runner'
+  - key: n
+    command: 'node --env-file=.env index.js'
+    description: 'run with variables from .env'

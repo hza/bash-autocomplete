@@ -1,0 +1,58 @@
+version: '20261013'
+description: "Run, list, view and sign Shortcuts"
+commands:
+  run:
+    description: "Run a shortcut"
+    flags:
+      -i: {value: file, description: "Input file(s) for the shortcut", repeat: true}
+      --input-path: {value: file, description: "Input file(s) for the shortcut", show: always, repeat: true}
+      -o: {value: file, description: "Write the output to a file"}
+      --output-path: {value: file, description: "Write the output to a file", show: always}
+      --output-type: {value: any, description: "UTI of the output type (e.g. public.png)"}
+    positional: [{exec: "shortcuts list"}]
+  list:
+    description: "List your shortcuts"
+    flags:
+      -f: {value: {exec: "shortcuts list --folders"}, description: "List shortcuts in a folder"}
+      --folder-name: {value: {exec: "shortcuts list --folders"}, description: "List shortcuts in a folder"}
+      --folders: {description: "List folders instead of shortcuts"}
+      --show-identifiers: {description: "Show shortcut identifiers"}
+  view:
+    description: "Open a shortcut in Shortcuts"
+    positional: [{exec: "shortcuts list"}]
+  sign:
+    description: "Sign a shortcut file"
+    flags:
+      -m: {value: {enum: {people-who-know-me: "only contacts can import", anyone: "anyone can import"}}, description: "Signing mode"}
+      --mode: {value: {enum: {people-who-know-me: "only contacts can import", anyone: "anyone can import"}}, description: "Signing mode"}
+      -i: {value: {file: "*.shortcut"}, description: "Shortcut file to sign"}
+      --input: {value: {file: "*.shortcut"}, description: "Shortcut file to sign", show: always}
+      -o: {value: file, description: "Signed output file"}
+      --output: {value: file, description: "Signed output file", show: always}
+  help:
+    description: "Show help for a subcommand"
+    args: "@subcommands"
+snippets:
+  - key: l
+    mark: pin
+    command: "shortcuts list"
+    description: "list all shortcuts"
+  - key: r
+    mark: pin
+    command: "shortcuts run 'My Shortcut'"
+    description: "run a shortcut by name"
+  - key: i
+    command: "shortcuts run 'My Shortcut' -i photo.jpg -o result.png"
+    description: "run with an input and output file"
+  - key: p
+    command: "echo hello | shortcuts run 'My Shortcut' | cat"
+    description: "pipe text through a shortcut"
+  - key: f
+    command: "shortcuts list --folders"
+    description: "list folders"
+  - key: v
+    command: "shortcuts view 'My Shortcut'"
+    description: "open a shortcut in the editor"
+  - key: s
+    command: "shortcuts sign -m anyone -i in.shortcut -o signed.shortcut"
+    description: "sign a shortcut for sharing"

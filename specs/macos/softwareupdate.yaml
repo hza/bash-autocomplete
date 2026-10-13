@@ -1,0 +1,77 @@
+version: '20261013'
+description: "System software update tool"
+flags:
+  -l: {description: "List available updates (--list)", show: always}
+  --list: {description: "List available updates"}
+  -d: {description: "Download only (--download)"}
+  --download: {description: "Download only"}
+  -i: {description: "Install updates: labels, -a or -r (--install)", show: always}
+  --install: {description: "Install updates: labels, -a or -r"}
+  -a: {description: "All applicable updates (--all)", show: always}
+  --all: {description: "All applicable updates"}
+  -r: {description: "Only recommended updates (--recommended)"}
+  --recommended: {description: "Only recommended updates"}
+  -R: {description: "Restart automatically if required (--restart)", show: always}
+  --restart: {description: "Restart automatically if required"}
+  --os-only: {description: "Only macOS updates"}
+  --safari-only: {description: "Only Safari updates"}
+  --stdinpass: {description: "Owner password from stdin (Apple silicon)"}
+  --user:
+    value: "@users"
+    description: "Owner user to authorize with (Apple silicon)"
+  --list-full-installers: {description: "List available macOS installers"}
+  --fetch-full-installer: {description: "Download the full macOS installer app"}
+  --full-installer-version:
+    value: {exec: "softwareupdate --list-full-installers 2>/dev/null | sed -n 's/.*Version: \\([^,]*\\),.*/\\1/p'", cache: '600'}
+    description: "macOS version for --fetch-full-installer"
+  --install-rosetta: {description: "Install Rosetta 2"}
+  --agree-to-license: {description: "Accept the license without prompting"}
+  --background: {description: "Trigger a background scan and update"}
+  --schedule: {description: "Show the automatic check preference"}
+  --history: {description: "Install history"}
+  --all-history: {description: "Install history incl. other installers"}
+  --dump-state: {description: "Log the update daemon state"}
+  --evaluate-products: {description: "Evaluate the --products keys"}
+  --no-scan: {description: "Use previously scanned updates"}
+  --product-types:
+    value: {enum: [macOS, Safari]}
+    description: "Limit the scan to product types"
+  --products:
+    value: any
+    description: "Comma-separated product keys"
+  --force: {description: "Force the operation"}
+  --verbose: {description: "Verbose output"}
+  -h: {description: "Show help (--help)"}
+  --help: {description: "Show help"}
+args: {exec: "softwareupdate --list 2>/dev/null | sed -n 's/^\\* Label: //p'", cache: '600'}
+snippets:
+  - key: l
+    mark: pin
+    command: "softwareupdate -l"
+    description: "what updates are available"
+  - key: a
+    mark: pin
+    command: "sudo softwareupdate -i -a -R"
+    description: "install everything, restart if needed"
+  - key: r
+    command: "sudo softwareupdate -i -r"
+    description: "install recommended updates only"
+  - key: o
+    command: "sudo softwareupdate -i --os-only -R"
+    description: "macOS update only"
+  - key: d
+    command: "softwareupdate -d -a"
+    description: "download now, install later"
+  - key: h
+    command: "softwareupdate --history"
+    description: "what was installed and when"
+  - key: f
+    command: "softwareupdate --list-full-installers"
+    description: "macOS versions available as installers"
+  - key: i
+    command: "softwareupdate --fetch-full-installer --full-installer-version 15.0"
+    description: "download an Install macOS app"
+  - key: z
+    mark: pin
+    command: "softwareupdate --install-rosetta --agree-to-license"
+    description: "install Rosetta 2 unattended"

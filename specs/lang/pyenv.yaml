@@ -1,0 +1,88 @@
+version: '20261013'
+description: Simple Python version management
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -v: {description: "Show version"}
+  --version: {description: "Show version"}
+commands:
+  commands: {description: "List all pyenv commands"}
+  install:
+    description: Install a python version
+    args: {exec: "pyenv install --list 2>/dev/null | sed 's/^ *//' | grep -v '^Available'", cache: '86400'}
+    flags:
+      -l: {description: "List all available versions"}
+      --list: {description: "List all available versions", show: always}
+      -f: {description: "Install even if the version is already installed"}
+      --force: {description: "Install even if the version is already installed"}
+      -s: {description: "Skip if the version is already installed"}
+      --skip-existing: {description: "Skip if the version is already installed"}
+      -k: {description: "Keep the source tree after installing"}
+      --keep: {description: "Keep the source tree after installing"}
+      -v: {description: "Verbose build output"}
+      --verbose: {description: "Verbose build output"}
+  uninstall:
+    description: Uninstall a python version
+    args: {exec: "pyenv versions --bare 2>/dev/null"}
+    flags:
+      -f: {description: "Do not prompt"}
+      --force: {description: "Do not prompt"}
+  global: {description: "Set or show the global python version", args: {exec: "pyenv versions --bare 2>/dev/null; echo system"}}
+  local:
+    description: Set or show the directory python version (.python-version)
+    args: {exec: "pyenv versions --bare 2>/dev/null; echo system"}
+    flags:
+      --unset: {description: "Remove .python-version"}
+  shell:
+    description: Set or show the shell-specific python version
+    args: {exec: "pyenv versions --bare 2>/dev/null; echo system"}
+    flags:
+      --unset: {description: "Unset the shell version"}
+  version: {description: "Show the current python version and its origin"}
+  version-name: {description: "Show the current python version"}
+  version-file: {description: "Show the file that sets the current version"}
+  versions:
+    description: List installed python versions
+    flags:
+      --bare: {description: "Only version names"}
+      --skip-aliases: {description: "Skip aliases"}
+  which: {description: "Show the full path to an executable", args: {exec: "ls \"$(pyenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  whence: {description: "List versions that contain an executable", args: {exec: "ls \"$(pyenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  prefix: {description: "Show the prefix of a python version", args: {exec: "pyenv versions --bare 2>/dev/null; echo system"}}
+  rehash: {description: "Rehash shims (run after installing executables)"}
+  root: {description: "Show the pyenv root directory"}
+  init: {description: "Configure the shell environment", args: {enum: [-, bash, zsh, fish]}}
+  shims: {description: "List existing shims", flags: {--short: {description: "Only names"}}}
+  exec: {description: "Run an executable with the selected version", args: {exec: "ls \"$(pyenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  help: {description: "Help about a command", args: "@subcommands"}
+snippets:
+  - key: i
+    mark: pin
+    command: "pyenv install 3.12"
+    description: "install the latest 3.12.x"
+  - key: g
+    mark: pin
+    command: "pyenv global 3.12"
+    description: "default Python for the user"
+  - key: l
+    mark: pin
+    command: "pyenv local 3.12"
+    description: "pin this directory (.python-version)"
+  - key: s
+    command: "pyenv shell system"
+    description: "use the system Python in this shell"
+  - key: v
+    command: "pyenv versions"
+    description: "installed versions, current marked"
+  - key: a
+    command: "pyenv install --list | grep -E '^ *3\\.[0-9]+\\.[0-9]+$'"
+    description: "available CPython releases"
+  - key: u
+    command: "pyenv uninstall -f 3.11"
+    description: "remove a version without asking"
+  - key: w
+    command: "pyenv which python"
+    description: "path of the active python"
+  - key: r
+    command: "pyenv rehash"
+    description: "refresh shims after pip installs a CLI"

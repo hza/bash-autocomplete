@@ -1,0 +1,42 @@
+version: '20261013'
+description: "Display updated information about the network"
+flags:
+  -m:
+    value: {enum: {tcp: "only tcp sockets", udp: "only udp sockets", route: "routing table instead of sockets"}}
+    description: "Monitor mode"
+    show: always
+  -t:
+    value: {enum: {wifi: "Wi-Fi interfaces", wired: "wired interfaces", awdl: "Apple Wireless Direct Link", expensive: "interfaces marked expensive", loopback: "loopback", undefined: "not bound to an interface", external: "all non-loopback interfaces"}}
+    description: "Interface type (repeatable)"
+    repeat: true
+  -p: {value: "@processes", description: "Only this process (name or pid; repeatable)", show: always, repeat: true}
+  -n: {description: "No address-to-name resolution"}
+  -c: {description: "Gentle on the CPU: draw less often"}
+  -d: {description: "Delta mode"}
+  -x: {description: "Exact numbers instead of KiB/MiB"}
+  -P: {description: "Per-process summaries only", show: always}
+  -s: {value: any, description: "Delay between updates in seconds"}
+  -l: {value: any, description: "Logging mode: print N samples (0 = forever)"}
+  -L: {value: any, description: "Logging mode in CSV: N samples (0 = forever)"}
+  -j: {value: any, description: "Include columns (comma list)"}
+  -J: {value: any, description: "Only these columns (comma list)"}
+  -k: {value: any, description: "Exclude columns (comma list)"}
+  -h: {description: "Show help"}
+snippets:
+  - key: p
+    mark: pin
+    command: "nettop -P -d"
+    description: "per-process bandwidth, deltas"
+  - key: s
+    command: "nettop -p Safari -n"
+    description: "connections of one app"
+  - key: c
+    mark: pin
+    command: "nettop -P -L 1 -J bytes_in,bytes_out > net.csv"
+    description: "one CSV snapshot of traffic per process"
+  - key: t
+    command: "nettop -m tcp -n -t external"
+    description: "external tcp sockets only"
+  - key: w
+    command: "nettop -P -t wifi -s 5"
+    description: "Wi-Fi traffic every 5 seconds"

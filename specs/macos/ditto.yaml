@@ -1,0 +1,59 @@
+version: '20261013'
+description: "Copy directory hierarchies, create and extract archives"
+flags:
+  -h: {description: "Show full usage"}
+  --help: {description: "Show full usage"}
+  -v: {description: "Print each source directory copied"}
+  -V: {description: "Print every file copied", show: always}
+  -X: {description: "Don't cross device boundaries"}
+  -c: {description: "Create an archive", show: always}
+  -x: {description: "Extract archives", show: always}
+  -k: {description: "PKZip format instead of CPIO", show: always}
+  -z: {description: "gzip-compressed CPIO"}
+  -j: {description: "bzip2-compressed CPIO"}
+  --keepParent: {description: "Embed the parent directory name in the archive", show: always}
+  --arch: {value: {enum: [arm64, x86_64, arm64e]}, description: "Thin Universal binaries to this architecture", repeat: true}
+  --bom: {value: file, description: "Copy only items present in this BOM"}
+  --rsrc: {description: "Preserve resource forks and HFS metadata"}
+  --norsrc: {description: "Don't preserve resource forks and HFS metadata"}
+  --extattr: {description: "Preserve extended attributes (default)"}
+  --noextattr: {description: "Don't preserve extended attributes"}
+  --qtn: {description: "Preserve quarantine info (default)"}
+  --noqtn: {description: "Drop quarantine info"}
+  --acl: {description: "Preserve ACLs (default)"}
+  --noacl: {description: "Don't preserve ACLs"}
+  --nocache: {description: "Bypass the unified buffer cache"}
+  --hfsCompression: {description: "Compress files with HFS+ compression"}
+  --nohfsCompression: {description: "Don't compress files"}
+  --preserveHFSCompression: {description: "Keep HFS+ compression (default)"}
+  --nopreserveHFSCompression: {description: "Decompress HFS+ compressed files"}
+  --sequesterRsrc: {description: "Put resource forks in __MACOSX (PKZip)"}
+  --zlibCompressionLevel: {value: {enum: ["0", "1", "5", "9"]}, description: "Zip compression level (0-9)"}
+  --password: {description: "Prompt for the password of an encrypted zip"}
+  --persistRootless: {description: "Keep SIP protection on copies"}
+  --nopersistRootless: {description: "Don't keep SIP protection"}
+  --nonAtomicCopies: {description: "Copy files in place, not atomically"}
+  --clone: {description: "Clone files when possible (APFS)"}
+  --noclone: {description: "Never clone files"}
+args: file
+snippets:
+  - key: z
+    mark: pin
+    command: "ditto -c -k --sequesterRsrc --keepParent MyApp.app MyApp.zip"
+    description: "zip like Finder's Compress"
+  - key: x
+    mark: pin
+    command: "ditto -x -k archive.zip dest/"
+    description: "unzip keeping metadata"
+  - key: c
+    command: "ditto -V src/ backup/src/"
+    description: "copy a tree, listing files"
+  - key: a
+    command: "ditto --arch arm64 Universal.app Thin.app"
+    description: "strip to arm64 only"
+  - key: q
+    command: "ditto --noqtn Downloaded.app /Applications/Downloaded.app"
+    description: "copy without quarantine"
+  - key: g
+    command: "ditto -c -z dir dir.cpgz"
+    description: "gzip-compressed CPIO archive"

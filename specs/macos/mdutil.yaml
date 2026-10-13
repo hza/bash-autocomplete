@@ -1,0 +1,51 @@
+version: '20261013'
+description: "Manage Spotlight indexes"
+flags:
+  -s: {description: "Print indexing status", show: always}
+  -i:
+    show: always
+    value: {enum: {"on": "enable indexing", "off": "disable indexing"}}
+    description: "Turn indexing on or off"
+  -E: {description: "Erase and rebuild the index", show: always}
+  -a: {description: "Apply to all volumes"}
+  -d: {description: "Disable Spotlight searches on the volume"}
+  -p: {description: "Publish metadata / flush network caches"}
+  -t: {description: "Resolve a file id to a path"}
+  -v: {description: "Verbose output"}
+  -V:
+    value: {exec: "ls -d / /Volumes/* 2>/dev/null"}
+    description: "Apply to all stores on this volume"
+  -r:
+    value: any
+    description: "Reimport files claimed by the listed plugins"
+  -L:
+    value: {exec: "ls -d / /Volumes/* 2>/dev/null"}
+    description: "List the index directory of a volume"
+  -P:
+    value: {exec: "ls -d / /Volumes/* 2>/dev/null"}
+    description: "Dump VolumeConfig.plist of a volume"
+  -X:
+    value: {exec: "ls -d / /Volumes/* 2>/dev/null"}
+    description: "Remove a volume's index directory"
+args: {exec: "ls -d / /System/Volumes/Data /Volumes/* 2>/dev/null"}
+snippets:
+  - key: s
+    mark: pin
+    command: "mdutil -s /"
+    description: "is Spotlight indexing the boot volume"
+  - key: a
+    command: "mdutil -sa"
+    description: "indexing status of every volume"
+  - key: e
+    mark: pin
+    command: "sudo mdutil -E /"
+    description: "rebuild a broken Spotlight index"
+  - key: o
+    command: "sudo mdutil -i off /Volumes/Backup"
+    description: "stop indexing an external drive"
+  - key: n
+    command: "sudo mdutil -i on /"
+    description: "turn indexing back on"
+  - key: x
+    command: "sudo mdutil -a -i off"
+    description: "disable indexing everywhere"

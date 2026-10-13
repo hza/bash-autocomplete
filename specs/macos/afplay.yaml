@@ -1,0 +1,31 @@
+version: '20261013'
+description: "Play an audio file"
+flags:
+  -v: {value: any, description: "Volume (1 = normal)", show: always}
+  --volume: {value: any, description: "Volume (1 = normal)"}
+  -t: {value: any, description: "Play for this many seconds", show: always}
+  --time: {value: any, description: "Play for this many seconds"}
+  -r: {value: any, description: "Playback rate (1 = normal)"}
+  --rate: {value: any, description: "Playback rate (1 = normal)"}
+  -q: {value: {enum: {"0": "low quality (default)", "1": "high quality"}}, description: "Quality for rate-scaled playback"}
+  --rQuality: {value: {enum: {"0": "low quality (default)", "1": "high quality"}}, description: "Quality for rate-scaled playback"}
+  -d: {description: "Debug output"}
+  --debug: {description: "Debug output"}
+  --leaks: {description: "Run leaks analysis"}
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+args: {file: "*.mp3 *.m4a *.aac *.wav *.aif *.aiff *.caf *.flac *.mp4"}
+snippets:
+  - key: g
+    mark: pin
+    command: "afplay /System/Library/Sounds/Glass.aiff"
+    description: "play a system sound"
+  - key: d
+    command: "make; afplay /System/Library/Sounds/Hero.aiff"
+    description: "chime when a command ends"
+  - key: t
+    command: "afplay -t 10 song.mp3"
+    description: "play the first 10 seconds"
+  - key: q
+    command: "afplay -v 0.3 -r 1.5 -q 1 podcast.m4a"
+    description: "quieter and faster"

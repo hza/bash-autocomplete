@@ -1,0 +1,63 @@
+version: '20261013'
+description: "System configuration: computer names, DNS, proxies, VPN"
+flags:
+  --get:
+    show: always
+    value: {enum: {ComputerName: "user-friendly name", LocalHostName: "Bonjour name (.local)", HostName: "hostname (often unset)"}}
+    description: "Print a name preference"
+  --set:
+    show: always
+    value: {enum: {ComputerName: "user-friendly name", LocalHostName: "Bonjour name (.local)", HostName: "hostname"}}
+    description: "Set a name preference (sudo; prompts if no value)"
+  --dns: {description: "Current DNS configuration", show: always}
+  --proxy: {description: "Current proxy configuration"}
+  --nwi: {description: "Network information (interfaces, reachability)"}
+  --nc:
+    show: always
+    value: {enum: {list: "VPN services", status: "status of a service", show: "configuration of a service", statistics: "statistics of a service", select: "make a service active", start: "connect", stop: "disconnect", enablevpn: "enable a VPN type", disablevpn: "disable a VPN type", help: "help"}}
+    description: "Network connection (VPN) commands"
+  -r:
+    value: "@hosts"
+    description: "Check reachability of a host or address"
+  -W: {description: "With -r: watch reachability changes"}
+  -w:
+    value: any
+    description: "Wait for a dynamic store key"
+  -t:
+    value: any
+    description: "With -w: timeout in seconds"
+  --renew:
+    value: {exec: "ifconfig -l | tr ' ' '\\n'"}
+    description: "Renew the DHCP lease of an interface"
+  -d: {description: "Debug output"}
+  -v: {description: "Verbose output"}
+  -p: {description: "Interactive prefs session (with no args)"}
+args: {exec: "scutil --nc list 2>/dev/null | sed -n 's/.*\"\\(.*\\)\".*/\\1/p'"}
+snippets:
+  - key: n
+    mark: pin
+    command: "scutil --get ComputerName"
+    description: "this Mac's name"
+  - key: r
+    mark: pin
+    command: "sudo scutil --set ComputerName my-mac && sudo scutil --set LocalHostName my-mac && sudo scutil --set HostName my-mac"
+    description: "rename the Mac everywhere"
+  - key: d
+    mark: pin
+    command: "scutil --dns | grep nameserver | sort -u"
+    description: "DNS servers in use"
+  - key: p
+    command: "scutil --proxy"
+    description: "system proxy settings"
+  - key: v
+    command: "scutil --nc list"
+    description: "VPN services and their state"
+  - key: c
+    command: "scutil --nc start \"VPN name\""
+    description: "connect a VPN"
+  - key: s
+    command: "scutil --nc stop \"VPN name\""
+    description: "disconnect a VPN"
+  - key: h
+    command: "scutil -r example.com"
+    description: "is a host reachable"

@@ -1,0 +1,32 @@
+version: '20261013'
+description: "Reset privacy (TCC) permissions"
+commands:
+  reset:
+    description: "Reset a privacy service's decisions (all apps, or one bundle id)"
+    positional:
+      - {enum: {All: "every service", Accessibility: "control the computer", AddressBook: "Contacts", AppleEvents: "Automation (control other apps)", Bluetooth: "Bluetooth", Calendar: "Calendars", Camera: "Camera", ListenEvent: "Input Monitoring", Location: "Location Services", MediaLibrary: "Media & Apple Music", Microphone: "Microphone", Photos: "Photos", PostEvent: "send keystrokes (Accessibility)", Reminders: "Reminders", ScreenCapture: "Screen Recording", SpeechRecognition: "Speech Recognition", SystemPolicyAllFiles: "Full Disk Access", SystemPolicyDesktopFolder: "Desktop folder", SystemPolicyDocumentsFolder: "Documents folder", SystemPolicyDownloadsFolder: "Downloads folder", SystemPolicyNetworkVolumes: "network volumes", SystemPolicyRemovableVolumes: "removable volumes", SystemPolicyAppBundles: "App Management", SystemPolicyDeveloperFiles: "developer files", DeveloperTool: "Developer Tools"}}
+      - {exec: "for a in /Applications/*.app /System/Applications/*.app /System/Applications/Utilities/*.app; do i=$(defaults read \"$a/Contents/Info\" CFBundleIdentifier 2>/dev/null) && printf '%s\\t%s\\n' \"$i\" \"$(basename \"$a\" .app)\"; done"}
+snippets:
+  - key: c
+    mark: pin
+    command: "tccutil reset Camera"
+    description: "re-ask every app for camera access"
+  - key: s
+    mark: pin
+    command: "tccutil reset ScreenCapture com.example.app"
+    description: "re-ask one app for Screen Recording"
+  - key: a
+    command: "tccutil reset Accessibility com.example.app"
+    description: "re-ask one app for Accessibility"
+  - key: m
+    command: "tccutil reset Microphone"
+    description: "re-ask every app for microphone access"
+  - key: e
+    command: "tccutil reset AppleEvents"
+    description: "reset Automation (scripting other apps)"
+  - key: f
+    command: "tccutil reset SystemPolicyAllFiles com.example.app"
+    description: "re-ask one app for Full Disk Access"
+  - key: x
+    command: "tccutil reset All com.example.app"
+    description: "forget every permission of one app"

@@ -1,0 +1,61 @@
+version: '20261013'
+description: "Manipulate text files of various formats"
+flags:
+  -help: {description: "Show help"}
+  -info: {description: "Show information about each file", show: always}
+  -convert:
+    value: {enum: [txt, rtf, rtfd, html, doc, docx, odt, wordml, webarchive]}
+    description: "Convert each file to this format"
+    show: always
+  -cat:
+    value: {enum: [txt, rtf, rtfd, html, doc, docx, odt, wordml, webarchive]}
+    description: "Concatenate files into one in this format"
+    show: always
+  -extension: {value: any, description: "Extension for output files"}
+  -output: {value: file, description: "Output file name", show: always}
+  -stdin: {description: "Read from stdin"}
+  -stdout: {description: "Write the first output to stdout"}
+  -encoding: {value: {enum: [UTF-8, UTF-16, ISO-8859-1, MacRoman, US-ASCII, windows-1252]}, description: "Encoding for plain text/html output"}
+  -inputencoding: {value: {enum: [UTF-8, UTF-16, ISO-8859-1, MacRoman, US-ASCII, windows-1252]}, description: "Encoding of plain text input"}
+  -format: {value: {enum: [txt, rtf, rtfd, html, doc, docx, odt, wordml, webarchive]}, description: "Force the input format"}
+  -font: {value: any, description: "Font for plain to rich text"}
+  -fontsize: {value: any, description: "Font size for plain to rich text"}
+  -noload: {description: "Don't load html subresources"}
+  -nostore: {description: "Don't write html subresources"}
+  -baseurl: {value: any, description: "Base URL for html subresources"}
+  -timeout: {value: any, description: "Seconds to wait for html resources"}
+  -textsizemultiplier: {value: any, description: "Font size factor for html"}
+  -excludedelements: {value: any, description: "Html elements to exclude: '(tag1, tag2)'"}
+  -prefixspaces: {value: any, description: "Indent for nested html"}
+  -strip: {description: "Don't copy metadata"}
+  -title: {value: any, description: "Title metadata"}
+  -author: {value: any, description: "Author metadata"}
+  -subject: {value: any, description: "Subject metadata"}
+  -keywords: {value: any, description: "Keywords metadata: '(a, b)'"}
+  -comment: {value: any, description: "Comment metadata"}
+  -editor: {value: any, description: "Last editor metadata"}
+  -company: {value: any, description: "Company metadata"}
+  -creationtime: {value: any, description: "Creation time (yyyy-mm-ddThh:mm:ssZ)"}
+  -modificationtime: {value: any, description: "Modification time (yyyy-mm-ddThh:mm:ssZ)"}
+args: {file: "*.txt *.rtf *.rtfd *.html *.htm *.doc *.docx *.odt *.xml *.webarchive *.md"}
+snippets:
+  - key: t
+    mark: pin
+    command: "textutil -convert txt report.docx"
+    description: "Word to plain text"
+  - key: d
+    mark: pin
+    command: "textutil -convert docx notes.rtf"
+    description: "RTF to Word"
+  - key: h
+    command: "textutil -convert html -output page.html document.docx"
+    description: "Word to HTML"
+  - key: c
+    command: "textutil -cat docx -output all.docx part1.docx part2.docx"
+    description: "merge documents"
+  - key: s
+    command: "pbpaste | textutil -stdin -format html -convert txt -stdout"
+    description: "clipboard HTML to plain text"
+  - key: i
+    command: "textutil -info document.docx"
+    description: "show document info"

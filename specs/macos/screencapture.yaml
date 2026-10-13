@@ -39,3 +39,30 @@ flags:
   -U: {description: "Show interactive toolbar"}
   -u: {description: "Present UI after capture"}
 args: file
+snippets:
+  - key: i
+    mark: pin
+    command: "screencapture -i shot.png"
+    description: "select a region or window (space toggles)"
+  - key: c
+    mark: pin
+    command: "screencapture -ic"
+    description: "select a region, copy to the clipboard"
+  - key: w
+    command: "screencapture -iW shot.png"
+    description: "click a window"
+  - key: s
+    command: "screencapture -x screen.png"
+    description: "whole screen, no sound"
+  - key: t
+    command: "screencapture -T 5 shot.png"
+    description: "whole screen after 5 seconds"
+  - key: p
+    command: "screencapture -t pdf screen.pdf"
+    description: "whole screen as PDF"
+  - key: v
+    command: "screencapture -v movie.mov"
+    description: "record a video until Ctrl-C"
+  - key: r
+    command: "screencapture -R 0,0,800,600 part.png"
+    description: "fixed rectangle x,y,w,h"

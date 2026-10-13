@@ -17,3 +17,30 @@ flags:
   -USR1: {description: "Send SIGUSR1"}
   -USR2: {description: "Send SIGUSR2"}
 args: "@pids"
+snippets:
+  - key: t
+    command: "kill -TERM $(pgrep -f NAME)"
+    description: "politely stop every process whose command line matches NAME"
+    mark: pin
+  - key: k
+    command: "kill -9 $(lsof -ti tcp:8080)"
+    description: "force-kill whatever listens on port 8080"
+    mark: pin
+  - key: h
+    command: "kill -HUP PID"
+    description: "ask a daemon to reload its config"
+  - key: s
+    command: "kill -STOP PID"
+    description: "pause a process (resume with @c)"
+  - key: c
+    command: "kill -CONT PID"
+    description: "resume a stopped process"
+  - key: j
+    command: "kill %1"
+    description: "terminate background job 1 of this shell"
+  - key: l
+    command: "kill -l"
+    description: "list signal names"
+  - key: z
+    command: "kill -0 PID && echo alive"
+    description: "check whether a process exists without signalling it"

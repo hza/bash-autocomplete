@@ -287,3 +287,40 @@ commands:
       --prod: {description: "Deploy only production dependencies"}
       --ignore-scripts: {description: "Ignore any scripts defined in package.json"}
     args: dir
+snippets:
+  - key: i
+    mark: pin
+    command: 'pnpm install'
+    description: 'install dependencies'
+  - key: f
+    command: 'pnpm install --frozen-lockfile'
+    description: 'CI install, lockfile must match'
+  - key: a
+    command: 'pnpm add '
+    description: 'add a dependency'
+  - key: d
+    command: 'pnpm add -D '
+    description: 'add a dev dependency'
+  - key: r
+    mark: pin
+    command: 'pnpm run dev'
+    description: 'run the dev script'
+  - key: t
+    mark: pin
+    command: 'pnpm test'
+    description: 'run tests'
+  - key: o
+    command: 'pnpm outdated'
+    description: 'show outdated packages'
+  - key: u
+    command: 'pnpm update --latest'
+    description: 'update to latest versions'
+  - key: w
+    command: 'pnpm -r run build'
+    description: 'build every workspace package'
+  - key: x
+    command: 'pnpm dlx '
+    description: 'run a package binary without installing'
+  - key: p
+    command: 'pnpm store prune'
+    description: 'remove unreferenced packages from the store'

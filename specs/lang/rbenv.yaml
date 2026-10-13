@@ -1,0 +1,85 @@
+version: '20261013'
+description: Manage Ruby versions
+flags:
+  -h: {description: "Show help"}
+  --help: {description: "Show help"}
+  -v: {description: "Show version"}
+  --version: {description: "Show version"}
+commands:
+  commands: {description: "List all rbenv commands"}
+  install:
+    description: Install a ruby version
+    args: {exec: "rbenv install --list 2>/dev/null | sed 's/^ *//' | grep -v '^Available'", cache: '86400'}
+    flags:
+      -l: {description: "List all available versions"}
+      --list: {description: "List all available versions", show: always}
+      -f: {description: "Install even if the version is already installed"}
+      --force: {description: "Install even if the version is already installed"}
+      -s: {description: "Skip if the version is already installed"}
+      --skip-existing: {description: "Skip if the version is already installed"}
+      -k: {description: "Keep the source tree after installing"}
+      --keep: {description: "Keep the source tree after installing"}
+      -v: {description: "Verbose build output"}
+      --verbose: {description: "Verbose build output"}
+  uninstall:
+    description: Uninstall a ruby version
+    args: {exec: "rbenv versions --bare 2>/dev/null"}
+    flags:
+      -f: {description: "Do not prompt"}
+      --force: {description: "Do not prompt"}
+  global: {description: "Set or show the global ruby version", args: {exec: "rbenv versions --bare 2>/dev/null; echo system"}}
+  local:
+    description: Set or show the directory ruby version (.ruby-version)
+    args: {exec: "rbenv versions --bare 2>/dev/null; echo system"}
+    flags:
+      --unset: {description: "Remove .ruby-version"}
+  shell:
+    description: Set or show the shell-specific ruby version
+    args: {exec: "rbenv versions --bare 2>/dev/null; echo system"}
+    flags:
+      --unset: {description: "Unset the shell version"}
+  version: {description: "Show the current ruby version and its origin"}
+  version-name: {description: "Show the current ruby version"}
+  version-file: {description: "Show the file that sets the current version"}
+  versions:
+    description: List installed ruby versions
+    flags:
+      --bare: {description: "Only version names"}
+      --skip-aliases: {description: "Skip aliases"}
+  which: {description: "Show the full path to an executable", args: {exec: "ls \"$(rbenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  whence: {description: "List versions that contain an executable", args: {exec: "ls \"$(rbenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  prefix: {description: "Show the prefix of a ruby version", args: {exec: "rbenv versions --bare 2>/dev/null; echo system"}}
+  rehash: {description: "Rehash shims (run after installing executables)"}
+  root: {description: "Show the rbenv root directory"}
+  init: {description: "Configure the shell environment", args: {enum: [-, bash, zsh, fish]}}
+  shims: {description: "List existing shims", flags: {--short: {description: "Only names"}}}
+  exec: {description: "Run an executable with the selected version", args: {exec: "ls \"$(rbenv root 2>/dev/null)/shims\" 2>/dev/null"}}
+  help: {description: "Help about a command", args: "@subcommands"}
+snippets:
+  - key: i
+    mark: pin
+    command: "rbenv install 3.3.4"
+    description: "build and install a Ruby"
+  - key: g
+    mark: pin
+    command: "rbenv global 3.3.4"
+    description: "default Ruby for the user"
+  - key: l
+    mark: pin
+    command: "rbenv local 3.3.4"
+    description: "pin this directory (.ruby-version)"
+  - key: s
+    command: "rbenv shell system"
+    description: "use the system Ruby in this shell"
+  - key: v
+    command: "rbenv versions"
+    description: "installed versions, current marked"
+  - key: a
+    command: "rbenv install --list"
+    description: "latest stable releases per implementation"
+  - key: u
+    command: "rbenv uninstall -f 3.2.2"
+    description: "remove a version without asking"
+  - key: r
+    command: "rbenv rehash"
+    description: "refresh shims after gem install"

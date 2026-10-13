@@ -105,3 +105,31 @@ commands:
       -e: {value: file, description: "Standard error file"}
   help:
     description: Show help
+snippets:
+  - key: l
+    mark: pin
+    command: "launchctl list"
+    description: "loaded jobs (PID, status, label)"
+  - key: g
+    command: "launchctl list | grep -v com.apple"
+    description: "loaded non-Apple jobs"
+  - key: p
+    mark: pin
+    command: "launchctl print gui/501/com.example.agent"
+    description: "state of one user agent (uid 501)"
+  - key: b
+    command: "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.example.agent.plist"
+    description: "load a user agent"
+  - key: o
+    command: "launchctl bootout gui/501/com.example.agent"
+    description: "unload a user agent"
+  - key: k
+    mark: pin
+    command: "launchctl kickstart -k gui/501/com.example.agent"
+    description: "restart a user agent"
+  - key: d
+    command: "launchctl print-disabled gui/501"
+    description: "disabled services of the user domain"
+  - key: e
+    command: "launchctl setenv NAME value"
+    description: "set an env var for GUI apps launched afterwards"

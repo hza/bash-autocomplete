@@ -192,3 +192,34 @@ commands:
       --help: {description: "Show help"}
   help:
     description: Show help for commands
+snippets:
+  - key: i
+    mark: pin
+    command: 'pip install -r requirements.txt'
+    description: 'install from requirements'
+  - key: f
+    mark: pin
+    command: 'pip freeze > requirements.txt'
+    description: 'pin installed packages to a file'
+  - key: l
+    mark: pin
+    command: 'pip list --outdated'
+    description: 'show outdated packages'
+  - key: u
+    command: 'pip install --upgrade pip'
+    description: 'upgrade pip itself'
+  - key: e
+    command: 'pip install -e .'
+    description: 'editable install of this project'
+  - key: s
+    command: 'pip show '
+    description: 'package details and location'
+  - key: c
+    command: 'pip check'
+    description: 'verify dependencies are compatible'
+  - key: x
+    command: 'pip cache purge'
+    description: 'clear the download cache'
+  - key: r
+    command: 'pip uninstall -y '
+    description: 'remove a package without asking'

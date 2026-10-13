@@ -1,0 +1,40 @@
+version: '20261013'
+description: "Quick Look server debug and management tool"
+flags:
+  -p: {description: "Show Quick Look previews of the files", show: always}
+  -t: {description: "Compute thumbnails of the files", show: always}
+  -r:
+    value: {enum: {cache: "reset the thumbnail disk cache"}}
+    description: "Reload the generator list (with 'cache': reset thumbnail cache)"
+  -m:
+    value: {enum: {plugins: "generator list", server: "quicklookd life info", memory: "memory use", burst: "last burst stats", threads: "concurrent access stats", other: "other info"}}
+    description: "Show quicklookd statistics"
+  -x: {description: "Use quicklookd (remote computation)"}
+  -i: {description: "Thumbnail in icon mode"}
+  -s: {value: any, description: "Thumbnail size in pixels"}
+  -f: {value: any, description: "Thumbnail scale factor"}
+  -F: {value: any, description: "Scale factor, draw downscaled and compare to 1x"}
+  -z: {description: "Show generation performance info"}
+  -o: {value: dir, description: "Write results to a directory", show: always}
+  -c: {value: any, description: "Force the content type (UTI)"}
+  -g: {value: file, description: "Force the generator to use"}
+  -h: {description: "Show help"}
+args: file
+snippets:
+  - key: p
+    mark: pin
+    command: "qlmanage -p README.md >/dev/null 2>&1"
+    description: "Quick Look preview from the terminal"
+  - key: t
+    mark: pin
+    command: "qlmanage -t -s 512 -o . document.pdf"
+    description: "save a 512px thumbnail PNG"
+  - key: c
+    command: "qlmanage -p -c public.plain-text script.unknown"
+    description: "preview as plain text"
+  - key: r
+    command: "qlmanage -r && qlmanage -r cache"
+    description: "reload generators and clear thumbnails"
+  - key: m
+    command: "qlmanage -m plugins"
+    description: "list Quick Look generators"

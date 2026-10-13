@@ -1,0 +1,63 @@
+version: '20261013'
+description: "Automate iOS and Android builds and releases"
+args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/fastlane.sh\""}
+flags:
+  --verbose: {description: "Verbose output", show: always}
+  --env: {value: {exec: "ls fastlane/.env.* .env.* 2>/dev/null | sed 's/.*\\.env\\.//' | sort -u"}, description: "dotenv files to load (comma list)", show: always}
+  --capture_output: {description: "Capture output for bug reports"}
+  --help: {description: "Show help"}
+  --version: {description: "Show the fastlane version"}
+commands:
+  lanes: {description: "List lanes with descriptions", flags: {--json: {description: "Output JSON"}}}
+  list: {description: "List lane names"}
+  init: {description: "Set up fastlane in this project", args: {enum: [swift, ios, android]}}
+  run: {description: "Run a single action", args: any}
+  actions: {description: "List available actions", args: any}
+  action: {description: "Show an action's documentation", args: any}
+  docs: {description: "Generate fastlane/README.md"}
+  env: {description: "Print environment for bug reports"}
+  new_action: {description: "Create a custom action"}
+  update_fastlane: {description: "Update fastlane"}
+  add_plugin: {description: "Add a plugin", args: any}
+  install_plugins: {description: "Install the Pluginfile's plugins"}
+  update_plugins: {description: "Update all plugins"}
+  search_plugins: {description: "Search plugins", args: any}
+  match: {description: "Sync certificates and profiles", args: {enum: [development, adhoc, appstore, enterprise, developer_id]}}
+  pilot: {description: "Manage TestFlight", args: {enum: [upload, distribute, builds, add, list, find, remove, export, import]}}
+  deliver: {description: "Upload metadata and binary to App Store Connect", args: {enum: [init, submit_build, download_screenshots, download_metadata]}}
+  gym: {description: "Build and sign the app (build_app)"}
+  scan: {description: "Run tests (run_tests)"}
+  snapshot: {description: "Take localized screenshots", args: {enum: [init, reset_simulators]}}
+  supply: {description: "Upload to Google Play", args: {enum: [init]}}
+  cert: {description: "Create or fetch signing certificates"}
+  sigh: {description: "Create or fetch provisioning profiles", args: {enum: [resign, repair, download_all, renew]}}
+  pem: {description: "Create push notification certificates"}
+  produce: {description: "Create the app on App Store Connect"}
+snippets:
+  - key: t
+    mark: pin
+    command: "fastlane ios beta"
+    description: "lane ios beta (TestFlight usually)"
+  - key: r
+    mark: pin
+    command: "fastlane ios release"
+    description: "lane ios release"
+  - key: l
+    command: "fastlane lanes"
+    description: "lanes with their descriptions"
+  - key: m
+    mark: pin
+    command: "fastlane match development --readonly"
+    description: "fetch dev certs without creating any"
+  - key: e
+    command: "fastlane ios beta --env staging"
+    description: "lane with fastlane/.env.staging loaded"
+  - key: u
+    command: "bundle exec fastlane update_plugins"
+    description: "refresh plugins via Bundler"
+  - key: p
+    command: "fastlane run increment_build_number"
+    description: "one action ad hoc"
+  - key: d
+    command: "fastlane docs"
+    description: "regenerate fastlane/README.md"

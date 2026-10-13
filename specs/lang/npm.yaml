@@ -1719,3 +1719,43 @@ commands:
     args: any
   whoami:
     description: Show logged-in user
+snippets:
+  - key: i
+    mark: pin
+    command: 'npm install'
+    description: 'install dependencies'
+  - key: c
+    command: 'npm ci'
+    description: 'clean install from the lockfile'
+  - key: d
+    command: 'npm install -D '
+    description: 'add a dev dependency'
+  - key: r
+    mark: pin
+    command: 'npm run dev'
+    description: 'run the dev script'
+  - key: t
+    mark: pin
+    command: 'npm test'
+    description: 'run tests'
+  - key: o
+    command: 'npm outdated'
+    description: 'show outdated packages'
+  - key: u
+    command: 'npm update'
+    description: 'update within semver ranges'
+  - key: a
+    command: 'npm audit fix'
+    description: 'fix vulnerable dependencies'
+  - key: l
+    command: 'npm ls --depth=0'
+    description: 'top-level installed packages'
+  - key: g
+    command: 'npm ls -g --depth=0'
+    description: 'globally installed packages'
+  - key: v
+    command: 'npm version patch'
+    description: 'bump the patch version and tag'
+  - key: p
+    command: 'npm publish --dry-run'
+    description: 'show what would be published'

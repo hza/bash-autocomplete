@@ -17,3 +17,31 @@ flags:
   -v: {description: "Verbose mode"}
   --help: {description: "Show help"}
 args: [file, {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null", suffix: ":", nospace: true}]
+snippets:
+  - key: u
+    mark: pin
+    command: "scp file.txt host:/tmp/"
+    description: "upload a file"
+  - key: d
+    mark: pin
+    command: "scp host:/var/log/syslog ."
+    description: "download a file"
+  - key: r
+    mark: pin
+    command: "scp -r dir host:~/"
+    description: "upload a directory"
+  - key: p
+    command: "scp -P 2222 file.txt user@host:~/"
+    description: "custom port"
+  - key: i
+    command: "scp -i ~/.ssh/id_ed25519 file.txt host:~/"
+    description: "with a given key"
+  - key: c
+    command: "scp -C big.log host:/tmp/"
+    description: "compress in transit"
+  - key: t
+    command: "scp -3 host1:file.txt host2:/tmp/"
+    description: "copy between two remotes via this host"
+  - key: j
+    command: "scp -J bastion file.txt host:/tmp/"
+    description: "through a jump host"

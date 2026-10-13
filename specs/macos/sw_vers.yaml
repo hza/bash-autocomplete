@@ -1,0 +1,18 @@
+version: '20261013'
+description: "Print macOS version information"
+flags:
+  --productName: {description: "Product name (macOS)", show: always}
+  --productVersion: {description: "Version number, e.g. 15.6", show: always}
+  --productVersionExtra: {description: "Rapid Security Response version suffix"}
+  --buildVersion: {description: "Build number", show: always}
+snippets:
+  - key: v
+    mark: pin
+    command: "sw_vers --productVersion"
+    description: "just the version number"
+  - key: b
+    command: "sw_vers --buildVersion"
+    description: "just the build number"
+  - key: m
+    command: "sw_vers --productVersion | cut -d. -f1"
+    description: "major version only"

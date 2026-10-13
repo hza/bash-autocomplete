@@ -1,0 +1,90 @@
+version: '20261013'
+description: "Convert, record and stream audio and video"
+flags:
+  -i: {value: file, description: "Input file or URL", show: always, repeat: true}
+  -y: {description: "Overwrite output files without asking", show: always}
+  -n: {description: "Never overwrite output files"}
+  -hide_banner: {description: "Hide the build banner"}
+  -loglevel: {value: {enum: [quiet, panic, fatal, error, warning, info, verbose, debug, trace]}, description: "Logging level"}
+  -v: {value: {enum: [quiet, panic, fatal, error, warning, info, verbose, debug, trace]}, description: "Logging level"}
+  -stats: {description: "Print progress during encoding"}
+  -nostdin: {description: "Don't read from stdin"}
+  -f: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" muxers", cache: '86400'}, description: "Force container format"}
+  '-c:v': {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" vencoders", cache: '86400'}, description: "Video codec (encoder)", show: always}
+  '-c:a': {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" aencoders", cache: '86400'}, description: "Audio codec (encoder)", show: always}
+  '-c:s': {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" sencoders", cache: '86400'}, description: "Subtitle codec"}
+  -c: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" vencoders; sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" aencoders", cache: '86400'}, description: "Codec for all streams (copy = remux)"}
+  -vcodec: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" vencoders", cache: '86400'}, description: "Video codec (same as -c:v)"}
+  -acodec: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" aencoders", cache: '86400'}, description: "Audio codec (same as -c:a)"}
+  -preset: {value: {enum: [ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, placebo]}, description: "x264/x265 speed vs compression"}
+  -tune: {value: {enum: [film, animation, grain, stillimage, fastdecode, zerolatency, psnr, ssim]}, description: "x264 tuning"}
+  -crf: {value: any, description: "Constant quality (x264 0-51, default 23; lower = better)"}
+  '-profile:v': {value: {enum: [baseline, main, high, high10, high422, high444, main10]}, description: "Codec profile"}
+  -pix_fmt: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" pix_fmts", cache: '86400'}, description: "Pixel format"}
+  '-b:v': {value: any, description: "Video bitrate, e.g. 2M"}
+  '-b:a': {value: {enum: [64k, 96k, 128k, 160k, 192k, 256k, 320k]}, description: "Audio bitrate"}
+  -r: {value: {enum: ['24', '25', '30', '50', '60']}, description: "Frame rate"}
+  -s: {value: {enum: [640x360, 1280x720, 1920x1080, 2560x1440, 3840x2160]}, description: "Frame size WxH"}
+  -ar: {value: {enum: ['22050', '44100', '48000', '96000']}, description: "Audio sample rate"}
+  -ac: {value: {enum: ['1', '2', '6']}, description: "Audio channels"}
+  -ss: {value: any, description: "Start time (before -i: fast seek), e.g. 00:01:30"}
+  -to: {value: any, description: "Stop time"}
+  -t: {value: any, description: "Duration"}
+  -vf: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" filters", cache: '86400'}, description: "Video filter graph", show: always}
+  -af: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" filters", cache: '86400'}, description: "Audio filter graph"}
+  -filter_complex: {value: any, description: "Complex filter graph"}
+  -map: {value: any, description: "Select input streams, e.g. 0:v:0"}
+  -vn: {description: "Drop video"}
+  -an: {description: "Drop audio"}
+  -sn: {description: "Drop subtitles"}
+  '-frames:v': {value: any, description: "Number of video frames to write"}
+  -movflags: {value: {enum: [+faststart, frag_keyframe+empty_moov]}, description: "MP4 muxer flags"}
+  -metadata: {value: any, description: "Set metadata key=value", repeat: true}
+  -hwaccel: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/ffmpeg.sh\" hwaccels", cache: '86400'}, description: "Hardware decoding"}
+  -threads: {value: any, description: "Thread count"}
+  -shortest: {description: "End with the shortest input"}
+  -stream_loop: {value: any, description: "Loop input N times (-1 = forever)"}
+  -re: {description: "Read input at native frame rate (streaming)"}
+  -encoders: {description: "List encoders"}
+  -decoders: {description: "List decoders"}
+  -formats: {description: "List formats"}
+  -codecs: {description: "List codecs"}
+  -filters: {description: "List filters"}
+  -pix_fmts: {description: "List pixel formats"}
+  -version: {description: "Show version"}
+  -h: {value: {enum: [long, full, filter=, encoder=, decoder=, muxer=, demuxer=]}, description: "Help (topic)"}
+args: file
+snippets:
+  - key: m
+    mark: pin
+    command: "ffmpeg -i in.mov -c:v libx264 -crf 23 -preset medium -c:a aac -movflags +faststart out.mp4"
+    description: "web-friendly H.264 MP4"
+  - key: r
+    mark: pin
+    command: "ffmpeg -i in.mkv -c copy out.mp4"
+    description: "remux without re-encoding"
+  - key: c
+    mark: pin
+    command: "ffmpeg -ss 00:01:00 -i in.mp4 -t 30 -c copy clip.mp4"
+    description: "cut 30 s starting at 1:00"
+  - key: a
+    command: "ffmpeg -i in.mp4 -vn -c:a libmp3lame -b:a 192k out.mp3"
+    description: "extract audio as MP3"
+  - key: s
+    command: "ffmpeg -i in.mp4 -vf scale=1280:-2 out-720p.mp4"
+    description: "scale to 720p width, keep aspect"
+  - key: g
+    command: "ffmpeg -i in.mp4 -vf 'fps=12,scale=480:-1:flags=lanczos' out.gif"
+    description: "short clip to GIF"
+  - key: t
+    command: "ffmpeg -ss 5 -i in.mp4 -frames:v 1 thumb.jpg"
+    description: "grab one frame at 5 s"
+  - key: h
+    command: "ffmpeg -i in.mov -c:v hevc_videotoolbox -b:v 6M -tag:v hvc1 -c:a copy out.mp4"
+    description: "HEVC on the Mac's hardware encoder"
+  - key: x
+    command: "ffmpeg -i in.mp4 -an -c:v copy silent.mp4"
+    description: "strip the audio track"
+  - key: i
+    command: "ffmpeg -hide_banner -i in.mp4"
+    description: "show stream info"

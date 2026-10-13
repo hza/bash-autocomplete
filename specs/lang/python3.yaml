@@ -34,3 +34,34 @@ flags:
     value: {enum: [default, always, never]}
     description: control validation of hash-based .pyc files
 args: file
+snippets:
+  - key: v
+    mark: pin
+    command: 'python3 -m venv .venv'
+    description: 'create a virtualenv in .venv'
+  - key: s
+    mark: pin
+    command: 'python3 -m http.server 8000'
+    description: 'serve the current dir over HTTP'
+  - key: j
+    mark: pin
+    command: 'python3 -m json.tool '
+    description: 'pretty-print a JSON file'
+  - key: p
+    command: 'python3 -m pip install -r requirements.txt'
+    description: 'install requirements with this interpreter'
+  - key: t
+    command: 'python3 -m unittest discover'
+    description: 'run unittest tests'
+  - key: d
+    command: 'python3 -m pdb '
+    description: 'debug a script'
+  - key: c
+    command: 'python3 -c ''import sys; print(sys.version)'''
+    description: 'show the interpreter version'
+  - key: i
+    command: 'python3 -i '
+    description: 'run a script, then stay interactive'
+  - key: r
+    command: 'python3 -m cProfile -s cumtime '
+    description: 'profile a script'

@@ -1,0 +1,112 @@
+version: '20261013'
+description: "CocoaPods, the Cocoa dependency manager"
+flags:
+  --verbose: {description: "Show more debugging information"}
+  --silent: {description: "Show nothing"}
+  --no-ansi: {description: "Output without ANSI codes"}
+  --allow-root: {description: "Allow running as root"}
+  --help: {description: "Show help for the command"}
+  --version: {description: "Show the CocoaPods version"}
+commands:
+  install:
+    description: "Install dependencies at the versions in Podfile.lock"
+    flags:
+      --repo-update: {description: "Run 'pod repo update' first", show: always}
+      --deployment: {description: "Fail if Podfile and Podfile.lock disagree"}
+      --clean-install: {description: "Ignore the project cache"}
+      --project-directory=: {value: dir, description: "Project root directory"}
+  update:
+    description: "Update pods and rewrite Podfile.lock"
+    args: {exec: "sed -n 's/^  - \"\\{0,1\\}\\([^ /\"]*\\).*/\\1/p' Podfile.lock 2>/dev/null | sort -u"}
+    flags:
+      --no-repo-update: {description: "Skip 'pod repo update'", show: always}
+      --exclude-pods=: {value: {exec: "sed -n 's/^  - \"\\{0,1\\}\\([^ /\"]*\\).*/\\1/p' Podfile.lock 2>/dev/null | sort -u"}, description: "Pods to leave alone (comma list)"}
+      --sources=: {value: any, description: "Spec sources to update from"}
+      --clean-install: {description: "Ignore the project cache"}
+      --project-directory=: {value: dir, description: "Project root directory"}
+  outdated:
+    description: "Show pods with newer versions"
+    flags:
+      --no-repo-update: {description: "Skip 'pod repo update'", show: always}
+      --ignore-prerelease: {description: "Ignore prerelease versions"}
+  init: {description: "Create a Podfile for the project here", args: {file: "*.xcodeproj"}}
+  deintegrate: {description: "Remove CocoaPods from the project", args: {file: "*.xcodeproj"}}
+  search:
+    description: "Search pods by name"
+    args: any
+    flags:
+      --simple: {description: "Search names only"}
+      --stats: {description: "Show additional stats"}
+      --web: {description: "Search on cocoapods.org"}
+      --ios: {description: "iOS pods only"}
+      --osx: {description: "macOS pods only"}
+  list: {description: "List pods in the spec repos", flags: {--update: {description: "Update spec repos first"}}}
+  env: {description: "Show the CocoaPods environment"}
+  setup: {description: "Set up the CocoaPods environment"}
+  cache:
+    description: "Manipulate the download cache"
+    commands:
+      list: {description: "List cached pods", args: any, flags: {--short: {description: "Only print paths"}}}
+      clean: {description: "Remove cached pods", args: any, flags: {--all: {description: "Remove all cached pods"}}}
+  repo:
+    description: "Manage spec repositories"
+    commands:
+      add: {description: "Add a spec repo (NAME URL)", args: any}
+      add-cdn: {description: "Add a CDN spec repo (NAME URL)", args: any}
+      update: {description: "Update spec repos", args: {exec: "ls ~/.cocoapods/repos 2>/dev/null"}}
+      remove: {description: "Remove a spec repo", args: {exec: "ls ~/.cocoapods/repos 2>/dev/null"}}
+      list: {description: "List spec repos"}
+      lint: {description: "Validate a spec repo", args: any}
+      push: {description: "Push a podspec to a spec repo", positional: [{exec: "ls ~/.cocoapods/repos 2>/dev/null"}, {file: "*.podspec *.podspec.json"}]}
+  spec:
+    description: "Manage pod specs"
+    commands:
+      create: {description: "Create a podspec", args: any}
+      lint: {description: "Validate a podspec", args: {file: "*.podspec *.podspec.json"}, flags: {--quick: {description: "Skip checks needing a download"}, --allow-warnings: {description: "Pass despite warnings"}, --no-clean: {description: "Keep the build directory"}}}
+      cat: {description: "Print a podspec", args: any}
+      which: {description: "Path of a podspec", args: any}
+      edit: {description: "Edit a podspec", args: any}
+  lib:
+    description: "Develop pods"
+    commands:
+      create: {description: "Create a pod skeleton", args: any}
+      lint: {description: "Validate a pod", args: {file: "*.podspec *.podspec.json"}, flags: {--quick: {description: "Skip checks needing a download"}, --allow-warnings: {description: "Pass despite warnings"}, --no-clean: {description: "Keep the build directory"}}}
+  trunk:
+    description: "Publish to the CocoaPods trunk"
+    commands:
+      register: {description: "Register a session (EMAIL [NAME])", args: any}
+      me: {description: "Show the registered user"}
+      push: {description: "Publish a podspec", args: {file: "*.podspec *.podspec.json"}, flags: {--allow-warnings: {description: "Pass despite warnings"}}}
+      info: {description: "Info about a pod", args: any}
+      deprecate: {description: "Deprecate a pod", args: any}
+      delete: {description: "Delete a pod version", args: any}
+  plugins: {description: "Show available plugins"}
+  try: {description: "Try a pod in a demo project", args: any}
+snippets:
+  - key: i
+    mark: pin
+    command: "pod install"
+    description: "install what Podfile.lock pins"
+  - key: r
+    mark: pin
+    command: "pod install --repo-update"
+    description: "install after refreshing specs"
+  - key: u
+    mark: pin
+    command: "pod update Alamofire"
+    description: "bump one pod"
+  - key: o
+    command: "pod outdated --no-repo-update"
+    description: "what could be updated"
+  - key: d
+    command: "pod deintegrate && pod install"
+    description: "rebuild the integration from scratch"
+  - key: c
+    command: "pod cache clean --all"
+    description: "empty the download cache"
+  - key: l
+    command: "pod lib lint --allow-warnings"
+    description: "validate the pod in this repo"
+  - key: p
+    command: "pod trunk push MyLib.podspec --allow-warnings"
+    description: "publish a release"
