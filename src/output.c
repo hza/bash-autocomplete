@@ -439,13 +439,12 @@ static const char *icon(const ynode *e) {
 
 static void add_snippets(void) {
     const ynode *e;
-    int want, same = 1;
-    char first = 0, last = 0;
-    const char *one = NULL;
+    int want, exact = 0, same = 1, nmatch = 0;
+    const char *first = NULL, *last = NULL, *one = NULL, *key = g_cur + 1;
     size_t nl;
     char name[32], desc[1024];
     if (!g_snippets || g_snippets->type != Y_ARR) return;
-    want = g_cur[0] == '@' && g_cur[1] && !g_cur[2];
+    want = g_cur[0] == '@' && g_cur[1]; /* "@key": exact key -> substitute, else list keys with that prefix */
     if (*g_cur && strcmp(g_cur, "@") && !want) return;
     if (!*g_cur && g_ncands) return; /* other candidates (lsof files): snippets only on "@" */
     nl = strlen(g_snippets_name);
@@ -454,18 +453,24 @@ static void add_snippets(void) {
     for (e = g_snippets->child; e; e = e->next) {
         const ynode *k = yaml_get(e, "key");
         if (!snippet_key(k)) continue;
+        if (want && !strcmp(k->str, g_cur + 1)) exact = 1;
+        if (want && strncmp(k->str, g_cur + 1, strlen(g_cur + 1))) continue;
+        if (want && !nmatch++ && !exact) key = k->str;
         if (!one) one = icon(e);
         else if (strcmp(one, icon(e))) same = 0;
-        if (!first || k->str[0] < first) first = k->str[0];
-        if (k->str[0] > last) last = k->str[0];
+        if (!first || strcmp(k->str, first) < 0) first = k->str;
+        if (!last || strcmp(k->str, last) > 0) last = k->str;
     }
+    if (exact) key = g_cur + 1;
+    else if (nmatch == 1) exact = 1; /* unique prefix: substitute that one */
     for (e = g_snippets->child; e; e = e->next) {
         const ynode *cmd = yaml_get(e, "command"), *k = yaml_get(e, "key");
         const char *d = spec_desc(e);
         const char *ic;
         if (!cmd || cmd->type != Y_STR || !snippet_key(k)) continue;
-        if (want) {
-            if (k->str[0] != g_cur[1]) continue;
+        if (want && !exact && strncmp(k->str, g_cur + 1, strlen(g_cur + 1))) continue;
+        if (want && exact) {
+            if (strcmp(k->str, key)) continue;
             if (!nl) { /* flag value (exec snippets): quoted whole */
                 char q[4096], *o = q;
                 const char *c;
@@ -486,8 +491,8 @@ static void add_snippets(void) {
             break; /* not substitutable: list nothing */
         }
         ic = icon(e);
-        if (same && !strcmp(ic, PUSHPIN)) ic = k->str[0] == last ? FIRE : ic;
-        else if (same && k->str[0] == first) ic = PUSHPIN;
+        if (same && !strcmp(ic, PUSHPIN)) ic = !strcmp(k->str, last) ? FIRE : ic;
+        else if (same && !strcmp(k->str, first)) ic = PUSHPIN;
         snprintf(name, sizeof name, "%s\xc2\xa0@%s", ic, k->str);
         if (d) snprintf(desc, sizeof desc, "%s   📚 %s", cmd->str, d);
         emit_desc(name, 0, d ? desc : cmd->str);

@@ -158,15 +158,51 @@ commands:
   ultrareview: {description: "Cloud multi-agent code review of the branch / PR"}
   update: {description: "Check for updates and install", aliases: [upgrade]}
 snippets:
-  - key: c
+  - key: p
+    mark: "1"
+    command: "claude --permission-mode plan -p \"\""
+    description: "plan mode: read and propose, no edits"
+  - key: g
+    mark: "2"
+    command: "claude -c --permission-mode acceptEdits -p \"go ahead with the plan\""
+    description: "accept the plan from @p and let it make the edits"
+  - key: a
     mark: pin
+    command: "claude --permission-mode acceptEdits -p \"\""
+    description: "auto-accept file edits"
+  - key: c
+    mark: lock
     command: "claude -c"
     description: "continue the last conversation in this folder"
   - key: r
-    mark: pin
+    mark: lock
     command: "claude -r"
     description: "pick a past conversation to resume"
-  - key: p
+  - key: w
+    mark: lock
+    command: "claude -w feature-x"
+    description: "work in a new git worktree"
+  - key: t
+    mark: lock
+    command: "claude -w feature-x --tmux"
+    description: "worktree in its own tmux session"
+  - key: k
+    mark: lock
+    command: "claude --fork-session -c"
+    description: "branch off the last conversation"
+  - key: u
+    mark: lock
+    command: "claude --from-pr 123"
+    description: "resume the session linked to a PR"
+  - key: z
+    mark: lock
+    command: "claude --safe-mode"
+    description: "start without any customizations (debug config)"
+  - key: v
+    mark: lock
+    command: "claude -d api,hooks"
+    description: "debug output for API and hooks"
+  - key: n
     mark: pin
     command: "claude -p \"explain this project\""
     description: "one-shot answer, print and exit"
@@ -189,82 +225,41 @@ snippets:
   - key: o
     command: "claude --model opus -p \"\""
     description: "start with Opus"
-  - key: f
-    command: "claude --model fable --effort max -p \"\""
-    description: "strongest model, maximum effort"
-  - key: q
+  - key: h
     command: "claude --model haiku -p \"\""
     description: "quick cheap one-shot with Haiku"
-  - key: n
-    command: "claude --permission-mode plan -p \"\""
-    description: "plan mode: read and propose, no edits"
-  - key: a
-    command: "claude --permission-mode acceptEdits -p \"\""
-    description: "auto-accept file edits"
   - key: y
     command: "claude --dangerously-skip-permissions -p \"\""
     description: "no permission prompts (sandboxes only)"
-  - key: w
-    mark: pin
-    command: "claude -w feature-x"
-    description: "work in a new git worktree"
-  - key: t
-    command: "claude -w feature-x --tmux"
-    description: "worktree in its own tmux session"
   - key: b
     command: "claude --bg \"fix the failing tests\""
     description: "background agent, returns immediately"
-  - key: g
-    command: "claude -c --permission-mode acceptEdits -p \"go ahead with the plan\""
-    description: "accept the plan from @n and let it make the edits"
-  - key: "8"
-    command: "claude -c --permission-mode plan -p \"\""
-    description: "revise the plan from @n with feedback (still no edits)"
-  - key: "9"
-    command: "claude agents"
-    description: "manage background agents"
-  - key: k
-    command: "claude --fork-session -c"
-    description: "branch off the last conversation"
-  - key: u
-    command: "claude --from-pr 123"
-    description: "resume the session linked to a PR"
   - key: d
     command: "claude --add-dir ../shared -p \"\""
     description: "also allow access to another folder"
   - key: x
     command: "claude --allowedTools \"Bash(git *) Edit Read\" -p \"\""
     description: "pre-approve specific tools"
-  - key: z
-    command: "claude --safe-mode"
-    description: "start without any customizations (debug config)"
-  - key: h
+  - key: m
     command: "claude --bare -p \"\""
     description: "minimal mode: no hooks, plugins or CLAUDE.md"
-  - key: v
-    command: "claude -d api,hooks"
-    description: "debug output for API and hooks"
   - key: i
+    mark: globe
     command: "claude mcp add --transport http NAME https://example.com/mcp"
     description: "add a remote HTTP MCP server"
   - key: "1"
+    mark: globe
     command: "claude mcp add -s user NAME -- npx -y PACKAGE"
     description: "add a stdio MCP server for all projects"
   - key: "2"
+    mark: globe
     command: "claude mcp list"
     description: "list MCP servers and their health"
   - key: "3"
+    mark: package
     command: "claude plugin marketplace add OWNER/REPO"
     description: "add a plugin marketplace from GitHub"
   - key: "4"
+    mark: package
     command: "claude plugin install NAME@MARKETPLACE"
     description: "install a plugin"
-  - key: "5"
-    command: "claude ultrareview"
-    description: "cloud code review of the current branch"
-  - key: "6"
-    command: "claude doctor"
-    description: "check installation health"
-  - key: "7"
-    command: "claude update"
-    description: "update Claude Code"

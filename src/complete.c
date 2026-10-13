@@ -26,9 +26,13 @@ static const ynode *find_group(const ynode *c, const ynode *root, char ch) {
 }
 
 /* `check`: warn about "groups" letters without a "-x" flag (own or root). */
-/* A snippet's `key`: one char of [0-9a-z] (typed as "@key"). */
+/* A snippet's `key`: 1..8 chars of [0-9a-z] (typed as "@key"). */
 int snippet_key(const ynode *k) {
-    return k && k->type == Y_STR && k->str[0] && !k->str[1] && (isdigit((unsigned char)k->str[0]) || islower((unsigned char)k->str[0]));
+    const char *c;
+    if (!k || k->type != Y_STR || !k->str[0] || strlen(k->str) > 8) return 0;
+    for (c = k->str; *c; c++)
+        if (!isdigit((unsigned char)*c) && !islower((unsigned char)*c)) return 0;
+    return 1;
 }
 
 /* A snippet's `mark` icon: a name from the table below or one emoji of a
@@ -52,6 +56,7 @@ static const struct { const char *name, *icon; } mark_names[] = {
     {"calendar", "\xf0\x9f\x93\x85"},              /* 📅 */
     {"chart", "\xf0\x9f\x93\x88"},                 /* 📈 */
     {"clock", "\xf0\x9f\x95\x90"},                 /* 🕐 */
+    {"console", "\xf0\x9f\x92\xbb"},               /* 💻 */
     {"eyes", "\xf0\x9f\x91\x80"},                  /* 👀 */
     {"fire", "\xf0\x9f\x94\xa5"},                  /* 🔥 */
     {"globe", "\xf0\x9f\x8c\x90"},                 /* 🌐 */
@@ -118,16 +123,20 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
             }
         }
     if (yaml_get(n, "snippets")) {
-        char seen[128] = {0};
         for (g = yaml_get(n, "snippets")->child; g; g = g->next) {
             const ynode *k = yaml_get(g, "key");
             if (!snippet_key(k)) {
-                fprintf(stderr, "%s: snippet \"%s\": key must be one of [0-9a-z]\n", path,
+                fprintf(stderr, "%s: snippet \"%s\": key must be 1-8 chars of [0-9a-z]\n", path,
                         yaml_get(g, "command") ? yaml_get(g, "command")->str : "?");
                 bad = 1;
-            } else if (seen[(int)k->str[0]]++) {
-                fprintf(stderr, "%s: duplicate snippet key %s\n", path, k->str);
-                bad = 1;
+            } else {
+                const ynode *o, *ok;
+                for (o = yaml_get(n, "snippets")->child; o != g; o = o->next)
+                    if ((ok = yaml_get(o, "key")) && ok->type == Y_STR && !strcmp(ok->str, k->str)) break;
+                if (o != g) {
+                        fprintf(stderr, "%s: duplicate snippet key %s\n", path, k->str);
+                    bad = 1;
+                }
             }
             if ((k = yaml_get(g, "mark")) && (k->type != Y_STR || !snippet_mark(k->str))) {
                 fprintf(stderr, "%s: snippet \"%s\": mark must be an icon name (see docs/writing-specs.md) or one emoji (U+1F300..U+1FAFF, no U+FE0F)\n", path,
