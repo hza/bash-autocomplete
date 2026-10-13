@@ -1,3 +1,4 @@
+version: '20261013'
 description: Fast, reliable, and secure dependency management
 flags:
   --verbose: {description: "Output verbose messages on internal operations"}

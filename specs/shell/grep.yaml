@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Search files for lines matching a pattern"
 flags:
   -e: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}

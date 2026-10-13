@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Set default apps for file types and URL schemes (lists take ~0.5 s)"
 flags:
   -s:

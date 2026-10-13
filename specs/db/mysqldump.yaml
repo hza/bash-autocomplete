@@ -1,3 +1,4 @@
+version: '20261013'
 description: Dump MySQL / MariaDB databases as SQL
 flags:
   -h: {value: "@hosts", description: "Connect to host", show: always}

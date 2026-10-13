@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Run a command as another user"
 flags:
   -u: {value: {exec: "cut -d: -f1 /etc/passwd | grep -v '^#'"}, description: run as this user, show: always}

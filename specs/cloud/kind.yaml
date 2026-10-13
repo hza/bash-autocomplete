@@ -1,3 +1,4 @@
+version: '20261013'
 description: Kubernetes in Docker
 flags:
   -h: {description: "Show help"}

@@ -1,3 +1,4 @@
+version: '20261013'
 description: PostgreSQL interactive terminal
 flags:
   -h: {value: "@hosts", description: "Database server host or socket directory", show: always}

@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Prevent the system from sleeping"
 flags:
   -d: {description: "Prevent the display from sleeping", show: always}

@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Repeat until a command succeeds (bash keyword)"
 args: "@command"
 snippets:

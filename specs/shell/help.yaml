@@ -1,3 +1,4 @@
+version: '20261013'
 description: Show help for bash builtins and keywords
 flags:
   -s: {description: "Short usage synopsis only"}

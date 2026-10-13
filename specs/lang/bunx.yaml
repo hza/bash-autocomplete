@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Run a package binary with Bun, installing it if needed"
 flags:
   --bun: {description: force the Bun runtime instead of Node.js, show: always}

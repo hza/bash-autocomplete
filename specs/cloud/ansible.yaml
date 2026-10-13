@@ -1,3 +1,4 @@
+version: '20261013'
 description: Run ad-hoc Ansible tasks against hosts
 flags:
   -h: {description: "Show help"}

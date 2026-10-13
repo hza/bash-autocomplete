@@ -1,3 +1,4 @@
+version: '20261013'
 description: Infrastructure as code with real programming languages
 flags:
   -h: {description: "Show help"}

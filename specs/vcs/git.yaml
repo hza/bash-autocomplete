@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Distributed version control"
 flags:
   -C: {value: dir, description: "Run as if git was started in <path>", show: always}

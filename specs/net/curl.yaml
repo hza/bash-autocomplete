@@ -1,3 +1,4 @@
+version: '20261013'
 description: "curl is a tool for transferring data from or to a server using URLs."
 groups:
   "012346": {description: "protocol versions"}

@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Scriptable image processing system"
 flags:
   -g:

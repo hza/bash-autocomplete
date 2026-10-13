@@ -92,6 +92,16 @@ int find_spec(const char *name, char *path, size_t size) {
     return 0;
 }
 
+int find_bundled(const char *name, char *path, size_t size) {
+    char user[PATH_MAX];
+    int i;
+    if (strchr(name, '/') || name[0] == '.') return 0;
+    snprintf(user, sizeof user, "%s/.config/autocomplete", getenv("HOME") ? getenv("HOME") : "");
+    for (i = 0; i < g_ndirs; i++)
+        if (strcmp(g_dirs[i], user) && find_in(g_dirs[i], name, path, size, 0)) return 1;
+    return 0;
+}
+
 /* Compiled specs live in $XDG_CACHE_HOME/autocomplete or ~/.cache/autocomplete
  * as <name>.cache; creates the directory when `create` is set. */
 int cache_dir(const char *sub, char *dir, size_t size) {

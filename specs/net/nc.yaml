@@ -1,3 +1,4 @@
+version: '20261013'
 description: Netcat - arbitrary TCP and UDP connections and listeners
 flags:
   -l: {description: "Listen for an incoming connection", show: always}

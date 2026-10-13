@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Build, run and manage containers"
 inherit_flags: false # global options only before the subcommand ("docker ps -D" fails)
 flags:

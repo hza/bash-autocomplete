@@ -1,3 +1,4 @@
+version: '20261013'
 description: MySQL / MariaDB command-line client
 flags:
   -h: {value: "@hosts", description: "Connect to host", show: always}

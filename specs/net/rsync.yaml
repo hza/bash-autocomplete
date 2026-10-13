@@ -1,3 +1,4 @@
+version: '20261013'
 description: Fast incremental file transfer (local and over ssh)
 flags:
   -a: {description: "Archive mode: -rlptgoD", show: always}

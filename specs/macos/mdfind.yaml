@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Find files using the Spotlight metadata index"
 flags:
   '-0': {description: "Print a NUL after each path (for xargs -0)"}

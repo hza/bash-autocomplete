@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Manipulate power management settings"
 flags:
   -a: {description: "Apply settings to all power sources", show: always}

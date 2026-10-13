@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Run or locate developer tools of the active Xcode / Command Line Tools"
 inherit_flags: false # xcrun options go before the tool name
 flags:

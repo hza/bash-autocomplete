@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Keychains, certificates, keys and trust settings"
 flags:
   -h: {description: "Show all commands, or usage of the given ones"}

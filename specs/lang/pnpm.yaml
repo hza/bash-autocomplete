@@ -1,3 +1,4 @@
+version: '20261013'
 description: Fast, disk space efficient package manager
 flags:
   -h: {description: "Show help"}

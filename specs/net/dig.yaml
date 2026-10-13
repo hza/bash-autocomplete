@@ -1,3 +1,4 @@
+version: '20261013'
 description: DNS lookup utility
 flags:
   -x: {value: any, description: "Reverse lookup of an IP address", show: always}

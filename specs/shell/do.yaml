@@ -1,2 +1,3 @@
+version: '20261013'
 description: "Loop body of for/while/until (bash keyword)"
 args: "@command"

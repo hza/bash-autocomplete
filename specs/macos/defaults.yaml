@@ -1,3 +1,4 @@
+version: '20261013'
 description: macOS user defaults management
 flags:
   --help: {description: "Show help"}

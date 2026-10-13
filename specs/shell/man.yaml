@@ -1,3 +1,4 @@
+version: '20261013'
 description: Show manual pages
 flags:
   -a: {description: "Show all matching pages, not just the first"}

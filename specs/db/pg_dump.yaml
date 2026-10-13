@@ -1,3 +1,4 @@
+version: '20261013'
 description: Extract a PostgreSQL database into a script or archive file
 flags:
   -h: {value: "@hosts", description: "Database server host or socket directory", show: always}

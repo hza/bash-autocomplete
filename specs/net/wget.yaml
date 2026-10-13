@@ -1,3 +1,4 @@
+version: '20261013'
 description: "The non-interactive network downloader."
 groups:
   "Vhe": {description: "info/config"}

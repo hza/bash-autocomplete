@@ -1,3 +1,4 @@
+version: '20261013'
 description: Python package manager
 flags:
   --help: {description: "Show help"}

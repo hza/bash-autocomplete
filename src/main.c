@@ -64,6 +64,32 @@ static void list_spec(const char *name) {
     add_name(name);
 }
 
+/* `version` of the spec file at path ("" if none, NULL if unreadable). */
+static char *spec_version(const char *path) {
+    ynode *n = yaml_load(path, NULL, 0);
+    const ynode *v;
+    char *r;
+    if (!n) return NULL;
+    v = yaml_get(n, "version");
+    r = strdup(v && v->type == Y_STR ? v->str : "");
+    yaml_free(n);
+    return r;
+}
+
+/* User copy of `name` older than the shipped spec: fills bundled path and
+ * both versions (caller frees), returns 1. */
+static int outdated(const char *name, const char *user, char *bpath, size_t size, char **bv, char **uv) {
+    *bv = *uv = NULL;
+    if (!find_bundled(name, bpath, size) || !(*bv = spec_version(bpath)) || !**bv) goto no;
+    if (!(*uv = spec_version(user))) goto no;
+    if (strcmp(*bv, *uv) > 0) return 1;
+no:
+    free(*bv);
+    free(*uv);
+    *bv = *uv = NULL;
+    return 0;
+}
+
 /* `autocomplete list`: sorted "name  description" lines; with --paths
  * " [path]" (" -> target" for symlinks, i.e. aliases) */
 static void print_list(void) {
@@ -75,6 +101,14 @@ static void print_list(void) {
     for (i = 0; i < g_nlist; i++) {
         ynode *n = load_spec(g_list[i]);
         const char *d = n ? spec_desc(n) : NULL;
+        char bpath[PATH_MAX], *bv, *uv, user[PATH_MAX], upd[128] = "";
+        snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
+        if (find_spec(g_list[i], path, sizeof path) && !strncmp(path, user, strlen(user)) &&
+            outdated(g_list[i], path, bpath, sizeof bpath, &bv, &uv)) {
+            snprintf(upd, sizeof upd, "  (update: %s > %s)", bv, *uv ? uv : "none");
+            free(bv);
+            free(uv);
+        }
         if (g_list_paths && find_spec(g_list[i], path, sizeof path)) {
             ssize_t len = readlink(path, target, sizeof target - 1);
             printf("%-*s  %s%s[%s", w, g_list[i], d ? d : "", d ? "  " : "", path);
@@ -82,7 +116,7 @@ static void print_list(void) {
             putchar(']');
         } else if (d) printf("%-*s  %s", w, g_list[i], d);
         else printf("%s", g_list[i]);
-        putchar('\n');
+        printf("%s\n", upd);
         if (n) yaml_free(n);
     }
 }
@@ -348,6 +382,63 @@ static int add_cmds(int argc, char **argv) {
     return rc;
 }
 
+static int copy_file(const char *src, const char *dst) {
+    char buf[8192];
+    size_t len;
+    FILE *in = fopen(src, "rb"), *out;
+    if (!in) return perror(src), 0;
+    if (!(out = fopen(dst, "wb"))) return perror(dst), fclose(in), 0;
+    while ((len = fread(buf, 1, sizeof buf, in)) > 0) fwrite(buf, 1, len, out);
+    fclose(in);
+    return fclose(out) == 0;
+}
+
+/* `autocomplete edit NAME`: open ~/.config/autocomplete/NAME.yaml in
+ * $VISUAL/$EDITOR/vi, copying the shipped spec there first if needed. */
+static int edit_cmd(const char *name) {
+    char dir[PATH_MAX], path[PATH_MAX], real[PATH_MAX], src[PATH_MAX], err[256], cmd[PATH_MAX * 2 + 64], *bv, *uv, *q;
+    const char *ed = getenv("VISUAL");
+    struct stat st;
+    ynode *n;
+    int rc;
+    if (!valid_name(name)) return fprintf(stderr, "%s: not a command name\n", name), 1;
+    if (!getenv("HOME")) return fprintf(stderr, "edit: HOME is not set\n"), 1;
+    snprintf(dir, sizeof dir, "%s/.config/autocomplete", getenv("HOME"));
+    snprintf(path, sizeof path, "%s/%s.yaml", dir, name);
+    if (access(path, F_OK) != 0) snprintf(path, sizeof path, "%s/%s.yml", dir, name);
+    if (access(path, F_OK) == 0) {
+        if (!realpath(path, real)) return perror(path), 1;
+        if (strcmp(real, path)) printf("%s is an alias of %s\n", path, real);
+        if (outdated(name, real, src, sizeof src, &bv, &uv)) {
+            fprintf(stderr, "%s: shipped version %s is newer than your copy (%s); see: diff %s %s\n",
+                    name, bv, *uv ? uv : "none", src, real);
+            free(bv);
+            free(uv);
+        }
+    } else {
+        if (!find_bundled(name, src, sizeof src))
+            return fprintf(stderr, "%s: no spec (create one: autocomplete add %s)\n", name, name), 1;
+        snprintf(real, sizeof real, "%s/%s.yaml", dir, name);
+        mkdirs(dir);
+        if (!copy_file(src, real)) return 1;
+        printf("copied %s -> %s\n", src, real);
+    }
+    if (!ed || !*ed) ed = getenv("EDITOR");
+    if (!ed || !*ed) ed = "vi";
+    /* editor may carry args (`code -w`): run via sh, path single-quoted */
+    rc = snprintf(cmd, sizeof cmd, "%s '", ed);
+    for (q = real; *q && rc < (int)sizeof cmd - 8; q++)
+        rc += *q == '\'' ? snprintf(cmd + rc, sizeof cmd - rc, "'\\''") : snprintf(cmd + rc, sizeof cmd - rc, "%c", *q);
+    snprintf(cmd + rc, sizeof cmd - rc, "'");
+    if (system(cmd) != 0) fprintf(stderr, "edit: '%s' exited with an error\n", ed);
+    if (!(n = yaml_load(real, err, sizeof err))) return fprintf(stderr, "%s: %s\n", real, err), 1;
+    rc = check_groups(n, n, real);
+    if (stat(real, &st) == 0 && st.st_size > CACHE_MIN && !save_cache(name, n, real, src, sizeof src))
+        fprintf(stderr, "%s: cannot write cache\n", name);
+    yaml_free(n);
+    return rc;
+}
+
 static void print_bash(const char *self) {
     g_self = self;
     each_spec(print_complete);
@@ -558,6 +649,7 @@ int main(int argc, char **argv) {
     if (argc >= 2 && !strcmp(argv[1], "alias")) return alias_cmds(argc - 2, argv + 2);
     if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "emoji")) return emoji_cmd(argv[2]);
     if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
+    if (argc == 3 && !strcmp(argv[1], "edit")) return edit_cmd(argv[2]);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         int i;
         for (i = 2; i < argc; i++) {
@@ -580,6 +672,8 @@ int main(int argc, char **argv) {
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"
             "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
+            "       autocomplete edit NAME         open ~/.config/autocomplete/NAME.yaml in $VISUAL/$EDITOR\n"
+            "                                  (copies the shipped spec there first)\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"

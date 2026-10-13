@@ -1,3 +1,4 @@
+version: '20261013'
 description: The Missing Package Manager for macOS
 flags:
   -v: {description: "Be verbose", show: always}

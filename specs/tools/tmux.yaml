@@ -1,3 +1,4 @@
+version: '20261013'
 description: Terminal multiplexer
 flags:
   -L: {value: any, description: "Socket name"}

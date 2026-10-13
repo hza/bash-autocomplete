@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Command-line JSON processor"
 flags:
   -n: {description: "Use null as the single input value"}

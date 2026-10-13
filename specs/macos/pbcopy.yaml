@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Copy standard input to the pasteboard"
 flags:
   -help: {description: "Show usage"}

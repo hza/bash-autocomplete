@@ -1,3 +1,4 @@
+version: '20261013'
 description: Dump traffic on a network
 flags:
   -i: {value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on", show: always}

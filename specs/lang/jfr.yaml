@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Inspect and edit Java Flight Recorder files (.jfr)"
 commands:
   print:

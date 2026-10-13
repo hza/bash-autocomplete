@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Stream editor: filter and transform text (BSD sed)"
 flags:
   -E: {description: "Extended regex: | + ? () {} without backslashes", show: always}

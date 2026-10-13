@@ -17,6 +17,8 @@
 void init_dirs(void);
 /* Path of the YAML spec for `name` (first dir that has it), or 0. */
 int find_spec(const char *name, char *path, size_t size);
+/* Like find_spec, but skipping ~/.config/autocomplete (the shipped spec). */
+int find_bundled(const char *name, char *path, size_t size);
 /* $XDG_CACHE_HOME/autocomplete/<sub> or ~/.cache/autocomplete/<sub> ("" =
  * the top dir), created; 0 when unset or AUTOCOMPLETE_NOCACHE is set. */
 int cache_dir(const char *sub, char *dir, size_t size);

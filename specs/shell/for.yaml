@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Loop over a list of words (bash keyword)"
 args: any
 snippets:

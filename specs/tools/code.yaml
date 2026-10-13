@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Visual Studio Code"
 flags:
   "-d": {description: "Compare two files with each other", value: file, show: always}

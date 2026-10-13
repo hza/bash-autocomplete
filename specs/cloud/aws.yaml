@@ -1,3 +1,4 @@
+version: '20261013'
 description: AWS command line interface
 flags:
   --debug: {description: "Turn on debug logging"}

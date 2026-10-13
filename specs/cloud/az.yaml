@@ -1,3 +1,4 @@
+version: '20261013'
 description: Azure command line interface
 flags:
   --output: {value: {exec: "printf 'json\\njsonc\\ntable\\ntsv\\nyaml\\nyamlc\\nnone\\n'"}, description: "Output format", show: always}

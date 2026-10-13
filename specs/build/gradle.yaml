@@ -1,3 +1,4 @@
+version: '20261013'
 description: Build automation tool
 flags:
   --help: {description: "Show help"}

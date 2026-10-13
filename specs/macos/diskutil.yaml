@@ -1,3 +1,4 @@
+version: '20261013'
 description: "macOS disk utility management"
 commands:
   list:

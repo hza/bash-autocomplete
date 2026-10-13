@@ -1,3 +1,4 @@
+version: '20261013'
 description: Switch the kubectl namespace
 flags:
   -h: {description: "Show help"}

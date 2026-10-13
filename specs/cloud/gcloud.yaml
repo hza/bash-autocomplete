@@ -1,3 +1,4 @@
+version: '20261013'
 description: Google Cloud command line interface
 flags:
   --project: {value: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}, description: "Google Cloud project ID to use", show: always}

@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Print the pasteboard contents"
 flags:
   -help: {description: "Show usage"}

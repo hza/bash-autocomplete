@@ -1,2 +1,3 @@
+version: '20261013'
 description: "Commands to run when the if tests fail (bash keyword)"
 args: "@command"

@@ -1,3 +1,4 @@
+version: '20261013'
 description: Switch between kubectl contexts
 flags:
   -h: {description: "Show help"}

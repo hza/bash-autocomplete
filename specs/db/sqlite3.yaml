@@ -1,3 +1,4 @@
+version: '20261013'
 description: Command-line interface for SQLite databases
 flags:
   -A: {value: any, description: "Run .archive ARGS and exit"}

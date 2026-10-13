@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Walk a file hierarchy and act on matching files"
 flags:
   -name: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/find.sh\" name"}, description: "Last path component matches a glob, e.g. '*.log'"}

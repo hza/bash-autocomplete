@@ -232,6 +232,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
+| `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`), copying the shipped spec there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits. |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 | `autocomplete alias --list` | List aliases as `NAME -> CMD`. |

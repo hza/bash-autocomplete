@@ -1,3 +1,4 @@
+version: '20261013'
 description: Kill processes by name
 flags:
   -d: {description: "Show what would be done, send no signal"}

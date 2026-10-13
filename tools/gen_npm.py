@@ -95,7 +95,7 @@ for c in cmds:
 # drop commands that are now aliases of another
 alias_of = {a for e in out_cmds.values() for a in e.get("aliases", [])}
 for a in alias_of: out_cmds.pop(a, None)
-new = {"description": old["description"], "flags": old["flags"], "commands": out_cmds}
+new = {"version": old["version"], "description": old["description"], "flags": old["flags"], "commands": out_cmds}
 
 class D(yaml.SafeDumper):
     def ignore_aliases(self, x): return True

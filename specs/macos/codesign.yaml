@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Create, check and display code signatures"
 flags:
   -s: {value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)", show: always}

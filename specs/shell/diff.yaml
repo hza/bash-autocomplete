@@ -1,3 +1,4 @@
+version: '20261013'
 description: "compare files line by line (BSD diff)"
 flags:
   -u: {description: "Unified diff: the format patch and code review tools read", show: always}

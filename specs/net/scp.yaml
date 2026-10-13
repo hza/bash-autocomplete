@@ -1,3 +1,4 @@
+version: '20261013'
 description: Secure copy (remote file copy)
 flags:
   -P: {value: any, description: "Port to connect to on the remote host", show: always}

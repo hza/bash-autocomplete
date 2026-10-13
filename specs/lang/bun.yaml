@@ -1,3 +1,4 @@
+version: '20261013'
 description: "JavaScript runtime, package manager, bundler and test runner"
 flags:
   --watch: {description: restart on file change, show: always}

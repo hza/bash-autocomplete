@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Time how long a command takes"
 flags:
   -l: {description: print rusage details}

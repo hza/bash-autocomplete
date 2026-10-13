@@ -1,3 +1,4 @@
+version: '20261013'
 description: Signal processes by name
 flags:
   -f: {description: "Match against the full command line", show: always}

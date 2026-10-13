@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Recursively search files for a regex (ripgrep), honouring .gitignore"
 flags:
   -e: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "A pattern to search for", repeat: true}

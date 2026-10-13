@@ -1,3 +1,4 @@
+version: '20261013'
 description: "apply a diff file to an original (BSD patch)"
 flags:
   -p: {value: {exec: "printf '%s\\n' 0 1 2 3"}, description: "Strip N leading path components (-p1 drops a/ b/ of git diffs)", show: always}

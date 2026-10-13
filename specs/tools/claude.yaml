@@ -1,3 +1,4 @@
+version: '20261013'
 description: "Claude Code: agentic coding in the terminal"
 flags:
   --add-dir: {value: dir, description: "Additional directories to allow tool access to", repeat: true}
