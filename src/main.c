@@ -387,6 +387,19 @@ static int add_cmds(int argc, char **argv) {
     return rc;
 }
 
+/* Do the two files have the same bytes? */
+static int same_file(const char *a, const char *b) {
+    FILE *fa = fopen(a, "rb"), *fb = fopen(b, "rb");
+    int ca, cb, r = 0;
+    if (fa && fb) {
+        do { ca = getc(fa); cb = getc(fb); } while (ca == cb && ca != EOF);
+        r = ca == cb;
+    }
+    if (fa) fclose(fa);
+    if (fb) fclose(fb);
+    return r;
+}
+
 static int copy_file(const char *src, const char *dst) {
     char buf[8192];
     size_t len;
@@ -436,12 +449,56 @@ static int edit_cmd(const char *name) {
         rc += *q == '\'' ? snprintf(cmd + rc, sizeof cmd - rc, "'\\''") : snprintf(cmd + rc, sizeof cmd - rc, "%c", *q);
     snprintf(cmd + rc, sizeof cmd - rc, "'");
     if (system(cmd) != 0) fprintf(stderr, "edit: '%s' exited with an error\n", ed);
+    /* unchanged copy of the shipped spec: drop it, the shipped one is used */
+    if (lstat(real, &st) == 0 && !S_ISLNK(st.st_mode) && find_bundled(name, src, sizeof src) &&
+        strcmp(src, real) && same_file(real, src)) {
+        if (unlink(real) == 0) printf("no changes; removed %s (the shipped spec is used)\n", real);
+        return 0;
+    }
     if (!(n = yaml_load(real, err, sizeof err))) return fprintf(stderr, "%s: %s\n", real, err), 1;
     rc = check_groups(n, n, real);
     if (stat(real, &st) == 0 && st.st_size > CACHE_MIN && !save_cache(name, n, real, src, sizeof src))
         fprintf(stderr, "%s: cannot write cache\n", name);
     yaml_free(n);
     return rc;
+}
+
+/* `autocomplete updates [NAME]`: your copies in ~/.config/autocomplete
+ * (aliases skipped) whose shipped spec has a newer version; with NAME,
+ * diff -u yours against the shipped one. Exit 1 if any update. */
+static int updates_cmd(const char *name) {
+    char user[PATH_MAX], path[PATH_MAX], bpath[PATH_MAX], *bv, *uv;
+    struct stat st;
+    int i, w = 0, found = 0;
+    if (name) {
+        if (!valid_name(name)) return fprintf(stderr, "%s: not a command name\n", name), 1;
+        if (!find_spec(name, path, sizeof path) || !outdated(name, path, bpath, sizeof bpath, &bv, &uv))
+            return fprintf(stderr, "%s: no update for your copy\n", name), 1;
+        fflush(stdout);
+        execlp("diff", "diff", "-u", path, bpath, (char *)NULL);
+        return perror("diff"), 1;
+    }
+    snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
+    g_list_user = 1;
+    each_spec(list_spec);
+    qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
+    for (i = 0; i < g_nlist; i++)
+        if ((int)strlen(g_list[i]) > w) w = (int)strlen(g_list[i]);
+    for (i = 0; i < g_nlist; i++) {
+        if (!find_spec(g_list[i], path, sizeof path) || lstat(path, &st) || S_ISLNK(st.st_mode)) continue;
+        if (find_bundled(g_list[i], bpath, sizeof bpath) && same_file(path, bpath)) {
+            printf("%-*s  same as shipped, not needed: rm %s\n", w, g_list[i], path);
+            found |= 1;
+            continue;
+        }
+        if (!outdated(g_list[i], path, bpath, sizeof bpath, &bv, &uv)) continue;
+        printf("%-*s  yours %s, shipped %s\n", w, g_list[i], *uv ? uv : "(no version)", bv);
+        found |= 2;
+        free(bv);
+        free(uv);
+    }
+    if (found & 2) printf("see changes: autocomplete updates NAME\n");
+    return found != 0;
 }
 
 static void print_bash(const char *self) {
@@ -655,6 +712,7 @@ int main(int argc, char **argv) {
     if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "emoji")) return emoji_cmd(argv[2]);
     if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
     if (argc == 3 && !strcmp(argv[1], "edit")) return edit_cmd(argv[2]);
+    if (argc <= 3 && argc >= 2 && !strcmp(argv[1], "updates")) return updates_cmd(argv[2]);
     if (argc >= 2 && !strcmp(argv[1], "list")) {
         int i;
         for (i = 2; i < argc; i++) {
@@ -681,6 +739,8 @@ int main(int argc, char **argv) {
             "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
             "       autocomplete edit NAME         open ~/.config/autocomplete/NAME.yaml in $VISUAL/$EDITOR\n"
             "                                  (copies the shipped spec there first)\n"
+            "       autocomplete updates [NAME]    your edited specs with a newer shipped version\n"
+            "                                  (NAME: diff -u yours shipped)\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"

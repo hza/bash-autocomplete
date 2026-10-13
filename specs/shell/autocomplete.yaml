@@ -26,6 +26,9 @@ commands:
   edit:
     description: "Open your copy of a spec in $VISUAL/$EDITOR (copies the shipped one first)"
     args: {exec: "autocomplete list --tsv"}
+  updates:
+    description: "Your edited specs with a newer shipped version; NAME: diff yours against it"
+    args: {exec: "autocomplete updates | awk '/, shipped /{print $1}'"}
   emoji:
     description: "List snippet mark names; NAME -> emoji, emoji -> NAME"
     args: {exec: "autocomplete emoji | awk '{print $2 \"\\t\" $1}'"}
