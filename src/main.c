@@ -54,7 +54,7 @@ static int g_nlist;
 static void add_name(const char *name) { if (g_nlist < 2048) g_list[g_nlist++] = (char *)name; }
 
 /* `list --user`: only specs resolving to a file under ~/.config/autocomplete */
-static int g_list_user, g_list_paths;
+static int g_list_user, g_list_paths, g_list_tsv;
 static void list_spec(const char *name) {
     char path[PATH_MAX], dir[PATH_MAX];
     if (g_list_user) {
@@ -102,6 +102,11 @@ static void print_list(void) {
         ynode *n = load_spec(g_list[i]);
         const char *d = n ? spec_desc(n) : NULL;
         char bpath[PATH_MAX], *bv, *uv, user[PATH_MAX], upd[128] = "";
+        if (g_list_tsv) {
+            printf("%s\t%s\n", g_list[i], d ? d : "");
+            if (n) yaml_free(n);
+            continue;
+        }
         snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
         if (find_spec(g_list[i], path, sizeof path) && !strncmp(path, user, strlen(user)) &&
             outdated(g_list[i], path, bpath, sizeof bpath, &bv, &uv)) {
@@ -655,8 +660,9 @@ int main(int argc, char **argv) {
         for (i = 2; i < argc; i++) {
             if (!strcmp(argv[i], "--paths")) g_list_paths = 1;
             else if (!strcmp(argv[i], "--user")) g_list_user = 1;
+            else if (!strcmp(argv[i], "--tsv")) g_list_tsv = 1;
             else {
-                fprintf(stderr, "usage: autocomplete list [--user] [--paths]\n");
+                fprintf(stderr, "usage: autocomplete list [--user] [--paths|--tsv]\n");
                 return 2;
             }
         }
@@ -666,8 +672,9 @@ int main(int argc, char **argv) {
     }
     fprintf(stderr,
             "usage: autocomplete bash              print bash init script\n"
-            "       autocomplete list [--user] [--paths]  list specs with descriptions (--user: only\n"
-            "                                  ~/.config/autocomplete; --paths: with the spec file)\n"
+            "       autocomplete list [--user] [--paths|--tsv]  list specs with descriptions (--user: only\n"
+            "                                  ~/.config/autocomplete; --paths: with the spec file;\n"
+            "                                  --tsv: NAME<TAB>DESCRIPTION lines for scripts)\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"

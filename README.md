@@ -229,6 +229,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete list` | List commands that have a spec, one per line with its description. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `add`, aliases, hand-written); combines with `--paths`. |
+| `autocomplete list --tsv` | `NAME<TAB>DESCRIPTION` lines (no padding), for scripts and `exec` completers. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
