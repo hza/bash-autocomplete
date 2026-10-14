@@ -68,7 +68,7 @@ When a short and a long flag with the same description are both listed, only the
 
 Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it; give it a `value` to complete that value too (mvn's `-Dspring-boot.run.profiles=` lists `application-<profile>.*` files). Inside an open quote (`-Dx='-Xmx1g -X`) the last space-separated word is completed, so a quoted value can hold several. Quote such keys in YAML.
 
-On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, only the short ones are listed and the long ones are folded into one last entry, `-📌 --  -- 256 long options: type -- to list`. Type `--<TAB>` to list them.
+On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, and the whole list would not fit the screen, only the short ones are listed and the long ones are folded into one entry, `--  -- 256 options: abstract-unix-socket alt-svc …` (as many names as fit). Type `--<TAB>` to list them.
 
 When the flag list is taller than the terminal, flags are grouped by their next letter: `--content-disposition` and `--content-on-error` fall into one `--c  -- connect-timeout content-disposition content-on-error …` entry. Type `--c<TAB>` (no space is added) to list that group; a big group is split again by the following letter. If all flags in a group share a longer prefix, the entry is that prefix: `--no-  -- no-🧩`. In the name list, names sharing a first word are shown once: `sasl-authzid sasl-ir` → `sasl-🧩`. The smallest groups are then shown in full again while the list still fits, so `node --<TAB>` lists its two `--no-` flags directly.
 

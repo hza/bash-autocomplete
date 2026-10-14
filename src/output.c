@@ -147,7 +147,7 @@ static void collapse_vars(void) {
  *   letters, then other symbols), description "(1) desc (2) desc"; long
  *   ones into "<word>📌" ("N more: names" when more than 5);
  * - on a bare "-", the long "--x" flags (unless "show: always") when there
- *   are 15 or more, into "-📌 --" ("N long options: type -- to list"), so
+ *   are 15 or more, into a plain "--" ("N options: name name …"), so
  *   the short flags stand out. Collapsed long flags go there too.
  * Nothing is folded when nothing else would be listed. "📌" sorts after
  * ASCII, so they are listed last. Never inserted: other candidates remain
@@ -222,19 +222,19 @@ static void emit_short_coll(const cand *coll, int k, const char *grp, int cl, in
 }
 
 /* "show: collapsed" hides short flags only; long ones are listed (and
- * grouped by letter) as usual, except in the "-📌" long-options fold. */
+ * grouped by letter) as usual, except in the "--" long-options fold. */
 static int is_coll(const cand *c) { return c->show == SHOW_COLLAPSED && c->text[1] != '-'; }
 
 static void collapse_flags(void) {
     static cand coll[MAXCANDS];
-    char desc[1024], text[256];
+    char desc[1024], names[1024] = "";
     const char *kind = NULL;
     int i, j, k = 0, cl, nlong = 0, ncoll = 0, longs = 0;
     if (g_cur[0] != '-') return;
     if (!strcmp(g_cur, "-")) {
         for (i = 0; i < g_ncands; i++)
             if (is_long_fold(&g_cands[i], 1)) longs++;
-        longs = longs >= 15;
+        longs = longs >= 15 && g_ncands > term_rows() - 2; /* all fit: list them */
     }
     for (i = 0; i < g_ncands; i++) {
         if (is_long_fold(&g_cands[i], longs)) nlong++;
@@ -245,7 +245,11 @@ static void collapse_flags(void) {
     if (!nlong && !ncoll) return;
     if (nlong + ncoll == g_ncands) return;
     for (i = j = 0; i < g_ncands; i++) {
-        if (is_long_fold(&g_cands[i], longs)) continue;
+        if (is_long_fold(&g_cands[i], longs)) { /* "--  -- 17 options: data form …" */
+            size_t n = strlen(names);
+            snprintf(names + n, sizeof names - n, " %s", g_cands[i].text + 2);
+            continue;
+        }
         if (is_coll(&g_cands[i])) coll[k++] = g_cands[i];
         else g_cands[j++] = g_cands[i];
     }
@@ -254,12 +258,12 @@ static void collapse_flags(void) {
     g_kind = kind;
     g_show = SHOW_ALWAYS;
     g_noesc = 1; /* never inserted: show "-📌 Z#N", not "Z\\#N" */
+    int w = 12;
     { /* name column: widest remaining name (see flush) */
-        int w = 12;
         for (i = 0; i < g_ncands; i++)
             if (dwidth(g_cands[i].text) > w) w = dwidth(g_cands[i].text);
-        for (cl = 0; cl < 4; cl++) emit_short_coll(coll, k, NULL, cl, term_width() - w - 8);
     }
+    for (cl = 0; cl < 4; cl++) emit_short_coll(coll, k, NULL, cl, term_width() - w - 8);
     for (i = 0; i < k; i++) { /* groups, each once */
         const char *g = coll[i].group;
         if (!g) continue;
@@ -268,9 +272,12 @@ static void collapse_flags(void) {
         emit_short_coll(coll, k, g, 0, 0);
     }
     if (nlong) {
-        snprintf(desc, sizeof desc, "%d long options: type -- to list", nlong);
-        snprintf(text, sizeof text, "%s📌 --", g_cur);
-        emit_desc(text, 0, desc);
+        /* plain "--": inserting it is what the user wants next anyway */
+        int max = term_width() - w - 8;
+        snprintf(desc, sizeof desc, "%d options:%s", nlong, names);
+        if (max > 10 && (int)strlen(desc) > max) strcpy(desc + max - 3, "…");
+        g_noesc = 0;
+        emit_desc("--", 0, desc);
     }
     g_show = SHOW_DEFAULT;
     g_noesc = 0;

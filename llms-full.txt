@@ -234,6 +234,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | Command | Description |
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
+| `autocomplete bash --man` | Same, plus every command in `$PATH` that has a man page and no completion yet: its flags are read from the man page on the first TAB and cached (see [Cache](docs/cache.md#man-page-specs)). |
 | `autocomplete list` | List commands that have a spec, one per line with its description. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `add`, aliases, hand-written); combines with `--paths`. |
@@ -422,7 +423,7 @@ When a short and a long flag with the same description are both listed, only the
 
 Flags on the top-level spec are offered after any subcommand too. A flag name ending in `=` (e.g. mvn's `'-Dtest=': {}`) is completed without a trailing space, so you can type the value straight after it; give it a `value` to complete that value too (mvn's `-Dspring-boot.run.profiles=` lists `application-<profile>.*` files). Inside an open quote (`-Dx='-Xmx1g -X`) the last space-separated word is completed, so a quoted value can hold several. Quote such keys in YAML.
 
-On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, only the short ones are listed and the long ones are folded into one last entry, `-📌 --  -- 256 long options: type -- to list`. Type `--<TAB>` to list them.
+On a bare `-<TAB>`, if the command has short flags and 15 or more long ones, and the whole list would not fit the screen, only the short ones are listed and the long ones are folded into one entry, `--  -- 256 options: abstract-unix-socket alt-svc …` (as many names as fit). Type `--<TAB>` to list them.
 
 When the flag list is taller than the terminal, flags are grouped by their next letter: `--content-disposition` and `--content-on-error` fall into one `--c  -- connect-timeout content-disposition content-on-error …` entry. Type `--c<TAB>` (no space is added) to list that group; a big group is split again by the following letter. If all flags in a group share a longer prefix, the entry is that prefix: `--no-  -- no-🧩`. In the name list, names sharing a first word are shown once: `sasl-authzid sasl-ir` → `sasl-🧩`. The smallest groups are then shown in full again while the list still fits, so `node --<TAB>` lists its two `--no-` flags directly.
 
@@ -690,7 +691,12 @@ See also [Cache](cache.md): `AUTOCOMPLETE_NOCACHE=1` rules out a stale cache.
 # How it works
 
 `autocomplete bash` prints one `complete -C` line that registers `autocomplete _complete`
-for every command that has a spec; no shell function is defined. When you press TAB, bash
+for every command that has a spec; no shell function is defined. `autocomplete bash --man`
+also registers every `$PATH` command with a section 1 or 8 man page, skipping commands that
+already have a completion (bash-completion, Homebrew scripts loaded earlier) and those with
+a spec. For such a command the first TAB parses its man page (`man -P cat`, never running
+the command itself) into a spec and caches it; a page without options leaves plain filename
+completion. When you press TAB, bash
 runs `autocomplete _complete` with the line and cursor position in `COMP_LINE` and
 `COMP_POINT`. The binary splits the line into words and walks the spec. It
 then prints the matching suggestions, already escaped for the shell and trimmed the way
@@ -739,6 +745,14 @@ The cache starts to pay off only for very large specs, hence the 100 KB threshol
 | ~1 MB | ~17 ms | ~28 ms |
 
 So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
+
+## Man page specs
+
+With `eval "$(autocomplete bash --man)"`, commands without a spec get one generated from
+their man page on the first TAB (about 0.15 s), stored in `~/.cache/autocomplete/man/<command>.yaml`.
+A page that lists no options leaves an empty file, so it isn't parsed again. It is
+regenerated when the command's executable is newer. To fix up a generated spec, copy it to
+`~/.config/autocomplete/` (or run `autocomplete add --from man <command>`): specs there win.
 
 ## exec output
 
