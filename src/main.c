@@ -165,7 +165,7 @@ static int valid_name(const char *s) {
 
 /* After specs were added or removed: the shell must re-register names. */
 static void reload_hint(void) {
-    printf("\nRun 'eval \"$(autocomplete bash)\"' (or open a new shell) to use it now.\n\n");
+    printf("\nTo use it now, run (or open a new shell):\n\n    eval \"$(autocomplete bash)\"\n\n");
 }
 
 /* `autocomplete alias --rm NAME...`: remove alias symlinks (never real specs). */
@@ -795,6 +795,11 @@ int main(int argc, char **argv) {
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"
             "       autocomplete emoji [NAME|EMOJI]   snippet mark names (NAME -> emoji, emoji -> NAME)\n"
-            "       autocomplete _complete LINE [WORDBREAKS]\n");
+            "       autocomplete _complete LINE [WORDBREAKS]\n"
+            "\n"
+            "Manual install: add this line to ~/.bash_profile (or ~/.bashrc):\n"
+            "\n"
+            "    eval \"$(autocomplete bash)\"\n"
+            "\n");
     return 2;
 }
