@@ -17,6 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include "util.h"
 
 #define MAXLINES 20000
 #define MAXOPTS 8
@@ -89,15 +93,46 @@ static int parse_entry(const char *s, opt *opts, const char **desc) {
 /* SYNOPSIS arguments: "[-O fmt | -o fmt] [-G gid[,gid...]]" -> O:fmt ... */
 /* help: the "usage:" line and its indented continuation lines instead, and
  * options without an argument too ("[--append]"; not "-abc" bundles). */
-static int synopsis_args(char **lines, int nl, opt *syn, int help) {
-    int i, n = 0, in = 0;
+/* Command word of a SYNOPSIS line at the base indent ("     md5sum [-b]"). */
+static size_t syn_word(const char *line, size_t ind, const char **w) {
+    size_t n = 0;
+    if (strspn(line, " ") != ind) return 0;
+    *w = line + ind;
+    while ((*w)[n] && (*w)[n] != ' ') n++;
+    return n;
+}
+
+/* Shared page (md5, sha256, md5sum, shasum): the SYNOPSIS lines of several
+ * commands. Use only those of `cmd`, none if it has no line of its own. */
+static int syn_skip(char **lines, int from, int nl, const char *cmd, size_t ind, int at) {
+    const char *w, *first = NULL;
+    size_t n, fl = 0;
+    int i, many = 0, own = -1, mine = 0;
+    for (i = from; i < nl && !(lines[i][0] && lines[i][0] != ' '); i++) {
+        if (!(n = syn_word(lines[i], ind, &w))) continue;
+        if (n == strlen(cmd) && !strncmp(w, cmd, n)) mine = 1;
+        if (!first) { first = w; fl = n; }
+        else if (n != fl || strncmp(w, first, n)) many = 1;
+        if (i <= at) own = n == strlen(cmd) && !strncmp(w, cmd, n);
+    }
+    return many && (!mine || own == 0);
+}
+
+static int synopsis_args(char **lines, int nl, opt *syn, int help, const char *cmd) {
+    int i, n = 0, in = 0, from = 0;
+    size_t ind = 0;
     for (i = 0; i < nl && n < MAXSYN; i++) {
         const char *p;
         if (!in && (help ? !strncasecmp(lines[i], "usage:", 6) : !strncmp(lines[i], "SYNOPSIS", 8))) {
             in = 1;
-            if (!help) continue;
+            if (!help) {
+                for (from = i + 1; from < nl && !lines[from][0]; from++) ;
+                ind = from < nl ? strspn(lines[from], " ") : 0;
+                continue;
+            }
         } else if (!in) continue;
         else if (lines[i][0] && lines[i][0] != ' ') break;
+        if (!help && syn_skip(lines, from, nl, cmd, ind, i)) continue;
         for (p = lines[i]; (p = strchr(p, '-')) && n < MAXSYN; p++) {
             const char *q = p;
             if (p == lines[i] || !(p[-1] == '[' || (p[-1] == ' ' && p - 1 > lines[i] && p[-2] == '|'))) continue;
@@ -262,6 +297,14 @@ static void help_intro(char **lines, int nl, char *out, size_t size) {
     }
 }
 
+/* Text after the NAME/whatis separator: " - ", or " – " (U+2013, what man
+ * prints in a UTF-8 terminal locale). NULL if none. */
+static const char *name_sep(const char *line) {
+    const char *a = strstr(line, " - "), *b = strstr(line, " \xe2\x80\x93 ");
+    if (a && (!b || a < b)) return a + 3;
+    return b ? b + 5 : NULL;
+}
+
 /* root's description: desc, else the whatis line, else "" (always present,
  * first key). */
 static void set_desc(ynode *root, const char *cmd, const char *desc) {
@@ -277,8 +320,8 @@ static void set_desc(ynode *root, const char *cmd, const char *desc) {
             while (fgets(line, sizeof line, f)) {
                 line[strcspn(line, "\r\n")] = 0;
                 /* "jfr(1)  - ..." / "ls(1), gls(1) - ..."; first exact name */
-                if (strncmp(line, cmd, strlen(cmd)) || line[strlen(cmd)] != '(' || !(p = strstr(line, " - "))) continue;
-                sentence(p + 3, buf, sizeof buf);
+                if (strncmp(line, cmd, strlen(cmd)) || line[strlen(cmd)] != '(' || !(p = name_sep(line))) continue;
+                sentence(p, buf, sizeof buf);
                 break;
             }
             pclose(f);
@@ -328,13 +371,13 @@ static ynode *text_spec(const char *shell, const char *cmd, int help) {
 
     root = yaml_new(NULL, Y_OBJ, NULL, NULL);
     for (i = 0; i < nl && !help; i++)
-        if (!strcmp(lines[i], "NAME") && i + 1 < nl && (p = strstr(lines[i + 1], " - "))) {
-            sentence(p + 3, desc, sizeof desc);
+        if (!strcmp(lines[i], "NAME") && i + 1 < nl && (p = name_sep(lines[i + 1]))) {
+            sentence(p, desc, sizeof desc);
             yaml_new(root, Y_STR, "description", desc);
             break;
         }
     flags = yaml_new(root, Y_OBJ, "flags", NULL);
-    nsyn = synopsis_args(lines, nl, syn, help);
+    nsyn = synopsis_args(lines, nl, syn, help, cmd);
 
     for (i = 0; i < nl && ind >= 0; i++) {
         const char *d;
@@ -434,4 +477,78 @@ ynode *cobra_spec(const char *cmd) {
         set_desc(root, cmd, desc);
     }
     return root;
+}
+
+/* Section 1/8 page names in `dir` (a manpath entry) into names[]. */
+static void man_dir_names(const char *dir, char **names, int *nn, int max) {
+    static const char *secs[] = {"man1", "man8"};
+    char sub[1024];
+    size_t s;
+    for (s = 0; s < sizeof secs / sizeof *secs; s++) {
+        DIR *d;
+        struct dirent *e;
+        snprintf(sub, sizeof sub, "%s/%s", dir, secs[s]);
+        if (!(d = opendir(sub))) continue;
+        while ((e = readdir(d)) && *nn < max) {
+            char *dot, *gz = NULL;
+            size_t l = strlen(e->d_name);
+            if (l > 3 && !strcmp(e->d_name + l - 3, ".gz")) gz = e->d_name + l - 3;
+            if (gz) *gz = 0;
+            /* "python3.11.1", "openssl.1ssl": cut the ".<section>" suffix */
+            if (!(dot = strrchr(e->d_name, '.')) || !isdigit((unsigned char)dot[1])) continue;
+            *dot = 0;
+            if (plain_name(e->d_name) && e->d_name[0] != '.') names[(*nn)++] = strdup(e->d_name);
+        }
+        closedir(d);
+    }
+}
+
+/* Names of the executables in the $PATH dirs, sorted. */
+static int path_names(char **names, int max) {
+    char *path = getenv("PATH"), *copy, *tok, p[1024];
+    struct dirent *e;
+    struct stat st;
+    int n = 0;
+    if (!path) return 0;
+    copy = strdup(path);
+    for (tok = strtok(copy, ":"); tok; tok = strtok(NULL, ":")) {
+        DIR *d = opendir(*tok ? tok : ".");
+        if (!d) continue;
+        while ((e = readdir(d)) && n < max) {
+            if (e->d_name[0] == '.' || !plain_name(e->d_name)) continue;
+            /* d_type saves a stat for plain files; links and unknown need one */
+            snprintf(p, sizeof p, "%s/%s", tok, e->d_name);
+            if (e->d_type == DT_DIR || (e->d_type != DT_REG && (stat(p, &st) || !S_ISREG(st.st_mode))))
+                continue;
+            if (access(p, X_OK) == 0) names[n++] = strdup(e->d_name);
+        }
+        closedir(d);
+    }
+    free(copy);
+    qsort(names, n, sizeof *names, cmp_str);
+    return n;
+}
+
+void each_man_command(void (*fn)(const char *)) {
+    static char *names[16384], *exes[16384];
+    char buf[8192] = "", *tok;
+    int nn = 0, ne, i, j = 0;
+    FILE *f = popen("manpath 2>/dev/null", "r");
+    if (f) {
+        if (!fgets(buf, sizeof buf, f)) buf[0] = 0;
+        pclose(f);
+    }
+    buf[strcspn(buf, "\n")] = 0;
+    for (tok = strtok(buf, ":"); tok; tok = strtok(NULL, ":"))
+        man_dir_names(tok, names, &nn, 16384);
+    qsort(names, nn, sizeof *names, cmp_str);
+    ne = path_names(exes, 16384);
+    for (i = 0; i < nn; i++) { /* sorted merge: man page names that are executables */
+        int c = 1;
+        if (i && !strcmp(names[i], names[i - 1])) continue;
+        while (j < ne && (c = strcmp(exes[j], names[i])) < 0) j++;
+        if (!c) fn(names[i]);
+    }
+    for (i = 0; i < nn; i++) free(names[i]);
+    for (i = 0; i < ne; i++) free(exes[i]);
 }

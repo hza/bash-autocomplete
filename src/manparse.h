@@ -13,5 +13,8 @@ ynode *help_spec(const char *cmd);
 /* {description, bridge: cobra} when `CMD __complete ""` answers like a
  * cobra program (last line ":<directive>"), else NULL. */
 ynode *cobra_spec(const char *cmd);
+/* Call fn for each command with a section 1/8 man page (any `manpath` dir)
+ * that is an executable in $PATH, sorted, unique. */
+void each_man_command(void (*fn)(const char *));
 
 #endif

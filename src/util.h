@@ -1,6 +1,7 @@
 /* Small helpers: sorting, mkdir -p, terminal size and display width. */
 #ifndef AUTOCOMPLETE_UTIL_H
 #define AUTOCOMPLETE_UTIL_H
+#include <stddef.h>
 
 /* qsort comparator for char * arrays. */
 int cmp_str(const void *a, const void *b);
@@ -11,5 +12,6 @@ int term_width(void);
 int term_rows(void);
 /* Terminal columns of a UTF-8 string (4-byte sequences = 2). */
 int dwidth(const char *s);
-
+/* Path of the executable `name` in $PATH into out (may be NULL); 0 if none. */
+int find_exe(const char *name, char *out, size_t size);
 #endif

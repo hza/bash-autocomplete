@@ -32,9 +32,10 @@
 
 static int g_ncomplete;
 static const char *g_self;
-static void print_complete(const char *name) {
+/* `complete … -C '<self> _complete'` without the names */
+static void print_complete_cmd(void) {
     const char *p;
-    if (!g_ncomplete++) {
+    {
         /* -C string is eval'd by bash: backslash-escape the path inside it,
            then single-quote the whole string for the `complete` line */
         /* $(compgen -v): the -C string runs in a subshell of the user's shell,
@@ -47,6 +48,9 @@ static void print_complete(const char *name) {
         }
         fputs(" _complete'", stdout);
     }
+}
+static void print_complete(const char *name) {
+    if (!g_ncomplete++) print_complete_cmd();
     printf(" %s", name);
 }
 static char *g_list[2048];
@@ -501,10 +505,50 @@ static int updates_cmd(const char *name) {
     return found != 0;
 }
 
-static void print_bash(const char *self) {
+/* spec names and names with a completion already (`complete -p` lines on
+   stdin, name = last word): left out of the man list */
+static char *g_skip[8192];
+static int g_nskip;
+static void add_skip(const char *name) {
+    if (g_nskip < 8192) g_skip[g_nskip++] = strdup(name);
+}
+static void print_man_name(const char *name) {
+    if (bsearch(&name, g_skip, g_nskip, sizeof *g_skip, cmp_str)) return;
+    printf("%s\n", name);
+}
+
+/* `_man_names`: commands for `bash --man`, see print_bash. */
+static int man_names(void) {
+    char line[4096];
+    while (fgets(line, sizeof line, stdin)) {
+        char *e = line + strcspn(line, "\n"), *w;
+        *e = 0;
+        if ((w = strrchr(line, ' '))) add_skip(w + 1);
+    }
+    each_spec(add_skip);
+    qsort(g_skip, g_nskip, sizeof *g_skip, cmp_str);
+    each_man_command(print_man_name);
+    return 0;
+}
+
+/* `bash --man`: also every $PATH command with a man page, except ones that
+ * already have a completion (bash-completion, brew, ...): their spec is
+ * generated from the man page on the first TAB (load_man_spec). The list is
+ * made at shell start by `_man_names`, which reads `complete -p`. */
+static void print_bash(const char *self, int man) {
+    const char *p;
     g_self = self;
     each_spec(print_complete);
     if (g_ncomplete) putchar('\n');
+    if (!man) return;
+    fputs("_ac_man=$(complete -p | ", stdout);
+    for (p = self; *p; p++) {
+        if (!isalnum((unsigned char)*p) && !strchr("/._-+,", *p)) putchar('\\');
+        putchar(*p);
+    }
+    fputs(" _man_names)\n[ -n \"$_ac_man\" ] && ", stdout);
+    print_complete_cmd();
+    fputs(" $_ac_man\nunset _ac_man\n", stdout);
 }
 
 /* `${NAME<op>` cheat-sheet (bash 3.2 forms only). `op`: what is typed after
@@ -684,13 +728,19 @@ static void dump(const ynode *n, int ind) {
 
 int main(int argc, char **argv) {
     init_dirs();
-    if (argc >= 2 && !strcmp(argv[1], "bash")) {
+    if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "bash")) {
         char abs[PATH_MAX];
+        int man = argc == 3 && !strcmp(argv[2], "--man");
+        if (argc == 3 && !man) {
+            fprintf(stderr, "bash: unknown option %s (--man)\n", argv[2]);
+            return 2;
+        }
         /* bare name -> found via PATH at completion time; otherwise pin it */
-        print_bash(strchr(argv[0], '/') && realpath(argv[0], abs) ? abs : argv[0]);
+        print_bash(strchr(argv[0], '/') && realpath(argv[0], abs) ? abs : argv[0], man);
         return 0;
     }
     if (argc >= 2 && !strcmp(argv[1], "_complete")) return complete_env();
+    if (argc == 2 && !strcmp(argv[1], "_man_names")) return man_names();
     if (argc >= 3 && !strcmp(argv[1], "check")) {
         char err[256];
         ynode *n = yaml_load(argv[2], err, sizeof err);

@@ -11,6 +11,7 @@
 #include <mach-o/dyld.h>
 #endif
 #include "spec.h"
+#include "manparse.h"
 #include "util.h"
 
 #define MAXDIRS 16
@@ -163,6 +164,26 @@ ynode *load_spec(const char *name) {
     if (!n && getenv("AUTOCOMPLETE_DEBUG")) fprintf(stderr, "autocomplete: %s: %s\n", path, err);
     if (n && big && !save_cache(name, n, path, bin, sizeof bin) && getenv("AUTOCOMPLETE_DEBUG"))
         fprintf(stderr, "autocomplete: cannot write cache for %s\n", name);
+    return n;
+}
+
+/* Spec generated from `name`'s man page, kept in <cache dir>/man/NAME.yaml
+ * (empty when the page lists no options); regenerated when the executable is
+ * newer. NULL: no man spec. */
+ynode *load_man_spec(const char *name) {
+    char dir[PATH_MAX], yml[PATH_MAX], exe[PATH_MAX];
+    struct stat es, cs;
+    ynode *n;
+    FILE *f;
+    if (!find_exe(name, exe, sizeof exe) || stat(exe, &es) || !cache_dir("man", dir, sizeof dir)) return NULL;
+    snprintf(yml, sizeof yml, "%s/%s.yaml", dir, name);
+    if (stat(yml, &cs) == 0 && MTIME(cs).tv_sec >= MTIME(es).tv_sec)
+        return cs.st_size ? yaml_load(yml, NULL, 0) : NULL;
+    n = man_spec(name);
+    if ((f = fopen(yml, "w"))) {
+        if (n) yaml_write(f, n);
+        fclose(f);
+    }
     return n;
 }
 

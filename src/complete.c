@@ -525,7 +525,7 @@ int do_complete(const char *line, const char *wbreaks) {
     slash = strrchr(w[0], '/');
     cname = slash ? slash + 1 : w[0];
     snprintf(cpath, sizeof cpath, "%s", cname);
-    if (!(root = c = load_spec(cname))) {
+    if (!(root = c = load_spec(cname)) && !(root = c = load_man_spec(cname))) {
         if (n > 1) { g_kind = "file"; complete_paths(0, NULL); } /* sudo cmd-without-spec */
         return 0;
     }

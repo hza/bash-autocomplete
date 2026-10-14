@@ -226,6 +226,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | Command | Description |
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
+| `autocomplete bash --man` | Same, plus every command in `$PATH` that has a man page and no completion yet: its flags are read from the man page on the first TAB and cached (see [Cache](docs/cache.md#man-page-specs)). |
 | `autocomplete list` | List commands that have a spec, one per line with its description. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `add`, aliases, hand-written); combines with `--paths`. |

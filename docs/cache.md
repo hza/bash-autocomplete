@@ -27,6 +27,14 @@ The cache starts to pay off only for very large specs, hence the 100 KB threshol
 
 So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
 
+## Man page specs
+
+With `eval "$(autocomplete bash --man)"`, commands without a spec get one generated from
+their man page on the first TAB (about 0.15 s), stored in `~/.cache/autocomplete/man/<command>.yaml`.
+A page that lists no options leaves an empty file, so it isn't parsed again. It is
+regenerated when the command's executable is newer. To fix up a generated spec, copy it to
+`~/.config/autocomplete/` (or run `autocomplete add --from man <command>`): specs there win.
+
 ## exec output
 
 An `exec` value with `cache: SECONDS` keeps its output in `~/.cache/autocomplete/exec/` and

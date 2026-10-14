@@ -1,5 +1,7 @@
 /* Small helpers: sorting, mkdir -p, terminal size and display width. */
 #include <fcntl.h>
+#include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -52,4 +54,19 @@ int dwidth(const char *s) {
         if ((c & 0xC0) != 0x80) w += c >= 0xF0 ? 2 : 1;
     }
     return w;
+}
+
+int find_exe(const char *name, char *out, size_t size) {
+    char *path = getenv("PATH"), *copy, *tok, p[PATH_MAX];
+    struct stat st;
+    int found = 0;
+    if (!path) return 0;
+    copy = strdup(path);
+    for (tok = strtok(copy, ":"); tok && !found; tok = strtok(NULL, ":")) {
+        snprintf(p, sizeof p, "%s/%s", *tok ? tok : ".", name);
+        found = stat(p, &st) == 0 && S_ISREG(st.st_mode) && access(p, X_OK) == 0;
+    }
+    free(copy);
+    if (found && out) snprintf(out, size, "%s", p);
+    return found;
 }

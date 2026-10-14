@@ -1,7 +1,12 @@
 # How it works
 
 `autocomplete bash` prints one `complete -C` line that registers `autocomplete _complete`
-for every command that has a spec; no shell function is defined. When you press TAB, bash
+for every command that has a spec; no shell function is defined. `autocomplete bash --man`
+also registers every `$PATH` command with a section 1 or 8 man page, skipping commands that
+already have a completion (bash-completion, Homebrew scripts loaded earlier) and those with
+a spec. For such a command the first TAB parses its man page (`man -P cat`, never running
+the command itself) into a spec and caches it; a page without options leaves plain filename
+completion. When you press TAB, bash
 runs `autocomplete _complete` with the line and cursor position in `COMP_LINE` and
 `COMP_POINT`. The binary splits the line into words and walks the spec. It
 then prints the matching suggestions, already escaped for the shell and trimmed the way
