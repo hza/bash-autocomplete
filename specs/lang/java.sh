@@ -1,9 +1,9 @@
 #!/bin/sh
 # java source-file launch: *.java files declaring main(), as cwd-relative paths.
 # `classes`: their class names under src/{main,test}/java (mvn -Dexec.mainClass=).
-# Cached per cwd in ~/.cache/autocomplete/java-mains, reused while no *.java file or
+# Cached per cwd in ~/.cache/autocomplete/commands/java, reused while no *.java file or
 # directory in the tree is newer than it (dir mtime catches adds/deletes/renames), ≤ 1 h.
-dir=${XDG_CACHE_HOME:-$HOME/.cache}/autocomplete/java-mains
+dir=${XDG_CACHE_HOME:-$HOME/.cache}/autocomplete/commands/java
 c=$dir/$(pwd | cksum | cut -d' ' -f1)
 walk() {
     find . \( -name target -o -name build -o -name out -o -name node_modules -o -name '.*' ! -name . \) -prune \

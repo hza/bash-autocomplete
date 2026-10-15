@@ -32,7 +32,7 @@ if the command reads `$AUTOCOMPLETE_CUR`). Delete the directory to refresh right
 ## mvn test names
 
 `mvn test -Dtest=<TAB>` (and `-Dit.test=`) scans `src/test` for test classes and methods, which
-can take seconds in big projects. The results are saved in `~/.cache/autocomplete/mvn-tests/` (per
+can take seconds in big projects. The results are saved in `~/.cache/autocomplete/commands/mvn/` (per
 project directory) and reused until a file under any `src/test` directory changes (added,
 edited or deleted), or for 1 hour at most. A test module added since the last scan only shows up
 after that hour; delete the directory to rescan right away. `AUTOCOMPLETE_NOCACHE` doesn't affect
@@ -42,6 +42,6 @@ this cache.
 
 `java <TAB>` lists the `*.java` files under the current directory that declare `main(`;
 `mvn exec:java -Dexec.mainClass=<TAB>` offers the same files under `src/main/java` or `src/test/java`
-as class names (`com.example.App`). The list is saved in `~/.cache/autocomplete/java-mains/` (per project directory) and reused until a `.java`
+as class names (`com.example.App`). The list is saved in `~/.cache/autocomplete/commands/java/` (per project directory) and reused until a `.java`
 file is edited, added, deleted or renamed, or for 1 hour at most. Delete the directory to rescan
 right away. `AUTOCOMPLETE_NOCACHE` doesn't affect this cache.

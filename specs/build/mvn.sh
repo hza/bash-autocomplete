@@ -1,12 +1,12 @@
 #!/bin/sh
 # mvn -Dtest= / -Dit.test= values: sh mvn.sh unit|it
 # CLASS, CLASS#method; comma lists complete the last item.
-# Cached per project dir in ~/.cache/autocomplete/mvn-tests: the test file list and each listing.
+# Cached per project dir in ~/.cache/autocomplete/commands/mvn: the test file list and each listing.
 # A cache file is reused while nothing under the */src/test dirs is newer than it (≤ 1 h).
 cur=$AUTOCOMPLETE_CUR
 case $cur in *,*) pre=${cur%,*},; w=${cur##*,} ;; *) pre=; w=$cur ;; esac
 ann='^[[:space:]]*@(Test|ParameterizedTest|RepeatedTest|TestFactory|TestTemplate)([[:space:](]|$)'
-dir=${XDG_CACHE_HOME:-$HOME/.cache}/autocomplete/mvn-tests
+dir=${XDG_CACHE_HOME:-$HOME/.cache}/autocomplete/commands/mvn
 b=$dir/$(pwd | cksum | cut -d' ' -f1)
 fresh() {
     [ -n "$(find "$1" -mmin -60 2>/dev/null)" ] || return 1
