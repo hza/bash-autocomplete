@@ -1,4 +1,4 @@
-/* Spec lookup (search dirs, recursive), loading and the compiled cache. */
+/* Spec lookup (search dirs, recursive) and loading. */
 #include <dirent.h>
 #include <limits.h>
 #include <stdint.h>
@@ -107,8 +107,7 @@ int find_bundled(const char *name, char *path, size_t size) {
     return 0;
 }
 
-/* Compiled specs live in $XDG_CACHE_HOME/autocomplete or ~/.cache/autocomplete
- * as <name>.cache; creates the directory when `create` is set. */
+/* $XDG_CACHE_HOME/autocomplete/<sub> or ~/.cache/autocomplete/<sub>, created. */
 int cache_dir(const char *sub, char *dir, size_t size) {
     const char *xdg = getenv("XDG_CACHE_HOME"), *home = getenv("HOME");
     if (getenv("AUTOCOMPLETE_NOCACHE")) return 0;
@@ -119,22 +118,6 @@ int cache_dir(const char *sub, char *dir, size_t size) {
     return 1;
 }
 
-static int cache_path(const char *name, char *path, size_t size, int create) {
-    const char *xdg = getenv("XDG_CACHE_HOME"), *home = getenv("HOME");
-    char dir[PATH_MAX];
-    if (create) return cache_dir("", dir, sizeof dir) && snprintf(path, size, "%s/%s.cache", dir, name) > 0;
-    if (getenv("AUTOCOMPLETE_NOCACHE")) return 0;
-    if (xdg && *xdg) snprintf(dir, sizeof dir, "%s/autocomplete", xdg);
-    else if (home) snprintf(dir, sizeof dir, "%s/.cache/autocomplete", home);
-    else return 0;
-    snprintf(path, size, "%s/%s.cache", dir, name);
-    return 1;
-}
-
-int save_cache(const char *name, const ynode *n, const char *src, char *out, size_t size) {
-    return cache_path(name, out, size, 1) && yaml_save_bin(n, out, src);
-}
-
 #ifdef __APPLE__
 #define MTIME(st) (st).st_mtimespec
 #else
@@ -143,11 +126,9 @@ int save_cache(const char *name, const ynode *n, const char *src, char *out, siz
 
 char g_spec_real[256];
 
-/* Load a spec; a big one from its compiled cache when that is newer than the YAML. */
+/* Load a spec from its YAML. */
 ynode *load_spec(const char *name) {
     char path[PATH_MAX], bin[PATH_MAX], err[256];
-    struct stat ys, bs;
-    int big;
     ynode *n;
     if (!find_spec(name, path, sizeof path)) return NULL;
     /* exec commands find helper files next to the (symlink-resolved) spec */
@@ -158,16 +139,8 @@ ynode *load_spec(const char *name) {
         *b = 0;
         setenv("AUTOCOMPLETE_SPEC_DIR", bin, 1);
     }
-    big = stat(path, &ys) == 0 && ys.st_size > CACHE_MIN;
-    if (big && cache_path(name, bin, sizeof bin, 0) && stat(bin, &bs) == 0 &&
-        (MTIME(bs).tv_sec > MTIME(ys).tv_sec ||
-         (MTIME(bs).tv_sec == MTIME(ys).tv_sec && MTIME(bs).tv_nsec > MTIME(ys).tv_nsec)) &&
-        (n = yaml_load_bin(bin, path)))
-        return n;
     n = yaml_load(path, err, sizeof err);
     if (!n && getenv("AUTOCOMPLETE_DEBUG")) fprintf(stderr, "autocomplete: %s: %s\n", path, err);
-    if (n && big && !save_cache(name, n, path, bin, sizeof bin) && getenv("AUTOCOMPLETE_DEBUG"))
-        fprintf(stderr, "autocomplete: cannot write cache for %s\n", name);
     return n;
 }
 

@@ -233,7 +233,6 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete manage` | Same as `list --user` (takes `--paths`/`--tsv`). |
 | `autocomplete list --tsv` | `NAME<TAB>DESCRIPTION` lines (no padding), for scripts and `exec` completers. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
-| `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
 | `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`), copying the shipped spec there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits; if you saved no changes, the copy is removed (the shipped spec stays in use). |
 | `autocomplete rm [-f] NAME...` | Delete your spec or alias in `~/.config/autocomplete` (and its cache), asking `[y/n]` for each unless `-f`; the shipped spec, if any, is used again. |
@@ -270,7 +269,7 @@ values. See [Adding your own commands](docs/adding-commands.md).
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
 - [Generating specs](docs/generated-specs.md): `autocomplete add`
-- [Cache](docs/cache.md): how parsed specs are cached and how to reset it
+- [Cache](docs/cache.md): man page specs, `exec` output and other cached results
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB
 

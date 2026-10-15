@@ -21,6 +21,6 @@ Key facts:
 ## Optional
 
 - [How it works](https://github.com/hza/bash-autocomplete/blob/main/docs/how-it-works.md): what happens when you press TAB
-- [Cache](https://github.com/hza/bash-autocomplete/blob/main/docs/cache.md): how large specs are precompiled
+- [Cache](https://github.com/hza/bash-autocomplete/blob/main/docs/cache.md): man page specs, exec output and other cached results
 - [Bundled specs](https://github.com/hza/bash-autocomplete/tree/main/specs): example YAML specs
 - [Full documentation in one file](https://github.com/hza/bash-autocomplete/blob/main/llms-full.txt)

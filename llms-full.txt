@@ -241,7 +241,6 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete manage` | Same as `list --user` (takes `--paths`/`--tsv`). |
 | `autocomplete list --tsv` | `NAME<TAB>DESCRIPTION` lines (no padding), for scripts and `exec` completers. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
-| `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
 | `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`), copying the shipped spec there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits; if you saved no changes, the copy is removed (the shipped spec stays in use). |
 | `autocomplete rm [-f] NAME...` | Delete your spec or alias in `~/.config/autocomplete` (and its cache), asking `[y/n]` for each unless `-f`; the shipped spec, if any, is used again. |
@@ -278,7 +277,7 @@ values. See [Adding your own commands](docs/adding-commands.md).
 - [Writing specs](docs/writing-specs.md): spec format, value types, supported YAML,
   where specs are looked up
 - [Generating specs](docs/generated-specs.md): `autocomplete add`
-- [Cache](docs/cache.md): how parsed specs are cached and how to reset it
+- [Cache](docs/cache.md): man page specs, `exec` output and other cached results
 - [Troubleshooting](docs/troubleshooting.md): common problems and fixes
 - [How it works](docs/how-it-works.md): what happens when you press TAB
 
@@ -679,7 +678,6 @@ generate one: your `~/.config/autocomplete` file wins.
 | A new spec isn't picked up | Re-run `eval "$(autocomplete bash)"`; bash only registers commands at startup. |
 | A spec seems to be ignored | `autocomplete check path/to/spec.yaml` shows errors with line numbers. `AUTOCOMPLETE_DEBUG=1` prints errors while completing. |
 | A bundled spec behaves like an old version after upgrading | Old installs put specs directly in `share/autocomplete`; those files take priority over the topic folders. Delete the top-level files (`find /usr/local/share/autocomplete -maxdepth 1 -type f -delete`) and run `make install` again. |
-| `NAME: no such spec (broken symlink?)` from `autocomplete cache` / `make install` | An alias points to a spec file that moved. Re-create it: `autocomplete alias --force CMD NAME`. |
 | No containers / images suggested | The Docker daemon must be running. |
 | List order differs between terminals (📌 snippets not first, `📌 vars` / `-📌` / `🧩` entries mixed in instead of last) | bash sorts the list using your locale. With `LANG=en_US.UTF-8` (VS Code's terminal sets it) macOS ignores emoji when sorting, so entries sort by their text; without `LANG` (C locale) they sort by bytes and emoji come last, 📌 before 🔥. Only the order changes; completion works the same. For the byte order: `export LC_COLLATE=C`. |
 | `source <(autocomplete bash)` does nothing | bash 3.2 bug; use `eval "$(autocomplete bash)"`. |
@@ -721,32 +719,19 @@ line. A single match is returned as the bare name. bash 3.2 shows escape codes l
 
 # Cache
 
-Specs larger than 100 KB are compiled to `~/.cache/autocomplete/<command>.cache`
-(`$XDG_CACHE_HOME/autocomplete` if set). Smaller specs are read straight from the YAML on
-every TAB; at that size the cache saves nothing (see below). A cache file is used only while
-it's newer than its YAML and was built from the same file; otherwise it's rebuilt
-automatically on the next TAB.
+Specs are read straight from their YAML on every TAB; even the largest bundled ones (about
+80 KB) take about 6 ms per TAB, mostly starting the program. The caches below keep the results
+of slow work: generating specs from man pages and running commands.
 
-- `autocomplete cache` (or `make cache`) rebuilds the cache for every big spec now.
-- `AUTOCOMPLETE_NOCACHE=1` turns the cache off.
-- `rm -rf ~/.cache/autocomplete` resets it.
+## Why specs aren't cached or compressed
 
-## When it matters
+Earlier versions compiled big specs into a binary cache. Measured on a MacBook it made no
+difference: a TAB took about 5 ms with or without it, and the largest bundled specs (gh, npm,
+about 80 KB) take about 6 ms, nearly all of it starting the program. So it was removed.
 
-For specs of normal size the cache makes no noticeable difference. Measured on a MacBook,
-a TAB takes about 5 ms with or without the cache for all bundled specs (docker, git, make,
-each under 10 KB). That time is mostly starting the program, and an `exec` command such as
-`docker ps` usually takes far longer than that.
-
-The cache starts to pay off only for very large specs, hence the 100 KB threshold:
-
-| Spec size | With cache | Without cache |
-|---|---|---|
-| ~20 KB | ~5 ms | ~5 ms |
-| ~200 KB | ~7 ms | ~9 ms |
-| ~1 MB | ~17 ms | ~28 ms |
-
-So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
+Compressing specs (gzip) wouldn't help either. After the first TAB the file is in the OS file
+cache, so reading it costs microseconds; decompressing would only add work and an external
+library. Shell startup doesn't read specs at all: `autocomplete bash` only lists their names.
 
 ## Man page specs
 

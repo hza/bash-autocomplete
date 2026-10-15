@@ -1,4 +1,4 @@
-/* Spec lookup (search dirs, recursive), loading and the compiled cache. */
+/* Spec lookup (search dirs, recursive) and loading. */
 #ifndef AUTOCOMPLETE_SPEC_H
 #define AUTOCOMPLETE_SPEC_H
 
@@ -7,10 +7,6 @@
 
 /* Max subfolder depth searched below each spec dir (guards symlink loops). */
 #define SPEC_DEPTH 4
-
-/* Only YAML bigger than this is compiled to a cache; smaller specs parse
- * about as fast as the cache loads. */
-#define CACHE_MIN (100 * 1024)
 
 /* Lookup dirs: $AUTOCOMPLETE_SPECS, ~/.config/autocomplete,
  * <bin dir>/specs, <bin dir>/../share/autocomplete. Call once first. */
@@ -22,9 +18,7 @@ int find_bundled(const char *name, char *path, size_t size);
 /* $XDG_CACHE_HOME/autocomplete/<sub> or ~/.cache/autocomplete/<sub> ("" =
  * the top dir), created; 0 when unset or AUTOCOMPLETE_NOCACHE is set. */
 int cache_dir(const char *sub, char *dir, size_t size);
-/* Compile n into the cache for `name`; out receives the cache path. */
-int save_cache(const char *name, const ynode *n, const char *src, char *out, size_t size);
-/* Load a spec (from its cache when big and fresh); exports AUTOCOMPLETE_SPEC_DIR. */
+/* Load a spec; exports AUTOCOMPLETE_SPEC_DIR. */
 ynode *load_spec(const char *name);
 /* Spec from `name`'s man page, cached in <cache dir>/man (`bash --man`). */
 ynode *load_man_spec(const char *name);

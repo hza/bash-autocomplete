@@ -155,32 +155,6 @@ static void print_list(void) {
     }
 }
 
-static int g_cache_failed;
-
-/* `autocomplete cache`: compile a big spec (> CACHE_MIN) unconditionally. */
-static void cache_spec(const char *name) {
-    char path[PATH_MAX], bin[PATH_MAX], err[256];
-    struct stat st;
-    ynode *n;
-    if (!find_spec(name, path, sizeof path)) {
-        /* listed but unreadable: a dangling symlink (e.g. a stale alias); warn only */
-        fprintf(stderr, "%s: no such spec (broken symlink? fix: autocomplete alias --force CMD %s)\n", name, name);
-        return;
-    }
-    if (stat(path, &st) == 0 && st.st_size <= CACHE_MIN) return;
-    if (!(n = yaml_load(path, err, sizeof err))) {
-        fprintf(stderr, "%s: %s\n", path, err);
-        g_cache_failed = 1;
-        return;
-    }
-    if (save_cache(name, n, path, bin, sizeof bin)) printf("%s -> %s\n", path, bin);
-    else {
-        fprintf(stderr, "%s: cannot write cache%s\n", name, getenv("AUTOCOMPLETE_NOCACHE") ? " (AUTOCOMPLETE_NOCACHE set)" : "");
-        g_cache_failed = 1;
-    }
-    yaml_free(n);
-}
-
 /* A plain command name usable as a spec file name. */
 static int valid_name(const char *s) {
     const char *p;
@@ -486,8 +460,6 @@ static int edit_cmd(const char *name) {
     }
     if (!(n = yaml_load(real, err, sizeof err))) return fprintf(stderr, "%s: %s\n", real, err), 1;
     rc = check_groups(n, n, real);
-    if (stat(real, &st) == 0 && st.st_size > CACHE_MIN && !save_cache(name, n, real, src, sizeof src))
-        fprintf(stderr, "%s: cannot write cache\n", name);
     yaml_free(n);
     return rc;
 }
@@ -508,10 +480,10 @@ static int run_diff(const char *yours, const char *shipped) {
 }
 
 /* `autocomplete rm [-f] NAME...`: delete your spec (or alias) in ~/.config/autocomplete
- * and its compiled cache, asking y/n first unless -f; the shipped spec, if any,
+ * asking y/n first unless -f; the shipped spec, if any,
  * takes over. */
 static int rm_cmd(int argc, char **argv) {
-    char user[PATH_MAX], path[PATH_MAX], bin[PATH_MAX], ans[16];
+    char user[PATH_MAX], path[PATH_MAX], ans[16];
     int i, rc = 0, force = argc && !strcmp(argv[0], "-f");
     argc -= force;
     argv += force;
@@ -532,10 +504,6 @@ static int rm_cmd(int argc, char **argv) {
             perror(path);
             rc = 1;
             continue;
-        }
-        if (cache_dir("", bin, sizeof bin) && strlen(bin) + strlen(name) + 8 < sizeof bin) {
-            strcat(strcat(strcat(bin, "/"), name), ".cache");
-            unlink(bin);
         }
         printf("removed %s", path);
         if (find_spec(name, path, sizeof path)) printf(" (now using %s)", path);
@@ -821,12 +789,6 @@ int main(int argc, char **argv) {
         putchar('\n');
         return check_groups(n, n, argv[2]);
     }
-    if (argc >= 2 && !strcmp(argv[1], "cache")) {
-        int i;
-        if (argc == 2) each_spec(cache_spec);
-        for (i = 2; i < argc; i++) cache_spec(argv[i]);
-        return g_cache_failed;
-    }
     if (argc >= 2 && !strcmp(argv[1], "alias")) return alias_cmds(argc - 2, argv + 2);
     if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "emoji")) return emoji_cmd(argv[2]);
     if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
@@ -857,14 +819,12 @@ int main(int argc, char **argv) {
             "                                  --tsv: NAME<TAB>DESCRIPTION lines for scripts)\n"
             "       autocomplete manage [--paths|--tsv]  same as list --user\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
-            "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"
             "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
             "       autocomplete edit NAME         open ~/.config/autocomplete/NAME.yaml in $VISUAL/$EDITOR\n"
             "                                  (copies the shipped spec there first)\n"
             "       autocomplete rm [-f] NAME...   delete your spec/alias, asking y/n unless -f\n"
             "       autocomplete diff [NAME...]    diff -u your copies against the shipped specs\n"
-            "                                  (NAME: diff -u yours shipped)\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"
             "       autocomplete alias --list          list aliases (NAME -> CMD)\n"

@@ -1,31 +1,18 @@
 # Cache
 
-Specs larger than 100 KB are compiled to `~/.cache/autocomplete/<command>.cache`
-(`$XDG_CACHE_HOME/autocomplete` if set). Smaller specs are read straight from the YAML on
-every TAB; at that size the cache saves nothing (see below). A cache file is used only while
-it's newer than its YAML and was built from the same file; otherwise it's rebuilt
-automatically on the next TAB.
+Specs are read straight from their YAML on every TAB; even the largest bundled ones (about
+80 KB) take about 6 ms per TAB, mostly starting the program. The caches below keep the results
+of slow work: generating specs from man pages and running commands.
 
-- `autocomplete cache` (or `make cache`) rebuilds the cache for every big spec now.
-- `AUTOCOMPLETE_NOCACHE=1` turns the cache off.
-- `rm -rf ~/.cache/autocomplete` resets it.
+## Why specs aren't cached or compressed
 
-## When it matters
+Earlier versions compiled big specs into a binary cache. Measured on a MacBook it made no
+difference: a TAB took about 5 ms with or without it, and the largest bundled specs (gh, npm,
+about 80 KB) take about 6 ms, nearly all of it starting the program. So it was removed.
 
-For specs of normal size the cache makes no noticeable difference. Measured on a MacBook,
-a TAB takes about 5 ms with or without the cache for all bundled specs (docker, git, make,
-each under 10 KB). That time is mostly starting the program, and an `exec` command such as
-`docker ps` usually takes far longer than that.
-
-The cache starts to pay off only for very large specs, hence the 100 KB threshold:
-
-| Spec size | With cache | Without cache |
-|---|---|---|
-| ~20 KB | ~5 ms | ~5 ms |
-| ~200 KB | ~7 ms | ~9 ms |
-| ~1 MB | ~17 ms | ~28 ms |
-
-So turning it off with `AUTOCOMPLETE_NOCACHE=1` is safe if it ever gets in the way.
+Compressing specs (gzip) wouldn't help either. After the first TAB the file is in the OS file
+cache, so reading it costs microseconds; decompressing would only add work and an external
+library. Shell startup doesn't read specs at all: `autocomplete bash` only lists their names.
 
 ## Man page specs
 

@@ -35,9 +35,5 @@ ynode *yaml_new(ynode *parent, ytype t, const char *key, const char *str);
 /* Write a tree as block YAML that yaml_parse reads back unchanged. */
 void yaml_write(FILE *f, const ynode *n);
 
-/* Compiled form: write a tree to `path` (atomically) tagged with its source
- * file `src`; load it back, NULL if missing, corrupt or made from another src. */
-int yaml_save_bin(const ynode *n, const char *path, const char *src);
-ynode *yaml_load_bin(const char *path, const char *src);
 
 #endif

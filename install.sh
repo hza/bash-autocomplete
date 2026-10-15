@@ -23,12 +23,6 @@ init_line() {
 }
 
 if [ "${1:-}" = --uninstall ]; then
-    cache=${XDG_CACHE_HOME:-$HOME/.cache}/autocomplete
-    if [ -d "$PREFIX/share/autocomplete" ]; then
-        find "$PREFIX/share/autocomplete" -name '*.yaml' | while read -r f; do
-            rm -f "$cache/$(basename "$f" .yaml).cache"
-        done
-    fi
     rm -rf "$PREFIX/bin/autocomplete" "$PREFIX/share/autocomplete"
     if [ -f "$PROFILE" ]; then
         line=$(init_line)
@@ -86,7 +80,6 @@ cp "$tmp/x/bin/autocomplete" "$PREFIX/bin/autocomplete"
 chmod 755 "$PREFIX/bin/autocomplete"
 cp -R "$tmp/x/share/autocomplete" "$PREFIX/share/autocomplete"
 echo "installed $PREFIX/bin/autocomplete and $PREFIX/share/autocomplete"
-[ "$(id -u)" = 0 ] || "$PREFIX/bin/autocomplete" cache >/dev/null || true
 
 line=$(init_line)
 if grep -qF 'autocomplete bash' "$PROFILE" 2>/dev/null; then
