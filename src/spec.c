@@ -16,6 +16,20 @@
 
 #define MAXDIRS 16
 
+/* Realpath of the running binary into out; 0 on failure. */
+static int self_exe(char *out, size_t size) {
+#ifdef __APPLE__
+    char buf[PATH_MAX];
+    uint32_t n = sizeof buf;
+    return _NSGetExecutablePath(buf, &n) == 0 && size >= PATH_MAX && realpath(buf, out);
+#else
+    ssize_t len = readlink("/proc/self/exe", out, size - 1);
+    if (len <= 0) return 0;
+    out[len] = 0;
+    return 1;
+#endif
+}
+
 static char *g_dirs[MAXDIRS];
 static int g_ndirs;
 
@@ -25,7 +39,6 @@ static void add_dir(const char *d) {
 
 void init_dirs(void) {
     char buf[PATH_MAX], exe[PATH_MAX], *env = getenv("AUTOCOMPLETE_SPECS"), *slash;
-    uint32_t size = sizeof buf;
 
     if (env) {
         char *copy = strdup(env), *tok;
@@ -36,16 +49,7 @@ void init_dirs(void) {
         snprintf(buf, sizeof buf, "%s/.config/autocomplete", getenv("HOME"));
         add_dir(buf);
     }
-#ifdef __APPLE__
-    if (_NSGetExecutablePath(buf, &size) != 0 || !realpath(buf, exe)) return;
-#else
-    (void)size;
-    {
-        ssize_t len = readlink("/proc/self/exe", exe, sizeof exe - 1);
-        if (len <= 0) return;
-        exe[len] = 0;
-    }
-#endif
+    if (!self_exe(exe, sizeof exe)) return;
     if (!(slash = strrchr(exe, '/'))) return;
     *slash = 0;
     snprintf(buf, sizeof buf, "%s/specs", exe);
@@ -148,12 +152,14 @@ ynode *load_spec(const char *name) {
  * (empty when the page lists no options); regenerated when the executable is
  * newer. NULL: no man spec. */
 ynode *load_man_spec(const char *name) {
-    char dir[PATH_MAX], yml[PATH_MAX], exe[PATH_MAX];
-    struct stat es, cs;
+    char dir[PATH_MAX], yml[PATH_MAX], exe[PATH_MAX], self[PATH_MAX];
+    struct stat es, cs, ss;
     ynode *n;
     FILE *f;
     if (!find_exe(name, exe, sizeof exe) || stat(exe, &es) || !cache_dir("man", dir, sizeof dir)) return NULL;
     snprintf(yml, sizeof yml, "%s/%s.yaml", dir, name);
+    /* stale when the command or this binary (parser changes) is newer */
+    if (self_exe(self, sizeof self) && stat(self, &ss) == 0 && MTIME(ss).tv_sec > MTIME(es).tv_sec) es = ss;
     if (stat(yml, &cs) == 0 && MTIME(cs).tv_sec >= MTIME(es).tv_sec)
         return cs.st_size ? yaml_load(yml, NULL, 0) : NULL;
     n = man_spec(name);

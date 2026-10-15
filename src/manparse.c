@@ -382,10 +382,21 @@ static ynode *text_spec(const char *shell, const char *cmd, int help) {
     for (i = 0; i < nl && ind >= 0; i++) {
         const char *d;
         int n, o;
-        if (indent(lines[i]) != ind || !(n = parse_entry(lines[i] + ind, opts, &d))) continue;
-        /* description: rest of this line + deeper-indented lines after it */
+        int k = indent(lines[i]);
+        /* "-A, --all" one short column left of long-only "    --x" (clap) */
+        if (k != ind && !(k + 4 == ind && lines[i][k + 2] == ',' && lines[i][k + 3] == ' ')) continue;
+        if (!(n = parse_entry(lines[i] + k, opts, &d))) continue;
+        /* description: rest of this line + deeper-indented lines after it
+         * (blank lines skipped while more deeper text follows: bat's man) */
         snprintf(text, sizeof text, "%s", d);
-        for (j = i + 1; j < nl && indent(lines[j]) > ind && strlen(text) < 400; j++) {
+        for (j = i + 1; j < nl && strlen(text) < 400; j++) {
+            if (!*lines[j]) {
+                int m = j;
+                while (m < nl && !*lines[m]) m++;
+                if (*text || m == nl || indent(lines[m]) <= ind) break;
+                j = m;
+            }
+            if (indent(lines[j]) <= ind) break;
             if (*text) strncat(text, " ", sizeof text - strlen(text) - 1);
             strncat(text, lines[j] + indent(lines[j]), sizeof text - strlen(text) - 1);
         }

@@ -242,7 +242,7 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 | `autocomplete list --tsv` | `NAME<TAB>DESCRIPTION` lines (no padding), for scripts and `exec` completers. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
-| `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`), copying the shipped spec there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits; if you saved no changes, the copy is removed (the shipped spec stays in use). |
+| `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`). An existing copy is opened as is; without one, the shipped spec is copied there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits; if you saved no changes, the copy is removed (the shipped spec stays in use). |
 | `autocomplete rm [-f] NAME...` | Delete your spec or alias in `~/.config/autocomplete` (and its cache), asking `[y/n]` for each unless `-f`; the shipped spec, if any, is used again. |
 | `autocomplete diff [NAME...]` | `diff -u` of your copies in `~/.config/autocomplete` against the shipped specs, so you can merge what you want (default: every override that differs; see `[override, update: …]` in `list`). Exit 1 if any differ. |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
@@ -738,7 +738,7 @@ library. Shell startup doesn't read specs at all: `autocomplete bash` only lists
 With `eval "$(autocomplete bash --man)"`, commands without a spec get one generated from
 their man page on the first TAB (about 0.15 s), stored in `~/.cache/autocomplete/man/<command>.yaml`.
 A page that lists no options leaves an empty file, so it isn't parsed again. It is
-regenerated when the command's executable is newer. To fix up a generated spec, copy it to
+regenerated when the command's executable or the `autocomplete` binary (a parser update) is newer. To fix up a generated spec, copy it to
 `~/.config/autocomplete/` (or run `autocomplete add --from man <command>`): specs there win.
 
 ## exec output
