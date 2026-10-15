@@ -1,62 +1,38 @@
-version: '20261013'
+version: '20261015'
 description: Extract a PostgreSQL database into a script or archive file
 flags:
-  -h: {value: "@hosts", description: "Database server host or socket directory", show: always}
-  --host: {value: "@hosts", description: "Database server host or socket directory"}
-  -p: {value: any, description: "Database server port"}
-  --port: {value: any, description: "Database server port"}
-  -U: {value: "@users", description: "Database user name", show: always}
-  --username: {value: "@users", description: "Database user name"}
-  -d: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database to dump (name or connection string)", show: always}
-  --dbname: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database to dump (name or connection string)"}
-  -w: {description: "Never prompt for password"}
-  --no-password: {description: "Never prompt for password"}
-  -W: {description: "Force password prompt"}
-  --password: {description: "Force password prompt"}
+  --host: {aliases: [-h], value: "@hosts", description: "Database server host or socket directory", show: always}
+  --port: {aliases: [-p], value: any, description: "Database server port"}
+  --username: {aliases: [-U], value: "@users", description: "Database user name", show: always}
+  --dbname: {aliases: [-d], value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database to dump (name or connection string)", show: always}
+  --no-password: {aliases: [-w], description: "Never prompt for password"}
+  --password: {aliases: [-W], description: "Force password prompt"}
   --role: {value: any, description: "Run SET ROLE before dump"}
-  -f: {value: file, description: "Output file or directory name", show: always}
-  --file: {value: file, description: "Output file or directory name"}
+  --file: {aliases: [-f], value: file, description: "Output file or directory name", show: always}
   -F: {value: {enum: {p: 'plain SQL script (default)', c: 'custom archive (pg_restore)', d: 'directory archive (parallel dump)', t: 'tar archive'}}, description: "Output format", show: always}
   --format: {value: {enum: {plain: 'SQL script (default)', custom: 'archive for pg_restore', directory: 'archive dir (parallel dump)', tar: 'tar archive'}}, description: "Output format"}
-  -j: {value: any, description: "Parallel jobs (directory format)"}
-  --jobs: {value: any, description: "Parallel jobs (directory format)"}
-  -v: {description: "Verbose mode"}
-  --verbose: {description: "Verbose mode"}
-  -Z: {value: any, description: "Compression level or method (0-9, gzip, lz4, zstd)"}
-  --compress: {value: any, description: "Compression level or method (0-9, gzip, lz4, zstd)"}
+  --jobs: {aliases: [-j], value: any, description: "Parallel jobs (directory format)"}
+  --verbose: {aliases: [-v], description: "Verbose mode"}
+  --compress: {aliases: [-Z], value: any, description: "Compression level or method (0-9, gzip, lz4, zstd)"}
   --lock-wait-timeout: {value: any, description: "Fail after waiting this long for a table lock"}
   --no-sync: {description: "Do not wait for changes to be written to disk"}
-  -a: {description: "Dump only the data, not the schema"}
-  --data-only: {description: "Dump only the data, not the schema"}
-  -s: {description: "Dump only the schema, no data", show: always}
-  --schema-only: {description: "Dump only the schema, no data"}
-  -b: {description: "Include large objects"}
-  --blobs: {description: "Include large objects"}
-  -B: {description: "Exclude large objects"}
-  --no-blobs: {description: "Exclude large objects"}
-  -c: {description: "Drop objects before recreating them"}
-  --clean: {description: "Drop objects before recreating them"}
+  --data-only: {aliases: [-a], description: "Dump only the data, not the schema"}
+  --schema-only: {aliases: [-s], description: "Dump only the schema, no data", show: always}
+  --blobs: {aliases: [-b], description: "Include large objects"}
+  --no-blobs: {aliases: [-B], description: "Exclude large objects"}
+  --clean: {aliases: [-c], description: "Drop objects before recreating them"}
   --if-exists: {description: "Use IF EXISTS when dropping objects"}
-  -C: {description: "Include commands to create the database"}
-  --create: {description: "Include commands to create the database"}
-  -E: {value: any, description: "Dump data in this encoding"}
-  --encoding: {value: any, description: "Dump data in this encoding"}
-  -n: {value: any, description: "Dump only matching schema(s)", repeat: true}
-  --schema: {value: any, description: "Dump only matching schema(s)", repeat: true}
-  -N: {value: any, description: "Do not dump matching schema(s)", repeat: true}
-  --exclude-schema: {value: any, description: "Do not dump matching schema(s)", repeat: true}
-  -t: {value: any, description: "Dump only matching table(s)", show: always, repeat: true}
-  --table: {value: any, description: "Dump only matching table(s)", repeat: true}
-  -T: {value: any, description: "Do not dump matching table(s)", repeat: true}
-  --exclude-table: {value: any, description: "Do not dump matching table(s)", repeat: true}
+  --create: {aliases: [-C], description: "Include commands to create the database"}
+  --encoding: {aliases: [-E], value: any, description: "Dump data in this encoding"}
+  --schema: {aliases: [-n], value: any, description: "Dump only matching schema(s)", repeat: true}
+  --exclude-schema: {aliases: [-N], value: any, description: "Do not dump matching schema(s)", repeat: true}
+  --table: {aliases: [-t], value: any, description: "Dump only matching table(s)", repeat: true, show: always}
+  --exclude-table: {aliases: [-T], value: any, description: "Do not dump matching table(s)", repeat: true}
   --exclude-table-data: {value: any, description: "Do not dump data of matching table(s)", repeat: true}
-  -O: {description: "Skip restoration of object ownership"}
-  --no-owner: {description: "Skip restoration of object ownership"}
-  -x: {description: "Do not dump privileges (grant/revoke)"}
-  --no-privileges: {description: "Do not dump privileges (grant/revoke)"}
+  --no-owner: {aliases: [-O], description: "Skip restoration of object ownership"}
+  --no-privileges: {aliases: [-x], description: "Do not dump privileges (grant/revoke)"}
   --no-acl: {description: "Do not dump privileges (grant/revoke)"}
-  -S: {value: "@users", description: "Superuser name for plain-text output"}
-  --superuser: {value: "@users", description: "Superuser name for plain-text output"}
+  --superuser: {aliases: [-S], value: "@users", description: "Superuser name for plain-text output"}
   --column-inserts: {description: "Dump data as INSERT with column names"}
   --inserts: {description: "Dump data as INSERT instead of COPY"}
   --rows-per-insert: {value: any, description: "Rows per INSERT (implies --inserts)"}
@@ -73,8 +49,7 @@ flags:
   --snapshot: {value: any, description: "Use the given snapshot"}
   --strict-names: {description: "Require each -t/-n pattern to match"}
   --use-set-session-authorization: {description: "Use SET SESSION AUTHORIZATION instead of ALTER OWNER"}
-  -V: {description: "Print version and exit"}
-  --version: {description: "Print version and exit"}
+  --version: {aliases: [-V], description: "Print version and exit"}
   --help: {description: "Show help and exit"}
 args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
 snippets:

@@ -1,21 +1,14 @@
-version: '20261013'
+version: '20261015'
 description: Vercel command-line interface
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -v: {description: "Show version"}
-  --version: {description: "Show version"}
-  -d: {description: "Debug output"}
-  --debug: {description: "Debug output"}
-  -t: {value: any, description: "Login token"}
-  --token: {value: any, description: "Login token"}
-  -S: {value: any, description: "Team scope"}
-  --scope: {value: any, description: "Team scope"}
+  --help: {aliases: [-h], description: "Show help"}
+  --version: {aliases: [-v], description: "Show version"}
+  --debug: {aliases: [-d], description: "Debug output"}
+  --token: {aliases: [-t], value: any, description: "Login token"}
+  --scope: {aliases: [-S], value: any, description: "Team scope"}
   --cwd: {value: dir, description: "Working directory"}
-  -A: {value: file, description: "Path to vercel.json"}
-  --local-config: {value: file, description: "Path to vercel.json"}
-  -Q: {value: dir, description: "Path to the global config directory"}
-  --global-config: {value: dir, description: "Path to the global config directory"}
+  --local-config: {aliases: [-A], value: file, description: "Path to vercel.json"}
+  --global-config: {aliases: [-Q], value: dir, description: "Path to the global config directory"}
   --no-color: {description: "Disable colors"}
 commands:
   deploy:
@@ -23,22 +16,16 @@ commands:
     flags:
       --prod: {description: "Deploy to production", show: always}
       --prebuilt: {description: "Deploy the output of vercel build", show: always}
-      -e: {value: any, description: "Runtime environment variable KEY=value"}
-      --env: {value: any, description: "Runtime environment variable KEY=value"}
-      -b: {value: any, description: "Build-time environment variable KEY=value"}
-      --build-env: {value: any, description: "Build-time environment variable KEY=value"}
-      -f: {description: "Force a new deployment without cache"}
-      --force: {description: "Force a new deployment without cache"}
+      --env: {aliases: [-e], value: any, description: "Runtime environment variable KEY=value"}
+      --build-env: {aliases: [-b], value: any, description: "Build-time environment variable KEY=value"}
+      --force: {aliases: [-f], description: "Force a new deployment without cache"}
       --with-cache: {description: "Keep build cache with --force"}
-      -y: {description: "Skip questions, use defaults"}
-      --yes: {description: "Skip questions, use defaults"}
+      --yes: {aliases: [-y], description: "Skip questions, use defaults"}
       --archive: {value: {enum: [tgz]}, description: "Upload as an archive"}
       --target: {value: {enum: [production, preview]}, description: "Target environment"}
       --skip-domain: {description: "Don't assign production domains"}
-      -l: {description: "Print build logs"}
-      --logs: {description: "Print build logs"}
-      -m: {value: any, description: "Metadata KEY=value"}
-      --meta: {value: any, description: "Metadata KEY=value"}
+      --logs: {aliases: [-l], description: "Print build logs"}
+      --meta: {aliases: [-m], value: any, description: "Metadata KEY=value"}
       --public: {description: "Make source publicly viewable"}
       --no-wait: {description: "Don't wait for the deployment to finish"}
     args: dir
@@ -48,15 +35,12 @@ commands:
       --prod: {description: "Build for production", show: always}
       --target: {value: {enum: [production, preview]}, description: "Target environment"}
       --output: {value: dir, description: "Output directory"}
-      -y: {description: "Skip questions"}
-      --yes: {description: "Skip questions"}
+      --yes: {aliases: [-y], description: "Skip questions"}
   dev:
     description: Run the local development server
     flags:
-      -l: {value: any, description: "Listen on port or address", show: always}
-      --listen: {value: any, description: "Listen on port or address"}
-      -y: {description: "Skip questions"}
-      --yes: {description: "Skip questions"}
+      --listen: {aliases: [-l], value: any, description: "Listen on port or address", show: always}
+      --yes: {aliases: [-y], description: "Skip questions"}
     args: dir
   env:
     description: Manage environment variables
@@ -66,29 +50,25 @@ commands:
       rm: {description: "Remove an environment variable", flags: {-y: {description: "No confirmation"}}, positional: [any, {enum: [production, preview, development]}]}
       pull: {description: "Write variables to a .env file", flags: {--environment: {value: {enum: [production, preview, development]}, description: "Environment to pull", show: always}, --git-branch: {value: any, description: "Preview branch"}, -y: {description: "Overwrite without asking"}}, args: file}
       update: {description: "Update an environment variable", positional: [any, {enum: [production, preview, development]}]}
-      run: {description: "Run a command with the variables set", flags: {-e: {value: {enum: [production, preview, development]}, description: "Environment"}, --environment: {value: {enum: [production, preview, development]}, description: "Environment"}}, args: "@command"}
+      run: {description: "Run a command with the variables set", flags: {--environment: {aliases: [-e], value: {enum: [production, preview, development]}, description: "Environment"}}, args: "@command"}
   pull:
     description: Pull project settings and env into .vercel
     flags:
       --environment: {value: {enum: [production, preview, development]}, description: "Environment to pull", show: always}
       --git-branch: {value: any, description: "Preview branch"}
-      -y: {description: "Skip questions"}
-      --yes: {description: "Skip questions"}
+      --yes: {aliases: [-y], description: "Skip questions"}
     args: dir
   link:
     description: Link the directory to a Vercel project
     flags:
-      -p: {value: any, description: "Project name"}
-      --project: {value: any, description: "Project name"}
+      --project: {aliases: [-p], value: any, description: "Project name"}
       --repo: {description: "Link all projects of the git repository"}
-      -y: {description: "Skip questions"}
-      --yes: {description: "Skip questions"}
+      --yes: {aliases: [-y], description: "Skip questions"}
     args: dir
   logs:
     description: Show runtime logs of a deployment
     flags:
-      -j: {description: "JSON output"}
-      --json: {description: "JSON output"}
+      --json: {aliases: [-j], description: "JSON output"}
     args: any
   inspect:
     description: Show deployment details
@@ -103,14 +83,13 @@ commands:
     flags:
       --prod: {description: "Only production deployments"}
       --environment: {value: {enum: [production, preview]}, description: "Filter by environment"}
-      -m: {value: any, description: "Filter by metadata KEY=value"}
-      --meta: {value: any, description: "Filter by metadata KEY=value"}
+      --meta: {aliases: [-m], value: any, description: "Filter by metadata KEY=value"}
       --status: {value: any, description: "Filter by state"}
     args: any
   promote: {description: "Promote a deployment to production", flags: {--timeout: {value: any, description: "Wait timeout"}}, args: any}
   rollback: {description: "Roll production back to an earlier deployment", flags: {--timeout: {value: any, description: "Wait timeout"}}, args: any}
   redeploy: {description: "Rebuild and deploy a previous deployment", flags: {--no-wait: {description: "Don't wait"}, --target: {value: {enum: [production, preview]}, description: "Target environment"}}, args: any}
-  remove: {description: "Remove deployments or projects", aliases: [rm], flags: {-y: {description: "No confirmation"}, --yes: {description: "No confirmation"}, -s: {description: "Remove only deployments without an alias"}, --safe: {description: "Remove only deployments without an alias"}}, args: any}
+  remove: {description: "Remove deployments or projects", aliases: [rm], flags: {--yes: {aliases: [-y], description: "No confirmation"}, --safe: {aliases: [-s], description: "Remove only deployments without an alias"}}, args: any}
   alias: {description: "Manage deployment aliases", commands: {set: {description: "Assign an alias to a deployment", args: any}, ls: {description: "List aliases"}, rm: {description: "Remove an alias", args: any}}}
   domains: {description: "Manage domains", commands: {ls: {description: "List domains"}, add: {description: "Add a domain to a project", args: any}, inspect: {description: "Show domain details", args: any}, rm: {description: "Remove a domain", args: any}, buy: {description: "Buy a domain", args: any}, move: {description: "Move a domain to another scope", args: any}, transfer-in: {description: "Transfer a domain in", args: any}}}
   dns: {description: "Manage DNS records", commands: {ls: {description: "List records", args: any}, add: {description: "Add a record", args: any}, rm: {description: "Remove a record", args: any}, import: {description: "Import a zone file", args: any}}}
@@ -121,7 +100,7 @@ commands:
   git: {description: "Manage the Git connection", commands: {connect: {description: "Connect the repository"}, disconnect: {description: "Disconnect the repository"}}}
   integration: {description: "Manage marketplace integrations", commands: {add: {description: "Install an integration", args: any}, list: {description: "List installed integrations"}, open: {description: "Open an integration dashboard", args: any}, remove: {description: "Uninstall an integration", args: any}}}
   blob: {description: "Manage Vercel Blob storage", commands: {list: {description: "List blobs", aliases: [ls]}, put: {description: "Upload a file", args: file}, del: {description: "Delete blobs", args: any}, copy: {description: "Copy a blob", aliases: [cp], args: any}}}
-  bisect: {description: "Find the deployment that introduced a bug", flags: {-g: {value: any, description: "Known good deployment"}, --good: {value: any, description: "Known good deployment"}, -b: {value: any, description: "Known bad deployment"}, --bad: {value: any, description: "Known bad deployment"}}}
+  bisect: {description: "Find the deployment that introduced a bug", flags: {--good: {aliases: [-g], value: any, description: "Known good deployment"}, --bad: {aliases: [-b], value: any, description: "Known bad deployment"}}}
   init: {description: "Create a project from an example", args: any}
   login: {description: "Log in", flags: {--github: {description: "Log in with GitHub"}, --gitlab: {description: "Log in with GitLab"}}, args: any}
   logout: {description: "Log out"}

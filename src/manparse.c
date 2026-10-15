@@ -20,6 +20,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "spec.h"
 #include "util.h"
 
 #define MAXLINES 20000
@@ -168,7 +169,7 @@ static void sentence(const char *text, char *out, size_t size) {
 
 static ynode *add_flag(ynode *flags, const char *name, const char *arg, const char *desc) {
     ynode *f;
-    if (yaml_get(flags, name)) return NULL;
+    if (flag_get(flags, name)) return NULL;
     f = yaml_new(flags, Y_OBJ, name, NULL);
     if (arg && *arg) yaml_new(f, Y_STR, "value", value_kind(arg));
     if (desc && *desc) yaml_new(f, Y_STR, "description", desc);
@@ -401,13 +402,27 @@ static ynode *text_spec(const char *shell, const char *cmd, int help) {
             strncat(text, lines[j] + indent(lines[j]), sizeof text - strlen(text) - 1);
         }
         sentence(text[0] == ':' ? text + 1 + strspn(text + 1, " ") : text, desc, sizeof desc); /* python: "-b     : issue..." */
-        for (o = 0; o < n; o++) {
-            const char *arg = opts[o].arg;
-            int s;
+        /* "-v, --version": one flag, keyed by the (first) long name, the
+         * other names as "aliases" */
+        {
+            const char *arg = "";
+            int s, key = 0;
+            ynode *f, *al = NULL;
+            for (o = n - 1; o >= 0; o--)
+                if (opts[o].name[1] == '-') key = o;
             for (j = 0; j < n && !*arg; j++) arg = opts[j].arg; /* "-A num, --after-context" */
-            for (s = 0; s < nsyn && !*arg; s++)
-                if (!strcmp(syn[s].name, opts[o].name)) arg = syn[s].arg;
-            add_flag(flags, opts[o].name, arg, desc);
+            for (o = 0; o < n; o++)
+                for (s = 0; s < nsyn && !*arg; s++)
+                    if (!strcmp(syn[s].name, opts[o].name)) arg = syn[s].arg;
+            if (flag_get(flags, opts[key].name)) continue;
+            f = yaml_new(flags, Y_OBJ, opts[key].name, NULL);
+            for (o = 0; o < n; o++) {
+                if (o == key || flag_get(flags, opts[o].name)) continue;
+                if (!al) al = yaml_new(f, Y_ARR, "aliases", NULL);
+                yaml_new(al, Y_STR, NULL, opts[o].name);
+            }
+            if (*arg) yaml_new(f, Y_STR, "value", value_kind(arg));
+            if (*desc) yaml_new(f, Y_STR, "description", desc);
         }
     }
     /* SYNOPSIS-only options ("[-O fmt]" with no entry of its own) */

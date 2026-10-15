@@ -1,60 +1,38 @@
-version: '20261013'
+version: '20261015'
 description: "compare files line by line (BSD diff)"
 flags:
-  -u: {description: "Unified diff: the format patch and code review tools read", show: always}
-  --unified: {description: "Unified diff: the format patch and code review tools read"}
+  --unified: {aliases: [-u], description: "Unified diff: the format patch and code review tools read", show: always}
   -U: {value: any, description: "Unified diff with NUM lines of context"}
-  -c: {description: "Context diff (3 lines of context)"}
-  --context: {description: "Context diff (3 lines of context)"}
+  --context: {aliases: [-c], description: "Context diff (3 lines of context)"}
   -C: {value: any, description: "Context diff with NUM lines of context"}
   -n: {description: "RCS format diff"}
   -e: {description: "Output an ed script"}
   -f: {description: "Output a forward ed script"}
-  -y: {description: "Side by side in two columns", show: always}
-  --side-by-side: {description: "Side by side in two columns"}
-  -W: {value: any, description: "Side by side: output at most NUM columns"}
-  --width: {value: any, description: "Side by side: output at most NUM columns"}
+  --side-by-side: {aliases: [-y], description: "Side by side in two columns", show: always}
+  --width: {aliases: [-W], value: any, description: "Side by side: output at most NUM columns"}
   --suppress-common-lines: {description: "Side by side: show only the changed lines"}
-  -q: {description: "Only report whether the files differ", show: always}
-  --brief: {description: "Only report whether the files differ"}
-  -s: {description: "Report when two files are the same"}
-  --report-identical-files: {description: "Report when two files are the same"}
-  -r: {description: "Recurse into subdirectories", show: always}
-  --recursive: {description: "Recurse into subdirectories"}
-  -N: {description: "Treat a file missing on one side as empty (new and removed files show whole)", show: always}
-  --new-file: {description: "Treat a file missing on one side as empty (new and removed files show whole)"}
-  -P: {description: "Treat a file missing on the first side as empty"}
-  --unidirectional-new-file: {description: "Treat a file missing on the first side as empty"}
-  -S: {value: file, description: "Start a folder comparison at this file"}
-  --starting-file: {value: file, description: "Start a folder comparison at this file"}
-  -x: {value: any, description: "Exclude files matching this pattern (folders)"}
-  --exclude: {value: any, description: "Exclude files matching this pattern (folders)"}
-  -X: {value: file, description: "Exclude files matching the patterns in this file"}
-  --exclude-from: {value: file, description: "Exclude files matching the patterns in this file"}
-  -i: {description: "Ignore case differences", show: always}
-  --ignore-case: {description: "Ignore case differences"}
+  --brief: {aliases: [-q], description: "Only report whether the files differ", show: always}
+  --report-identical-files: {aliases: [-s], description: "Report when two files are the same"}
+  --recursive: {aliases: [-r], description: "Recurse into subdirectories", show: always}
+  --new-file: {aliases: [-N], description: "Treat a file missing on one side as empty (new and removed files show whole)", show: always}
+  --unidirectional-new-file: {aliases: [-P], description: "Treat a file missing on the first side as empty"}
+  --starting-file: {aliases: [-S], value: file, description: "Start a folder comparison at this file"}
+  --exclude: {aliases: [-x], value: any, description: "Exclude files matching this pattern (folders)"}
+  --exclude-from: {aliases: [-X], value: file, description: "Exclude files matching the patterns in this file"}
+  --ignore-case: {aliases: [-i], description: "Ignore case differences", show: always}
   --no-ignore-case: {description: "Consider case when comparing file names"}
-  -w: {description: "Ignore all white space", show: always}
-  --ignore-all-blanks: {description: "Ignore all white space"}
+  --ignore-all-blanks: {aliases: [-w], description: "Ignore all white space", show: always}
   --ignore-all-space: {description: "Ignore all white space"}
-  -b: {description: "Ignore changes in the amount of white space"}
-  --ignore-space-change: {description: "Ignore changes in the amount of white space"}
-  -B: {description: "Ignore changes where all lines are blank"}
-  --ignore-blank-lines: {description: "Ignore changes where all lines are blank"}
+  --ignore-space-change: {aliases: [-b], description: "Ignore changes in the amount of white space"}
+  --ignore-blank-lines: {aliases: [-B], description: "Ignore changes where all lines are blank"}
   -I: {value: any, description: "Ignore changes where all lines match this regex"}
-  -F: {value: any, description: "Show the last line matching this regex in the hunk header"}
-  --show-function-line: {value: any, description: "Show the last line matching this regex in the hunk header"}
-  -p: {description: "Show which C function each change is in"}
-  --show-c-function: {description: "Show which C function each change is in"}
-  -d: {description: "Try harder to find a smaller set of changes", show: always}
-  --minimal: {description: "Try harder to find a smaller set of changes"}
-  -a: {description: "Treat all files as text"}
-  --text: {description: "Treat all files as text"}
+  --show-function-line: {aliases: [-F], value: any, description: "Show the last line matching this regex in the hunk header"}
+  --show-c-function: {aliases: [-p], description: "Show which C function each change is in"}
+  --minimal: {aliases: [-d], description: "Try harder to find a smaller set of changes", show: always}
+  --text: {aliases: [-a], description: "Treat all files as text"}
   --strip-trailing-cr: {description: "Strip trailing carriage returns on input"}
-  -t: {description: "Expand tabs to spaces in the output"}
-  --expand-tabs: {description: "Expand tabs to spaces in the output"}
-  -T: {description: "Make tabs line up by prepending a tab"}
-  --initial-tab: {description: "Make tabs line up by prepending a tab"}
+  --expand-tabs: {aliases: [-t], description: "Expand tabs to spaces in the output"}
+  --initial-tab: {aliases: [-T], description: "Make tabs line up by prepending a tab"}
   --tabsize: {value: any, description: "Tab stops every NUM columns"}
   -L: {value: any, description: "Use this label instead of the file name and time"}
   -l: {description: "Pass the output through pr(1) to paginate it"}

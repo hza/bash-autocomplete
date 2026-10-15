@@ -117,7 +117,7 @@ int check_groups(const ynode *n, const ynode *root, const char *path) {
         for (p = g->key; p && *p; p++) {
             char flag[3] = {'-', *p, 0};
             const ynode *own = yaml_get(n, "flags"), *top = yaml_get(root, "flags");
-            if (!yaml_get(own, flag) && !yaml_get(top, flag)) {
+            if (!flag_get(own, flag) && !flag_get(top, flag)) {
                 fprintf(stderr, "%s: groups \"%s\": no flag %s\n", path, g->key, flag);
                 bad = 1;
             }
@@ -428,10 +428,10 @@ static void complete_value(const ynode *v, const ynode *parent) {
     }
 }
 
-/* Find flag `name` in cmd's flags; *val receives its "value" spec (NULL
- * when the flag takes no value). Flags are maps: {value, description}. */
+/* Find flag `name` (key or alias) in cmd's flags; *val receives its "value"
+ * spec (NULL when the flag takes no value). */
 static int find_flag(const ynode *cmd, const char *name, const ynode **val) {
-    const ynode *f = yaml_get(yaml_get(cmd, "flags"), name);
+    const ynode *f = flag_get(yaml_get(cmd, "flags"), name);
     if (f) *val = yaml_get(f, "value");
     return f != NULL;
 }
@@ -474,27 +474,68 @@ static int split(const char *line, char **words, size_t *start) {
     return n;
 }
 
+/* Was flag f (key or alias) typed among the words before the cursor? */
+static int typed(const ynode *f, char **w, int n) {
+    const ynode *a;
+    int i;
+    for (i = 1; i < n - 1; i++) {
+        if (!strcmp(w[i], f->key)) return 1;
+        for (a = yaml_get(f, "aliases") ? yaml_get(f, "aliases")->child : NULL; a; a = a->next)
+            if (a->type == Y_STR && !strcmp(w[i], a->str)) return 1;
+    }
+    return 0;
+}
+
+/* The name flag f is listed under for the typed word: as the user types,
+ * so short names ("-v") first unless the word starts with "--"; the
+ * others are appended to the description: "-v  -- Show version
+ * (🔥 --version)". NULL when no name matches. */
+static const char *flag_name(const ynode *f, char *desc, size_t size) {
+    const ynode *al = yaml_get(f, "aliases"), *a;
+    const char *names[16], *pick = NULL, *d = spec_desc(f);
+    int n = 0, i, pass;
+    size_t have;
+    names[n++] = f->key;
+    for (a = al ? al->child : NULL; a && n < 16; a = a->next)
+        if (a->type == Y_STR) names[n++] = a->str;
+    for (pass = strncmp(g_cur, "--", 2) ? 0 : 1; pass < 2 && !pick; pass++)
+        for (i = 0; i < n && !pick; i++)
+            if ((names[i][1] == '-') == pass && !strncmp(names[i], g_cur, strlen(g_cur))) pick = names[i];
+    if (!pick) return NULL;
+    if (n == 1) {
+        snprintf(desc, size, "%s", d ? d : "");
+        return pick;
+    }
+    have = (size_t)snprintf(desc, size, "%s%s(🔥", d ? d : "", d ? " " : "");
+    for (i = 0; i < n && have < size; i++)
+        if (names[i] != pick) have += (size_t)snprintf(desc + have, size - have, " %s", names[i]);
+    if (have < size - 1) strcat(desc, ")");
+    return pick;
+}
+
 /* List cmd's flags, then (with_root) the root's (valid at every depth).
  * A switch already among the typed words isn't offered again, unless
  * `repeat: true`; a "-Dx=" key takes its value attached, so no space. */
 static void list_flags(const ynode *c, const ynode *root, char **w, int n, int with_root) {
     const ynode *f, *s = c;
-    int i;
+    char desc[1024];
     for (;;) {
         for (f = yaml_get(s, "flags") ? yaml_get(s, "flags")->child : NULL; f; f = f->next) {
             const ynode *gr;
-            if (!yaml_get(f, "value") && !(yaml_get(f, "repeat") && yaml_get(f, "repeat")->b)) {
-                for (i = 1; i < n - 1 && strcmp(w[i], f->key); i++) {}
-                if (i < n - 1) continue;
-            }
-            gr = f->key[1] && !f->key[2] ? find_group(c, root, f->key[1]) : NULL;
+            const char *name;
+            if (!yaml_get(f, "value") && !(yaml_get(f, "repeat") && yaml_get(f, "repeat")->b) && typed(f, w, n))
+                continue;
+            if (!(name = flag_name(f, desc, sizeof desc))) continue;
+            gr = name[1] && !name[2] ? find_group(c, root, name[1]) : NULL;
             g_group = gr ? gr->key : NULL;
             g_gdesc = gr ? spec_desc(gr) : NULL;
             g_show = g_group                                    ? SHOW_COLLAPSED
                      : is_str(yaml_get(f, "show"), "always")      ? SHOW_ALWAYS
                      : is_str(yaml_get(f, "show"), "collapsed") ? SHOW_COLLAPSED
                                                                 : SHOW_DEFAULT;
-            emit_desc(f->key, f->key[strlen(f->key) - 1] != '=', spec_desc(f));
+            /* "📌 Up  -- (U) Proxy user …": no alias hint inside a fold */
+            emit_desc(name, name[strlen(name) - 1] != '=',
+                      g_show == SHOW_COLLAPSED ? spec_desc(f) : *desc ? desc : NULL);
         }
         g_show = SHOW_DEFAULT;
         g_group = g_gdesc = NULL;

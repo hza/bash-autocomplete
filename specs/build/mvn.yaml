@@ -1,21 +1,14 @@
-version: '20261013'
+version: '20261015'
 description: "Apache Maven build tool"
 flags:
-  -am: {description: "Also build projects required by the -pl list"}
-  --also-make: {description: "Also build projects required by the -pl list"}
-  -amd: {description: "Also build projects that depend on the -pl list"}
-  --also-make-dependents: {description: "Also build projects that depend on the -pl list"}
-  -B: {description: "Run in non-interactive (batch) mode"}
-  --batch-mode: {description: "Run in non-interactive (batch) mode"}
-  -b: {value: any, description: "Build strategy id"}
-  --builder: {value: any, description: "Build strategy id"}
-  -C: {description: "Fail the build if checksums don't match"}
-  --strict-checksums: {description: "Fail the build if checksums don't match"}
-  -c: {description: "Warn if checksums don't match"}
-  --lax-checksums: {description: "Warn if checksums don't match"}
+  --also-make: {aliases: [-am], description: "Also build projects required by the -pl list"}
+  --also-make-dependents: {aliases: [-amd], description: "Also build projects that depend on the -pl list"}
+  --batch-mode: {aliases: [-B], description: "Run in non-interactive (batch) mode"}
+  --builder: {aliases: [-b], value: any, description: "Build strategy id"}
+  --strict-checksums: {aliases: [-C], description: "Fail the build if checksums don't match"}
+  --lax-checksums: {aliases: [-c], description: "Warn if checksums don't match"}
   --color: {value: {enum: [auto, always, never]}, description: "Output color mode"}
-  -D: {value: any, description: "Define a user property", show: always}
-  --define: {value: any, description: "Define a user property", show: always}
+  --define: {aliases: [-D], value: any, description: "Define a user property", show: always}
   -DskipTests: {description: "Compile tests but don't run them"}
   '-Dmaven.test.skip=true': {description: "Skip compiling and running tests"}
   -DskipITs: {description: "Skip integration tests (failsafe)"}
@@ -53,60 +46,33 @@ flags:
   '-Dexec.args=': {description: "Program arguments for exec:java"}
   '-Dexpression=': {description: "Expression for help:evaluate"}
   -DforceStdout: {description: "Print only the value (help:evaluate)"}
-  -e: {description: "Produce execution error messages"}
-  --errors: {description: "Produce execution error messages"}
-  -emp: {value: any, description: "Encrypt master security password"}
-  --encrypt-master-password: {value: any, description: "Encrypt master security password"}
-  -ep: {value: any, description: "Encrypt server password"}
-  --encrypt-password: {value: any, description: "Encrypt server password"}
-  -f: {value: file, description: "Alternate POM file (or directory with pom.xml)"}
-  --file: {value: file, description: "Alternate POM file (or directory with pom.xml)"}
-  -fae: {description: "Fail the build only at the end"}
-  --fail-at-end: {description: "Fail the build only at the end"}
-  -ff: {description: "Stop at first failure in reactor builds"}
-  --fail-fast: {description: "Stop at first failure in reactor builds"}
-  -fn: {description: "Never fail the build"}
-  --fail-never: {description: "Never fail the build"}
-  -gs: {value: file, description: "Alternate global settings file"}
-  --global-settings: {value: file, description: "Alternate global settings file"}
-  -gt: {value: file, description: "Alternate global toolchains file"}
-  --global-toolchains: {value: file, description: "Alternate global toolchains file"}
-  -h: {description: "Display help information"}
-  --help: {description: "Display help information"}
-  -itr: {description: "Ignore repositories from transitive dependencies"}
-  --ignore-transitive-repositories: {description: "Ignore repositories from transitive dependencies"}
-  -l: {value: file, description: "Log file for all build output"}
-  --log-file: {value: file, description: "Log file for all build output"}
-  -N: {description: "Do not recurse into sub-projects"}
-  --non-recursive: {description: "Do not recurse into sub-projects"}
-  -nsu: {description: "Suppress SNAPSHOT updates"}
-  --no-snapshot-updates: {description: "Suppress SNAPSHOT updates"}
-  -ntp: {description: "Do not display transfer progress"}
-  --no-transfer-progress: {description: "Do not display transfer progress"}
-  -o: {description: "Work offline"}
-  --offline: {description: "Work offline"}
-  -P: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate", show: always}
-  --activate-profiles: {value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate", show: always}
-  -pl: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build", show: always}
-  --projects: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build", show: always}
-  -q: {description: "Quiet output, only show errors"}
-  --quiet: {description: "Quiet output, only show errors"}
-  -rf: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
-  --resume-from: {value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
-  -s: {value: file, description: "Alternate user settings file"}
-  --settings: {value: file, description: "Alternate user settings file"}
-  -t: {value: file, description: "Alternate user toolchains file"}
-  --toolchains: {value: file, description: "Alternate user toolchains file"}
-  -T: {value: any, description: "Thread count, e.g. 4 or 1C"}
-  --threads: {value: any, description: "Thread count, e.g. 4 or 1C"}
-  -U: {description: "Force update of missing releases and snapshots", show: always}
-  --update-snapshots: {description: "Force update of missing releases and snapshots", show: always}
-  -v: {description: "Display version information"}
-  --version: {description: "Display version information"}
-  -V: {description: "Display version information and continue the build"}
-  --show-version: {description: "Display version information and continue the build"}
-  -X: {description: "Produce execution debug output"}
-  --debug: {description: "Produce execution debug output"}
+  --errors: {aliases: [-e], description: "Produce execution error messages"}
+  --encrypt-master-password: {aliases: [-emp], value: any, description: "Encrypt master security password"}
+  --encrypt-password: {aliases: [-ep], value: any, description: "Encrypt server password"}
+  --file: {aliases: [-f], value: file, description: "Alternate POM file (or directory with pom.xml)"}
+  --fail-at-end: {aliases: [-fae], description: "Fail the build only at the end"}
+  --fail-fast: {aliases: [-ff], description: "Stop at first failure in reactor builds"}
+  --fail-never: {aliases: [-fn], description: "Never fail the build"}
+  --global-settings: {aliases: [-gs], value: file, description: "Alternate global settings file"}
+  --global-toolchains: {aliases: [-gt], value: file, description: "Alternate global toolchains file"}
+  --help: {aliases: [-h], description: "Display help information"}
+  --ignore-transitive-repositories: {aliases: [-itr], description: "Ignore repositories from transitive dependencies"}
+  --log-file: {aliases: [-l], value: file, description: "Log file for all build output"}
+  --non-recursive: {aliases: [-N], description: "Do not recurse into sub-projects"}
+  --no-snapshot-updates: {aliases: [-nsu], description: "Suppress SNAPSHOT updates"}
+  --no-transfer-progress: {aliases: [-ntp], description: "Do not display transfer progress"}
+  --offline: {aliases: [-o], description: "Work offline"}
+  --activate-profiles: {aliases: [-P], value: {exec: "tr -d '\\n' < pom.xml | grep -o '<profile>[[:space:]]*<id>[^<]*' | sed 's/.*<id>//'"}, description: "Comma-delimited list of profiles to activate", show: always}
+  --projects: {aliases: [-pl], value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Comma-delimited list of reactor projects to build", show: always}
+  --quiet: {aliases: [-q], description: "Quiet output, only show errors"}
+  --resume-from: {aliases: [-rf], value: {exec: "grep -o '<module>[^<]*' pom.xml | sed 's/<module>//'"}, description: "Resume reactor from specified project"}
+  --settings: {aliases: [-s], value: file, description: "Alternate user settings file"}
+  --toolchains: {aliases: [-t], value: file, description: "Alternate user toolchains file"}
+  --threads: {aliases: [-T], value: any, description: "Thread count, e.g. 4 or 1C"}
+  --update-snapshots: {aliases: [-U], description: "Force update of missing releases and snapshots", show: always}
+  --version: {aliases: [-v], description: "Display version information"}
+  --show-version: {aliases: [-V], description: "Display version information and continue the build"}
+  --debug: {aliases: [-X], description: "Produce execution debug output"}
 args: "@subcommands"
 commands:
   validate:

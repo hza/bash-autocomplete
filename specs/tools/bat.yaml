@@ -1,35 +1,28 @@
 version: '20261015'
 description: 'a cat(1) clone with syntax highlighting and Git integration'
 flags:
-  -A:
-    description: 'Show non-printable characters like space, tab or newline'
   --show-all:
+    aliases: [-A]
     description: 'Show non-printable characters like space, tab or newline'
   --nonprintable-notation:
     value: any
     description: 'Specify how to display non-printable characters when using --show-all'
-  -p:
-    description: 'Only show plain style, no decorations'
   --plain:
+    aliases: [-p]
     description: 'Only show plain style, no decorations'
-  -l:
-    value: any
-    description: 'Explicitly set the language for syntax highlighting'
   --language:
+    aliases: [-l]
     value: any
     description: 'Explicitly set the language for syntax highlighting'
-  -H:
-    value: any
-    description: 'Highlight the specified line ranges with a different background color'
   --highlight-line:
+    aliases: [-H]
     value: any
     description: 'Highlight the specified line ranges with a different background color'
   --file-name:
     value: any
     description: 'Specify the name to display for a file'
-  -d:
-    description: 'Only show lines that have been added/removed/modified with respect to the Git index'
   --diff:
+    aliases: [-d]
     description: 'Only show lines that have been added/removed/modified with respect to the Git index'
   --diff-context:
     value: any
@@ -40,16 +33,14 @@ flags:
   --wrap:
     value: any
     description: 'Specify the text-wrapping mode (*auto*, never, character)'
-  -S:
-    description: 'Truncate all lines longer than screen width'
   --chop-long-lines:
+    aliases: [-S]
     description: 'Truncate all lines longer than screen width'
   --terminal-width:
     value: any
     description: 'Explicitly set the width of the terminal instead of determining it automatically'
-  -n:
-    description: 'Only show line numbers, no other decorations'
   --number:
+    aliases: [-n]
     description: 'Only show line numbers, no other decorations'
   --color:
     value: any
@@ -60,9 +51,8 @@ flags:
   --decorations:
     value: any
     description: 'Specify when to use the decorations that have been specified via ''--style'''
-  -f:
-    description: 'Alias for ''--decorations=always --color=always'''
   --force-colorization:
+    aliases: [-f]
     description: 'Alias for ''--decorations=always --color=always'''
   --paging:
     value: any
@@ -70,10 +60,8 @@ flags:
   --pager:
     value: any
     description: 'Determine which pager is used'
-  -m:
-    value: any
-    description: 'Map a glob pattern to an existing syntax name'
   --map-syntax:
+    aliases: [-m]
     value: any
     description: 'Map a glob pattern to an existing syntax name'
   --ignored-suffix:
@@ -90,9 +78,8 @@ flags:
     description: 'Sets the theme name for syntax highlighting used when the terminal uses a dark background'
   --list-themes:
     description: 'Display a list of supported themes for syntax highlighting'
-  -s:
-    description: 'Squeeze consecutive empty lines into a single empty line'
   --squeeze-blank:
+    aliases: [-s]
     description: 'Squeeze consecutive empty lines into a single empty line'
   --squeeze-limit:
     value: any
@@ -100,19 +87,15 @@ flags:
   --style:
     value: any
     description: 'Configure which elements (line numbers, file headers, grid borders, Git modifications, ..) to display in addition to the file contents'
-  -r:
-    value: any
-    description: 'Only print the specified range of lines for each file'
   --line-range:
+    aliases: [-r]
     value: any
     description: 'Only print the specified range of lines for each file'
-  -L:
-    description: 'Display a list of supported languages for syntax highlighting'
   --list-languages:
+    aliases: [-L]
     description: 'Display a list of supported languages for syntax highlighting'
-  -u:
-    description: 'This option exists for POSIX-compliance reasons (''u'' is for ''unbuffered'')'
   --unbuffered:
+    aliases: [-u]
     description: 'This option exists for POSIX-compliance reasons (''u'' is for ''unbuffered'')'
   --no-custom-assets:
     description: 'Do not load custom assets'
@@ -126,13 +109,11 @@ flags:
     description: 'Show acknowledgements'
   --set-terminal-title:
     description: 'Sets terminal title to filenames when using a pager'
-  -h:
-    description: 'Print this help message'
   --help:
+    aliases: [-h]
     description: 'Print this help message'
-  -V:
-    description: 'Show version information'
   --version:
+    aliases: [-V]
     description: 'Show version information'
   --config-file:
     description: 'Show path to the configuration file'

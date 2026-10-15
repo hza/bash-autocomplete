@@ -399,6 +399,14 @@ static void write_inline(FILE *f, const ynode *n) {
     }
 }
 
+/* A non-empty list of strings, written inline. */
+static int flat(const ynode *n) {
+    const ynode *c;
+    for (c = n->child; c; c = c->next)
+        if (c->type != Y_STR) return 0;
+    return n->child != NULL;
+}
+
 static void write_block(FILE *f, const ynode *n, int ind) {
     const ynode *c;
     for (c = n->child; c; c = c->next) {
@@ -408,7 +416,15 @@ static void write_block(FILE *f, const ynode *n, int ind) {
             fputc(':', f);
         } else
             fputc('-', f);
-        if ((c->type == Y_OBJ || c->type == Y_ARR) && c->child) {
+        if (c->type == Y_ARR && flat(c)) { /* "aliases: [-v, -V]" */
+            const ynode *e;
+            fputs(" [", f);
+            for (e = c->child; e; e = e->next) {
+                put_scalar(f, e->str);
+                if (e->next) fputs(", ", f);
+            }
+            fputs("]\n", f);
+        } else if ((c->type == Y_OBJ || c->type == Y_ARR) && c->child) {
             fputc('\n', f);
             write_block(f, c, ind + 2);
         } else {

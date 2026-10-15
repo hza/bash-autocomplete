@@ -1,35 +1,28 @@
-version: '20261013'
+version: '20261015'
 description: "JavaScript runtime, package manager, bundler and test runner"
 flags:
   --watch: {description: restart on file change, show: always}
   --hot: {description: reload in place on file change}
   --no-clear-screen: {description: keep the screen on reload}
   --smol: {description: use less memory}
-  -r: {value: file, description: module to preload, show: always}
-  --preload: {value: file, description: module to preload}
+  --preload: {aliases: [-r], value: file, description: module to preload, show: always}
   --inspect: {description: activate the debugger}
   --inspect-wait: {description: activate the debugger and wait for a connection}
   --inspect-brk: {description: activate the debugger and break on the first line}
   --env-file: {value: file, description: load environment variables from a file}
   --cwd: {value: dir, description: run in this directory, show: always}
-  -c: {value: file, description: path to bunfig.toml, show: always}
-  --config: {value: file, description: path to bunfig.toml, show: always}
+  --config: {aliases: [-c], value: file, description: path to bunfig.toml, show: always}
   --install:
     value: {enum: [auto, fallback, force]}
     description: auto-install mode
   --no-install: {description: disable auto-install, show: always}
   --port: {value: any, description: default port for Bun.serve}
-  -e: {value: any, description: evaluate a script, show: always}
-  --eval: {value: any, description: evaluate a script}
-  -p: {value: any, description: evaluate a script and print the result, show: always}
-  --print: {value: any, description: evaluate a script and print the result}
-  -b: {description: force the Bun runtime instead of Node.js}
-  --bun: {description: force the Bun runtime instead of Node.js}
-  -v: {description: print the version}
-  --version: {description: print the version}
+  --eval: {aliases: [-e], value: any, description: evaluate a script, show: always}
+  --print: {aliases: [-p], value: any, description: evaluate a script and print the result, show: always}
+  --bun: {aliases: [-b], description: force the Bun runtime instead of Node.js}
+  --version: {aliases: [-v], description: print the version}
   --revision: {description: print the version with the commit}
-  -h: {description: print help, show: always}
-  --help: {description: print help, show: always}
+  --help: {aliases: [-h], description: print help, show: always}
 args:
   - exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(j.scripts||{}).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   - file
@@ -38,8 +31,7 @@ commands:
     description: run a file or a package.json script
     flags:
       --silent: {description: do not print the script command}
-      -F: {value: any, description: run in workspaces matching a pattern}
-      --filter: {value: any, description: run in workspaces matching a pattern}
+      --filter: {aliases: [-F], value: any, description: run in workspaces matching a pattern}
       --workspaces: {description: run in all workspaces}
       --parallel: {description: run several scripts concurrently}
       --sequential: {description: run several scripts in order}
@@ -55,10 +47,8 @@ commands:
     description: run tests
     flags:
       --timeout: {value: any, description: per-test timeout in ms}
-      -u: {description: update snapshots}
-      --update-snapshots: {description: update snapshots}
-      -t: {value: any, description: run only tests whose name matches}
-      --test-name-pattern: {value: any, description: run only tests whose name matches}
+      --update-snapshots: {aliases: [-u], description: update snapshots}
+      --test-name-pattern: {aliases: [-t], value: any, description: run only tests whose name matches}
       --only: {description: run only tests marked only}
       --todo: {description: include tests marked todo}
       --bail: {value: any, description: stop after this many failures}
@@ -101,19 +91,16 @@ commands:
     aliases: [i]
     description: install dependencies from package.json
     flags:
-      -p: {description: skip devDependencies}
-      --production: {description: skip devDependencies}
+      --production: {aliases: [-p], description: skip devDependencies}
       --no-save: {description: do not update package.json or the lockfile}
       --dry-run: {description: do not change anything}
       --frozen-lockfile: {description: fail if the lockfile would change}
-      -f: {description: reinstall everything from the registry}
-      --force: {description: reinstall everything from the registry}
+      --force: {aliases: [-f], description: reinstall everything from the registry}
       --no-cache: {description: ignore the manifest cache}
       --silent: {description: no output}
       --verbose: {description: very verbose output}
       --ignore-scripts: {description: skip the project lifecycle scripts}
-      -g: {description: install globally}
-      --global: {description: install globally}
+      --global: {aliases: [-g], description: install globally}
       --backend:
         value: {enum: [clonefile, hardlink, symlink, copyfile]}
         description: how files are installed
@@ -130,15 +117,12 @@ commands:
     aliases: [a]
     description: add a dependency to package.json
     flags:
-      -d: {description: add to devDependencies}
-      --dev: {description: add to devDependencies}
+      --dev: {aliases: [-d], description: add to devDependencies}
       --optional: {description: add to optionalDependencies}
       --peer: {description: add to peerDependencies}
-      -E: {description: pin the exact version}
-      --exact: {description: pin the exact version}
+      --exact: {aliases: [-E], description: pin the exact version}
       --trust: {description: add to trustedDependencies}
-      -g: {description: install globally}
-      --global: {description: install globally}
+      --global: {aliases: [-g], description: install globally}
       --no-save: {description: do not update package.json or the lockfile}
       --dry-run: {description: do not change anything}
       --ignore-scripts: {description: skip the project lifecycle scripts}
@@ -148,19 +132,16 @@ commands:
     aliases: [rm]
     description: remove a dependency from package.json
     flags:
-      -g: {description: remove a global package}
-      --global: {description: remove a global package}
+      --global: {aliases: [-g], description: remove a global package}
       --dry-run: {description: do not change anything}
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   update:
     description: update outdated dependencies
     flags:
-      -i: {description: choose updates interactively, show: always}
-      --interactive: {description: choose updates interactively, show: always}
+      --interactive: {aliases: [-i], description: choose updates interactively, show: always}
       --latest: {description: update to the latest version ignoring ranges, show: always}
-      -r: {description: update in all workspaces, show: always}
-      --recursive: {description: update in all workspaces, show: always}
+      --recursive: {aliases: [-r], description: update in all workspaces, show: always}
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   outdated:
@@ -253,8 +234,7 @@ commands:
         description: module format
       --root: {value: dir, description: root of multiple entry points}
       --splitting: {description: enable code splitting}
-      -e: {value: any, description: module to keep external, show: always}
-      --external: {value: any, description: module to keep external, show: always}
+      --external: {aliases: [-e], value: any, description: module to keep external, show: always}
       --packages:
         value: {enum: [bundle, external]}
         description: bundle or externalize dependencies
@@ -272,8 +252,7 @@ commands:
   init:
     description: start an empty project
     flags:
-      -y: {description: accept all defaults, show: always}
-      --yes: {description: accept all defaults, show: always}
+      --yes: {aliases: [-y], description: accept all defaults, show: always}
       --react: {description: React template, show: always}
       --minimal: {description: only type definitions, show: always}
   create:

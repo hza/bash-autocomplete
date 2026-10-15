@@ -1,12 +1,8 @@
-version: '20261013'
+version: '20261015'
 description: Node.js package manager
 flags:
-  -w:
-    show: always
-    value:
-      exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
-    description: Run in workspace
   --workspace:
+    aliases: [-w]
     show: always
     value:
       exec: node -e 'let d=process.cwd(),p=require("path");try{for(const w of require(p.join(d,"package.json")).workspaces||[])console.log(w)}catch(e){}'
@@ -35,15 +31,12 @@ flags:
   --json:
     show: always
     description: Output JSON
-  -h:
-    show: always
-    description: Show help
   --help:
+    aliases: [-h]
     show: always
     description: Show help
-  -v:
-    description: Show npm version
   --version:
+    aliases: [-v]
     description: Show npm version
 commands:
   access:
@@ -73,9 +66,8 @@ commands:
   approve-scripts:
     description: Approve install scripts for specific dependencies
     flags:
-      -a:
-        description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        aliases: [-a]
         description: Show or act on all packages, not just the ones your project directly depends on
       --allow-scripts-pending:
         description: List packages with install scripts that are not yet covered by the...
@@ -86,22 +78,20 @@ commands:
     description: Run a security audit
     flags:
       --audit-level:
-        show: always
         value:
           exec: printf 'info\nlow\nmoderate\nhigh\ncritical\n'
         description: Minimum level to fail
+        show: always
       --dry-run:
-        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
-      -f:
         show: always
-        description: Removes various protections against unfortunate side effects, common...
       --force:
-        show: always
+        aliases: [-f]
         description: Removes various protections against unfortunate side effects, common...
-      --package-lock-only:
         show: always
+      --package-lock-only:
         description: If set to true, the current operation will only use the package-lock.json,...
+        show: always
       --no-package-lock:
         description: 'Disable: if set to false, then ignore package-lock.json files when installing'
       --omit:
@@ -170,10 +160,10 @@ commands:
       --global-style:
         description: Only install direct dependencies in the top level node_modules, but hoist on...
       --omit:
-        show: always
         value:
           exec: printf 'dev\noptional\npeer\n'
         description: Dependency type to skip
+        show: always
       --include:
         value:
           exec: printf '%s\n' prod dev optional peer
@@ -183,8 +173,8 @@ commands:
       --foreground-scripts:
         description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
       --ignore-scripts:
-        show: always
         description: Do not run lifecycle scripts
+        show: always
       --allow-directory:
         value:
           exec: printf '%s\n' all none root
@@ -228,24 +218,19 @@ commands:
     description: Manage npm configuration
     aliases: [c]
     flags:
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --editor:
         value: file
         description: The command to run for npm edit and npm config edit
-      -L:
-        value:
-          exec: printf '%s\n' global user project
-        description: When passed to npm config this refers to which config file to use
       --location:
+        aliases: [-L]
         value:
           exec: printf '%s\n' global user project
         description: When passed to npm config this refers to which config file to use
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
+        aliases: [-l]
         description: Show extended information in ls, search, and help-search
     commands:
       set:
@@ -261,8 +246,7 @@ commands:
         description: List config
         flags:
           --long:
-            description: Show defaults too
-          -l:
+            aliases: [-l]
             description: Show defaults too
       edit:
         description: Edit config file
@@ -324,9 +308,8 @@ commands:
   deny-scripts:
     description: Deny install scripts for specific dependencies
     flags:
-      -a:
-        description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        aliases: [-a]
         description: Show or act on all packages, not just the ones your project directly depends on
       --allow-scripts-pending:
         description: List packages with install scripts that are not yet covered by the...
@@ -346,18 +329,18 @@ commands:
     description: The registry diff command
     flags:
       --diff:
-        show: always
         value: any
         description: Define arguments to compare in npm diff
-      --diff-name-only:
         show: always
+      --diff-name-only:
         description: Prints only filenames when using npm diff
+        show: always
       --diff-unified:
         value: any
         description: The number of lines of context to print in npm diff
       --diff-ignore-all-space:
-        show: always
         description: Ignore whitespace when comparing lines in npm diff
+        show: always
       --diff-no-prefix:
         description: Do not show any source or destination prefix in npm diff output
       --diff-src-prefix:
@@ -368,9 +351,8 @@ commands:
         description: Destination prefix to be used in npm diff output
       --diff-text:
         description: Treat all files as text in npm diff
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --tag:
         value: any
@@ -424,10 +406,8 @@ commands:
         value:
           exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
         description: Package to install and run
-      -c:
-        value: any
-        description: Shell command to run
       --call:
+        aliases: [-c]
         value: any
         description: Shell command to run
       --workspaces:
@@ -442,8 +422,7 @@ commands:
       --dangerously-allow-all-scripts:
         description: If true, bypass the allowScripts policy entirely and run every dependency...
       --yes:
-        description: Install without prompting
-      -y:
+        aliases: [-y]
         description: Install without prompting
       --no:
         description: Never install
@@ -477,15 +456,15 @@ commands:
       --no-package-lock:
         description: 'Disable: if set to false, then ignore package-lock.json files when installing'
       --omit:
-        show: always
         value:
           exec: printf '%s\n' dev optional peer
         description: Dependency types to omit from the installation tree on disk
-      --include:
         show: always
+      --include:
         value:
           exec: printf '%s\n' prod dev optional peer
         description: Option that allows for defining which types of dependencies to install
+        show: always
       --ignore-scripts:
         description: If true, npm does not run scripts specified in package.json files
       --no-audit:
@@ -515,9 +494,8 @@ commands:
   get:
     description: Get a value from the npm configuration
     flags:
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
+        aliases: [-l]
         description: Show extended information in ls, search, and help-search
   help:
     description: Get help on npm
@@ -530,9 +508,8 @@ commands:
   help-search:
     description: Search npm help documentation
     flags:
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
+        aliases: [-l]
         description: Show extended information in ls, search, and help-search
   init:
     description: Create a package.json
@@ -558,20 +535,17 @@ commands:
         description: The value that npm init should use by default for the package version...
       --init-private:
         description: The value npm init should use by default for the package's private flag
-      -y:
-        show: always
-        description: Use defaults
       --yes:
-        show: always
+        aliases: [-y]
         description: Use defaults
-      -f:
-        description: Removes various protections against unfortunate side effects, common...
+        show: always
       --force:
+        aliases: [-f]
         description: Removes various protections against unfortunate side effects, common...
       --scope:
-        show: always
         value: any
         description: Scope
+        show: always
       --no-workspaces-update:
         description: 'Disable: if set to true, the npm cli will run an update after operations...'
       --include-workspace-root:
@@ -581,9 +555,8 @@ commands:
     description: Install a package
     aliases: [add, i, in]
     flags:
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: Do not update package.json
@@ -591,19 +564,19 @@ commands:
         description: Save installed packages into dependencies specifically
       --save-dev:
         description: Save to devDependencies
+        aliases: [-D]
       --save-optional:
         description: Save to optionalDependencies
+        aliases: [-O]
       --save-peer:
         description: Save installed packages to a package.json file as peerDependencies
       --save-bundle:
         description: If a package would be saved at install time by the use of --save,...
-      -E:
-        description: Pin exact version
       --save-exact:
+        aliases: [-E]
         description: Pin exact version
-      -g:
-        description: Operate on global packages
       --global:
+        aliases: [-g]
         description: Operate on global packages
       --install-strategy:
         value:
@@ -687,10 +660,6 @@ commands:
         description: Include the workspace root when workspaces are enabled for a command
       --install-links:
         description: 'When set file: protocol dependencies will be packed and installed as regular...'
-      -D:
-        description: Save to devDependencies
-      -O:
-        description: Save to optionalDependencies
       --legacy-peer-deps:
         description: Ignore peer dependency conflicts
       --force:
@@ -760,9 +729,8 @@ commands:
   install-scripts:
     description: Manage install-script approvals for dependencies
     flags:
-      -a:
-        description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        aliases: [-a]
         description: Show or act on all packages, not just the ones your project directly depends on
       --no-allow-scripts-pin:
         description: 'Disable: write pinned (pkg@version) entries when approving install scripts'
@@ -778,9 +746,8 @@ commands:
     description: Install package(s) and run tests
     aliases: [it]
     flags:
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: 'Disable: save installed packages to a package.json file as dependencies'
@@ -794,13 +761,11 @@ commands:
         description: Save installed packages to a package.json file as peerDependencies
       --save-bundle:
         description: If a package would be saved at install time by the use of --save,...
-      -E:
-        description: Dependencies saved to package.json will be configured with an exact version...
       --save-exact:
+        aliases: [-E]
         description: Dependencies saved to package.json will be configured with an exact version...
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --install-strategy:
         value:
@@ -889,9 +854,8 @@ commands:
     description: Symlink a package folder
     aliases: [ln]
     flags:
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: 'Disable: save installed packages to a package.json file as dependencies'
@@ -905,13 +869,11 @@ commands:
         description: Save installed packages to a package.json file as peerDependencies
       --save-bundle:
         description: If a package would be saved at install time by the use of --save,...
-      -E:
-        description: Dependencies saved to package.json will be configured with an exact version...
       --save-exact:
+        aliases: [-E]
         description: Dependencies saved to package.json will be configured with an exact version...
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --install-strategy:
         value:
@@ -968,21 +930,17 @@ commands:
     description: List installed packages
     aliases: [la]
     flags:
-      -a:
-        description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        aliases: [-a]
         description: Show or act on all packages, not just the ones your project directly depends on
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
+        aliases: [-l]
         description: Show extended information in ls, search, and help-search
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --depth:
         value: any
@@ -1010,40 +968,36 @@ commands:
     description: Log in to a registry
     flags:
       --scope:
-        show: always
         value: any
         description: Associate an operation with a scope for a scoped registry
-      --auth-type:
         show: always
+      --auth-type:
         value:
           exec: printf '%s\n' legacy web
         description: What authentication strategy to use with login
+        show: always
   logout:
     description: Log out of a registry
     flags:
       --scope:
-        show: always
         value: any
         description: Associate an operation with a scope for a scoped registry
+        show: always
   ls:
     description: List installed packages
     aliases: [list]
     flags:
-      -a:
-        description: Show all dependencies
       --all:
+        aliases: [-a]
         description: Show all dependencies
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
+        aliases: [-l]
         description: Show extended information in ls, search, and help-search
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
-      -g:
-        description: Operate on global packages
       --global:
+        aliases: [-g]
         description: Operate on global packages
       --depth:
         value: any
@@ -1075,9 +1029,8 @@ commands:
       --otp:
         value: any
         description: This is a one-time password from a two-factor authenticator
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
     commands:
       set: {}
@@ -1086,23 +1039,18 @@ commands:
   outdated:
     description: Check for outdated packages
     flags:
-      -a:
-        show: always
-        description: Show or act on all packages, not just the ones your project directly depends on
       --all:
+        aliases: [-a]
+        description: Show or act on all packages, not just the ones your project directly depends on
         show: always
-        description: Show all, not just direct deps
-      -l:
-        description: Show extended information in ls, search, and help-search
       --long:
-        description: Show extended info
-      -p:
-        description: Output parseable results from commands that write to standard output
+        aliases: [-l]
+        description: Show extended information in ls, search, and help-search
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
-      -g:
-        description: Operate on global packages
       --global:
+        aliases: [-g]
         description: Operate on global packages
       --before:
         value: any
@@ -1132,25 +1080,24 @@ commands:
     description: Create a tarball
     flags:
       --dry-run:
-        show: always
         description: Show what would happen, change nothing
+        show: always
       --pack-destination:
         value: dir
         description: Output dir
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
       --ignore-scripts:
-        show: always
         description: If true, npm does not run scripts specified in package.json files
+        show: always
     args: any
   ping:
     description: Ping npm registry
   pkg:
     description: Manage package.json
     flags:
-      -f:
-        description: Removes various protections against unfortunate side effects, common...
       --force:
+        aliases: [-f]
         description: Removes various protections against unfortunate side effects, common...
     commands:
       set:
@@ -1167,18 +1114,15 @@ commands:
   prefix:
     description: Show prefix
     flags:
-      -g:
-        show: always
-        description: Operate on global packages
       --global:
+        aliases: [-g]
+        description: Operate on global packages
         show: always
-        description: Operates in "global" mode, so that packages are installed into the prefix...
   profile:
     description: Change settings on your registry profile
     flags:
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
       --otp:
         value: any
@@ -1200,8 +1144,8 @@ commands:
           exec: printf '%s\n' prod dev optional peer
         description: Option that allows for defining which types of dependencies to install
       --dry-run:
-        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
+        show: always
       --foreground-scripts:
         description: Run all build scripts (ie, preinstall, install, and postinstall) scripts for...
       --ignore-scripts:
@@ -1215,21 +1159,21 @@ commands:
     description: Publish a package
     flags:
       --tag:
-        show: always
         value: any
         description: Dist tag
-      --access:
         show: always
+      --access:
         value:
           exec: printf 'public\nrestricted\n'
         description: Access level
+        show: always
       --dry-run:
-        show: always
         description: Show what would happen, change nothing
-      --otp:
         show: always
+      --otp:
         value: any
         description: One-time password
+        show: always
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
       --provenance:
@@ -1241,9 +1185,8 @@ commands:
   query:
     description: Retrieve a filtered list of packages
     flags:
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
@@ -1268,9 +1211,8 @@ commands:
     description: Rebuild native packages
     aliases: [rb]
     flags:
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
       --no-bin-links:
         description: 'Disable: tells npm to create symlinks (or .cmd shims on Windows) for package...'
@@ -1297,9 +1239,9 @@ commands:
       --no-browser:
         description: 'Disable: the browser that is called by npm commands to open websites'
       --browser:
-        show: always
         value: file
         description: The browser that is called by npm commands to open websites
+        show: always
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
     args:
@@ -1315,12 +1257,10 @@ commands:
   root:
     description: Show node_modules dir
     flags:
-      -g:
-        show: always
-        description: Operate on global packages
       --global:
+        aliases: [-g]
+        description: Operate on global packages
         show: always
-        description: Operates in "global" mode, so that packages are installed into the prefix...
   run:
     description: Run a package.json script
     aliases: [run-script, rum, urn]
@@ -1344,13 +1284,13 @@ commands:
     description: Generate a Software Bill of Materials (SBOM)
     flags:
       --omit:
-        show: always
         value:
           exec: printf '%s\n' dev optional peer
         description: Dependency types to omit from the installation tree on disk
-      --package-lock-only:
         show: always
+      --package-lock-only:
         description: If set to true, the current operation will only use the package-lock.json,...
+        show: always
       --sbom-format:
         value:
           exec: printf '%s\n' cyclonedx spdx
@@ -1367,9 +1307,8 @@ commands:
         description: If false, never shows colors
       --no-color:
         description: 'Disable: if false, never shows colors'
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
       --no-description:
         description: 'Disable: show the description in npm search'
@@ -1392,15 +1331,11 @@ commands:
   set:
     description: Set a value in the npm configuration
     flags:
-      -g:
-        description: Operates in "global" mode, so that packages are installed into the prefix...
       --global:
+        aliases: [-g]
         description: Operates in "global" mode, so that packages are installed into the prefix...
-      -L:
-        value:
-          exec: printf '%s\n' global user project
-        description: When passed to npm config this refers to which config file to use
       --location:
+        aliases: [-L]
         value:
           exec: printf '%s\n' global user project
         description: When passed to npm config this refers to which config file to use
@@ -1422,9 +1357,9 @@ commands:
       --no-unicode:
         description: 'Disable: when set to true, npm uses unicode characters in the tree output'
       --otp:
-        show: always
         value: any
         description: This is a one-time password from a two-factor authenticator
+        show: always
     args: any
   stars:
     description: View packages marked as favorites
@@ -1450,9 +1385,8 @@ commands:
       --otp:
         value: any
         description: This is a one-time password from a two-factor authenticator
-      -p:
-        description: Output parseable results from commands that write to standard output
       --parseable:
+        aliases: [-p]
         description: Output parseable results from commands that write to standard output
     commands:
       create: {}
@@ -1538,9 +1472,8 @@ commands:
     description: Remove a package
     aliases: [unlink, remove, rm, r, un]
     flags:
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: Do not update package.json
@@ -1554,9 +1487,8 @@ commands:
         description: Save installed packages to a package.json file as peerDependencies
       --save-bundle:
         description: If a package would be saved at install time by the use of --save,...
-      -g:
-        description: Operate on global packages
       --global:
+        aliases: [-g]
         description: Operate on global packages
       --include-workspace-root:
         description: Include the workspace root when workspaces are enabled for a command
@@ -1570,14 +1502,12 @@ commands:
     description: Remove a package from the registry
     flags:
       --dry-run:
-        show: always
         description: Indicates that you don't want npm to make any changes and that it should...
-      -f:
         show: always
-        description: Removes various protections against unfortunate side effects, common...
       --force:
-        show: always
+        aliases: [-f]
         description: Removes various protections against unfortunate side effects, common...
+        show: always
     args: any
   unstar:
     description: Remove an item from your favorite packages
@@ -1585,17 +1515,16 @@ commands:
       --no-unicode:
         description: 'Disable: when set to true, npm uses unicode characters in the tree output'
       --otp:
-        show: always
         value: any
         description: This is a one-time password from a two-factor authenticator
+        show: always
     args: any
   update:
     description: Update packages
     aliases: [u, up, upgrade]
     flags:
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: Do not update package.json
@@ -1603,15 +1532,15 @@ commands:
         description: Save installed packages into dependencies specifically
       --save-dev:
         description: Save to devDependencies
+        aliases: [-D]
       --save-optional:
         description: Save installed packages to a package.json file as optionalDependencies
       --save-peer:
         description: Save installed packages to a package.json file as peerDependencies
       --save-bundle:
         description: If a package would be saved at install time by the use of --save,...
-      -g:
-        description: Operate on global packages
       --global:
+        aliases: [-g]
         description: Operate on global packages
       --install-strategy:
         value:
@@ -1666,8 +1595,6 @@ commands:
         description: Include the workspace root when workspaces are enabled for a command
       --install-links:
         description: 'When set file: protocol dependencies will be packed and installed as regular...'
-      -D:
-        description: Save to devDependencies
     args:
       exec: node -e 'let d=process.cwd(),p=require("path");for(;;){try{const j=require(p.join(d,"package.json"));console.log(Object.keys(Object.assign({},j.dependencies,j.devDependencies,j.optionalDependencies,j.peerDependencies)).join("\n"));break}catch(e){const u=p.dirname(d);if(u===d)break;d=u}}'
   version:
@@ -1679,16 +1606,15 @@ commands:
       --no-commit-hooks:
         description: 'Disable: run git commit hooks when using the npm version command'
       --no-git-tag-version:
-        show: always
         description: Don't commit or tag
+        show: always
       --preid:
         value: any
         description: Prerelease id
       --sign-git-tag:
         description: If set to true, then the npm version command will tag the version using -s...
-      -S:
-        description: Save installed packages to a package.json file as dependencies
       --save:
+        aliases: [-S]
         description: Save installed packages to a package.json file as dependencies
       --no-save:
         description: 'Disable: save installed packages to a package.json file as dependencies'
@@ -1720,42 +1646,42 @@ commands:
   whoami:
     description: Show logged-in user
 snippets:
-  - key: i
-    mark: pin
-    command: 'npm install'
-    description: 'install dependencies'
-  - key: c
-    command: 'npm ci'
-    description: 'clean install from the lockfile'
-  - key: d
-    command: 'npm install -D '
-    description: 'add a dev dependency'
-  - key: r
-    mark: pin
-    command: 'npm run dev'
-    description: 'run the dev script'
-  - key: t
-    mark: pin
-    command: 'npm test'
-    description: 'run tests'
-  - key: o
-    command: 'npm outdated'
-    description: 'show outdated packages'
-  - key: u
-    command: 'npm update'
-    description: 'update within semver ranges'
-  - key: a
-    command: 'npm audit fix'
-    description: 'fix vulnerable dependencies'
-  - key: l
-    command: 'npm ls --depth=0'
-    description: 'top-level installed packages'
-  - key: g
-    command: 'npm ls -g --depth=0'
-    description: 'globally installed packages'
-  - key: v
-    command: 'npm version patch'
-    description: 'bump the patch version and tag'
-  - key: p
-    command: 'npm publish --dry-run'
-    description: 'show what would be published'
+- key: i
+  mark: pin
+  command: npm install
+  description: install dependencies
+- key: c
+  command: npm ci
+  description: clean install from the lockfile
+- key: d
+  command: 'npm install -D '
+  description: add a dev dependency
+- key: r
+  mark: pin
+  command: npm run dev
+  description: run the dev script
+- key: t
+  mark: pin
+  command: npm test
+  description: run tests
+- key: o
+  command: npm outdated
+  description: show outdated packages
+- key: u
+  command: npm update
+  description: update within semver ranges
+- key: a
+  command: npm audit fix
+  description: fix vulnerable dependencies
+- key: l
+  command: npm ls --depth=0
+  description: top-level installed packages
+- key: g
+  command: npm ls -g --depth=0
+  description: globally installed packages
+- key: v
+  command: npm version patch
+  description: bump the patch version and tag
+- key: p
+  command: npm publish --dry-run
+  description: show what would be published

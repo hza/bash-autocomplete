@@ -1,40 +1,26 @@
-version: '20261013'
+version: '20261015'
 description: Run Ansible playbooks
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
   --version: {description: "Show version"}
-  -i: {value: [file, dir], description: "Inventory file, dir or host list", show: always}
-  --inventory: {value: [file, dir], description: "Inventory file, dir or host list"}
-  -l: {value: {exec: "{ ansible-inventory --graph 2>/dev/null | sed -n 's/^[ |-]*@\\([^:]*\\):$/\\1/p'; ansible all --list-hosts 2>/dev/null | sed -n 's/^ *//; /^hosts (/d; p'; } | sort -u", cache: 60}, description: "Limit to a host pattern", show: always}
-  --limit: {value: {exec: "{ ansible-inventory --graph 2>/dev/null | sed -n 's/^[ |-]*@\\([^:]*\\):$/\\1/p'; ansible all --list-hosts 2>/dev/null | sed -n 's/^ *//; /^hosts (/d; p'; } | sort -u", cache: 60}, description: "Limit to a host pattern"}
-  -t: {value: any, description: "Run only tasks with these tags"}
-  --tags: {value: any, description: "Run only tasks with these tags"}
+  --inventory: {aliases: [-i], value: [file, dir], description: "Inventory file, dir or host list", show: always}
+  --limit: {aliases: [-l], value: {exec: "{ ansible-inventory --graph 2>/dev/null | sed -n 's/^[ |-]*@\\([^:]*\\):$/\\1/p'; ansible all --list-hosts 2>/dev/null | sed -n 's/^ *//; /^hosts (/d; p'; } | sort -u", cache: 60}, description: "Limit to a host pattern", show: always}
+  --tags: {aliases: [-t], value: any, description: "Run only tasks with these tags"}
   --skip-tags: {value: any, description: "Skip tasks with these tags"}
-  -e: {value: any, description: "Extra variables key=value, JSON or @file", show: always}
-  --extra-vars: {value: any, description: "Extra variables key=value, JSON or @file"}
-  -C: {description: "Dry run, report what would change", show: always}
-  --check: {description: "Dry run, report what would change"}
-  -D: {description: "Show diffs of changed files"}
-  --diff: {description: "Show diffs of changed files"}
-  -b: {description: "Become (sudo)"}
-  --become: {description: "Become (sudo)"}
+  --extra-vars: {aliases: [-e], value: any, description: "Extra variables key=value, JSON or @file", show: always}
+  --check: {aliases: [-C], description: "Dry run, report what would change", show: always}
+  --diff: {aliases: [-D], description: "Show diffs of changed files"}
+  --become: {aliases: [-b], description: "Become (sudo)"}
   --become-user: {value: any, description: "User to become (default root)"}
   --become-method: {value: {enum: [sudo, su, doas, pbrun, pfexec, runas, machinectl]}, description: "Privilege escalation method"}
-  -K: {description: "Ask for the become password"}
-  --ask-become-pass: {description: "Ask for the become password"}
-  -u: {value: any, description: "Remote user"}
-  --user: {value: any, description: "Remote user"}
-  -k: {description: "Ask for the SSH password"}
-  --ask-pass: {description: "Ask for the SSH password"}
+  --ask-become-pass: {aliases: [-K], description: "Ask for the become password"}
+  --user: {aliases: [-u], value: any, description: "Remote user"}
+  --ask-pass: {aliases: [-k], description: "Ask for the SSH password"}
   --private-key: {value: file, description: "SSH private key"}
   --key-file: {value: file, description: "SSH private key"}
-  -c: {value: {enum: [ssh, paramiko, local, docker, winrm, psrp]}, description: "Connection type"}
-  --connection: {value: {enum: [ssh, paramiko, local, docker, winrm, psrp]}, description: "Connection type"}
-  -T: {value: any, description: "Connection timeout in seconds"}
-  --timeout: {value: any, description: "Connection timeout in seconds"}
-  -f: {value: any, description: "Parallel processes (default 5)"}
-  --forks: {value: any, description: "Parallel processes (default 5)"}
+  --connection: {aliases: [-c], value: {enum: [ssh, paramiko, local, docker, winrm, psrp]}, description: "Connection type"}
+  --timeout: {aliases: [-T], value: any, description: "Connection timeout in seconds"}
+  --forks: {aliases: [-f], value: any, description: "Parallel processes (default 5)"}
   --list-hosts: {description: "List matching hosts and exit"}
   --list-tasks: {description: "List tasks and exit"}
   --list-tags: {description: "List tags and exit"}
@@ -44,11 +30,9 @@ flags:
   --flush-cache: {description: "Clear the fact cache"}
   --force-handlers: {description: "Run handlers even if a task fails"}
   --vault-id: {value: any, description: "Vault identity label@source"}
-  -J: {description: "Ask for the vault password"}
-  --ask-vault-pass: {description: "Ask for the vault password"}
+  --ask-vault-pass: {aliases: [-J], description: "Ask for the vault password"}
   --vault-password-file: {value: file, description: "Vault password file"}
-  -M: {value: dir, description: "Extra module path"}
-  --module-path: {value: dir, description: "Extra module path"}
+  --module-path: {aliases: [-M], value: dir, description: "Extra module path"}
   -v: {description: "Verbose (-vvv for more)", repeat: true}
   --verbose: {description: "Verbose", repeat: true}
 args: {file: "*.yml *.yaml"}

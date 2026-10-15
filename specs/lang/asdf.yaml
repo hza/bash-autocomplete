@@ -1,8 +1,7 @@
-version: '20261013'
+version: '20261015'
 description: Multiple runtime version manager
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
 commands:
   plugin:
     description: Manage plugins

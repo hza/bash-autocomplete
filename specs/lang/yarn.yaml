@@ -1,10 +1,9 @@
-version: '20261013'
+version: '20261015'
 description: Fast, reliable, and secure dependency management
 flags:
   --verbose: {description: "Output verbose messages on internal operations"}
   --json: {description: "Format Yarn log messages as lines of JSON"}
-  --help: {description: "Output usage information"}
-  -h: {description: "Output usage information"}
+  --help: {aliases: [-h], description: "Output usage information"}
   --no-lockfile: {description: "Don't read or generate a lockfile"}
   --pure-lockfile: {description: "Don't generate a lockfile"}
   --frozen-lockfile: {description: "Don't generate a lockfile and fail if an update is needed"}
@@ -31,16 +30,11 @@ commands:
   add:
     description: Install a package and add it to package.json
     flags:
-      -D: {description: "Save package to devDependencies"}
-      --dev: {description: "Save package to devDependencies"}
-      -P: {description: "Save package to peerDependencies"}
-      --peer: {description: "Save package to peerDependencies"}
-      -O: {description: "Save package to optionalDependencies"}
-      --optional: {description: "Save package to optionalDependencies"}
-      -E: {description: "Install exact version"}
-      --exact: {description: "Install exact version"}
-      -T: {description: "Install tilde version"}
-      --tilde: {description: "Install tilde version"}
+      --dev: {aliases: [-D], description: "Save package to devDependencies"}
+      --peer: {aliases: [-P], description: "Save package to peerDependencies"}
+      --optional: {aliases: [-O], description: "Save package to optionalDependencies"}
+      --exact: {aliases: [-E], description: "Install exact version"}
+      --tilde: {aliases: [-T], description: "Install tilde version"}
       --audit: {description: "Run vulnerability audit on installed packages"}
     args: any
   remove:
@@ -49,16 +43,11 @@ commands:
   upgrade:
     description: Upgrade packages to their latest version
     flags:
-      -L: {description: "List upgradeable packages"}
-      --latest: {description: "List upgradeable packages"}
-      -E: {description: "Install exact version"}
-      --exact: {description: "Install exact version"}
-      -T: {description: "Install tilde version"}
-      --tilde: {description: "Install tilde version"}
-      -P: {value: any, description: "Upgrade packages with matching prefix (semver)"}
-      --pattern: {value: any, description: "Upgrade packages with matching prefix (semver)"}
-      -S: {value: any, description: "Upgrade to specific semver range"}
-      --scope: {value: any, description: "Upgrade to specific semver range"}
+      --latest: {aliases: [-L], description: "List upgradeable packages"}
+      --exact: {aliases: [-E], description: "Install exact version"}
+      --tilde: {aliases: [-T], description: "Install tilde version"}
+      --pattern: {aliases: [-P], value: any, description: "Upgrade packages with matching prefix (semver)"}
+      --scope: {aliases: [-S], value: any, description: "Upgrade to specific semver range"}
     args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
   install:
     description: Install all dependencies
@@ -94,10 +83,8 @@ commands:
   init:
     description: Interactively creates or updates a package.json file
     flags:
-      -y: {description: "Skip questions and use default values"}
-      --yes: {description: "Skip questions and use default values"}
-      -p: {description: "Publish setup"}
-      --private: {description: "Publish setup"}
+      --yes: {aliases: [-y], description: "Skip questions and use default values"}
+      --private: {aliases: [-p], description: "Publish setup"}
   publish:
     description: Publish a package to the npm registry
     flags:
@@ -109,8 +96,7 @@ commands:
   pack:
     description: Create a compressed gzip archive of package dependencies
     flags:
-      -f: {value: any, description: "Filename for the output file"}
-      --filename: {value: any, description: "Filename for the output file"}
+      --filename: {aliases: [-f], value: any, description: "Filename for the output file"}
   link:
     description: Symlink a package folder during development
     args: any
@@ -138,8 +124,7 @@ commands:
       set:
         description: Sets the configuration key to a given value
         flags:
-          -g: {description: "Set global config"}
-          --global: {description: "Set global config"}
+          --global: {aliases: [-g], description: "Set global config"}
         args: any
       delete:
         description: Deletes the configuration key from the config file

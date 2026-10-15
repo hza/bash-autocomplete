@@ -1,83 +1,56 @@
-version: '20261013'
+version: '20261015'
 description: "Scriptable image processing system"
 flags:
-  -g:
-    value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
-    description: "Get property value"
   --getProperty:
+    aliases: [-g]
     value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
     description: "Get property value"
-  -s:
-    value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
-    description: "Set property: key value"
   --setProperty:
+    aliases: [-s]
     value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
     description: "Set property: key value"
-  -d:
-    value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
-    description: "Delete property"
   --deleteProperty:
+    aliases: [-d]
     show: always
     value: {exec: "sips -H 2>&1 | awk '/property keys/ {p=1; next} p && NF >= 2 && !/read-only/ {k=$1; $1=\"\"; sub(/^ /, \"\"); print k \"\\t\" $0}'"}
     description: "Delete property"
-  -X: {value: any, description: "Extract profile tag: tag tagFile"}
-  --extractTag: {value: any, description: "Extract profile tag: tag tagFile"}
-  -x: {value: file, description: "Extract embedded ICC profile to file"}
-  --extractProfile: {value: file, description: "Extract embedded ICC profile to file"}
+  --extractTag: {aliases: [-X], value: any, description: "Extract profile tag: tag tagFile"}
+  --extractProfile: {aliases: [-x], value: file, description: "Extract embedded ICC profile to file"}
   --verify: {description: "Verify profile"}
-  '-1': {description: "Print output on one line"}
-  --oneLine: {description: "Print output on one line"}
+  --oneLine: {aliases: ['-1'], description: "Print output on one line"}
   --deleteTag: {value: any, description: "Delete profile tag"}
   --copyTag: {value: any, description: "Copy profile tag: srcTag dstTag"}
   --loadTag: {value: any, description: "Load profile tag: tag tagFile"}
   --repair: {description: "Repair profile"}
-  -e: {value: file, description: "Embed ICC profile"}
-  --embedProfile: {value: file, description: "Embed ICC profile"}
-  -E: {value: file, description: "Embed ICC profile if image has none"}
-  --embedProfileIfNone: {value: file, description: "Embed ICC profile if image has none"}
-  -m: {value: file, description: "Color match to ICC profile"}
-  --matchTo: {value: file, description: "Color match to ICC profile", show: always}
-  -M: {value: file, description: "Color match to profile with intent"}
-  --matchToWithIntent: {value: file, description: "Color match to profile with intent"}
+  --embedProfile: {aliases: [-e], value: file, description: "Embed ICC profile"}
+  --embedProfileIfNone: {aliases: [-E], value: file, description: "Embed ICC profile if image has none"}
+  --matchTo: {aliases: [-m], value: file, description: "Color match to ICC profile", show: always}
+  --matchToWithIntent: {aliases: [-M], value: file, description: "Color match to profile with intent"}
   --deleteColorManagementProperties: {description: "Remove color management properties", show: always}
-  -r:
-    value: {enum: ['90', '180', '270']}
-    description: "Rotate clockwise by degrees"
   --rotate:
+    aliases: [-r]
     value: {enum: ['90', '180', '270']}
     description: "Rotate clockwise by degrees"
-  -f:
-    value: {enum: [horizontal, vertical]}
-    description: "Flip image"
   --flip:
+    aliases: [-f]
     value: {enum: [horizontal, vertical]}
     description: "Flip image"
-  -c: {value: any, description: "Crop to pixelsH pixelsW"}
-  --cropToHeightWidth: {value: any, description: "Crop to pixelsH pixelsW"}
+  --cropToHeightWidth: {aliases: [-c], value: any, description: "Crop to pixelsH pixelsW"}
   --cropOffset: {value: any, description: "Crop offset: offsetY offsetX"}
-  -p: {value: any, description: "Pad to pixelsH pixelsW"}
-  --padToHeightWidth: {value: any, description: "Pad to pixelsH pixelsW"}
+  --padToHeightWidth: {aliases: [-p], value: any, description: "Pad to pixelsH pixelsW"}
   --padColor: {value: any, description: "Pad color (hex)"}
-  -z: {value: any, description: "Resample to pixelsH pixelsW"}
-  --resampleHeightWidth: {value: any, description: "Resample to pixelsH pixelsW", show: always}
+  --resampleHeightWidth: {aliases: [-z], value: any, description: "Resample to pixelsH pixelsW", show: always}
   --resampleWidth: {value: any, description: "Resample to width, keeping aspect", show: always}
   --resampleHeight: {value: any, description: "Resample to height, keeping aspect"}
-  -Z: {value: any, description: "Resample so the longest side fits pixels"}
-  --resampleHeightWidthMax: {value: any, description: "Resample so the longest side fits pixels", show: always}
-  -i: {description: "Add a Finder icon to the file"}
-  --addIcon: {description: "Add a Finder icon to the file"}
+  --resampleHeightWidthMax: {aliases: [-Z], value: any, description: "Resample so the longest side fits pixels", show: always}
+  --addIcon: {aliases: [-i], description: "Add a Finder icon to the file"}
   --optimizeColorForSharing: {description: "Optimize color for sharing"}
-  -o: {value: file, description: "Output file or directory"}
-  --out: {value: file, description: "Output file or directory", show: always}
-  -j: {value: file, description: "Run JavaScript file"}
-  --js: {value: file, description: "Run JavaScript file"}
+  --out: {aliases: [-o], value: file, description: "Output file or directory", show: always}
+  --js: {aliases: [-j], value: file, description: "Run JavaScript file"}
   --debug: {description: "Enable debugging output"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -H: {description: "Show help for properties"}
-  --helpProperties: {description: "Show help for properties"}
-  -v: {description: "Show the version"}
-  --version: {description: "Show the version"}
+  --help: {aliases: [-h], description: "Show help"}
+  --helpProperties: {aliases: [-H], description: "Show help for properties"}
+  --version: {aliases: [-v], description: "Show the version"}
   --formats: {description: "Show the read/write formats"}
 args: file
 snippets:

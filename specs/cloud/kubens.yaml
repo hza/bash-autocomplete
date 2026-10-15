@@ -1,16 +1,11 @@
-version: '20261013'
+version: '20261015'
 description: Switch the kubectl namespace
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -c: {description: "Show the current namespace"}
-  --current: {description: "Show the current namespace"}
-  -f: {description: "Switch even if the namespace doesn't exist"}
-  --force: {description: "Switch even if the namespace doesn't exist"}
-  -u: {description: "Unset the namespace (back to default)"}
-  --unset: {description: "Unset the namespace (back to default)"}
-  -V: {description: "Show version"}
-  --version: {description: "Show version"}
+  --help: {aliases: [-h], description: "Show help"}
+  --current: {aliases: [-c], description: "Show the current namespace"}
+  --force: {aliases: [-f], description: "Switch even if the namespace doesn't exist"}
+  --unset: {aliases: [-u], description: "Unset the namespace (back to default)"}
+  --version: {aliases: [-V], description: "Show version"}
 args: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'; echo -", cache: 30}
 snippets:
   - key: s

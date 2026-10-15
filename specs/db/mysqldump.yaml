@@ -1,52 +1,36 @@
-version: '20261013'
+version: '20261015'
 description: Dump MySQL / MariaDB databases as SQL
 flags:
-  -h: {value: "@hosts", description: "Connect to host", show: always}
-  --host: {value: "@hosts", description: "Connect to host"}
-  -P: {value: any, description: "Port number for TCP/IP connection"}
-  --port: {value: any, description: "Port number for TCP/IP connection"}
-  -u: {value: "@users", description: "User for login", show: always}
-  --user: {value: "@users", description: "User for login"}
+  --host: {aliases: [-h], value: "@hosts", description: "Connect to host", show: always}
+  --port: {aliases: [-P], value: any, description: "Port number for TCP/IP connection"}
+  --user: {aliases: [-u], value: "@users", description: "User for login", show: always}
   -p: {description: "Prompt for password (or -pSECRET, no space)", show: always}
   --password: {description: "Prompt for password (or --password=SECRET)"}
-  -S: {value: file, description: "Socket file for connection"}
-  --socket: {value: file, description: "Socket file for connection"}
+  --socket: {aliases: [-S], value: file, description: "Socket file for connection"}
   --protocol: {value: {enum: {tcp: TCP/IP, socket: 'Unix socket file', pipe: 'named pipe (Windows)', memory: 'shared memory (Windows)'}}, description: "Transport protocol"}
-  -B: {description: "Dump several databases (names as args)", show: always}
-  --databases: {description: "Dump several databases (names as args)"}
-  -A: {description: "Dump all databases", show: always}
-  --all-databases: {description: "Dump all databases"}
-  -r: {value: {file: "*.sql"}, description: "Write output to file"}
-  --result-file: {value: {file: "*.sql"}, description: "Write output to file"}
-  -d: {description: "No row data (schema only)", show: always}
-  --no-data: {description: "No row data (schema only)"}
-  -t: {description: "No CREATE TABLE statements (data only)"}
-  --no-create-info: {description: "No CREATE TABLE statements (data only)"}
-  -n: {description: "No CREATE DATABASE statements"}
-  --no-create-db: {description: "No CREATE DATABASE statements"}
+  --databases: {aliases: [-B], description: "Dump several databases (names as args)", show: always}
+  --all-databases: {aliases: [-A], description: "Dump all databases", show: always}
+  --result-file: {aliases: [-r], value: {file: "*.sql"}, description: "Write output to file"}
+  --no-data: {aliases: [-d], description: "No row data (schema only)", show: always}
+  --no-create-info: {aliases: [-t], description: "No CREATE TABLE statements (data only)"}
+  --no-create-db: {aliases: [-n], description: "No CREATE DATABASE statements"}
   --single-transaction: {description: "Consistent InnoDB dump without locking", show: always}
-  -R: {description: "Include stored procedures and functions"}
-  --routines: {description: "Include stored procedures and functions"}
-  -E: {description: "Include events"}
-  --events: {description: "Include events"}
+  --routines: {aliases: [-R], description: "Include stored procedures and functions"}
+  --events: {aliases: [-E], description: "Include events"}
   --triggers: {description: "Include triggers (default on)"}
   --skip-triggers: {description: "Do not dump triggers"}
   --ignore-table: {value: any, description: "Skip table (db.table)", repeat: true}
-  -w: {value: any, description: "Dump only rows matching WHERE condition"}
-  --where: {value: any, description: "Dump only rows matching WHERE condition"}
+  --where: {aliases: [-w], value: any, description: "Dump only rows matching WHERE condition"}
   --add-drop-database: {description: "Add DROP DATABASE before each CREATE DATABASE"}
   --add-drop-table: {description: "Add DROP TABLE before each CREATE TABLE"}
   --skip-add-drop-table: {description: "Do not add DROP TABLE"}
-  -c: {description: "Use complete INSERTs with column names"}
-  --complete-insert: {description: "Use complete INSERTs with column names"}
+  --complete-insert: {aliases: [-c], description: "Use complete INSERTs with column names"}
   --skip-extended-insert: {description: "One INSERT per row"}
   --insert-ignore: {description: "Write INSERT IGNORE"}
   --replace: {description: "Write REPLACE instead of INSERT"}
   --hex-blob: {description: "Dump binary columns as hex"}
-  -x: {description: "Lock all tables across all databases"}
-  --lock-all-tables: {description: "Lock all tables across all databases"}
-  -l: {description: "Lock tables per database"}
-  --lock-tables: {description: "Lock tables per database"}
+  --lock-all-tables: {aliases: [-x], description: "Lock all tables across all databases"}
+  --lock-tables: {aliases: [-l], description: "Lock tables per database"}
   --skip-lock-tables: {description: "Do not lock tables"}
   --quick: {description: "Stream rows instead of buffering (default on)"}
   --compact: {description: "Less verbose output (no comments etc.)"}
@@ -54,10 +38,8 @@ flags:
   --set-gtid-purged: {value: {enum: ['OFF', 'ON', AUTO, COMMENTED]}, description: "Write SET @@GLOBAL.GTID_PURGED"}
   --source-data: {value: {enum: {'1': 'CHANGE REPLICATION SOURCE statement', '2': 'same, commented out'}}, description: "Include binary log position"}
   --master-data: {value: {enum: {'1': 'CHANGE MASTER statement', '2': 'same, commented out'}}, description: "Include binary log position (older name)"}
-  -T: {value: dir, description: "Write tab-separated data files to dir"}
-  --tab: {value: dir, description: "Write tab-separated data files to dir"}
-  -X: {description: "Produce XML output"}
-  --xml: {description: "Produce XML output"}
+  --tab: {aliases: [-T], value: dir, description: "Write tab-separated data files to dir"}
+  --xml: {aliases: [-X], description: "Produce XML output"}
   --default-character-set: {value: {enum: [utf8mb4, utf8, latin1, binary]}, description: "Default character set"}
   --defaults-file: {value: file, description: "Read options only from this file"}
   --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
@@ -66,12 +48,9 @@ flags:
   --ssl-mode: {value: {enum: [DISABLED, PREFERRED, REQUIRED, VERIFY_CA, VERIFY_IDENTITY]}, description: "TLS mode for the connection"}
   --column-statistics: {description: "Write ANALYZE TABLE statements (0 to disable)"}
   --no-tablespaces: {description: "Do not write tablespace info"}
-  -f: {description: "Continue even on SQL errors"}
-  --force: {description: "Continue even on SQL errors"}
-  -v: {description: "Verbose progress on stderr"}
-  --verbose: {description: "Verbose progress on stderr"}
-  -V: {description: "Print version and exit"}
-  --version: {description: "Print version and exit"}
+  --force: {aliases: [-f], description: "Continue even on SQL errors"}
+  --verbose: {aliases: [-v], description: "Verbose progress on stderr"}
+  --version: {aliases: [-V], description: "Print version and exit"}
   --help: {description: "Show help and exit"}
 args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
 snippets:

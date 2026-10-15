@@ -1,27 +1,19 @@
-version: '20261013'
+version: '20261015'
 description: "Visual Studio Code"
 flags:
-  "-d": {description: "Compare two files with each other", value: file, show: always}
-  "--diff": {description: "Compare two files with each other", value: file, show: always}
-  "-m": {description: "Three-way merge: path1 path2 base result", value: file}
-  "--merge": {description: "Three-way merge: path1 path2 base result", value: file}
-  "-a": {description: "Add folder(s) to the last active window", value: dir}
-  "--add": {description: "Add folder(s) to the last active window", value: dir}
+  "--diff": {aliases: [-d], description: "Compare two files with each other", value: file, show: always}
+  "--merge": {aliases: [-m], description: "Three-way merge: path1 path2 base result", value: file}
+  "--add": {aliases: [-a], description: "Add folder(s) to the last active window", value: dir}
   "--remove": {description: "Remove folder(s) from the last active window", value: dir}
-  "-g": {description: "Open a file at the path on the specified line and character position", value: file}
-  "--goto": {description: "Open a file at the path on the specified line and character position", value: file}
-  "-n": {description: "Force to open a new window", show: always}
-  "--new-window": {description: "Force to open a new window", show: always}
-  "-r": {description: "Force to open a file or folder in an already opened window"}
-  "--reuse-window": {description: "Force to open a file or folder in an already opened window"}
+  "--goto": {aliases: [-g], description: "Open a file at the path on the specified line and character position", value: file}
+  "--new-window": {aliases: [-n], description: "Force to open a new window", show: always}
+  "--reuse-window": {aliases: [-r], description: "Force to open a file or folder in an already opened window"}
   "--agents": {description: "Opens the agents window"}
-  "-w": {description: "Wait for the files to be closed before returning"}
-  "--wait": {description: "Wait for the files to be closed before returning"}
+  "--wait": {aliases: [-w], description: "Wait for the files to be closed before returning"}
   "--locale": {description: "The locale to use (e.g. en-US or zh-TW)", value: any}
   "--user-data-dir": {description: "Specifies the directory that user data is kept in", value: dir}
   "--profile": {description: "Opens the provided folder or workspace with the given profile and...", value: any}
-  "-h": {description: "Print usage"}
-  "--help": {description: "Print usage"}
+  "--help": {aliases: [-h], description: "Print usage"}
   "--extensions-dir": {description: "Set the root path for extensions", value: dir}
   "--list-extensions": {description: "List the installed extensions", show: always}
   "--show-versions": {description: "Show versions of installed extensions, when using --list-extensions", show: always}
@@ -38,14 +30,12 @@ flags:
     description: "Enables proposed API features for extensions"
     value: {"exec": "ls ~/.vscode/extensions 2>/dev/null | grep -v '^extensions.json$' | sed 's/-[0-9].*//' | sort -u"}
   "--add-mcp": {description: "Add an MCP server definition (JSON) to the user profile", value: any}
-  "-v": {description: "Print version"}
-  "--version": {description: "Print version"}
+  "--version": {aliases: [-v], description: "Print version"}
   "--verbose": {description: "Print verbose output (implies --wait)"}
   "--log":
     description: "Log level to use"
     value: {"exec": "printf '%s\\n' critical error warn info debug trace off"}
-  "-s": {description: "Print process usage and diagnostics information", show: always}
-  "--status": {description: "Print process usage and diagnostics information", show: always}
+  "--status": {aliases: [-s], description: "Print process usage and diagnostics information", show: always}
   "--prof-startup": {description: "Run CPU profiler during startup"}
   "--disable-extensions": {description: "Disable all installed extensions"}
   "--disable-extension":

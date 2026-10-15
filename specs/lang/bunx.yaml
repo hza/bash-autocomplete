@@ -1,9 +1,8 @@
-version: '20261013'
+version: '20261015'
 description: "Run a package binary with Bun, installing it if needed"
 flags:
   --bun: {description: force the Bun runtime instead of Node.js, show: always}
-  -p: {value: any, description: package to install before running, show: always}
-  --package: {value: any, description: package to install before running, show: always}
+  --package: {aliases: [-p], value: any, description: package to install before running, show: always}
   --no-install: {description: do not install missing packages}
   --verbose: {description: verbose output}
   --silent: {description: no output}

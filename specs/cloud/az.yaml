@@ -1,23 +1,17 @@
-version: '20261013'
+version: '20261015'
 description: Azure command line interface
 flags:
-  --output: {value: {enum: [json, jsonc, table, tsv, yaml, yamlc, none]}, description: "Output format", show: always}
-  -o: {value: {enum: [json, jsonc, table, tsv, yaml, yamlc, none]}, description: "Output format"}
+  --output: {aliases: [-o], value: {enum: [json, jsonc, table, tsv, yaml, yamlc, none]}, description: "Output format", show: always}
   --query: {value: any, description: "JMESPath query string", show: always}
   --subscription: {value: {exec: "az account list --query '[].name' -o tsv 2>/dev/null", cache: 300}, description: "Name or ID of subscription", show: always}
-  --resource-group: {value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group", show: always}
-  -g: {value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group"}
-  --name: {value: any, description: "Name of the resource"}
-  -n: {value: any, description: "Name of the resource"}
-  --location: {value: {exec: "az account list-locations --query '[].name' -o tsv 2>/dev/null", cache: 86400}, description: "Azure region", show: always}
-  -l: {value: {exec: "az account list-locations --query '[].name' -o tsv 2>/dev/null", cache: 86400}, description: "Azure region"}
-  --help: {description: "Show help message"}
-  -h: {description: "Show help message"}
+  --resource-group: {aliases: [-g], value: {exec: "az group list --query '[].name' -o tsv 2>/dev/null", cache: 120}, description: "Name of resource group", show: always}
+  --name: {aliases: [-n], value: any, description: "Name of the resource"}
+  --location: {aliases: [-l], value: {exec: "az account list-locations --query '[].name' -o tsv 2>/dev/null", cache: 86400}, description: "Azure region", show: always}
+  --help: {aliases: [-h], description: "Show help message"}
   --debug: {description: "Increase logging verbosity to show all debug logs"}
   --verbose: {description: "Increase logging verbosity"}
   --only-show-errors: {description: "Only show errors, suppressing warnings"}
-  --yes: {description: "Do not prompt for confirmation"}
-  -y: {description: "Do not prompt for confirmation"}
+  --yes: {aliases: [-y], description: "Do not prompt for confirmation"}
   --no-wait: {description: "Do not wait for the long-running operation to finish"}
 commands:
   login:
@@ -27,10 +21,8 @@ commands:
       --tenant: {value: any, description: "Tenant ID or domain"}
       --service-principal: {description: "Log in with a service principal"}
       --identity: {description: "Log in with a managed identity"}
-      --username: {value: any, description: "User name or app ID"}
-      -u: {value: any, description: "User name or app ID"}
-      --password: {value: any, description: "Password or client secret"}
-      -p: {value: any, description: "Password or client secret"}
+      --username: {aliases: [-u], value: any, description: "User name or app ID"}
+      --password: {aliases: [-p], value: any, description: "Password or client secret"}
   logout: {description: "Log out to remove access to Azure subscriptions"}
   version: {description: "Show the versions of Azure CLI modules and extensions"}
   upgrade: {description: "Upgrade Azure CLI and extensions"}

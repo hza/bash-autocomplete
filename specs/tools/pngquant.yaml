@@ -1,11 +1,9 @@
-version: '20261013'
+version: '20261015'
 description: "Lossy PNG compressor (quantizes to an 8-bit palette)"
 flags:
-  -f: {description: "Overwrite existing output files"}
-  --force: {description: "Overwrite existing output files"}
+  --force: {aliases: [-f], description: "Overwrite existing output files"}
   --skip-if-larger: {description: "Only save files smaller than the original"}
-  -o: {value: {file: "*.png"}, description: "Output file (- = stdout)"}
-  --output: {value: {file: "*.png"}, description: "Output file (- = stdout)"}
+  --output: {aliases: [-o], value: {file: "*.png"}, description: "Output file (- = stdout)"}
   --ext:
     value: {enum: {.png: "replace the original (with --force)", -fs8.png: "default suffix", -min.png: "custom suffix"}}
     description: "Output filename suffix"
@@ -20,16 +18,13 @@ flags:
   --ordered: {description: "Ordered dithering"}
   --posterize: {value: {enum: ['1', '2', '3', '4']}, description: "Drop low bits (4 = ARGB4444)"}
   --strip: {description: "Remove optional metadata (default on Mac)"}
-  -v: {description: "Print status messages"}
-  --verbose: {description: "Print status messages"}
-  -V: {description: "Print version"}
-  --version: {description: "Print version"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --verbose: {aliases: [-v], description: "Print status messages"}
+  --version: {aliases: [-V], description: "Print version"}
+  --help: {aliases: [-h], description: "Show help"}
 args: {file: "*.png"}
 snippets:
   - key: d
-    mark: pin
+    mark: '1'
     command: "pngquant --quality 65-85 --skip-if-larger --strip --ext .png --force -- images/*.png"
     description: "compress every PNG in a dir in place (skips ones that would grow)"
   - key: c

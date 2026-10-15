@@ -1,35 +1,21 @@
-version: '20261013'
+version: '20261015'
 description: "Build targets from a makefile"
 flags:
-  -f: {value: file, description: "Read FILE as a makefile", show: always}
-  --file: {value: file, description: "Read FILE as a makefile", show: always}
+  --file: {aliases: [-f], value: file, description: "Read FILE as a makefile", show: always}
   --makefile: {value: file, description: "Read FILE as a makefile"}
-  -C: {value: dir, description: "Change to DIRECTORY before doing anything", show: always}
-  --directory: {value: dir, description: "Change to DIRECTORY before doing anything", show: always}
-  -j: {value: any, description: "Allow N jobs at once; infinite jobs with no arg", show: always}
-  --jobs: {value: any, description: "Allow N jobs at once; infinite jobs with no arg", show: always}
-  -k: {description: "Keep going when some targets can't be made"}
-  --keep-going: {description: "Keep going when some targets can't be made"}
-  -n: {description: "Don't actually run any commands; just print them"}
-  --dry-run: {description: "Don't actually run any commands; just print them"}
-  -B: {description: "Unconditionally make all targets", show: always}
-  --always-make: {description: "Unconditionally make all targets", show: always}
-  -s: {description: "Don't echo commands"}
-  --silent: {description: "Don't echo commands"}
-  -i: {description: "Ignore errors from commands"}
-  --ignore-errors: {description: "Ignore errors from commands"}
-  -e: {description: "Environment variables override makefiles", show: always}
-  --environment-overrides: {description: "Environment variables override makefiles", show: always}
-  -p: {description: "Print make's internal database"}
-  --print-data-base: {description: "Print make's internal database"}
-  -q: {description: "Run no commands; exit status says if up to date"}
-  --question: {description: "Run no commands; exit status says if up to date"}
-  -I: {value: dir, description: "Search DIRECTORY for included makefiles"}
-  --include-dir: {value: dir, description: "Search DIRECTORY for included makefiles"}
+  --directory: {aliases: [-C], value: dir, description: "Change to DIRECTORY before doing anything", show: always}
+  --jobs: {aliases: [-j], value: any, description: "Allow N jobs at once; infinite jobs with no arg", show: always}
+  --keep-going: {aliases: [-k], description: "Keep going when some targets can't be made"}
+  --dry-run: {aliases: [-n], description: "Don't actually run any commands; just print them"}
+  --always-make: {aliases: [-B], description: "Unconditionally make all targets", show: always}
+  --silent: {aliases: [-s], description: "Don't echo commands"}
+  --ignore-errors: {aliases: [-i], description: "Ignore errors from commands"}
+  --environment-overrides: {aliases: [-e], description: "Environment variables override makefiles", show: always}
+  --print-data-base: {aliases: [-p], description: "Print make's internal database"}
+  --question: {aliases: [-q], description: "Run no commands; exit status says if up to date"}
+  --include-dir: {aliases: [-I], value: dir, description: "Search DIRECTORY for included makefiles"}
   -d: {description: "Print lots of debugging information"}
   --debug: {description: "Print various types of debugging information"}
-  -v: {description: "Print the version number of make and exit"}
-  --version: {description: "Print the version number of make and exit"}
-  -h: {description: "Print this message and exit"}
-  --help: {description: "Print this message and exit"}
+  --version: {aliases: [-v], description: "Print the version number of make and exit"}
+  --help: {aliases: [-h], description: "Print this message and exit"}
 args: ["@make-targets", "@make-variables"]

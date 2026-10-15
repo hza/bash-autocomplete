@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: "Pattern scanning and processing language (BSD awk)"
 flags:
   -F: {value: {enum: {',': comma, ':': colon, '\t': tab, ';': semicolon, '|': pipe, '=': 'equals sign'}}, description: "Input field separator (regex)", show: always}
@@ -6,8 +6,7 @@ flags:
   -f: {value: file, description: "Read the program from a file", repeat: true}
   -d: {description: "Debug output"}
   -safe: {description: "Safe mode: no system(), pipes or file output"}
-  --version: {description: "Version information"}
-  -version: {description: "Version information"}
+  --version: {aliases: [-version], description: "Version information"}
 snippets:
   - key: s
     mark: pin

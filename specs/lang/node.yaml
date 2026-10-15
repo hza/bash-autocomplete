@@ -1,16 +1,11 @@
-version: '20261013'
+version: '20261015'
 description: "Server-side JavaScript runtime"
 flags:
-  -e: {value: any, description: evaluate a script, show: always}
-  --eval: {value: any, description: evaluate a script, show: always}
-  -p: {value: any, description: evaluate a script and print the result, show: always}
-  --print: {value: any, description: evaluate a script and print the result, show: always}
-  -c: {description: syntax-check the script without running it}
-  --check: {description: syntax-check the script without running it}
-  -i: {description: always enter the REPL}
-  --interactive: {description: always enter the REPL}
-  -r: {value: any, description: CommonJS module to preload}
-  --require: {value: any, description: CommonJS module to preload}
+  --eval: {aliases: [-e], value: any, description: evaluate a script, show: always}
+  --print: {aliases: [-p], value: any, description: evaluate a script and print the result, show: always}
+  --check: {aliases: [-c], description: syntax-check the script without running it}
+  --interactive: {aliases: [-i], description: always enter the REPL}
+  --require: {aliases: [-r], value: any, description: CommonJS module to preload}
   --import: {value: any, description: ES module to preload}
   --run:
     value:
@@ -58,10 +53,8 @@ flags:
   --conditions: {value: any, description: extra conditions for exports resolution}
   --preserve-symlinks: {description: keep symlinks when resolving modules}
   --title: {value: any, description: process title}
-  -v: {description: print the version}
-  --version: {description: print the version}
-  -h: {description: print the options}
-  --help: {description: print the options}
+  --version: {aliases: [-v], description: print the version}
+  --help: {aliases: [-h], description: print the options}
   --v8-options: {description: print the V8 options}
   --completion-bash: {description: print a bash completion script}
 args: file

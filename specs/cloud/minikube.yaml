@@ -1,13 +1,10 @@
-version: '20261013'
+version: '20261015'
 description: Run a local Kubernetes cluster
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -p: {value: {exec: "minikube profile list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^\"Name\":\"\\([^\"]*\\)\".*/\\1/p' | sort -u", cache: 60}, description: "Profile (cluster) name", show: always}
-  --profile: {value: {exec: "minikube profile list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^\"Name\":\"\\([^\"]*\\)\".*/\\1/p' | sort -u", cache: 60}, description: "Profile (cluster) name"}
+  --help: {aliases: [-h], description: "Show help"}
+  --profile: {aliases: [-p], value: {exec: "minikube profile list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^\"Name\":\"\\([^\"]*\\)\".*/\\1/p' | sort -u", cache: 60}, description: "Profile (cluster) name", show: always}
   --alsologtostderr: {description: "Log to stderr as well as files"}
-  -v: {value: any, description: "Log verbosity level"}
-  --v: {value: any, description: "Log verbosity level"}
+  --v: {aliases: [-v], value: any, description: "Log verbosity level"}
   --log_dir: {value: dir, description: "Log directory"}
   --user: {value: any, description: "User name for auditing"}
 commands:
@@ -20,8 +17,7 @@ commands:
       --disk-size: {value: any, description: "Disk size, e.g. 20g"}
       --kubernetes-version: {value: {enum: [stable, latest]}, description: "Kubernetes version (e.g. v1.30.0)"}
       --container-runtime: {value: {enum: [docker, containerd, cri-o]}, description: "Container runtime"}
-      -n: {value: any, description: "Number of nodes"}
-      --nodes: {value: any, description: "Number of nodes"}
+      --nodes: {aliases: [-n], value: any, description: "Number of nodes"}
       --addons: {value: any, description: "Addons to enable"}
       --extra-config: {value: any, description: "Component option component.key=value"}
       --mount: {description: "Mount a host directory"}
@@ -33,13 +29,13 @@ commands:
       --wait: {value: {enum: [all, none, apiserver, system_pods, default_sa, apps_running, node_ready, kubelet]}, description: "Components to wait for"}
   stop: {description: "Stop a cluster", flags: {--all: {description: "Stop all profiles"}, --keep-context-active: {description: "Keep the kubectl context"}}}
   delete: {description: "Delete a cluster", flags: {--all: {description: "Delete all profiles", show: always}, --purge: {description: "Also delete ~/.minikube"}}}
-  pause: {description: "Pause Kubernetes", flags: {-A: {description: "All namespaces"}, --all-namespaces: {description: "All namespaces"}}}
+  pause: {description: "Pause Kubernetes", flags: {--all-namespaces: {aliases: [-A], description: "All namespaces"}}}
   unpause: {description: "Unpause Kubernetes"}
-  status: {description: "Show cluster status", flags: {-o: {value: {enum: [text, json]}, description: "Output format"}, --output: {value: {enum: [text, json]}, description: "Output format"}, -l: {description: "Show layout"}}}
+  status: {description: "Show cluster status", flags: {--output: {aliases: [-o], value: {enum: [text, json]}, description: "Output format"}, -l: {description: "Show layout"}}}
   profile:
     description: Show or switch the current profile
     commands:
-      list: {description: "List profiles", flags: {-o: {value: {enum: [table, json]}, description: "Output format"}, --output: {value: {enum: [table, json]}, description: "Output format"}}}
+      list: {description: "List profiles", flags: {--output: {aliases: [-o], value: {enum: [table, json]}, description: "Output format"}}}
     args: {exec: "minikube profile list -o json 2>/dev/null | tr '{,' '\\n\\n' | sed -n 's/^\"Name\":\"\\([^\"]*\\)\".*/\\1/p' | sort -u", cache: 60}
   addons:
     description: Manage addons
@@ -55,26 +51,25 @@ commands:
     description: Expose a service URL
     flags:
       --url: {description: "Print the URL only", show: always}
-      -n: {value: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'", cache: 30}, description: "Namespace"}
-      --namespace: {value: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'", cache: 30}, description: "Namespace"}
+      --namespace: {aliases: [-n], value: {exec: "kubectl get ns -o name 2>/dev/null | sed 's|namespace/||'", cache: 30}, description: "Namespace"}
       --https: {description: "Use https"}
       --all: {description: "Forward all services"}
     commands:
       list: {description: "List services and URLs", flags: {-n: {value: any, description: "Namespace"}}}
     args: {exec: "kubectl get svc -o name 2>/dev/null | sed 's|service/||'"}
-  tunnel: {description: "Route LoadBalancer services to the host", flags: {-c: {description: "Clean up orphaned routes"}, --cleanup: {description: "Clean up orphaned routes"}, --bind-address: {value: any, description: "Bind address"}}}
+  tunnel: {description: "Route LoadBalancer services to the host", flags: {--cleanup: {aliases: [-c], description: "Clean up orphaned routes"}, --bind-address: {value: any, description: "Bind address"}}}
   mount: {description: "Mount a host directory into the cluster (host:vm)", args: any}
-  ssh: {description: "SSH into the node", flags: {-n: {value: any, description: "Node name"}, --node: {value: any, description: "Node name"}, --native-ssh: {value: {enum: ['true', 'false']}, description: "Use the Go SSH client"}}, args: any}
+  ssh: {description: "SSH into the node", flags: {--node: {aliases: [-n], value: any, description: "Node name"}, --native-ssh: {value: {enum: ['true', 'false']}, description: "Use the Go SSH client"}}, args: any}
   ssh-key: {description: "Print the SSH key path"}
   ip: {description: "Print the node IP", flags: {-n: {value: any, description: "Node name"}}}
   kubectl: {description: "Run the matching kubectl version", args: any}
-  docker-env: {description: "Print env to use the cluster's Docker", flags: {-u: {description: "Print unset commands"}, --unset: {description: "Print unset commands"}, --shell: {value: {enum: [bash, zsh, fish, powershell, cmd]}, description: "Shell syntax"}}}
+  docker-env: {description: "Print env to use the cluster's Docker", flags: {--unset: {aliases: [-u], description: "Print unset commands"}, --shell: {value: {enum: [bash, zsh, fish, powershell, cmd]}, description: "Shell syntax"}}}
   podman-env: {description: "Print env to use the cluster's Podman", flags: {-u: {description: "Print unset commands"}}}
   image:
     description: Manage images in the cluster
     commands:
       load: {description: "Load a local image into the cluster", args: any}
-      build: {description: "Build an image inside the cluster", flags: {-t: {value: any, description: "Image tag"}, --tag: {value: any, description: "Image tag"}, -f: {value: file, description: "Dockerfile"}}, args: dir}
+      build: {description: "Build an image inside the cluster", flags: {--tag: {aliases: [-t], value: any, description: "Image tag"}, -f: {value: file, description: "Dockerfile"}}, args: dir}
       ls: {description: "List images", aliases: [list]}
       rm: {description: "Remove images", aliases: [remove, unload], args: any}
       pull: {description: "Pull images", args: any}
@@ -83,7 +78,7 @@ commands:
   cp: {description: "Copy a file into the node", args: file}
   node: {description: "Manage nodes", commands: {add: {description: "Add a node", flags: {--control-plane: {description: "Add a control-plane node"}, --worker: {value: {enum: ['true', 'false']}, description: "Worker node"}}}, list: {description: "List nodes"}, start: {description: "Start a node", args: any}, stop: {description: "Stop a node", args: any}, delete: {description: "Delete a node", args: any}}}
   config: {description: "Manage persistent config", commands: {set: {description: "Set a value", positional: [{enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile, WantUpdateNotification]}, any]}, get: {description: "Get a value", args: {enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile]}}, unset: {description: "Unset a value", args: {enum: [driver, cpus, memory, disk-size, kubernetes-version, container-runtime, profile]}}, view: {description: "Show config"}, defaults: {description: "List default values", args: any}}}
-  logs: {description: "Show cluster logs", flags: {-f: {description: "Follow"}, --follow: {description: "Follow"}, -n: {value: any, description: "Number of lines"}, --length: {value: any, description: "Number of lines"}, --file: {value: file, description: "Write logs to a file"}, --problems: {description: "Show only problems"}}}
+  logs: {description: "Show cluster logs", flags: {--follow: {aliases: [-f], description: "Follow"}, --length: {aliases: [-n], value: any, description: "Number of lines"}, --file: {value: file, description: "Write logs to a file"}, --problems: {description: "Show only problems"}}}
   update-context: {description: "Fix the kubeconfig context after an IP change"}
   update-check: {description: "Check for a newer version"}
   cache: {description: "Manage cached images", commands: {add: {description: "Cache an image", args: any}, delete: {description: "Remove a cached image", args: any}, list: {description: "List cached images"}, reload: {description: "Reload cached images"}}}

@@ -1,17 +1,14 @@
 version: '20261015'
 description: 'a command-line fuzzy finder'
 flags:
-  -x:
-    description: 'Extended-search mode'
   --extended:
+    aliases: [-x]
     description: 'Extended-search mode'
-  -e:
-    description: 'Enable exact-match'
   --exact:
+    aliases: [-e]
     description: 'Enable exact-match'
-  -i:
-    description: 'Case-insensitive match (default: smart-case match)'
   --ignore-case:
+    aliases: [-i]
     description: 'Case-insensitive match (default: smart-case match)'
   --literal:
     description: 'Do not normalize latin script letters for matching'
@@ -21,19 +18,15 @@ flags:
   --algo:
     value: any
     description: 'Fuzzy matching algorithm (default: v2)'
-  -n:
-    value: any
-    description: 'Comma-separated list of field index expressions for limiting search scope'
   --nth:
+    aliases: [-n]
     value: any
     description: 'Comma-separated list of field index expressions for limiting search scope'
   --with-nth:
     value: any
     description: 'Transform the presentation of each line using field index expressions'
-  -d:
-    value: any
-    description: 'Field delimiter regex for --nth and --with-nth (default: AWK-style)'
   --delimiter:
+    aliases: [-d]
     value: any
     description: 'Field delimiter regex for --nth and --with-nth (default: AWK-style)'
   --disabled:
@@ -45,9 +38,8 @@ flags:
   --tiebreak:
     value: any
     description: 'Comma-separated list of sort criteria to apply when the scores are tied'
-  -m:
-    description: 'Enable multi-select with tab/shift-tab'
   --multi:
+    aliases: [-m]
     description: 'Enable multi-select with tab/shift-tab'
   --no-mouse:
     description: 'Disable mouse'
@@ -163,24 +155,18 @@ flags:
   --preview-label-pos:
     value: any
     description: 'Position of the border label on the border line of the preview window'
-  -q:
-    value: any
-    description: 'Start the finder with the given query'
   --query:
+    aliases: [-q]
     value: any
     description: 'Start the finder with the given query'
-  '-1':
-    description: 'If there is only one match for the initial query (--query), do not start interactive finder and automatically select the only match'
   --select-1:
+    aliases: ['-1']
     description: 'If there is only one match for the initial query (--query), do not start interactive finder and automatically select the only match'
-  '-0':
-    description: 'If there is no match for the initial query (--query), do not start interactive finder and exit immediately'
   --exit-0:
+    aliases: ['-0']
     description: 'If there is no match for the initial query (--query), do not start interactive finder and exit immediately'
-  -f:
-    value: any
-    description: 'Filter mode'
   --filter:
+    aliases: [-f]
     value: any
     description: 'Filter mode'
   --print-query:

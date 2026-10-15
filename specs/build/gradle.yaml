@@ -1,38 +1,22 @@
-version: '20261013'
+version: '20261015'
 description: Build automation tool
 flags:
-  --help: {description: "Show help"}
-  -h: {description: "Show help"}
-  -p: {value: dir, description: "Specifies the start directory for Gradle"}
-  --project-dir: {value: dir, description: "Specifies the start directory for Gradle"}
-  -b: {value: file, description: "Specifies the build file"}
-  --build-file: {value: file, description: "Specifies the build file"}
-  -g: {value: dir, description: "Specifies the Gradle user home directory"}
-  --gradle-user-home: {value: dir, description: "Specifies the Gradle user home directory"}
-  -c: {value: file, description: "Specifies the settings file"}
-  --settings-file: {value: file, description: "Specifies the settings file"}
-  -I: {value: file, description: "Specifies an initialization script"}
-  --init-script: {value: file, description: "Specifies an initialization script"}
-  -D: {value: any, description: "Set system property"}
-  --system-prop: {value: any, description: "Set system property"}
-  -P: {value: any, description: "Set project property"}
-  --project-prop: {value: any, description: "Set project property"}
-  -m: {description: "Run the builds with all task actions disabled"}
-  --dry-run: {description: "Run the builds with all task actions disabled"}
-  -q: {description: "Log errors only"}
-  --quiet: {description: "Log errors only"}
-  -w: {description: "Set log level to warn"}
-  --warn: {description: "Set log level to warn"}
-  -i: {description: "Set log level to info", show: always}
-  --info: {description: "Set log level to info", show: always}
-  -d: {description: "Log in debug mode"}
-  --debug: {description: "Log in debug mode"}
-  -s: {description: "Print out the stacktrace for all exceptions"}
-  --stacktrace: {description: "Print out the stacktrace for all exceptions"}
-  -S: {description: "Print out the full (very verbose) stacktrace for all exceptions"}
-  --full-stacktrace: {description: "Print out the full (very verbose) stacktrace for all exceptions"}
-  -x: {value: {exec: "{ ./gradlew -q tasks --all 2>/dev/null || gradle -q tasks --all 2>/dev/null; } | awk '/^[a-zA-Z][a-zA-Z0-9:]* - /{t=$1; sub(/^[^ ]* - /,\"\"); print t\"\\t\"$0; next} /^[a-zA-Z][a-zA-Z0-9:]*$/{print $1}'"}, description: "Specify a task to be excluded from execution", show: always}
-  --exclude-task: {value: {exec: "{ ./gradlew -q tasks --all 2>/dev/null || gradle -q tasks --all 2>/dev/null; } | awk '/^[a-zA-Z][a-zA-Z0-9:]* - /{t=$1; sub(/^[^ ]* - /,\"\"); print t\"\\t\"$0; next} /^[a-zA-Z][a-zA-Z0-9:]*$/{print $1}'"}, description: "Specify a task to be excluded from execution", show: always}
+  --help: {aliases: [-h], description: "Show help"}
+  --project-dir: {aliases: [-p], value: dir, description: "Specifies the start directory for Gradle"}
+  --build-file: {aliases: [-b], value: file, description: "Specifies the build file"}
+  --gradle-user-home: {aliases: [-g], value: dir, description: "Specifies the Gradle user home directory"}
+  --settings-file: {aliases: [-c], value: file, description: "Specifies the settings file"}
+  --init-script: {aliases: [-I], value: file, description: "Specifies an initialization script"}
+  --system-prop: {aliases: [-D], value: any, description: "Set system property"}
+  --project-prop: {aliases: [-P], value: any, description: "Set project property"}
+  --dry-run: {aliases: [-m], description: "Run the builds with all task actions disabled"}
+  --quiet: {aliases: [-q], description: "Log errors only"}
+  --warn: {aliases: [-w], description: "Set log level to warn"}
+  --info: {aliases: [-i], description: "Set log level to info", show: always}
+  --debug: {aliases: [-d], description: "Log in debug mode"}
+  --stacktrace: {aliases: [-s], description: "Print out the stacktrace for all exceptions"}
+  --full-stacktrace: {aliases: [-S], description: "Print out the full (very verbose) stacktrace for all exceptions"}
+  --exclude-task: {aliases: [-x], value: {exec: "{ ./gradlew -q tasks --all 2>/dev/null || gradle -q tasks --all 2>/dev/null; } | awk '/^[a-zA-Z][a-zA-Z0-9:]* - /{t=$1; sub(/^[^ ]* - /,\"\"); print t\"\\t\"$0; next} /^[a-zA-Z][a-zA-Z0-9:]*$/{print $1}'"}, description: "Specify a task to be excluded from execution", show: always}
   --rerun-tasks: {description: "Ignore previously cached task results"}
   --continue: {description: "Continue task execution after a task failure"}
   --parallel: {description: "Build projects in parallel"}
@@ -48,8 +32,7 @@ flags:
   --no-daemon: {description: "Do not use the Gradle daemon to run the build"}
   --status: {description: "Shows status of running and recently stopped Gradle daemon(s)"}
   --stop: {description: "Stops the Gradle daemon if it is running"}
-  -t: {description: "Enables continuous build"}
-  --continuous: {description: "Enables continuous build"}
+  --continuous: {aliases: [-t], description: "Enables continuous build"}
   --scan: {description: "Create a build scan"}
   --no-scan: {description: "Do not create a build scan"}
   --refresh-dependencies: {description: "Refresh the state of dependencies"}
@@ -58,6 +41,5 @@ flags:
   --offline: {description: "Execute the build without accessing network resources", show: always}
   --console: {value: any, description: "Specifies which type of console output to generate"}
   --warning-mode: {value: any, description: "Specifies which mode of warnings to generate"}
-  -v: {description: "Print version info"}
-  --version: {description: "Print version info"}
+  --version: {aliases: [-v], description: "Print version info"}
 args: {exec: "{ ./gradlew -q tasks --all 2>/dev/null || gradle -q tasks --all 2>/dev/null; } | awk '/^[a-zA-Z][a-zA-Z0-9:]* - /{t=$1; sub(/^[^ ]* - /,\"\"); print t\"\\t\"$0; next} /^[a-zA-Z][a-zA-Z0-9:]*$/{print $1}'"}

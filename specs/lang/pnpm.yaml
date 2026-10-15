@@ -1,24 +1,18 @@
-version: '20261013'
+version: '20261015'
 description: Fast, disk space efficient package manager
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -v: {description: "Show pnpm version"}
-  --version: {description: "Show pnpm version"}
-  -r: {description: "Run in every package found in subdirectories"}
-  --recursive: {description: "Run in every package found in subdirectories"}
+  --help: {aliases: [-h], description: "Show help"}
+  --version: {aliases: [-v], description: "Show pnpm version"}
+  --recursive: {aliases: [-r], description: "Run in every package found in subdirectories"}
   --filter:
     show: always
     value: {exec: "pnpm ls -r --depth -1 --json 2>/dev/null | node -e 'let s=\"\";process.stdin.on(\"data\",d=>s+=d).on(\"end\",()=>{try{for(const p of JSON.parse(s))if(p.name)console.log(p.name)}catch(e){}})'"}
     description: "Filtering allows you to restrict commands to specific subsets of packages"
-  -C:
-    value: dir
-    description: "Run as if pnpm was started in <path> instead of the current working directory"
   --dir:
+    aliases: [-C]
     value: dir
     description: "Run as if pnpm was started in <path> instead of the current working directory"
-  -w: {description: "Run as if pnpm was started in the root of the workspace"}
-  --workspace-root: {description: "Run as if pnpm was started in the root of the workspace"}
+  --workspace-root: {aliases: [-w], description: "Run as if pnpm was started in the root of the workspace"}
   --json: {description: "Output as JSON"}
   --reporter:
     value: any
@@ -27,16 +21,11 @@ commands:
   add:
     description: Install a package
     flags:
-      -D: {description: "Save to devDependencies", show: always}
-      --save-dev: {description: "Save to devDependencies", show: always}
-      -P: {description: "Save to peerDependencies"}
-      --save-peer: {description: "Save to peerDependencies"}
-      -O: {description: "Save to optionalDependencies"}
-      --save-optional: {description: "Save to optionalDependencies"}
-      -E: {description: "Install exact version"}
-      --save-exact: {description: "Install exact version"}
-      -g: {description: "Install globally", show: always}
-      --global: {description: "Install globally", show: always}
+      --save-dev: {aliases: [-D], description: "Save to devDependencies", show: always}
+      --save-peer: {aliases: [-P], description: "Save to peerDependencies"}
+      --save-optional: {aliases: [-O], description: "Save to optionalDependencies"}
+      --save-exact: {aliases: [-E], description: "Install exact version"}
+      --global: {aliases: [-g], description: "Install globally", show: always}
       --workspace: {description: "Only adds the new dependency if it can be found in the workspace"}
       --ignore-workspace-root-check: {description: "Allow to install a dependency in the workspace root"}
     args: any
@@ -44,8 +33,7 @@ commands:
     description: Remove a package from node_modules and from the project's package.json
     aliases: [uninstall, rm, un]
     flags:
-      -g: {description: "Remove global package"}
-      --global: {description: "Remove global package"}
+      --global: {aliases: [-g], description: "Remove global package"}
     args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
   install:
     description: Install all dependencies for a project
@@ -65,14 +53,10 @@ commands:
     description: Update packages to their latest version based on the specified range
     aliases: [up, upgrade]
     flags:
-      -r: {description: "Update in every package found in subdirectories"}
-      --recursive: {description: "Update in every package found in subdirectories"}
-      -g: {description: "Update global packages"}
-      --global: {description: "Update global packages"}
-      -L: {description: "Ignore version ranges in package.json"}
-      --latest: {description: "Ignore version ranges in package.json"}
-      -i: {description: "Show outdated dependencies and select which ones to update"}
-      --interactive: {description: "Show outdated dependencies and select which ones to update"}
+      --recursive: {aliases: [-r], description: "Update in every package found in subdirectories"}
+      --global: {aliases: [-g], description: "Update global packages"}
+      --latest: {aliases: [-L], description: "Ignore version ranges in package.json"}
+      --interactive: {aliases: [-i], description: "Show outdated dependencies and select which ones to update"}
       --no-save: {description: "Don't save to package.json"}
     args: {exec: "node -e 'try{const p=require(\"./package.json\");for(const k of Object.keys(Object.assign({},p.dependencies,p.devDependencies,p.optionalDependencies,p.peerDependencies)))console.log(k)}catch(e){}'"}
   run:
@@ -93,8 +77,7 @@ commands:
   init:
     description: Create a package.json file
     flags:
-      -y: {description: "Use default values"}
-      --yes: {description: "Use default values"}
+      --yes: {aliases: [-y], description: "Use default values"}
   publish:
     description: Publish a package to the registry
     flags:
@@ -103,8 +86,7 @@ commands:
       --otp: {value: any, description: "Specify a one-time password from a two-factor authenticator"}
       --dry-run: {description: "Print details about the planned publish but do not actually publish to the registry"}
       --no-git-checks: {description: "Don't check if current branch is your publish branch, if your branch is clean, or if your branch is up-to-date"}
-      -r: {description: "Publish packages from all subpackages"}
-      --recursive: {description: "Publish packages from all subpackages"}
+      --recursive: {aliases: [-r], description: "Publish packages from all subpackages"}
   pack:
     description: Create a tarball from a package
     flags:
@@ -113,8 +95,7 @@ commands:
     description: Connect the local project to another one
     aliases: [ln]
     flags:
-      -g: {description: "Link global package"}
-      --global: {description: "Link global package"}
+      --global: {aliases: [-g], description: "Link global package"}
     args: any
   unlink:
     description: Unlinks a package. Like yarn unlink but pnpm re-installs the dependency after removing the external link
@@ -123,14 +104,12 @@ commands:
     description: Fetch a package from the registry without installing it as a dependency, hotload it, and run whatever default command binary it exposes
     flags:
       --package: {value: any, description: "The package to install before running the command"}
-      -c: {description: "Run the shell command within a shell interpreter"}
-      --shell: {description: "Run the shell command within a shell interpreter"}
+      --shell: {aliases: [-c], description: "Run the shell command within a shell interpreter"}
     args: any
   exec:
     description: Execute a shell command in scope of a project
     flags:
-      -r: {description: "Execute in every project of the workspace"}
-      --recursive: {description: "Execute in every project of the workspace"}
+      --recursive: {aliases: [-r], description: "Execute in every project of the workspace"}
       --parallel: {description: "Completely disregard concurrency and topological ordering"}
       --stream: {description: "Stream output from child processes immediately"}
       --shell-mode: {description: "Run the command inside of a shell interpreter"}
@@ -172,11 +151,9 @@ commands:
     description: Print all the versions of packages that are installed
     aliases: [ls]
     flags:
-      -r: {description: "Perform command on every package in subdirectories"}
-      --recursive: {description: "Perform command on every package in subdirectories"}
+      --recursive: {aliases: [-r], description: "Perform command on every package in subdirectories"}
       --json: {description: "Show information in JSON format"}
-      -g: {description: "List packages in the global install prefix instead of in the current project"}
-      --global: {description: "List packages in the global install prefix instead of in the current project"}
+      --global: {aliases: [-g], description: "List packages in the global install prefix instead of in the current project"}
       --depth: {value: any, description: "Max display depth of the dependency tree"}
       --prod: {description: "Display only the dependency tree for packages in dependencies"}
       --dev: {description: "Display only the dependency tree for packages in devDependencies"}
@@ -185,11 +162,9 @@ commands:
   outdated:
     description: Check for outdated packages
     flags:
-      -r: {description: "Check packages outdated in every package found in subdirectories", show: always}
-      --recursive: {description: "Check packages outdated in every package found in subdirectories", show: always}
+      --recursive: {aliases: [-r], description: "Check packages outdated in every package found in subdirectories", show: always}
       --json: {description: "Show information in JSON format"}
-      -g: {description: "Check packages outdated in the global install prefix", show: always}
-      --global: {description: "Check packages outdated in the global install prefix", show: always}
+      --global: {aliases: [-g], description: "Check packages outdated in the global install prefix", show: always}
       --format: {value: any, description: "Output format: list|table|json", show: always}
       --compatible: {description: "Print only versions that satisfy specs in package.json", show: always}
       --long: {description: "By default, details about the outdated packages (such as a link to the repo) are not displayed. To display the details, pass this flag.", show: always}
@@ -197,11 +172,9 @@ commands:
   why:
     description: Show all packages that depend on the specified package
     flags:
-      -r: {description: "Show packages from all projects in the workspace"}
-      --recursive: {description: "Show packages from all projects in the workspace"}
+      --recursive: {aliases: [-r], description: "Show packages from all projects in the workspace"}
       --json: {description: "Log output in JSON format"}
-      -g: {description: "Look in global pnpm store"}
-      --global: {description: "Look in global pnpm store"}
+      --global: {aliases: [-g], description: "Look in global pnpm store"}
       --parseable: {description: "Show parseable output instead of tree view"}
       --dev: {description: "Show path only through dev dependencies"}
       --prod: {description: "Show path only through non-dev dependencies"}
@@ -223,13 +196,11 @@ commands:
   root:
     description: Print the effective modules directory
     flags:
-      -g: {description: "Print the global modules directory"}
-      --global: {description: "Print the global modules directory"}
+      --global: {aliases: [-g], description: "Print the global modules directory"}
   bin:
     description: Print the directory where pnpm will install executables
     flags:
-      -g: {description: "Print the global executables directory"}
-      --global: {description: "Print the global executables directory"}
+      --global: {aliases: [-g], description: "Print the global executables directory"}
   setup:
     description: Set up pnpm's global bin directory and add it to PATH
   self-update:
@@ -250,29 +221,25 @@ commands:
         description: Print all the config settings
         flags:
           --json: {description: "Show settings in JSON format"}
-          -g: {description: "Print the global config only"}
-          --global: {description: "Print the global config only"}
+          --global: {aliases: [-g], description: "Print the global config only"}
   env:
     description: Manage the Node.js environment
     commands:
       use:
         description: Installs and sets the specified version of Node.js
         flags:
-          -g: {description: "Installs globally"}
-          --global: {description: "Installs globally"}
+          --global: {aliases: [-g], description: "Installs globally"}
           --bin: {description: "Show the path to the binaries of the Node.js version"}
         args: any
       remove:
         description: Remove the specified version(s) of Node.js
         flags:
-          -g: {description: "Remove globally"}
-          --global: {description: "Remove globally"}
+          --global: {aliases: [-g], description: "Remove globally"}
         args: any
       list:
         description: List local or global Node.js versions
         flags:
-          -g: {description: "List global versions"}
-          --global: {description: "List global versions"}
+          --global: {aliases: [-g], description: "List global versions"}
           --json: {description: "Show info in JSON format"}
           --remote: {description: "List the remote versions of Node.js"}
       add:

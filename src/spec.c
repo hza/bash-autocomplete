@@ -176,6 +176,16 @@ const char *spec_desc(const ynode *spec) {
     return d && d->type == Y_STR ? d->str : NULL;
 }
 
+/* Flag `name` in a "flags" map: by key or by one of its "aliases". */
+const ynode *flag_get(const ynode *flags, const char *name) {
+    const ynode *f, *a;
+    if ((f = yaml_get(flags, name))) return f;
+    for (f = flags ? flags->child : NULL; f; f = f->next)
+        for (a = yaml_get(f, "aliases") ? yaml_get(f, "aliases")->child : NULL; a; a = a->next)
+            if (a->type == Y_STR && !strcmp(a->str, name)) return f;
+    return NULL;
+}
+
 /* Add spec names found in dir and its subfolders to names (deduplicated). */
 static void collect_specs(const char *dir, char **names, int *nn, int max, int depth) {
     char sub[PATH_MAX];

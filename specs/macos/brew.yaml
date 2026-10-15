@@ -1,14 +1,10 @@
 version: '20261015'
 description: The Missing Package Manager for macOS
 flags:
-  -v: {description: "Be verbose", show: always}
-  --verbose: {description: "Be verbose", show: always}
-  -d: {description: "Display any debugging information"}
-  --debug: {description: "Display any debugging information"}
-  -q: {description: "Make some output more quiet", show: always}
-  --quiet: {description: "Make some output more quiet", show: always}
-  -h: {description: "Show help", show: always}
-  --help: {description: "Show help", show: always}
+  --verbose: {aliases: [-v], description: "Be verbose", show: always}
+  --debug: {aliases: [-d], description: "Display any debugging information"}
+  --quiet: {aliases: [-q], description: "Make some output more quiet", show: always}
+  --help: {aliases: [-h], description: "Show help", show: always}
   --prefix:
     description: "Print the Homebrew prefix, or with a formula its install path (opt symlink)"
     value:
@@ -23,13 +19,10 @@ commands:
       --fetch-HEAD: {description: "Fetch the upstream repository to detect if the HEAD installation is outdated"}
       --ignore-dependencies: {description: "Skip installing any dependencies"}
       --only-dependencies: {description: "Install dependencies but not the formula itself"}
-      -s: {description: "Compile from source even if a bottle is provided", show: always}
-      --build-from-source: {description: "Compile from source even if a bottle is provided", show: always}
+      --build-from-source: {aliases: [-s], description: "Compile from source even if a bottle is provided", show: always}
       --force-bottle: {description: "Install from a bottle if it exists for the current version"}
-      -n: {description: "Dry run, show what would be installed", show: always}
-      --dry-run: {description: "Dry run, show what would be installed", show: always}
-      -f: {description: "Install without checking for previously installed versions"}
-      --force: {description: "Install without checking for previously installed versions"}
+      --dry-run: {aliases: [-n], description: "Dry run, show what would be installed", show: always}
+      --force: {aliases: [-f], description: "Install without checking for previously installed versions"}
     args:
       exec: "brew formulae 2>/dev/null"
   uninstall:
@@ -38,8 +31,7 @@ commands:
     flags:
       --cask: {description: "Treat as a cask"}
       --formula: {description: "Treat as a formula"}
-      -f: {description: "Delete all installed versions"}
-      --force: {description: "Delete all installed versions"}
+      --force: {aliases: [-f], description: "Delete all installed versions"}
       --zap: {description: "Remove all files associated with a cask"}
       --ignore-dependencies: {description: "Don't fail uninstall if there are dependents"}
     args:
@@ -50,17 +42,14 @@ commands:
       --cask: {description: "Treat as a cask"}
       --formula: {description: "Treat as a formula"}
       --greedy: {description: "Also upgrade casks with auto_updates or version :latest"}
-      -n: {description: "Dry run, show what would be upgraded", show: always}
-      --dry-run: {description: "Dry run, show what would be upgraded", show: always}
-      -f: {description: "Force upgrade even if up-to-date"}
-      --force: {description: "Force upgrade even if up-to-date"}
+      --dry-run: {aliases: [-n], description: "Dry run, show what would be upgraded", show: always}
+      --force: {aliases: [-f], description: "Force upgrade even if up-to-date"}
     args:
       exec: "brew list --formula 2>/dev/null"
   update:
     description: Fetch the newest version of Homebrew and all formulae
     flags:
-      -f: {description: "Force an update"}
-      --force: {description: "Force an update"}
+      --force: {aliases: [-f], description: "Force an update"}
       --merge: {description: "Use git merge instead of git rebase"}
       --auto-update: {description: "Run as if called by Homebrew's automatic updater"}
   search:
@@ -111,8 +100,7 @@ commands:
   cleanup:
     description: Remove stale lock files and outdated downloads
     flags:
-      -n: {description: "Dry run, show what would be removed", show: always}
-      --dry-run: {description: "Dry run, show what would be removed", show: always}
+      --dry-run: {aliases: [-n], description: "Dry run, show what would be removed", show: always}
       -s: {description: "Remove all cached downloads, including recent ones"}
       --prune: {value: any, description: "Remove all cache files older than specified days"}
     args:
@@ -171,8 +159,7 @@ commands:
     flags:
       --overwrite: {description: "Delete files already existing in the prefix"}
       --dry-run: {description: "Dry run, show what would be linked"}
-      -f: {description: "Allow keg-only formulae to be linked"}
-      --force: {description: "Allow keg-only formulae to be linked"}
+      --force: {aliases: [-f], description: "Allow keg-only formulae to be linked"}
       --HEAD: {description: "Link the HEAD version of the formula"}
     args:
       exec: "brew list --formula 2>/dev/null"
@@ -250,8 +237,7 @@ commands:
       --cask: {description: "Create a basic template for a cask"}
       --set-name: {value: any, description: "Set the name of the new formula or cask"}
       --set-version: {value: any, description: "Set the version of the new formula or cask"}
-      -f: {description: "Overwrite the formula file"}
-      --force: {description: "Overwrite the formula file"}
+      --force: {aliases: [-f], description: "Overwrite the formula file"}
     args: any
   fetch:
     description: Download a bottle or source packages for formulae and casks
@@ -260,8 +246,7 @@ commands:
       --cask: {description: "Treat as a cask"}
       --HEAD: {description: "Fetch HEAD version instead of stable version"}
       --retry: {description: "Retry if download fails or file is missing"}
-      -f: {description: "Remove a previously cached version and re-fetch"}
-      --force: {description: "Remove a previously cached version and re-fetch"}
+      --force: {aliases: [-f], description: "Remove a previously cached version and re-fetch"}
     args:
       exec: "brew formulae 2>/dev/null"
   reinstall:
@@ -269,10 +254,8 @@ commands:
     flags:
       --cask: {description: "Treat as a cask"}
       --formula: {description: "Treat as a formula"}
-      -s: {description: "Compile from source even if a bottle is provided"}
-      --build-from-source: {description: "Compile from source even if a bottle is provided"}
-      -f: {description: "Force reinstall"}
-      --force: {description: "Force reinstall"}
+      --build-from-source: {aliases: [-s], description: "Compile from source even if a bottle is provided"}
+      --force: {aliases: [-f], description: "Force reinstall"}
     args:
       exec: "brew list --formula 2>/dev/null"
   log:

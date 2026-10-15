@@ -1,8 +1,7 @@
-version: '20261013'
+version: '20261015'
 description: OrbStack command-line tool (Docker and Linux machines on macOS)
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
 commands:
   start: {description: "Start OrbStack, or the given machines", args: {exec: "orbctl list -q 2>/dev/null"}}
   stop: {description: "Stop OrbStack, or the given machines", args: {exec: "orbctl list -q 2>/dev/null"}}
@@ -12,31 +11,24 @@ commands:
     description: List machines
     aliases: [ls]
     flags:
-      -q: {description: "Only print names"}
-      --quiet: {description: "Only print names"}
-      -r: {description: "Only running machines"}
-      --running: {description: "Only running machines"}
-      -f: {value: {enum: [text, json]}, description: "Output format"}
-      --format: {value: {enum: [text, json]}, description: "Output format"}
+      --quiet: {aliases: [-q], description: "Only print names"}
+      --running: {aliases: [-r], description: "Only running machines"}
+      --format: {aliases: [-f], value: {enum: [text, json]}, description: "Output format"}
   info: {description: "Show machine details", args: {exec: "orbctl list -q 2>/dev/null"}}
   create:
     description: Create a Linux machine (DISTRO[:VERSION] [NAME])
     aliases: [new]
     positional: [{enum: [alma, alpine, arch, centos, debian, devuan, fedora, gentoo, kali, nixos, openeuler, opensuse, oracle, rocky, ubuntu, void]}, any]
     flags:
-      -a: {value: {enum: [amd64, arm64]}, description: "Architecture"}
-      --arch: {value: {enum: [amd64, arm64]}, description: "Architecture", show: always}
-      -u: {value: any, description: "Default username"}
-      --user: {value: any, description: "Default username"}
-      -c: {value: {file: "*.yaml *.yml"}, description: "cloud-init user data file"}
-      --user-data: {value: {file: "*.yaml *.yml"}, description: "cloud-init user data file"}
+      --arch: {aliases: [-a], value: {enum: [amd64, arm64]}, description: "Architecture", show: always}
+      --user: {aliases: [-u], value: any, description: "Default username"}
+      --user-data: {aliases: [-c], value: {file: "*.yaml *.yml"}, description: "cloud-init user data file"}
   delete:
     description: Delete machines
     aliases: [rm]
     args: {exec: "orbctl list -q 2>/dev/null"}
     flags:
-      -f: {description: "Do not prompt for confirmation"}
-      --force: {description: "Do not prompt for confirmation"}
+      --force: {aliases: [-f], description: "Do not prompt for confirmation"}
   clone: {description: "Clone a machine", positional: [{exec: "orbctl list -q 2>/dev/null"}, any]}
   rename: {description: "Rename a machine", positional: [{exec: "orbctl list -q 2>/dev/null"}, any]}
   default: {description: "Get or set the default machine", args: {exec: "orbctl list -q 2>/dev/null"}}
@@ -44,31 +36,24 @@ commands:
     description: Run a command in a machine
     args: "@command"
     flags:
-      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
-      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
-      -u: {value: any, description: "Run as this user"}
-      --user: {value: any, description: "Run as this user"}
-      -w: {value: dir, description: "Working directory"}
-      --workdir: {value: dir, description: "Working directory"}
+      --machine: {aliases: [-m], value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
+      --user: {aliases: [-u], value: any, description: "Run as this user"}
+      --workdir: {aliases: [-w], value: dir, description: "Working directory"}
   shell:
     description: Open a shell in a machine
     flags:
-      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
-      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
-      -u: {value: any, description: "Log in as this user"}
-      --user: {value: any, description: "Log in as this user"}
+      --machine: {aliases: [-m], value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name", show: always}
+      --user: {aliases: [-u], value: any, description: "Log in as this user"}
   push:
     description: Copy files from macOS to a machine
     args: file
     flags:
-      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
-      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {aliases: [-m], value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
   pull:
     description: Copy files from a machine to macOS
     args: any
     flags:
-      -m: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
-      --machine: {value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
+      --machine: {aliases: [-m], value: {exec: "orbctl list -q 2>/dev/null"}, description: "Machine name"}
   logs: {description: "Show machine logs", args: {exec: "orbctl list -q 2>/dev/null"}}
   config:
     description: Show or change OrbStack settings

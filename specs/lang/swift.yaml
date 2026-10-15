@@ -1,28 +1,23 @@
-version: '20261013'
+version: '20261015'
 description: "Swift toolchain and package manager"
 flags:
   --version: {description: "Show the Swift version"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
 args: {file: "*.swift"}
 commands:
   build:
     description: "Build sources into binary products"
     flags:
-      -c: {value: {enum: [debug, release]}, description: "Build configuration", show: always}
-      --configuration: {value: {enum: [debug, release]}, description: "Build configuration"}
+      --configuration: {aliases: [-c], value: {enum: [debug, release]}, description: "Build configuration", show: always}
       --product: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" products"}, description: "Build the specified product", show: always}
       --target: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" targets"}, description: "Build the specified target"}
       --build-tests: {description: "Build both source and test targets"}
       --show-bin-path: {description: "Print the binary output path"}
       --package-path: {value: dir, description: "Package directory"}
       --scratch-path: {value: dir, description: "Build directory (default .build)"}
-      -j: {value: any, description: "Parallel jobs"}
-      --jobs: {value: any, description: "Parallel jobs"}
-      -v: {description: "Verbose output"}
-      --verbose: {description: "Verbose output"}
-      -q: {description: "Only errors"}
-      --quiet: {description: "Only errors"}
+      --jobs: {aliases: [-j], value: any, description: "Parallel jobs"}
+      --verbose: {aliases: [-v], description: "Verbose output"}
+      --quiet: {aliases: [-q], description: "Only errors"}
       --arch: {value: {enum: [arm64, x86_64]}, description: "Target architecture (repeatable)", repeat: true}
       --swift-sdk: {value: any, description: "Swift SDK to build with"}
       --sanitize: {value: {enum: [address, thread, undefined, scudo]}, description: "Runtime sanitizer"}
@@ -35,8 +30,7 @@ commands:
     description: "Build and run an executable product"
     args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/swift.sh\" executables"}
     flags:
-      -c: {value: {enum: [debug, release]}, description: "Build configuration", show: always}
-      --configuration: {value: {enum: [debug, release]}, description: "Build configuration"}
+      --configuration: {aliases: [-c], value: {enum: [debug, release]}, description: "Build configuration", show: always}
       --skip-build: {description: "Skip building the executable", show: always}
       --build-tests: {description: "Build test targets too"}
       --repl: {description: "Launch a REPL with the package's modules"}
@@ -53,8 +47,7 @@ commands:
       --num-workers: {value: any, description: "Parallel test workers"}
       --skip-build: {description: "Skip building the tests"}
       --enable-code-coverage: {description: "Collect code coverage"}
-      --list-tests: {description: "List test names"}
-      -l: {description: "List test names"}
+      --list-tests: {aliases: [-l], description: "List test names"}
       --xunit-output: {value: file, description: "Write an xUnit XML report"}
       --enable-swift-testing: {description: "Run swift-testing tests"}
       --disable-xctest: {description: "Don't run XCTest tests"}

@@ -1,32 +1,25 @@
-version: '20261013'
+version: '20261015'
 description: "Run or locate developer tools of the active Xcode / Command Line Tools"
 inherit_flags: false # xcrun options go before the tool name
 flags:
-  -v: {description: "Verbose tool lookup"}
-  --verbose: {description: "Verbose tool lookup"}
-  -n: {description: "Don't use the lookup cache"}
-  --no-cache: {description: "Don't use the lookup cache"}
-  -k: {description: "Remove the lookup cache"}
-  --kill-cache: {description: "Remove the lookup cache"}
+  --verbose: {aliases: [-v], description: "Verbose tool lookup"}
+  --no-cache: {aliases: [-n], description: "Don't use the lookup cache"}
+  --kill-cache: {aliases: [-k], description: "Remove the lookup cache"}
   --sdk:
     value: {enum: [macosx, iphoneos, iphonesimulator, appletvos, appletvsimulator, watchos, watchsimulator, xros, xrsimulator, driverkit]}
     description: "SDK to look the tool up in"
     show: always
   --toolchain: {value: {exec: "ls /Library/Developer/Toolchains ~/Library/Developer/Toolchains 2>/dev/null | sed -n 's/[.]xctoolchain$//p'"}, description: "Toolchain to look the tool up in"}
-  -l: {description: "Print the command line before running it"}
-  --log: {description: "Print the command line before running it"}
-  -f: {value: {exec: "ls \"$(xcode-select -p)/usr/bin\" \"$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin\" 2>/dev/null | sort -u"}, description: "Print the path of a tool", show: always}
-  --find: {value: {exec: "ls \"$(xcode-select -p)/usr/bin\" \"$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin\" 2>/dev/null | sort -u"}, description: "Print the path of a tool"}
-  -r: {description: "Run the tool (default)"}
-  --run: {description: "Run the tool (default)"}
+  --log: {aliases: [-l], description: "Print the command line before running it"}
+  --find: {aliases: [-f], value: {exec: "ls \"$(xcode-select -p)/usr/bin\" \"$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin\" 2>/dev/null | sort -u"}, description: "Print the path of a tool", show: always}
+  --run: {aliases: [-r], description: "Run the tool (default)"}
   --show-sdk-path: {description: "Print the path of the selected SDK", show: always}
   --show-sdk-version: {description: "Print the version of the selected SDK"}
   --show-sdk-build-version: {description: "Print the build version of the selected SDK"}
   --show-sdk-platform-path: {description: "Print the platform path of the selected SDK"}
   --show-sdk-platform-version: {description: "Print the platform version of the selected SDK"}
   --version: {description: "Show the xcrun version"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
 args: "@command"
 commands:
   simctl:
@@ -35,8 +28,7 @@ commands:
       list:
         description: "List devices, runtimes, device types or pairs"
         flags:
-          -j: {description: "JSON output"}
-          --json: {description: "JSON output"}
+          --json: {aliases: [-j], description: "JSON output"}
           -v: {description: "More detail"}
         positional: [{enum: [devices, devicetypes, runtimes, pairs]}, {enum: [available, booted]}]
       boot: {description: "Boot a device", args: {exec: '{ printf "booted\tthe booted simulator\n"; xcrun simctl list devices available 2>/dev/null | sed -nE "s/^ +(.+) \(([0-9A-F-]{36})\) \((.+)\).*/\2\t\1 (\3)/p"; }'}}
@@ -81,26 +73,19 @@ commands:
   notarytool:
     description: "Submit software to the Apple notary service"
     flags:
-      -p: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n "s/.*\"svce\"<blob>=\"com.apple.gke.notary.tool.saved-creds.\(.*\)\"/\1/p"', cache: 300}, description: "Saved keychain profile (store-credentials)", show: always}
-      --keychain-profile: {value: {exec: 'security dump-keychain 2>/dev/null | sed -n "s/.*\"svce\"<blob>=\"com.apple.gke.notary.tool.saved-creds.\(.*\)\"/\1/p"', cache: 300}, description: "Saved keychain profile (store-credentials)"}
-      -k: {value: {file: "*.p8"}, description: "App Store Connect API key file"}
-      --key: {value: {file: "*.p8"}, description: "App Store Connect API key file"}
-      -d: {value: any, description: "App Store Connect API key ID"}
-      --key-id: {value: any, description: "App Store Connect API key ID"}
-      -i: {value: any, description: "App Store Connect API issuer ID"}
-      --issuer: {value: any, description: "App Store Connect API issuer ID"}
+      --keychain-profile: {aliases: [-p], value: {exec: 'security dump-keychain 2>/dev/null | sed -n "s/.*\"svce\"<blob>=\"com.apple.gke.notary.tool.saved-creds.\(.*\)\"/\1/p"', cache: 300}, description: "Saved keychain profile (store-credentials)", show: always}
+      --key: {aliases: [-k], value: {file: "*.p8"}, description: "App Store Connect API key file"}
+      --key-id: {aliases: [-d], value: any, description: "App Store Connect API key ID"}
+      --issuer: {aliases: [-i], value: any, description: "App Store Connect API issuer ID"}
       --apple-id: {value: any, description: "Developer Apple ID"}
       --password: {value: any, description: "App-specific password"}
       --team-id: {value: any, description: "Developer team ID"}
       --keychain: {value: file, description: "Keychain file to read credentials from"}
-      -f: {value: {enum: [text, json, plist]}, description: "Output format"}
-      --output-format: {value: {enum: [text, json, plist]}, description: "Output format"}
+      --output-format: {aliases: [-f], value: {enum: [text, json, plist]}, description: "Output format"}
       --progress: {description: "Show progress"}
       --no-progress: {description: "Hide progress"}
-      -v: {description: "Verbose output"}
-      --verbose: {description: "Verbose output"}
-      -h: {description: "Show help"}
-      --help: {description: "Show help"}
+      --verbose: {aliases: [-v], description: "Verbose output"}
+      --help: {aliases: [-h], description: "Show help"}
     commands:
       store-credentials:
         description: "Save notary credentials in the keychain"

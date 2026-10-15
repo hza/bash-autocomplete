@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: Google Cloud command line interface
 flags:
   --project: {value: {exec: "gcloud projects list --format='value(projectId)' 2>/dev/null", cache: 300}, description: "Google Cloud project ID to use", show: always}
@@ -10,8 +10,7 @@ flags:
   --sort-by: {value: any, description: "Comma-separated list of resource field keys to sort by"}
   --region: {value: {exec: "gcloud compute regions list --format='value(name)' 2>/dev/null", cache: 86400}, description: "Region of the resource", show: always}
   --zone: {value: {exec: "gcloud compute zones list --format='value(name)' 2>/dev/null", cache: 86400}, description: "Zone of the resource", show: always}
-  --quiet: {description: "Disable all interactive prompts"}
-  -q: {description: "Disable all interactive prompts"}
+  --quiet: {aliases: [-q], description: "Disable all interactive prompts"}
   --verbosity: {value: {enum: [debug, info, warning, error, critical, none]}, description: "Override the default verbosity"}
   --log-http: {description: "Log all HTTP server requests and responses to stderr"}
   --impersonate-service-account: {value: any, description: "Impersonate this service account"}

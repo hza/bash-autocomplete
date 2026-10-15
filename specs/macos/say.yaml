@@ -1,29 +1,20 @@
-version: '20261013'
+version: '20261015'
 description: "Convert text to audible speech"
 flags:
-  -v:
-    value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
-    description: "Voice to use"
   --voice:
+    aliases: [-v]
     show: always
     value: {exec: "say -v '?' | sed -E 's/^(.*[^ ]) +([a-z]{2,3}_[A-Za-z0-9]+) +# (.*)$/\\1\t\\2  \\3/'"}
     description: "Voice to use"
-  -r: {value: any, description: "Speech rate in words per minute"}
-  --rate: {value: any, description: "Speech rate in words per minute", show: always}
-  -f: {value: file, description: "Read text from file ('-' for stdin)"}
-  --input-file: {value: file, description: "Read text from file ('-' for stdin)", show: always}
-  -o: {value: file, description: "Write audio to file instead of speaking"}
-  --output-file: {value: file, description: "Write audio to file instead of speaking", show: always}
-  -n: {value: any, description: "Send audio to a network service (name:port)"}
-  --network-send: {value: any, description: "Send audio to a network service (name:port)"}
-  -a:
-    value: {exec: "say -a '?' | sed -E 's/^ *([0-9]+) +(.*)$/\\1\t\\2/'"}
-    description: "Audio device to use"
+  --rate: {aliases: [-r], value: any, description: "Speech rate in words per minute", show: always}
+  --input-file: {aliases: [-f], value: file, description: "Read text from file ('-' for stdin)", show: always}
+  --output-file: {aliases: [-o], value: file, description: "Write audio to file instead of speaking", show: always}
+  --network-send: {aliases: [-n], value: any, description: "Send audio to a network service (name:port)"}
   --audio-device:
+    aliases: [-a]
     value: {exec: "say -a '?' | sed -E 's/^ *([0-9]+) +(.*)$/\\1\t\\2/'"}
     description: "Audio device to use"
-  -i: {description: "Highlight words as they are spoken"}
-  --interactive: {description: "Highlight words as they are spoken"}
+  --interactive: {aliases: [-i], description: "Highlight words as they are spoken"}
   --progress: {description: "Show a progress meter"}
   --file-format:
     value: {exec: "say --file-format=? 2>&1 | sed -E 's/^([^ ]+) +(.*)$/\\1\t\\2/'"}

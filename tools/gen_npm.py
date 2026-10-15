@@ -28,7 +28,7 @@ allc = run("help").split("All commands:")[1].split("\n\n")[1]
 cmds = [c.strip() for c in allc.replace("\n", " ").split(",") if c.strip()]
 
 TYPOS = {"isnt", "isnta", "isntal", "isntall", "isntall-clean", "innit", "udpate", "tst"}
-WS = old["flags"]["-w"]["value"]
+WS = old["flags"]["--workspace"]["value"]
 DEPS = old["commands"]["uninstall"]["args"]
 pr = lambda *v: {"exec": "printf '%s\\n' " + " ".join(v)}
 
@@ -55,9 +55,11 @@ def parse_flags(opts):
         if a: e["value"] = value_for(name, a)
         if d: e["description"] = d
         flags[f] = e
-    # short aliases: -S|--save -> copy long's desc
+    # short aliases: -S|--save -> "--save: {aliases: [-S]}"
     for s, l in re.findall(r"(?<![\w-])(-[A-Za-z])\|(--[\w-]+)", opts):
-        flags[s] = dict(flags.get(l, {}))
+        flags.pop(s, None)
+        e = flags.get(l, {})
+        flags[l] = {"aliases": e.get("aliases", []) + [s], **{k: v for k, v in e.items() if k != "aliases"}}
     return flags
 
 out_cmds = {}
@@ -76,6 +78,8 @@ for c in cmds:
     if aliases: e["aliases"] = aliases
     fl = parse_flags(opts)
     for k, v in (o.get("flags") or {}).items():  # hand-written values/descriptions win
+        if k not in fl:  # a hand-written short merges into the long it aliases
+            k = next((l for l, e in fl.items() if k in e.get("aliases", [])), k)
         fl[k] = {**fl.get(k, {}), **v}
     for k in list(fl):  # global flags are matched at every depth already
         if k in old["flags"] and k not in (o.get("flags") or {}): del fl[k]

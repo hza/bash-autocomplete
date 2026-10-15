@@ -1,8 +1,7 @@
-version: '20261013'
+version: '20261015'
 description: Dump traffic on a network
 flags:
-  -i: {value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on", show: always}
-  --interface: {value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on"}
+  --interface: {aliases: [-i], value: {exec: "printf '%s\\n' any pktap; ifconfig -l | tr ' ' '\\n'"}, description: "Interface to capture on", show: always}
   -n: {description: "Don't resolve addresses and ports to names", show: always}
   -w: {value: file, description: "Write raw packets to a file", show: always}
   -r: {value: {file: "*.pcap *.pcapng *.cap"}, description: "Read packets from a file", show: always}
@@ -18,10 +17,8 @@ flags:
   -q: {description: "Quick output (less protocol info)"}
   -e: {description: "Print the link-level header"}
   -l: {description: "Line-buffered stdout (for piping)"}
-  -s: {value: any, description: "Snapshot length in bytes (0 = default 262144)"}
-  --snapshot-length: {value: any, description: "Snapshot length in bytes (0 = default 262144)"}
-  -D: {description: "List capture interfaces"}
-  --list-interfaces: {description: "List capture interfaces"}
+  --snapshot-length: {aliases: [-s], value: any, description: "Snapshot length in bytes (0 = default 262144)"}
+  --list-interfaces: {aliases: [-D], description: "List capture interfaces"}
   -t: {description: "No timestamps"}
   -tt: {description: "Unix epoch timestamps"}
   -ttt: {description: "Delta to the previous packet"}

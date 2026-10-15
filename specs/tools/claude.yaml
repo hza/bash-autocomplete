@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: "Claude Code: agentic coding in the terminal"
 flags:
   --add-dir: {value: dir, description: "Additional directories to allow tool access to", repeat: true}
@@ -16,11 +16,9 @@ flags:
   --brief: {description: "Enable SendUserMessage tool"}
   --chrome: {description: "Enable Claude in Chrome integration"}
   --no-chrome: {description: "Disable Claude in Chrome integration"}
-  -c: {description: "Continue the most recent conversation in this directory", show: always}
-  --continue: {description: "Continue the most recent conversation in this directory"}
+  --continue: {aliases: [-c], description: "Continue the most recent conversation in this directory", show: always}
   --dangerously-skip-permissions: {description: "Bypass all permission checks (sandboxes only)"}
-  -d: {value: any, description: "Debug mode with optional category filter (api,hooks)"}
-  --debug: {value: any, description: "Debug mode with optional category filter (api,hooks)"}
+  --debug: {aliases: [-d], value: any, description: "Debug mode with optional category filter (api,hooks)"}
   --debug-file: {value: file, description: "Write debug logs to this file"}
   --disable-slash-commands: {description: "Disable all skills"}
   --disallowedTools: {value: any, description: "Tool names to deny"}
@@ -31,8 +29,7 @@ flags:
   --file: {value: any, description: "File resources to download: file_id:relative_path"}
   --fork-session: {description: "New session ID when resuming (with -r/-c)"}
   --from-pr: {value: any, description: "Resume a session linked to a PR number/URL"}
-  -h: {description: "Display help"}
-  --help: {description: "Display help"}
+  --help: {aliases: [-h], description: "Display help"}
   --ide: {description: "Connect to the IDE on startup"}
   --include-hook-events: {description: "Hook events in stream-json output"}
   --include-partial-messages: {description: "Partial message chunks in stream-json output"}
@@ -41,21 +38,18 @@ flags:
   --max-budget-usd: {value: any, description: "Maximum dollars to spend (--print only)"}
   --mcp-config: {value: {file: "*.json"}, description: "Load MCP servers from JSON files or strings"}
   --model: {value: {enum: [fable, opus, sonnet, haiku, claude-fable-5-1, claude-opus-5-5, claude-sonnet-5-5, claude-haiku-5-5]}, description: "Model for the session"}
-  -n: {value: any, description: "Display name for this session"}
-  --name: {value: any, description: "Display name for this session"}
+  --name: {aliases: [-n], value: any, description: "Display name for this session"}
   --no-session-persistence: {description: "Don't save the session (--print only)"}
   --output-format: {value: {enum: [text, json, stream-json]}, description: "Output format (--print only)"}
   --permission-mode: {value: {enum: [acceptEdits, auto, bypassPermissions, default, dontAsk, plan]}, description: "Permission mode for the session"}
   --plugin-dir: {value: dir, description: "Load a plugin from a directory or .zip", repeat: true}
   --plugin-url: {value: any, description: "Fetch a plugin .zip from a URL", repeat: true}
-  -p: {description: "Print response and exit (non-interactive)", show: always}
-  --print: {description: "Print response and exit (non-interactive)"}
+  --print: {aliases: [-p], description: "Print response and exit (non-interactive)", show: always}
   --prompt-suggestions: {value: {enum: ['true', 'false']}, description: "Enable prompt suggestions"}
   --remote-control: {value: any, description: "Interactive session with Remote Control"}
   --remote-control-session-name-prefix: {value: any, description: "Prefix for Remote Control session names"}
   --replay-user-messages: {description: "Re-emit user messages on stdout (stream-json)"}
-  -r: {value: any, description: "Resume a conversation by ID, or open the picker", show: always}
-  --resume: {value: any, description: "Resume a conversation by ID, or open the picker"}
+  --resume: {aliases: [-r], value: any, description: "Resume a conversation by ID, or open the picker", show: always}
   --safe-mode: {description: "Start with all customizations disabled"}
   --session-id: {value: any, description: "Use a specific session UUID"}
   --setting-sources: {value: {enum: [user, project, local, 'user,project', 'user,project,local']}, description: "Setting sources to load"}
@@ -65,10 +59,8 @@ flags:
   --tmux: {description: "Create a tmux session for the worktree (with -w)"}
   --tools: {value: any, description: "Built-in tools to enable (\"\" none, default, Bash,Edit,Read)"}
   --verbose: {description: "Override verbose mode setting"}
-  -v: {description: "Print the version"}
-  --version: {description: "Print the version"}
-  -w: {value: any, description: "Run in a new git worktree (optional name)", show: always}
-  --worktree: {value: any, description: "Run in a new git worktree (optional name)"}
+  --version: {aliases: [-v], description: "Print the version"}
+  --worktree: {aliases: [-w], value: any, description: "Run in a new git worktree (optional name)", show: always}
 args: any
 commands:
   agents:
@@ -99,25 +91,19 @@ commands:
           --callback-port: {value: any, description: "Fixed port for the OAuth callback"}
           --client-id: {value: any, description: "OAuth client ID for HTTP/SSE servers"}
           --client-secret: {description: "Prompt for the OAuth client secret"}
-          -e: {value: any, description: "Set environment variables (KEY=value)", repeat: true}
-          --env: {value: any, description: "Set environment variables (KEY=value)", repeat: true}
-          -H: {value: any, description: "Set headers (\"X-Api-Key: abc\")", repeat: true}
-          --header: {value: any, description: "Set headers (\"X-Api-Key: abc\")", repeat: true}
-          -s: {value: {enum: [local, user, project]}, description: "Configuration scope (default local)"}
-          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope (default local)"}
-          -t: {value: {enum: [stdio, sse, http]}, description: "Transport type (default stdio)"}
-          --transport: {value: {enum: [stdio, sse, http]}, description: "Transport type (default stdio)"}
+          --env: {aliases: [-e], value: any, description: "Set environment variables (KEY=value)", repeat: true}
+          --header: {aliases: [-H], value: any, description: "Set headers (\"X-Api-Key: abc\")", repeat: true}
+          --scope: {aliases: [-s], value: {enum: [local, user, project]}, description: "Configuration scope (default local)"}
+          --transport: {aliases: [-t], value: {enum: [stdio, sse, http]}, description: "Transport type (default stdio)"}
         args: any
       add-from-claude-desktop:
         description: "Import MCP servers from Claude Desktop"
         flags:
-          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
-          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {aliases: [-s], value: {enum: [local, user, project]}, description: "Configuration scope"}
       add-json:
         description: "Add an MCP server with a JSON string"
         flags:
-          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
-          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {aliases: [-s], value: {enum: [local, user, project]}, description: "Configuration scope"}
       get: {description: "Details about an MCP server"}
       list: {description: "List configured MCP servers (health-checked)"}
       login: {description: "Authenticate with an MCP server"}
@@ -125,8 +111,7 @@ commands:
       remove:
         description: "Remove an MCP server"
         flags:
-          -s: {value: {enum: [local, user, project]}, description: "Configuration scope"}
-          --scope: {value: {enum: [local, user, project]}, description: "Configuration scope"}
+          --scope: {aliases: [-s], value: {enum: [local, user, project]}, description: "Configuration scope"}
       reset-project-choices: {description: "Reset approved/rejected .mcp.json servers"}
       serve: {description: "Start Claude Code as an MCP server"}
   plugin:

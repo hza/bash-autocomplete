@@ -1,22 +1,18 @@
-version: '20261013'
+version: '20261015'
 description: Kubernetes package manager
 flags:
-  --help: {description: "Show help"}
-  -h: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
   --kube-context: {value: {exec: "kubectl config get-contexts -o name 2>/dev/null"}, description: "Name of the kubeconfig context to use"}
   --kubeconfig: {value: file, description: "Path to the kubeconfig file"}
   --kube-apiserver: {value: any, description: "The address and the port for the Kubernetes API server"}
   --debug: {description: "Enable verbose output"}
-  -n: {value: {exec: "kubectl get namespaces -o name 2>/dev/null | cut -d/ -f2"}, description: "Namespace scope for this request"}
-  --namespace: {value: {exec: "kubectl get namespaces -o name 2>/dev/null | cut -d/ -f2"}, description: "Namespace scope for this request"}
+  --namespace: {aliases: [-n], value: {exec: "kubectl get namespaces -o name 2>/dev/null | cut -d/ -f2"}, description: "Namespace scope for this request"}
 commands:
   install:
     description: Install a chart
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
-      -f: {value: file, description: "Specify values in a YAML file or a URL", show: always}
-      --values: {value: file, description: "Specify values in a YAML file or a URL", show: always}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
+      --values: {aliases: [-f], value: file, description: "Specify values in a YAML file or a URL", show: always}
       --set: {value: any, description: "Set values on the command line", show: always}
       --set-string: {value: any, description: "Set STRING values on the command line"}
       --set-file: {value: any, description: "Set values from respective files specified via the command line"}
@@ -28,8 +24,7 @@ commands:
       --create-namespace: {description: "Create the release namespace if not present"}
       --dry-run: {value: any, description: "Simulate an install", show: always}
       --debug: {description: "Enable verbose output"}
-      -g: {description: "Generate the name (and omit the NAME parameter)", show: always}
-      --generate-name: {description: "Generate the name (and omit the NAME parameter)", show: always}
+      --generate-name: {aliases: [-g], description: "Generate the name (and omit the NAME parameter)", show: always}
       --render-subchart-notes: {description: "If set, render subchart notes along with the parent"}
       --dependency-update: {description: "Update dependencies if they are missing before installing the chart"}
       --version: {value: any, description: "Specify a version constraint for the chart version to use"}
@@ -43,30 +38,25 @@ commands:
       --pass-credentials: {description: "Pass credentials to all domains"}
       --devel: {description: "Use development versions, too"}
       --replace: {description: "Re-use the given name, even if that name is already used"}
-      --help: {description: "Show help"}
     args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   uninstall:
     description: Uninstall a release
     aliases: [delete]
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
       --dry-run: {value: any, description: "Simulate an uninstall"}
       --keep-history: {description: "Remove all associated resources and mark the release as deleted, but retain the release history"}
       --no-hooks: {description: "Prevent hooks from running during uninstallation"}
       --timeout: {value: any, description: "Time to wait for any individual Kubernetes operation"}
       --wait: {description: "If set, will wait until all the resources are deleted before returning"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args:
       exec: "helm list --short 2>/dev/null"
   upgrade:
     description: Upgrade a release
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
-      -f: {value: file, description: "Specify values in a YAML file or a URL"}
-      --values: {value: file, description: "Specify values in a YAML file or a URL"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
+      --values: {aliases: [-f], value: file, description: "Specify values in a YAML file or a URL"}
       --set: {value: any, description: "Set values on the command line"}
       --set-string: {value: any, description: "Set STRING values on the command line"}
       --set-file: {value: any, description: "Set values from respective files specified via the command line"}
@@ -78,8 +68,7 @@ commands:
       --create-namespace: {description: "If --install is set, create the release namespace if not present"}
       --dry-run: {value: any, description: "Simulate an upgrade"}
       --debug: {description: "Enable verbose output"}
-      -i: {description: "If a release by this name doesn't already exist, run an install"}
-      --install: {description: "If a release by this name doesn't already exist, run an install"}
+      --install: {aliases: [-i], description: "If a release by this name doesn't already exist, run an install"}
       --render-subchart-notes: {description: "If set, render subchart notes along with the parent"}
       --dependency-update: {description: "Update dependencies if they are missing before installing the chart"}
       --version: {value: any, description: "Specify a version constraint for the chart version to use"}
@@ -98,13 +87,11 @@ commands:
       --no-hooks: {description: "Disable pre/post upgrade hooks"}
       --reset-values: {description: "When upgrading, reset the values to the ones built into the chart"}
       --reuse-values: {description: "When upgrading, reuse the last release's values and merge in any overrides from the command line via --set and -f"}
-      --help: {description: "Show help"}
     args: [{exec: "helm list --short 2>/dev/null"}, {exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   rollback:
     description: Roll back a release to a previous revision
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
       --cleanup-on-fail: {description: "Allow deletion of new resources created in this rollback when rollback fails"}
       --dry-run: {value: any, description: "Simulate a rollback"}
       --force: {description: "Force resource update through delete/recreate if needed"}
@@ -114,124 +101,94 @@ commands:
       --wait: {description: "If set, will wait until all Pods, PVCs, Services are in a ready state before marking the release as successful"}
       --wait-for-jobs: {description: "If set and --wait enabled, will wait until all Jobs have been completed before marking the release as successful"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args:
       exec: "helm list --short 2>/dev/null"
   list:
     description: List releases
     aliases: [ls]
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
-      -A: {description: "List releases across all namespaces"}
-      --all-namespaces: {description: "List releases across all namespaces"}
-      -a: {description: "Show all releases without any filter applied"}
-      --all: {description: "Show all releases without any filter applied"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
+      --all-namespaces: {aliases: [-A], description: "List releases across all namespaces"}
+      --all: {aliases: [-a], description: "Show all releases without any filter applied"}
       --failed: {description: "Show failed releases"}
       --pending: {description: "Show pending releases"}
       --deployed: {description: "Show deployed releases"}
       --uninstalled: {description: "Show uninstalled releases"}
       --superseded: {description: "Show superseded releases"}
-      -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-      --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-      -q: {description: "Only show release names"}
-      --short: {description: "Only show release names"}
-      -m: {value: any, description: "Maximum number of releases to fetch"}
-      --max: {value: any, description: "Maximum number of releases to fetch"}
+      --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
+      --short: {aliases: [-q], description: "Only show release names"}
+      --max: {aliases: [-m], value: any, description: "Maximum number of releases to fetch"}
       --offset: {value: any, description: "Next release name in the list, used to offset from start value"}
-      -r: {description: "Reverse the sort order"}
-      --reverse: {description: "Reverse the sort order"}
+      --reverse: {aliases: [-r], description: "Reverse the sort order"}
       --time-format: {value: any, description: "Format time using golang time formatter"}
-      -d: {description: "Sort by release date"}
-      --date: {description: "Sort by release date"}
+      --date: {aliases: [-d], description: "Sort by release date"}
       --filter: {value: any, description: "A regular expression used to filter which releases are included in the results"}
       --selector: {value: any, description: "Selector (label query) to filter on"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
   get:
     description: Download extended information of a named release
     commands:
       all:
         description: Download all information for a named release
         flags:
-          -n: {value: any, description: "Namespace scope for this request"}
-          --namespace: {value: any, description: "Namespace scope for this request"}
+          --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
           --revision: {value: any, description: "Get the named release with revision"}
           --template: {value: any, description: "Go template for formatting the output"}
-          --help: {description: "Show help"}
         args:
           exec: "helm list --short 2>/dev/null"
       hooks:
         description: Download all hooks for a named release
         flags:
-          -n: {value: any, description: "Namespace scope for this request"}
-          --namespace: {value: any, description: "Namespace scope for this request"}
+          --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
           --revision: {value: any, description: "Get the named release with revision"}
-          --help: {description: "Show help"}
         args:
           exec: "helm list --short 2>/dev/null"
       manifest:
         description: Download the manifest for a named release
         flags:
-          -n: {value: any, description: "Namespace scope for this request"}
-          --namespace: {value: any, description: "Namespace scope for this request"}
+          --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
           --revision: {value: any, description: "Get the named release with revision"}
-          --help: {description: "Show help"}
         args:
           exec: "helm list --short 2>/dev/null"
       notes:
         description: Download the notes for a named release
         flags:
-          -n: {value: any, description: "Namespace scope for this request"}
-          --namespace: {value: any, description: "Namespace scope for this request"}
+          --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
           --revision: {value: any, description: "Get the named release with revision"}
-          --help: {description: "Show help"}
         args:
           exec: "helm list --short 2>/dev/null"
       values:
         description: Download the values file for a named release
         flags:
-          -n: {value: any, description: "Namespace scope for this request"}
-          --namespace: {value: any, description: "Namespace scope for this request"}
+          --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
           --revision: {value: any, description: "Get the named release with revision"}
-          -o: {value: any, description: "Prints the output in the specified format"}
-          --output: {value: any, description: "Prints the output in the specified format"}
-          -a: {description: "Dump all (computed) values"}
-          --all: {description: "Dump all (computed) values"}
-          --help: {description: "Show help"}
+          --output: {aliases: [-o], value: any, description: "Prints the output in the specified format"}
+          --all: {aliases: [-a], description: "Dump all (computed) values"}
         args:
           exec: "helm list --short 2>/dev/null"
   history:
     description: Fetch release history
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
       --max: {value: any, description: "Maximum number of revision to include in history"}
-      -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-      --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
+      --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args:
       exec: "helm list --short 2>/dev/null"
   status:
     description: Display the status of the named release
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
       --revision: {value: any, description: "If set, display the status of the named release with revision"}
-      -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-      --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
+      --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args:
       exec: "helm list --short 2>/dev/null"
   template:
     description: Locally render templates
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
-      -f: {value: file, description: "Specify values in a YAML file or a URL"}
-      --values: {value: file, description: "Specify values in a YAML file or a URL"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
+      --values: {aliases: [-f], value: file, description: "Specify values in a YAML file or a URL"}
       --set: {value: any, description: "Set values on the command line"}
       --set-string: {value: any, description: "Set STRING values on the command line"}
       --set-file: {value: any, description: "Set values from respective files specified via the command line"}
@@ -245,22 +202,18 @@ commands:
       --show-only: {value: any, description: "Only show manifests rendered from the given templates"}
       --validate: {description: "Validate your manifests against the Kubernetes cluster you are currently pointing at"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   package:
     description: Package a chart directory into a chart archive
     flags:
       --app-version: {value: any, description: "Set the appVersion on the chart to this version"}
-      -u: {description: "Update dependencies from Chart.yaml to dir before packaging if they are missing"}
-      --dependency-update: {description: "Update dependencies from Chart.yaml to dir before packaging if they are missing"}
-      -d: {value: dir, description: "Location to write the chart"}
-      --destination: {value: dir, description: "Location to write the chart"}
+      --dependency-update: {aliases: [-u], description: "Update dependencies from Chart.yaml to dir before packaging if they are missing"}
+      --destination: {aliases: [-d], value: dir, description: "Location to write the chart"}
       --key: {value: any, description: "Name of the key to use when signing"}
       --keyring: {value: file, description: "Location of a public keyring"}
       --passphrase-file: {value: file, description: "Location of a file which contains the passphrase for the signing key"}
       --sign: {description: "Use a PGP private key to sign this package"}
       --version: {value: any, description: "Set the version on the chart to this semver version"}
-      --help: {description: "Show help"}
   push:
     description: Push a chart to a remote
     flags:
@@ -270,7 +223,6 @@ commands:
       --insecure-skip-tls-verify: {description: "Skip tls certificate checks for the chart upload"}
       --plain-http: {description: "Use insecure HTTP connections for the chart upload"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
   pull:
     description: Download a chart from a repository and (optionally) unpack it in local directory
     aliases: [fetch]
@@ -282,8 +234,7 @@ commands:
       --username: {value: any, description: "Chart repository username"}
       --password: {value: any, description: "Chart repository password"}
       --pass-credentials: {description: "Pass credentials to all domains"}
-      -d: {value: dir, description: "Location to write the chart"}
-      --destination: {value: dir, description: "Location to write the chart"}
+      --destination: {aliases: [-d], value: dir, description: "Location to write the chart"}
       --devel: {description: "Use development versions, too"}
       --prov: {description: "Fetch the provenance file, but don't perform verification"}
       --repo: {value: any, description: "Chart repository url where to locate the requested chart"}
@@ -292,7 +243,6 @@ commands:
       --verify: {description: "Verify the package before using it"}
       --version: {value: any, description: "Specify a version constraint for the chart version to use"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   repo:
     description: Add, list, remove, update, and index chart repositories
@@ -309,30 +259,23 @@ commands:
           --pass-credentials: {description: "Pass credentials to all domains"}
           --no-update: {description: "Raise error if repo is already registered"}
           --force-update: {description: "Replace (overwrite) the repo if it already exists"}
-          --help: {description: "Show help"}
         args: any
       list:
         description: List chart repositories
         flags:
-          -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --help: {description: "Show help"}
+          --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
       index:
         description: Generate an index file given a directory containing packaged charts
         flags:
           --merge: {value: file, description: "Merge the generated index into the given index"}
           --url: {value: any, description: "Url of chart repository"}
-          --help: {description: "Show help"}
       update:
         description: Update information of available charts locally from chart repositories
         flags:
           --fail-on-repo-update-fail: {description: "Update fails if any of the repository updates fail"}
-          --help: {description: "Show help"}
         args: {exec: "helm repo list 2>/dev/null | tail -n +2 | awk '{print $1}'"}
       remove:
         description: Remove one or more chart repositories
-        flags:
-          --help: {description: "Show help"}
         args: {exec: "helm repo list 2>/dev/null | tail -n +2 | awk '{print $1}'"}
   search:
     description: Search for a keyword in charts
@@ -342,22 +285,17 @@ commands:
         flags:
           --devel: {description: "Use development versions (alpha, beta, and release candidate releases), too"}
           --max-col-width: {value: any, description: "Maximum column width for output table"}
-          -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          -r: {description: "Use regular expressions for searching repositories you have added"}
-          --regexp: {description: "Use regular expressions for searching repositories you have added"}
+          --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
+          --regexp: {aliases: [-r], description: "Use regular expressions for searching repositories you have added"}
           --version: {value: any, description: "Search using semantic versioning constraints on repositories you have added"}
           --versions: {description: "Show the long listing, with each version of each chart on its own line"}
-          --help: {description: "Show help"}
       hub:
         description: Search for charts in the Artifact Hub or your own hub instance
         flags:
           --endpoint: {value: any, description: "Hub instance to query for charts"}
           --max-col-width: {value: any, description: "Maximum column width for output table"}
-          -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
+          --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
           --list-repo-url: {description: "Print charts repository URL"}
-          --help: {description: "Show help"}
   show:
     description: Show information of a chart
     commands:
@@ -366,27 +304,23 @@ commands:
         flags:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
-          --help: {description: "Show help"}
         args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       chart:
         description: Show the chart's definition
         flags:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
-          --help: {description: "Show help"}
         args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       crds:
         description: Show the chart's CRDs
         flags:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
-          --help: {description: "Show help"}
       readme:
         description: Show the chart's README
         flags:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
-          --help: {description: "Show help"}
         args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
       values:
         description: Show the chart's values
@@ -394,14 +328,11 @@ commands:
           --version: {value: any, description: "Specify a version constraint for the chart version to use"}
           --devel: {description: "Use development versions, too"}
           --jsonpath: {value: any, description: "Supply a JSONPath expression to filter the output"}
-          --help: {description: "Show help"}
         args: [{exec: "helm search repo 2>/dev/null | tail -n +2 | awk -F'\\t' '{gsub(/ +$/,\"\",$1); gsub(/ +$/,\"\",$4); print $1\"\\t\"$4}'", tree: true}, file]
   create:
     description: Create a new chart with the given name
     flags:
-      -p: {value: dir, description: "The named Helm starter scaffold"}
-      --starter: {value: dir, description: "The named Helm starter scaffold"}
-      --help: {description: "Show help"}
+      --starter: {aliases: [-p], value: dir, description: "The named Helm starter scaffold"}
   dependency:
     description: Manage a chart's dependencies
     commands:
@@ -411,21 +342,17 @@ commands:
           --keyring: {value: file, description: "Keyring containing public keys"}
           --skip-refresh: {description: "Do not refresh the local repository cache"}
           --verify: {description: "Verify the packages against signatures"}
-          --help: {description: "Show help"}
       list:
         description: List the dependencies for the given chart
         flags:
           --max-col-width: {value: any, description: "Maximum column width for output table"}
-          -o: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --output: {value: any, description: "Prints the output in the specified format (table, json, yaml)"}
-          --help: {description: "Show help"}
+          --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (table, json, yaml)"}
       update:
         description: Update charts/ based on the contents of Chart.yaml
         flags:
           --keyring: {value: file, description: "Keyring containing public keys"}
           --skip-refresh: {description: "Do not refresh the local repository cache"}
           --verify: {description: "Verify the packages against signatures"}
-          --help: {description: "Show help"}
   plugin:
     description: Install, list, or uninstall Helm plugins
     commands:
@@ -433,56 +360,41 @@ commands:
         description: Install one or more Helm plugins
         flags:
           --version: {value: any, description: "Specify a version constraint"}
-          --help: {description: "Show help"}
       list:
         description: List installed Helm plugins
-        flags:
-          --help: {description: "Show help"}
       uninstall:
         description: Uninstall one or more Helm plugins
-        flags:
-          --help: {description: "Show help"}
       update:
         description: Update one or more Helm plugins
-        flags:
-          --help: {description: "Show help"}
   registry:
     description: Login to or logout from a registry
     commands:
       login:
         description: Login to a registry
         flags:
-          -u: {value: any, description: "Registry username"}
-          --username: {value: any, description: "Registry username"}
-          -p: {value: any, description: "Registry password"}
-          --password: {value: any, description: "Registry password"}
+          --username: {aliases: [-u], value: any, description: "Registry username"}
+          --password: {aliases: [-p], value: any, description: "Registry password"}
           --password-stdin: {description: "Read password or identity token from stdin"}
           --ca-file: {value: file, description: "Verify certificates of HTTPS-enabled servers using this CA bundle"}
           --cert-file: {value: file, description: "Identify HTTPS client using this SSL certificate file"}
           --key-file: {value: file, description: "Identify HTTPS client using this SSL key file"}
           --insecure: {description: "Allow connections to TLS registry without certs"}
-          --help: {description: "Show help"}
       logout:
         description: Logout from a registry
-        flags:
-          --help: {description: "Show help"}
   test:
     description: Run tests for a release
     flags:
-      -n: {value: any, description: "Namespace scope for this request"}
-      --namespace: {value: any, description: "Namespace scope for this request"}
+      --namespace: {aliases: [-n], value: any, description: "Namespace scope for this request"}
       --filter: {value: any, description: "Specify tests by attribute (currently \"name\") using attribute=value syntax"}
       --logs: {description: "Dump the logs from test pods (this runs after all tests are complete, but before any cleanup)"}
       --timeout: {value: any, description: "Time to wait for any individual Kubernetes operation"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args:
       exec: "helm list --short 2>/dev/null"
   lint:
     description: Examine a chart for possible issues
     flags:
-      -f: {value: file, description: "Specify values in a YAML file or a URL"}
-      --values: {value: file, description: "Specify values in a YAML file or a URL"}
+      --values: {aliases: [-f], value: file, description: "Specify values in a YAML file or a URL"}
       --set: {value: any, description: "Set values on the command line"}
       --set-string: {value: any, description: "Set STRING values on the command line"}
       --set-file: {value: any, description: "Set values from respective files specified via the command line"}
@@ -492,31 +404,23 @@ commands:
       --with-subcharts: {description: "Lint dependent charts"}
       --quiet: {description: "Print only warnings and errors"}
       --debug: {description: "Enable verbose output"}
-      --help: {description: "Show help"}
     args: file
   verify:
     description: Verify that a chart at the given path has been signed and is valid
     flags:
       --keyring: {value: file, description: "Keyring containing public keys"}
-      --help: {description: "Show help"}
   version:
     description: Print the client version information
     flags:
       --short: {description: "Print just the version number"}
       --template: {value: any, description: "Template for version string format"}
-      -o: {value: any, description: "Prints the output in the specified format (json, yaml)"}
-      --output: {value: any, description: "Prints the output in the specified format (json, yaml)"}
-      --help: {description: "Show help"}
+      --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (json, yaml)"}
   completion:
     description: Generate autocompletion scripts for the specified shell
-    flags:
-      --help: {description: "Show help"}
   env:
     description: Helm client environment information
     flags:
-      -o: {value: any, description: "Prints the output in the specified format (json, yaml)"}
-      --output: {value: any, description: "Prints the output in the specified format (json, yaml)"}
-      --help: {description: "Show help"}
+      --output: {aliases: [-o], value: any, description: "Prints the output in the specified format (json, yaml)"}
 snippets:
   - key: u
     mark: pin

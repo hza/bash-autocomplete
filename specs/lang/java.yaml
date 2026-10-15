@@ -1,20 +1,15 @@
-version: '20261013'
+version: '20261015'
 description: "Launch a Java application"
 flags:
-  -cp: {value: file, description: class path (dirs and jars separated by colons)}
-  -classpath: {value: file, description: class path (dirs and jars separated by colons), show: always}
-  --class-path: {value: file, description: class path (dirs and jars separated by colons)}
+  --class-path: {aliases: [-cp, -classpath], value: file, description: class path (dirs and jars separated by colons), show: always}
   -jar: {value: file, description: run the main class of a jar file, show: always}
-  -m: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
-  --module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
-  -p: {value: file, description: module path}
-  --module-path: {value: file, description: module path}
+  --module: {aliases: [-m], value: {exec: "java --list-modules | sed 's/@.*//'"}, description: run the main class of a module}
+  --module-path: {aliases: [-p], value: file, description: module path}
   --upgrade-module-path: {value: file, description: module path that replaces upgradeable modules}
   --add-modules: {value: {exec: "java --list-modules | sed 's/@.*//'; printf '%s\n' ALL-DEFAULT ALL-SYSTEM ALL-MODULE-PATH"}, description: extra root modules to resolve}
   --enable-native-access: {value: any, description: modules allowed to do restricted native operations}
   --list-modules: {description: list observable modules and exit}
-  -d: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
-  --describe-module: {value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
+  --describe-module: {aliases: [-d], value: {exec: "java --list-modules | sed 's/@.*//'"}, description: describe a module and exit}
   --dry-run: {description: load the main class without running main}
   --validate-modules: {description: validate all modules and exit}
   -version: {description: print the version to stderr and exit, show: always}
@@ -36,7 +31,6 @@ flags:
   -XX:+UseG1GC: {description: use the G1 garbage collector}
   -XX:+UseZGC: {description: use the Z garbage collector}
   -XX:+HeapDumpOnOutOfMemoryError: {description: dump the heap on OutOfMemoryError}
-  -X: {description: print help on extra options}
   --help: {description: print help}
-  --help-extra: {description: print help on extra options}
+  --help-extra: {aliases: [-X], description: print help on extra options}
 args: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/java.sh\""}

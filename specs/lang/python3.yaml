@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: "Python interpreter"
 flags:
   -m:
@@ -10,8 +10,7 @@ flags:
   -B: {description: do not write .pyc files}
   -d: {description: parser debugging output}
   -E: {description: ignore PYTHON* environment variables}
-  -h: {description: print help and exit}
-  --help: {description: print help and exit}
+  --help: {aliases: [-h], description: print help and exit}
   -i: {description: inspect interactively after running the script}
   -I: {description: isolate from the user environment}
   -O: {description: remove asserts and __debug__ code}
@@ -21,8 +20,7 @@ flags:
   -S: {description: do not import site on startup}
   -u: {description: unbuffered stdout and stderr}
   -v: {description: trace import statements}
-  -V: {description: print the version and exit}
-  --version: {description: print the version and exit}
+  --version: {aliases: [-V], description: print the version and exit}
   -W:
     value: {enum: [default, error, ignore, always, module, once]}
     description: warning control (action:message:category:module:lineno)

@@ -1,15 +1,11 @@
-version: '20261013'
+version: '20261015'
 description: Switch between kubectl contexts
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -c: {description: "Show the current context"}
-  --current: {description: "Show the current context"}
+  --help: {aliases: [-h], description: "Show help"}
+  --current: {aliases: [-c], description: "Show the current context"}
   -d: {value: {exec: "kubectl config get-contexts -o name 2>/dev/null"}, description: "Delete a context ('.' = current)"}
-  -u: {description: "Unset the current context"}
-  --unset: {description: "Unset the current context"}
-  -V: {description: "Show version"}
-  --version: {description: "Show version"}
+  --unset: {aliases: [-u], description: "Unset the current context"}
+  --version: {aliases: [-V], description: "Show version"}
 args: {exec: "kubectl config get-contexts -o name 2>/dev/null; echo -"}
 snippets:
   - key: s

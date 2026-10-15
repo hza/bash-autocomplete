@@ -283,44 +283,6 @@ static void collapse_flags(void) {
     g_noesc = 0;
 }
 
-/* A short flag listed next to a long one with the same description
- * replaces it, the long name becoming a hint: "-d  -- HTTP POST data
- * (🔥 --data)". Each long flag takes at most one short. */
-static void merge_pairs(void) {
-    static char paired[MAXCANDS];
-    int i, j, k;
-    if (g_cur[0] != '-') { /* empty word: only when all are flags (do_complete's fallback) */
-        if (*g_cur) return;
-        for (i = 0; i < g_ncands; i++)
-            if (g_cands[i].text[0] != '-') return;
-    }
-    memset(paired, 0, (size_t)g_ncands);
-    for (i = k = 0; i < g_ncands; i++) {
-        cand *c = &g_cands[i];
-        int hit = -1;
-        if (c->text && c->text[1] && c->text[1] != '-' && c->desc && !strstr(c->text, "📌"))
-            for (j = 0; j < g_ncands; j++)
-                if (!paired[j] && g_cands[j].text && !strncmp(g_cands[j].text, "--", 2) && g_cands[j].desc &&
-                    !strcmp(g_cands[j].desc, c->desc)) {
-                    hit = j;
-                    break;
-                }
-        if (hit < 0) continue;
-        {
-            cand *keep = c, *drop = &g_cands[hit]; /* the short stays, the long one goes */
-            char *d = malloc(strlen(c->desc) + strlen(drop->text) + 16);
-            if (!d) continue;
-            sprintf(d, "%s (🔥 %s)", c->desc, drop->text);
-            paired[hit] = 1;
-            keep->desc = d;
-            drop->text = NULL; /* dropped below */
-        }
-    }
-    for (i = k = 0; i < g_ncands; i++)
-        if (g_cands[i].text) g_cands[k++] = g_cands[i];
-    g_ncands = k;
-}
-
 /* A flag list taller than the terminal is grouped by the next letter after
  * the typed word: "--content-disposition" and "--content-on-error" fall
  * into one "--c🧩" entry (no space, description: the member names, those
@@ -512,7 +474,6 @@ void flush(void) {
     collapse_vars();
     add_snippets();
     collapse_flags();
-    merge_pairs();
     group_flags();
     for (i = 0; i < g_ncands; i++) {
         int len = dwidth(g_cands[i].text);

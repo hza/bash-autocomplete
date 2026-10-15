@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: "Distributed version control"
 flags:
   -C: {value: dir, description: "Run as if git was started in <path>", show: always}
@@ -6,8 +6,7 @@ flags:
   --git-dir: {value: dir, description: "Set the path to the repository"}
   --work-tree: {value: dir, description: "Set the path to the working tree"}
   --no-pager: {description: "Do not pipe output into a pager"}
-  -p: {description: "Pipe all output into a pager", show: always}
-  --paginate: {description: "Pipe all output into a pager"}
+  --paginate: {aliases: [-p], description: "Pipe all output into a pager", show: always}
   --bare: {description: "Treat the repository as a bare repository"}
   --help: {description: "Show help", show: always}
   --version: {description: "Print the git version", show: always}
@@ -16,20 +15,13 @@ commands:
   add:
     description: Add file contents to the index
     flags:
-      -A: {description: "Add changes from all tracked and untracked files", show: always}
-      --all: {description: "Add changes from all tracked and untracked files", show: always}
-      -u: {description: "Update tracked files", show: always}
-      --update: {description: "Update tracked files", show: always}
-      -p: {description: "Select hunks interactively", show: always}
-      --patch: {description: "Select hunks interactively", show: always}
-      -n: {description: "Dry run"}
-      --dry-run: {description: "Dry run"}
-      -f: {description: "Allow adding otherwise ignored files", show: always}
-      --force: {description: "Allow adding otherwise ignored files", show: always}
-      -v: {description: "Be verbose"}
-      --verbose: {description: "Be verbose"}
-      -N: {description: "Record only the fact that the path will be added later"}
-      --intent-to-add: {description: "Record only the fact that the path will be added later"}
+      --all: {aliases: [-A], description: "Add changes from all tracked and untracked files", show: always}
+      --update: {aliases: [-u], description: "Update tracked files", show: always}
+      --patch: {aliases: [-p], description: "Select hunks interactively", show: always}
+      --dry-run: {aliases: [-n], description: "Dry run"}
+      --force: {aliases: [-f], description: "Allow adding otherwise ignored files", show: always}
+      --verbose: {aliases: [-v], description: "Be verbose"}
+      --intent-to-add: {aliases: [-N], description: "Record only the fact that the path will be added later"}
       --help: {description: "Show the manual page"}
     args:
       - exec: git ls-files -m -o --exclude-standard
@@ -38,14 +30,10 @@ commands:
   restore:
     description: Restore working tree files
     flags:
-      -S: {description: "Restore the index", show: always}
-      --staged: {description: "Restore the index", show: always}
-      -W: {description: "Restore the working tree", show: always}
-      --worktree: {description: "Restore the working tree", show: always}
-      -s: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Which tree-ish to checkout from", show: always}
-      --source: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Which tree-ish to checkout from", show: always}
-      -p: {description: "Select hunks interactively", show: always}
-      --patch: {description: "Select hunks interactively", show: always}
+      --staged: {aliases: [-S], description: "Restore the index", show: always}
+      --worktree: {aliases: [-W], description: "Restore the working tree", show: always}
+      --source: {aliases: [-s], value: {exec: "git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags", tree: true}, description: "Which tree-ish to checkout from", show: always}
+      --patch: {aliases: [-p], description: "Select hunks interactively", show: always}
       --help: {description: "Show the manual page"}
     args:
       - exec: git diff --name-only --relative
@@ -55,12 +43,10 @@ commands:
   rm:
     description: Remove files from the working tree and from the index
     flags:
-      -f: {description: "Override the up-to-date check"}
-      --force: {description: "Override the up-to-date check"}
+      --force: {aliases: [-f], description: "Override the up-to-date check"}
       -r: {description: "Allow recursive removal", show: always}
       --cached: {description: "Only remove from the index", show: always}
-      -n: {description: "Dry run"}
-      --dry-run: {description: "Dry run"}
+      --dry-run: {aliases: [-n], description: "Dry run"}
       --help: {description: "Show the manual page"}
     args:
       exec: git ls-files
@@ -68,22 +54,17 @@ commands:
   mv:
     description: Move or rename a file, a directory, or a symlink
     flags:
-      -f: {description: "Force move/rename even if target exists", show: always}
-      --force: {description: "Force move/rename even if target exists", show: always}
-      -n: {description: "Dry run"}
-      --dry-run: {description: "Dry run"}
+      --force: {aliases: [-f], description: "Force move/rename even if target exists", show: always}
+      --dry-run: {aliases: [-n], description: "Dry run"}
       --help: {description: "Show the manual page"}
     args: file
   status:
     description: Show the working tree status
     flags:
-      -s: {description: "Show status concisely", show: always}
-      --short: {description: "Show status concisely", show: always}
-      -b: {description: "Show branch information"}
-      --branch: {description: "Show branch information"}
+      --short: {aliases: [-s], description: "Show status concisely", show: always}
+      --branch: {aliases: [-b], description: "Show branch information"}
       --porcelain: {description: "Machine-readable output"}
-      -u: {value: any, description: "Show untracked files, optional modes: all, normal, no. (Default: all)"}
-      --untracked-files: {value: any, description: "Show untracked files, optional modes: all, normal, no. (Default: all)", show: always}
+      --untracked-files: {aliases: [-u], value: any, description: "Show untracked files, optional modes: all, normal, no. (Default: all)", show: always}
       --ignored: {description: "Show ignored files, optional modes: traditional, matching, no. (Default: traditional)"}
       --help: {description: "Show the manual page"}
     args: file
@@ -95,8 +76,7 @@ commands:
       --stat: {description: "Show diffstat instead of patch", show: always}
       --name-only: {description: "Show only names of changed files"}
       --name-status: {description: "Show only names and status of changed files"}
-      -w: {description: "Ignore whitespace when comparing lines"}
-      --ignore-all-space: {description: "Ignore whitespace when comparing lines"}
+      --ignore-all-space: {aliases: [-w], description: "Ignore whitespace when comparing lines"}
       --word-diff: {description: "Show a word diff"}
       --color-words: {description: "Show a colored word diff"}
       --no-index: {description: "Compare two paths on the filesystem"}
@@ -110,24 +90,17 @@ commands:
   commit:
     description: Record changes to the repository
     flags:
-      -m: {value: any, description: "Commit message", show: always}
-      --message: {value: any, description: "Commit message", show: always}
-      -a: {description: "Commit all changed files", show: always}
-      --all: {description: "Commit all changed files", show: always}
+      --message: {aliases: [-m], value: any, description: "Commit message", show: always}
+      --all: {aliases: [-a], description: "Commit all changed files", show: always}
       --amend: {description: "Amend previous commit", show: always}
       --no-edit: {description: "Use the selected commit message without launching an editor"}
-      -F: {value: file, description: "Read message from file", show: always}
-      --file: {value: file, description: "Read message from file", show: always}
-      -v: {description: "Show diff in commit message template"}
-      --verbose: {description: "Show diff in commit message template"}
-      -n: {description: "Bypass pre-commit and commit-msg hooks"}
-      --no-verify: {description: "Bypass pre-commit and commit-msg hooks"}
-      -s: {description: "Add a Signed-off-by trailer"}
-      --signoff: {description: "Add a Signed-off-by trailer"}
+      --file: {aliases: [-F], value: file, description: "Read message from file", show: always}
+      --verbose: {aliases: [-v], description: "Show diff in commit message template"}
+      --no-verify: {aliases: [-n], description: "Bypass pre-commit and commit-msg hooks"}
+      --signoff: {aliases: [-s], description: "Add a Signed-off-by trailer"}
       --fixup: {value: any, description: "Use autosquash formatted message to fixup or amend/reword specified commit"}
       --allow-empty: {description: "Allow a commit with no changes"}
-      -p: {description: "Interactively add changes"}
-      --patch: {description: "Interactively add changes"}
+      --patch: {aliases: [-p], description: "Interactively add changes"}
       --help: {description: "Show the manual page"}
     args:
       exec: git ls-files -m
@@ -139,11 +112,9 @@ commands:
       --graph: {description: "Draw a text-based graph of the history", show: always}
       --all: {description: "Show commits from all refs", show: always}
       --decorate: {description: "Decorate options", show: always}
-      -p: {description: "Show the patch of each commit", show: always}
-      --patch: {description: "Show the patch of each commit", show: always}
+      --patch: {aliases: [-p], description: "Show the patch of each commit", show: always}
       --stat: {description: "Show a diffstat for each commit", show: always}
-      -n: {value: any, description: "Limit the number of commits", show: always}
-      --max-count: {value: any, description: "Limit the number of commits", show: always}
+      --max-count: {aliases: [-n], value: any, description: "Limit the number of commits", show: always}
       --author: {value: any, description: "Only commits by a matching author", show: always}
       --since: {value: any, description: "Only commits newer than a date"}
       --until: {value: any, description: "Only commits older than a date", show: always}
@@ -172,22 +143,16 @@ commands:
   branch:
     description: List, create, or delete branches
     flags:
-      -a: {description: "List both remote-tracking and local branches", show: always}
-      --all: {description: "List both remote-tracking and local branches", show: always}
-      -r: {description: "Act on remote-tracking branches"}
-      --remotes: {description: "Act on remote-tracking branches"}
-      -d: {description: "Delete fully merged branch", show: always}
-      --delete: {description: "Delete fully merged branch", show: always}
+      --all: {aliases: [-a], description: "List both remote-tracking and local branches", show: always}
+      --remotes: {aliases: [-r], description: "Act on remote-tracking branches"}
+      --delete: {aliases: [-d], description: "Delete fully merged branch", show: always}
       -D: {description: "Delete branch (even if not merged)"}
-      -m: {description: "Move/rename a branch and its reflog", show: always}
-      --move: {description: "Move/rename a branch and its reflog", show: always}
+      --move: {aliases: [-m], description: "Move/rename a branch and its reflog", show: always}
       -M: {description: "Move/rename a branch, even if target exists"}
-      -c: {description: "Copy a branch and its reflog"}
-      --copy: {description: "Copy a branch and its reflog"}
+      --copy: {aliases: [-c], description: "Copy a branch and its reflog"}
       -v: {description: "Show hash and subject, give twice for upstream branch"}
       -vv: {description: "Show hash, subject and upstream branch for each branch"}
-      -u: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes", tree: true}, description: "Change the upstream info"}
-      --set-upstream-to: {value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes", tree: true}, description: "Change the upstream info"}
+      --set-upstream-to: {aliases: [-u], value: {exec: "git for-each-ref --format='%(refname:short)' refs/remotes", tree: true}, description: "Change the upstream info"}
       --unset-upstream: {description: "Unset the upstream info"}
       --show-current: {description: "Show current branch name", show: always}
       --merged: {description: "Print only branches that are merged"}
@@ -202,13 +167,10 @@ commands:
       -b: {value: any, description: "Create and checkout a new branch", show: always}
       -B: {value: any, description: "Create/reset and checkout a branch"}
       --orphan: {value: any, description: "New unparented branch"}
-      -f: {description: "Force checkout (throw away local modifications)"}
-      --force: {description: "Force checkout (throw away local modifications)"}
-      -t: {description: "Set branch tracking configuration", show: always}
-      --track: {description: "Set branch tracking configuration", show: always}
+      --force: {aliases: [-f], description: "Force checkout (throw away local modifications)"}
+      --track: {aliases: [-t], description: "Set branch tracking configuration", show: always}
       --detach: {description: "Detach HEAD at named commit"}
-      -p: {description: "Select hunks interactively"}
-      --patch: {description: "Select hunks interactively"}
+      --patch: {aliases: [-p], description: "Select hunks interactively"}
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
@@ -218,17 +180,12 @@ commands:
   switch:
     description: Switch branches
     flags:
-      -c: {value: any, description: "Create and switch to a new branch", show: always}
-      --create: {value: any, description: "Create and switch to a new branch", show: always}
-      -C: {value: any, description: "Create/reset and switch to a branch"}
-      --force-create: {value: any, description: "Create/reset and switch to a branch"}
-      -d: {description: "Detach HEAD at named commit", show: always}
-      --detach: {description: "Detach HEAD at named commit", show: always}
-      -t: {description: "Set branch tracking configuration", show: always}
-      --track: {description: "Set branch tracking configuration", show: always}
+      --create: {aliases: [-c], value: any, description: "Create and switch to a new branch", show: always}
+      --force-create: {aliases: [-C], value: any, description: "Create/reset and switch to a branch"}
+      --detach: {aliases: [-d], description: "Detach HEAD at named commit", show: always}
+      --track: {aliases: [-t], description: "Set branch tracking configuration", show: always}
       --orphan: {value: any, description: "New unparented branch"}
-      -f: {description: "Force checkout (throw away local modifications)"}
-      --force: {description: "Force checkout (throw away local modifications)"}
+      --force: {aliases: [-f], description: "Force checkout (throw away local modifications)"}
       --discard-changes: {description: "Throw away local modifications"}
       --help: {description: "Show the manual page"}
     args:
@@ -244,8 +201,7 @@ commands:
       --continue: {description: "Continue the current in-progress merge"}
       -m: {value: any, description: "Merge commit message (for a non-fast-forward merge)"}
       --no-edit: {description: "Accept the auto-generated merge message"}
-      -s: {value: any, description: "Merge strategy to use", show: always}
-      --strategy: {value: any, description: "Merge strategy to use", show: always}
+      --strategy: {aliases: [-s], value: any, description: "Merge strategy to use", show: always}
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
@@ -253,8 +209,7 @@ commands:
   rebase:
     description: Reapply commits on top of another base tip
     flags:
-      -i: {description: "Let the user edit the list of commits to rebase", show: always}
-      --interactive: {description: "Let the user edit the list of commits to rebase", show: always}
+      --interactive: {aliases: [-i], description: "Let the user edit the list of commits to rebase", show: always}
       --continue: {description: Continue, show: always}
       --abort: {description: "Abort and check out the original branch", show: always}
       --skip: {description: "Skip current patch and continue", show: always}
@@ -271,8 +226,7 @@ commands:
       --continue: {description: "Resume revert or cherry-pick sequence"}
       --abort: {description: "Cancel revert or cherry-pick sequence"}
       --skip: {description: "Skip current commit and continue"}
-      -n: {description: "Don't automatically commit", show: always}
-      --no-commit: {description: "Don't automatically commit", show: always}
+      --no-commit: {aliases: [-n], description: "Don't automatically commit", show: always}
       -x: {description: "Append commit name", show: always}
       --help: {description: "Show the manual page"}
     args:
@@ -285,8 +239,7 @@ commands:
       --mixed: {description: "Reset HEAD and index"}
       --hard: {description: "Reset HEAD, index and working tree", show: always}
       --keep: {description: "Reset HEAD but keep local changes"}
-      -p: {description: "Select hunks interactively", show: always}
-      --patch: {description: "Select hunks interactively", show: always}
+      --patch: {aliases: [-p], description: "Select hunks interactively", show: always}
       --help: {description: "Show the manual page"}
     args:
       - exec: git for-each-ref --format='%(refname:short)' refs/heads refs/remotes refs/tags
@@ -299,8 +252,7 @@ commands:
       --continue: {description: "Resume revert or cherry-pick sequence"}
       --abort: {description: "Cancel revert or cherry-pick sequence", show: always}
       --no-edit: {description: "Do not start the commit message editor"}
-      -n: {description: "Don't automatically commit", show: always}
-      --no-commit: {description: "Don't automatically commit", show: always}
+      --no-commit: {aliases: [-n], description: "Don't automatically commit", show: always}
       --help: {description: "Show the manual page"}
     args:
       exec: git for-each-ref --format='%(refname:short)' refs/heads refs/tags
@@ -308,18 +260,12 @@ commands:
   tag:
     description: Create, list, delete or verify a tag object signed with GPG
     flags:
-      -a: {description: "Annotated tag, needs a message"}
-      --annotate: {description: "Annotated tag, needs a message"}
-      -m: {value: any, description: "Tag message", show: always}
-      --message: {value: any, description: "Tag message", show: always}
-      -d: {description: "Delete tags", show: always}
-      --delete: {description: "Delete tags", show: always}
-      -l: {description: "List tag names"}
-      --list: {description: "List tag names"}
-      -f: {description: "Replace the tag if exists"}
-      --force: {description: "Replace the tag if exists"}
-      -s: {description: "Annotated and GPG-signed tag"}
-      --sign: {description: "Annotated and GPG-signed tag"}
+      --annotate: {aliases: [-a], description: "Annotated tag, needs a message"}
+      --message: {aliases: [-m], value: any, description: "Tag message", show: always}
+      --delete: {aliases: [-d], description: "Delete tags", show: always}
+      --list: {aliases: [-l], description: "List tag names"}
+      --force: {aliases: [-f], description: "Replace the tag if exists"}
+      --sign: {aliases: [-s], description: "Annotated and GPG-signed tag"}
       --help: {description: "Show the manual page"}
     args:
       exec: git tag
@@ -327,8 +273,7 @@ commands:
     description: Download objects and refs from another repository
     flags:
       --all: {description: "Fetch from all remotes", show: always}
-      -p: {description: "Prune remote-tracking branches no longer on remote", show: always}
-      --prune: {description: "Prune remote-tracking branches no longer on remote", show: always}
+      --prune: {aliases: [-p], description: "Prune remote-tracking branches no longer on remote", show: always}
       --tags: {description: "Fetch all tags and associated objects", show: always}
       --depth: {value: any, description: "Deepen history of shallow clone"}
       -v: {description: "Be more verbose"}
@@ -352,15 +297,12 @@ commands:
   push:
     description: Update remote refs along with associated objects
     flags:
-      -u: {description: "Set upstream for git pull/status", show: always}
-      --set-upstream: {description: "Set upstream for git pull/status", show: always}
-      -f: {description: "Force updates"}
-      --force: {description: "Force updates"}
+      --set-upstream: {aliases: [-u], description: "Set upstream for git pull/status", show: always}
+      --force: {aliases: [-f], description: "Force updates"}
       --force-with-lease: {description: "Require old value of ref to be at this value"}
       --tags: {description: "Push tags (can't be used with --all or --mirror)", show: always}
       --all: {description: "Push all refs", show: always}
-      -d: {description: "Delete refs", show: always}
-      --delete: {description: "Delete refs", show: always}
+      --delete: {aliases: [-d], description: "Delete refs", show: always}
       --dry-run: {description: "Dry run"}
       --no-verify: {description: "Bypass pre-push hook"}
       --help: {description: "Show the manual page"}
@@ -371,8 +313,7 @@ commands:
   remote:
     description: Manage set of tracked repositories
     flags:
-      -v: {description: "Be verbose; must be placed before a subcommand", show: always}
-      --verbose: {description: "Be verbose; must be placed before a subcommand", show: always}
+      --verbose: {aliases: [-v], description: "Be verbose; must be placed before a subcommand", show: always}
       --help: {description: "Show the manual page"}
     commands:
       add:
@@ -435,14 +376,10 @@ commands:
       push:
         description: Save local changes to a new stash
         flags:
-          -m: {value: any, description: "Stash message"}
-          --message: {value: any, description: "Stash message"}
-          -u: {description: "Include untracked files in stash"}
-          --include-untracked: {description: "Include untracked files in stash"}
-          -p: {description: "Stash in patch mode"}
-          --patch: {description: "Stash in patch mode"}
-          -k: {description: "Keep index"}
-          --keep-index: {description: "Keep index"}
+          --message: {aliases: [-m], value: any, description: "Stash message"}
+          --include-untracked: {aliases: [-u], description: "Include untracked files in stash"}
+          --patch: {aliases: [-p], description: "Stash in patch mode"}
+          --keep-index: {aliases: [-k], description: "Keep index"}
           --help: {description: "Show the manual page"}
         args: file
       pop:
@@ -468,8 +405,7 @@ commands:
       show:
         description: Show the changes in a stash
         flags:
-          -p: {description: "Show the stash as a patch", show: always}
-          --patch: {description: "Show the stash as a patch", show: always}
+          --patch: {aliases: [-p], description: "Show the stash as a patch", show: always}
           --help: {description: "Show the manual page"}
         args:
           exec: git stash list --format='%gd'
@@ -490,25 +426,21 @@ commands:
     description: Clone a repository into a new directory
     flags:
       --depth: {value: any, description: "Create a shallow clone of that depth", show: always}
-      -b: {value: any, description: "Checkout <branch> instead of the remote's HEAD", show: always}
-      --branch: {value: any, description: "Checkout <branch> instead of the remote's HEAD", show: always}
+      --branch: {aliases: [-b], value: any, description: "Checkout <branch> instead of the remote's HEAD", show: always}
       --single-branch: {description: "Clone only one branch, HEAD or --branch", show: always}
       --recursive: {description: "Alias of --recurse-submodules", show: always}
       --recurse-submodules: {description: "Initialize submodules in the clone"}
       --bare: {description: "Create a bare repository"}
       --mirror: {description: "Create a mirror repository (implies bare)"}
-      -o: {value: any, description: "Use <name> instead of 'origin' to track upstream"}
-      --origin: {value: any, description: "Use <name> instead of 'origin' to track upstream"}
+      --origin: {aliases: [-o], value: any, description: "Use <name> instead of 'origin' to track upstream"}
       --help: {description: "Show the manual page"}
     args: dir
   init:
     description: Create an empty Git repository or reinitialize an existing one
     flags:
       --bare: {description: "Create a bare repository", show: always}
-      -b: {value: any, description: "Override the name of the initial branch", show: always}
-      --initial-branch: {value: any, description: "Override the name of the initial branch", show: always}
-      -q: {description: "Be quiet"}
-      --quiet: {description: "Be quiet"}
+      --initial-branch: {aliases: [-b], value: any, description: "Override the name of the initial branch", show: always}
+      --quiet: {aliases: [-q], description: "Be quiet"}
       --help: {description: "Show the manual page"}
     args: dir
   blame:
@@ -526,10 +458,8 @@ commands:
   clean:
     description: Remove untracked files from the working tree
     flags:
-      -n: {description: "Dry run", show: always}
-      --dry-run: {description: "Dry run", show: always}
-      -f: {description: Force, show: always}
-      --force: {description: Force, show: always}
+      --dry-run: {aliases: [-n], description: "Dry run", show: always}
+      --force: {aliases: [-f], description: Force, show: always}
       -d: {description: "Remove whole directories", show: always}
       -x: {description: "Remove ignored files, too", show: always}
       -X: {description: "Remove only ignored files"}
@@ -539,10 +469,8 @@ commands:
   grep:
     description: Print lines matching a pattern
     flags:
-      -i: {description: "Case insensitive matching"}
-      --ignore-case: {description: "Case insensitive matching"}
-      -n: {description: "Show line numbers"}
-      --line-number: {description: "Show line numbers"}
+      --ignore-case: {aliases: [-i], description: "Case insensitive matching"}
+      --line-number: {aliases: [-n], description: "Show line numbers"}
       -l: {description: "Show only filenames instead of matching lines"}
       -w: {description: "Match patterns only at word boundaries"}
       -e: {value: any, description: "Match <pattern>"}
@@ -606,8 +534,7 @@ commands:
       remove:
         description: Remove a worktree
         flags:
-          -f: {description: "Force removal even if worktree is dirty or locked"}
-          --force: {description: "Force removal even if worktree is dirty or locked"}
+          --force: {aliases: [-f], description: "Force removal even if worktree is dirty or locked"}
           --help: {description: "Show the manual page"}
         args:
           exec: git worktree list --porcelain | sed -n 's/^worktree //p'
@@ -655,12 +582,10 @@ commands:
       --global: {description: "Use global config file", show: always}
       --local: {description: "Use repository config file"}
       --system: {description: "Use system config file"}
-      -l: {description: "List all", show: always}
-      --list: {description: "List all", show: always}
+      --list: {aliases: [-l], description: "List all", show: always}
       --get: {description: "Get value: name [value-pattern]"}
       --unset: {description: "Remove a variable: name [value-pattern]", show: always}
-      -e: {description: "Open an editor", show: always}
-      --edit: {description: "Open an editor", show: always}
+      --edit: {aliases: [-e], description: "Open an editor", show: always}
       --help: {description: "Show the manual page"}
     args:
       exec: git config --list --name-only | sort -u

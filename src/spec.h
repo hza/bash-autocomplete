@@ -26,6 +26,8 @@ ynode *load_man_spec(const char *name);
 extern char g_spec_real[256];
 /* "description" of a command or flag spec, if any. */
 const char *spec_desc(const ynode *spec);
+/* Flag `name` in a "flags" map, matched by key or "aliases"; NULL if none. */
+const ynode *flag_get(const ynode *flags, const char *name);
 /* Call fn for every unique spec name. */
 void each_spec(void (*fn)(const char *));
 

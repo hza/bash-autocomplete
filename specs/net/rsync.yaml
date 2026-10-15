@@ -1,20 +1,15 @@
-version: '20261013'
+version: '20261015'
 description: Fast incremental file transfer (local and over ssh)
 flags:
-  -a: {description: "Archive mode: -rlptgoD", show: always}
-  --archive: {description: "Archive mode: -rlptgoD"}
-  -v: {description: "Verbose (repeat for more)", repeat: true, show: always}
-  --verbose: {description: "Verbose (repeat for more)", repeat: true}
-  -z: {description: "Compress data in transfer", show: always}
-  --compress: {description: "Compress data in transfer"}
-  -n: {description: "Dry run: show what would be done", show: always}
-  --dry-run: {description: "Dry run: show what would be done"}
+  --archive: {aliases: [-a], description: "Archive mode: -rlptgoD", show: always}
+  --verbose: {aliases: [-v], description: "Verbose (repeat for more)", repeat: true, show: always}
+  --compress: {aliases: [-z], description: "Compress data in transfer", show: always}
+  --dry-run: {aliases: [-n], description: "Dry run: show what would be done", show: always}
   -P: {description: "--partial --progress", show: always}
   --progress: {description: "Show progress during transfer"}
   --partial: {description: "Keep partially transferred files"}
   --partial-dir: {value: dir, description: "Put partial files in this directory"}
-  -h: {description: "Human-readable numbers"}
-  --human-readable: {description: "Human-readable numbers"}
+  --human-readable: {aliases: [-h], description: "Human-readable numbers"}
   -e: {value: {enum: [ssh, 'ssh -p 2222', 'ssh -i ~/.ssh/id_ed25519']}, description: "Remote shell to use (e.g. 'ssh -p 2222')"}
   --rsh: {value: any, description: "Remote shell to use"}
   --delete: {description: "Delete extraneous files on the receiver", show: always}
@@ -29,88 +24,61 @@ flags:
   --exclude-from: {value: file, description: "Read exclude patterns from a file"}
   --include: {value: any, description: "Don't exclude files matching a pattern"}
   --include-from: {value: file, description: "Read include patterns from a file"}
-  -f: {value: any, description: "Add a filter rule"}
-  --filter: {value: any, description: "Add a filter rule"}
+  --filter: {aliases: [-f], value: any, description: "Add a filter rule"}
   -F: {description: "Use .rsync-filter files (-FF: also exclude them)", repeat: true}
-  -C: {description: "Ignore files like CVS does"}
-  --cvs-exclude: {description: "Ignore files like CVS does"}
+  --cvs-exclude: {aliases: [-C], description: "Ignore files like CVS does"}
   --files-from: {value: file, description: "Read the list of source files from a file"}
   --from0: {description: "Lists in --files-from etc. are NUL-separated"}
-  -r: {description: "Recurse into directories"}
-  --recursive: {description: "Recurse into directories"}
-  -d: {description: "Transfer directories without recursing"}
-  --dirs: {description: "Transfer directories without recursing"}
-  -R: {description: "Use relative path names"}
-  --relative: {description: "Use relative path names"}
-  -l: {description: "Copy symlinks as symlinks"}
-  --links: {description: "Copy symlinks as symlinks"}
-  -L: {description: "Copy the files symlinks point to"}
-  --copy-links: {description: "Copy the files symlinks point to"}
-  -k: {description: "Treat symlinks to dirs as dirs"}
-  --copy-dirlinks: {description: "Treat symlinks to dirs as dirs"}
-  -K: {description: "Treat symlinked dirs on the receiver as dirs"}
-  --keep-dirlinks: {description: "Treat symlinked dirs on the receiver as dirs"}
+  --recursive: {aliases: [-r], description: "Recurse into directories"}
+  --dirs: {aliases: [-d], description: "Transfer directories without recursing"}
+  --relative: {aliases: [-R], description: "Use relative path names"}
+  --links: {aliases: [-l], description: "Copy symlinks as symlinks"}
+  --copy-links: {aliases: [-L], description: "Copy the files symlinks point to"}
+  --copy-dirlinks: {aliases: [-k], description: "Treat symlinks to dirs as dirs"}
+  --keep-dirlinks: {aliases: [-K], description: "Treat symlinked dirs on the receiver as dirs"}
   --copy-unsafe-links: {description: "Copy symlinks pointing outside the tree"}
   --safe-links: {description: "Ignore symlinks pointing outside the tree"}
-  -H: {description: "Preserve hard links"}
-  --hard-links: {description: "Preserve hard links"}
-  -p: {description: "Preserve permissions"}
-  --perms: {description: "Preserve permissions"}
-  -E: {description: "Preserve executability"}
-  --executability: {description: "Preserve executability"}
+  --hard-links: {aliases: [-H], description: "Preserve hard links"}
+  --perms: {aliases: [-p], description: "Preserve permissions"}
+  --executability: {aliases: [-E], description: "Preserve executability"}
   --chmod: {value: any, description: "Change permissions (e.g. Du=rwx,Fgo-w)"}
-  -o: {description: "Preserve owner (super-user only)"}
-  --owner: {description: "Preserve owner (super-user only)"}
-  -g: {description: "Preserve group"}
-  --group: {description: "Preserve group"}
+  --owner: {aliases: [-o], description: "Preserve owner (super-user only)"}
+  --group: {aliases: [-g], description: "Preserve group"}
   -D: {description: "--devices --specials"}
   --devices: {description: "Preserve device files"}
   --specials: {description: "Preserve special files"}
-  -t: {description: "Preserve modification times"}
-  --times: {description: "Preserve modification times"}
-  -O: {description: "Don't preserve directory times"}
-  --omit-dir-times: {description: "Don't preserve directory times"}
+  --times: {aliases: [-t], description: "Preserve modification times"}
+  --omit-dir-times: {aliases: [-O], description: "Don't preserve directory times"}
   --numeric-ids: {description: "Don't map uid/gid by name"}
-  -x: {description: "Don't cross filesystem boundaries"}
-  --one-file-system: {description: "Don't cross filesystem boundaries"}
-  -u: {description: "Skip files that are newer on the receiver"}
-  --update: {description: "Skip files that are newer on the receiver"}
-  -c: {description: "Compare by checksum, not size and time"}
-  --checksum: {description: "Compare by checksum, not size and time"}
+  --one-file-system: {aliases: [-x], description: "Don't cross filesystem boundaries"}
+  --update: {aliases: [-u], description: "Skip files that are newer on the receiver"}
+  --checksum: {aliases: [-c], description: "Compare by checksum, not size and time"}
   --size-only: {description: "Compare by size only"}
-  -I: {description: "Don't skip files that match size and time"}
-  --ignore-times: {description: "Don't skip files that match size and time"}
+  --ignore-times: {aliases: [-I], description: "Don't skip files that match size and time"}
   --modify-window: {value: any, description: "Time tolerance in seconds when comparing"}
   --existing: {description: "Only update files that already exist on the receiver"}
   --ignore-existing: {description: "Skip files that already exist on the receiver"}
   --max-size: {value: any, description: "Skip files larger than SIZE (e.g. 100M)"}
   --min-size: {value: any, description: "Skip files smaller than SIZE"}
-  -W: {description: "Copy whole files (no delta algorithm)"}
-  --whole-file: {description: "Copy whole files (no delta algorithm)"}
+  --whole-file: {aliases: [-W], description: "Copy whole files (no delta algorithm)"}
   --inplace: {description: "Update destination files in place"}
   --append: {description: "Append data onto shorter files"}
-  -S: {description: "Handle sparse files efficiently"}
-  --sparse: {description: "Handle sparse files efficiently"}
-  -m: {description: "Prune empty directories"}
-  --prune-empty-dirs: {description: "Prune empty directories"}
-  -b: {description: "Back up replaced/deleted files"}
-  --backup: {description: "Back up replaced/deleted files"}
+  --sparse: {aliases: [-S], description: "Handle sparse files efficiently"}
+  --prune-empty-dirs: {aliases: [-m], description: "Prune empty directories"}
+  --backup: {aliases: [-b], description: "Back up replaced/deleted files"}
   --backup-dir: {value: dir, description: "Put backups in this directory"}
   --suffix: {value: any, description: "Backup suffix (default ~)"}
   --link-dest: {value: dir, description: "Hard-link unchanged files from this directory"}
   --compare-dest: {value: dir, description: "Also compare against this directory"}
   --copy-dest: {value: dir, description: "Like --compare-dest, but copy unchanged files"}
-  -T: {value: dir, description: "Temporary directory"}
-  --temp-dir: {value: dir, description: "Temporary directory"}
+  --temp-dir: {aliases: [-T], value: dir, description: "Temporary directory"}
   --delay-updates: {description: "Put updated files into place at the end"}
   --remove-source-files: {description: "Delete transferred files on the sender (move)"}
-  -i: {description: "Itemized change summary"}
-  --itemize-changes: {description: "Itemized change summary"}
+  --itemize-changes: {aliases: [-i], description: "Itemized change summary"}
   --stats: {description: "Print transfer statistics"}
   --list-only: {description: "List the files instead of copying"}
   --out-format: {value: any, description: "Per-file output format"}
-  -q: {description: "Suppress non-error messages"}
-  --quiet: {description: "Suppress non-error messages"}
+  --quiet: {aliases: [-q], description: "Suppress non-error messages"}
   --bwlimit: {value: any, description: "Limit bandwidth (KiB/s)"}
   --timeout: {value: any, description: "I/O timeout in seconds"}
   --contimeout: {value: any, description: "Daemon connection timeout in seconds"}
@@ -128,8 +96,7 @@ flags:
   --read-batch: {value: file, description: "Apply a batch file"}
   '-4': {description: "Prefer IPv4"}
   '-6': {description: "Prefer IPv6"}
-  -V: {description: "Print the version"}
-  --version: {description: "Print the version"}
+  --version: {aliases: [-V], description: "Print the version"}
   --help: {description: "Print help"}
 args: [file, {exec: "awk 'tolower($1)==\"host\"{for(i=2;i<=NF;i++) if($i !~ /[*?!]/) print $i}' ~/.ssh/config 2>/dev/null", suffix: ":", nospace: true}]
 snippets:

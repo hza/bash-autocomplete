@@ -1,39 +1,28 @@
-version: '20261013'
+version: '20261015'
 description: "Create, check and display code signatures"
 flags:
-  -s: {value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)", show: always}
-  --sign: {value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)"}
+  --sign: {aliases: [-s], value: {exec: "{ printf -- '-\\tad-hoc signature\\n'; security find-identity -v -p codesigning 2>/dev/null | awk -F'\"' 'NF > 2 {print $2}'; }"}, description: "Sign with this identity (- = ad hoc)", show: always}
   -v: {description: "Verify signatures (or more verbose when repeated)", repeat: true, show: always}
   --verify: {description: "Verify signatures"}
   --verbose: {description: "More output (--verbose=N for a level)"}
-  -d: {description: "Display signature information", show: always}
-  --display: {description: "Display signature information"}
-  -h: {description: "Show the hosting chain of running code (pids)"}
-  --hosting: {description: "Show the hosting chain of running code (pids)"}
-  -f: {description: "Replace an existing signature", show: always}
-  --force: {description: "Replace an existing signature"}
-  -a: {value: {enum: [arm64, x86_64, arm64e, i386]}, description: "Select a Mach-O architecture"}
-  --architecture: {value: {enum: [arm64, x86_64, arm64e, i386]}, description: "Select a Mach-O architecture"}
+  --display: {aliases: [-d], description: "Display signature information", show: always}
+  --hosting: {aliases: [-h], description: "Show the hosting chain of running code (pids)"}
+  --force: {aliases: [-f], description: "Replace an existing signature", show: always}
+  --architecture: {aliases: [-a], value: {enum: [arm64, x86_64, arm64e, i386]}, description: "Select a Mach-O architecture"}
   --all-architectures: {description: "Verify each architecture of a universal binary"}
   --bundle-version: {value: any, description: "Bundle version (Versions/x) to sign or check"}
   --check-notarization: {description: "Also check notarization (with --verify)"}
-  -D: {value: file, description: "Write a detached signature to this file"}
-  --detached: {value: file, description: "Write a detached signature to this file"}
+  --detached: {aliases: [-D], value: file, description: "Write a detached signature to this file"}
   --deep: {description: "Recurse into nested code (deprecated for signing)"}
   --detached-database: {description: "Store detached signatures in the system database"}
   --force-library-entitlements: {description: "Allow entitlements on libraries"}
   --generate-entitlement-der: {description: "Add DER-encoded entitlements"}
-  -i: {value: any, description: "Signing identifier, e.g. com.example.tool"}
-  --identifier: {value: any, description: "Signing identifier, e.g. com.example.tool"}
-  -o: {value: {enum: [runtime, kill, hard, host, expires, library, linker-signed]}, description: "Option flags, comma-separated (runtime = hardened runtime)", show: always}
-  --options: {value: {enum: [runtime, kill, hard, host, expires, library, linker-signed]}, description: "Option flags, comma-separated (runtime = hardened runtime)"}
-  -P: {value: any, description: "Page size for signing (bytes, power of two)"}
-  --pagesize: {value: any, description: "Page size for signing (bytes, power of two)"}
+  --identifier: {aliases: [-i], value: any, description: "Signing identifier, e.g. com.example.tool"}
+  --options: {aliases: [-o], value: {enum: [runtime, kill, hard, host, expires, library, linker-signed]}, description: "Option flags, comma-separated (runtime = hardened runtime)", show: always}
+  --pagesize: {aliases: [-P], value: any, description: "Page size for signing (bytes, power of two)"}
   --remove-signature: {description: "Remove the signature"}
-  -r: {value: file, description: "Internal requirements (file, - or =text)"}
-  --requirements: {value: file, description: "Internal requirements (file, - or =text)"}
-  -R: {value: any, description: "Verify against this requirement (file, - or =text)"}
-  --test-requirement: {value: any, description: "Verify against this requirement (file, - or =text)"}
+  --requirements: {aliases: [-r], value: file, description: "Internal requirements (file, - or =text)"}
+  --test-requirement: {aliases: [-R], value: any, description: "Verify against this requirement (file, - or =text)"}
   --continue: {description: "Keep going after an error"}
   --dryrun: {description: "Do everything except write the signature"}
   --entitlements: {value: {file: "*.plist *.entitlements *.xml"}, description: "Entitlements file to embed (or output with -d)", show: always}

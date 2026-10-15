@@ -1,23 +1,17 @@
-version: '20261013'
+version: '20261015'
 description: DigitalOcean command-line interface
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -t: {value: any, description: "API v2 access token"}
-  --access-token: {value: any, description: "API v2 access token"}
+  --help: {aliases: [-h], description: "Show help"}
+  --access-token: {aliases: [-t], value: any, description: "API v2 access token"}
   --context: {value: {exec: "doctl auth list 2>/dev/null | sed 's/ (current)//'"}, description: "Authentication context name"}
-  -c: {value: file, description: "Path to config file"}
-  --config: {value: file, description: "Path to config file"}
-  -o: {value: {enum: [text, json]}, description: "Output format", show: always}
-  --output: {value: {enum: [text, json]}, description: "Output format"}
+  --config: {aliases: [-c], value: file, description: "Path to config file"}
+  --output: {aliases: [-o], value: {enum: [text, json]}, description: "Output format", show: always}
   --format: {value: any, description: "Columns to show, comma separated"}
   --no-header: {description: "Omit the header row"}
-  -u: {value: any, description: "Override the default API endpoint"}
-  --api-url: {value: any, description: "Override the default API endpoint"}
+  --api-url: {aliases: [-u], value: any, description: "Override the default API endpoint"}
   --interactive: {value: {enum: ['true', 'false']}, description: "Enable interactive prompts"}
   --trace: {description: "Show a log of network activity"}
-  -v: {description: "Verbose output"}
-  --verbose: {description: "Verbose output"}
+  --verbose: {aliases: [-v], description: "Verbose output"}
 commands:
   auth:
     description: Manage authentication contexts
@@ -81,8 +75,7 @@ commands:
             description: Delete Droplets
             aliases: [rm, d]
             flags:
-              -f: {description: "Delete without confirmation"}
-              --force: {description: "Delete without confirmation"}
+              --force: {aliases: [-f], description: "Delete without confirmation"}
               --tag-name: {value: any, description: "Delete Droplets with this tag"}
             args: {exec: "doctl compute droplet list --format Name --no-header 2>/dev/null", cache: 60}
           actions: {description: "List Droplet actions", args: any}
@@ -223,8 +216,7 @@ commands:
         description: Show app logs
         flags:
           --type: {value: {enum: [build, deploy, run, run_restarted]}, description: "Log type", show: always}
-          -f: {description: "Follow logs"}
-          --follow: {description: "Follow logs"}
+          --follow: {aliases: [-f], description: "Follow logs"}
           --deployment: {value: any, description: "Deployment ID"}
           --tail: {value: any, description: "Number of lines"}
         args: any

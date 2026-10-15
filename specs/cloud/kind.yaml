@@ -1,12 +1,9 @@
-version: '20261013'
+version: '20261015'
 description: Kubernetes in Docker
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -v: {value: any, description: "Log verbosity"}
-  --verbosity: {value: any, description: "Log verbosity"}
-  -q: {description: "Silence all stderr output"}
-  --quiet: {description: "Silence all stderr output"}
+  --help: {aliases: [-h], description: "Show help"}
+  --verbosity: {aliases: [-v], value: any, description: "Log verbosity"}
+  --quiet: {aliases: [-q], description: "Silence all stderr output"}
 commands:
   create:
     description: Create a resource
@@ -23,24 +20,24 @@ commands:
   delete:
     description: Delete a resource
     commands:
-      cluster: {description: "Delete a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --kubeconfig: {value: file, description: "Kubeconfig to clean"}}}
-      clusters: {description: "Delete clusters", flags: {-A: {description: "Delete all clusters"}, --all: {description: "Delete all clusters"}}, args: {exec: "kind get clusters 2>/dev/null"}}
+      cluster: {description: "Delete a cluster", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --kubeconfig: {value: file, description: "Kubeconfig to clean"}}}
+      clusters: {description: "Delete clusters", flags: {--all: {aliases: [-A], description: "Delete all clusters"}}, args: {exec: "kind get clusters 2>/dev/null"}}
   get:
     description: Show resources
     commands:
       clusters: {description: "List clusters"}
-      nodes: {description: "List nodes of a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, -A: {description: "All clusters"}, --all-clusters: {description: "All clusters"}}}
-      kubeconfig: {description: "Print the kubeconfig of a cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --internal: {description: "Use the internal address"}}}
+      nodes: {description: "List nodes of a cluster", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --all-clusters: {aliases: [-A], description: "All clusters"}}}
+      kubeconfig: {description: "Print the kubeconfig of a cluster", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --internal: {description: "Use the internal address"}}}
   load:
     description: Load images into nodes
     commands:
-      docker-image: {description: "Load docker images into the cluster", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --nodes: {value: any, description: "Only these nodes"}}, args: {exec: "docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -v '<none>'"}}
+      docker-image: {description: "Load docker images into the cluster", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name", show: always}, --nodes: {value: any, description: "Only these nodes"}}, args: {exec: "docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null | grep -v '<none>'"}}
       image-archive: {description: "Load an image tarball", flags: {--name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --nodes: {value: any, description: "Only these nodes"}}, args: {file: "*.tar"}}
   export:
     description: Export logs or kubeconfig
     commands:
-      kubeconfig: {description: "Write the cluster's kubeconfig", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --kubeconfig: {value: file, description: "Target kubeconfig"}, --internal: {description: "Use the internal address"}}}
-      logs: {description: "Dump node logs", flags: {-n: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --name: {value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}}, args: dir}
+      kubeconfig: {description: "Write the cluster's kubeconfig", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}, --kubeconfig: {value: file, description: "Target kubeconfig"}, --internal: {description: "Use the internal address"}}}
+      logs: {description: "Dump node logs", flags: {--name: {aliases: [-n], value: {exec: "kind get clusters 2>/dev/null"}, description: "Cluster name"}}, args: dir}
   build:
     description: Build node images
     commands:

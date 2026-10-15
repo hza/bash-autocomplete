@@ -1,10 +1,8 @@
-version: '20261013'
+version: '20261015'
 description: "Access system wide log messages created by os_log, os_trace and other logging systems"
 flags:
-  -q: {description: "Quiet"}
-  --quiet: {description: "Quiet"}
-  -v: {description: "Verbose"}
-  --verbose: {description: "Verbose"}
+  --quiet: {aliases: [-q], description: "Quiet"}
+  --verbose: {aliases: [-v], description: "Verbose"}
   --help: {description: "Show help"}
 commands:
   show:

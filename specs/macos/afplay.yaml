@@ -1,19 +1,13 @@
-version: '20261013'
+version: '20261015'
 description: "Play an audio file"
 flags:
-  -v: {value: any, description: "Volume (1 = normal)", show: always}
-  --volume: {value: any, description: "Volume (1 = normal)"}
-  -t: {value: any, description: "Play for this many seconds", show: always}
-  --time: {value: any, description: "Play for this many seconds"}
-  -r: {value: any, description: "Playback rate (1 = normal)"}
-  --rate: {value: any, description: "Playback rate (1 = normal)"}
-  -q: {value: {enum: {"0": "low quality (default)", "1": "high quality"}}, description: "Quality for rate-scaled playback"}
-  --rQuality: {value: {enum: {"0": "low quality (default)", "1": "high quality"}}, description: "Quality for rate-scaled playback"}
-  -d: {description: "Debug output"}
-  --debug: {description: "Debug output"}
+  --volume: {aliases: [-v], value: any, description: "Volume (1 = normal)", show: always}
+  --time: {aliases: [-t], value: any, description: "Play for this many seconds", show: always}
+  --rate: {aliases: [-r], value: any, description: "Playback rate (1 = normal)"}
+  --rQuality: {aliases: [-q], value: {enum: {"0": "low quality (default)", "1": "high quality"}}, description: "Quality for rate-scaled playback"}
+  --debug: {aliases: [-d], description: "Debug output"}
   --leaks: {description: "Run leaks analysis"}
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
 args: {file: "*.mp3 *.m4a *.aac *.wav *.aif *.aiff *.caf *.flac *.mp4"}
 snippets:
   - key: g

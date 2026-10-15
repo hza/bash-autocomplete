@@ -1,12 +1,9 @@
-version: '20261013'
+version: '20261015'
 description: Infrastructure as code with real programming languages
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -C: {value: dir, description: "Run as if started in this directory"}
-  --cwd: {value: dir, description: "Run as if started in this directory"}
-  -v: {value: any, description: "Log verbosity level"}
-  --verbose: {value: any, description: "Log verbosity level"}
+  --help: {aliases: [-h], description: "Show help"}
+  --cwd: {aliases: [-C], value: dir, description: "Run as if started in this directory"}
+  --verbose: {aliases: [-v], value: any, description: "Log verbosity level"}
   --logtostderr: {description: "Log to stderr"}
   --color: {value: {enum: [always, never, raw, auto]}, description: "Colorize output"}
   --non-interactive: {description: "Disable interactive prompts"}
@@ -19,19 +16,13 @@ commands:
   new:
     description: Create a project from a template
     flags:
-      -n: {value: any, description: "Project name"}
-      --name: {value: any, description: "Project name"}
-      -d: {value: any, description: "Project description"}
-      --description: {value: any, description: "Project description"}
-      -s: {value: any, description: "Stack name"}
-      --stack: {value: any, description: "Stack name"}
-      -c: {value: any, description: "Config key=value"}
-      --config: {value: any, description: "Config key=value"}
+      --name: {aliases: [-n], value: any, description: "Project name"}
+      --description: {aliases: [-d], value: any, description: "Project description"}
+      --stack: {aliases: [-s], value: any, description: "Stack name"}
+      --config: {aliases: [-c], value: any, description: "Config key=value"}
       --dir: {value: dir, description: "Target directory"}
-      -g: {description: "Generate files only, no install or stack"}
-      --generate-only: {description: "Generate files only, no install or stack"}
-      -y: {description: "Accept defaults"}
-      --yes: {description: "Accept defaults"}
+      --generate-only: {aliases: [-g], description: "Generate files only, no install or stack"}
+      --yes: {aliases: [-y], description: "Accept defaults"}
       --force: {description: "Overwrite existing files"}
       --ai: {value: any, description: "Generate the program from a prompt"}
     args: {enum: [typescript, javascript, python, go, csharp, java, yaml, aws-typescript, aws-python, aws-go, azure-typescript, azure-python, gcp-typescript, gcp-python, kubernetes-typescript, kubernetes-python]}
@@ -39,25 +30,17 @@ commands:
     description: Create or update the stack's resources
     aliases: [update]
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
-      -y: {description: "Skip the preview confirmation", show: always}
-      --yes: {description: "Skip the preview confirmation"}
-      -f: {description: "Skip the preview"}
-      --skip-preview: {description: "Skip the preview"}
-      -t: {value: any, description: "Only this resource URN"}
-      --target: {value: any, description: "Only this resource URN"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
+      --yes: {aliases: [-y], description: "Skip the preview confirmation", show: always}
+      --skip-preview: {aliases: [-f], description: "Skip the preview"}
+      --target: {aliases: [-t], value: any, description: "Only this resource URN"}
       --target-dependents: {description: "Include dependents of targets"}
-      -r: {description: "Refresh state first", show: always}
-      --refresh: {description: "Refresh state first"}
+      --refresh: {aliases: [-r], description: "Refresh state first", show: always}
       --replace: {value: any, description: "Replace this resource URN"}
       --diff: {description: "Show a detailed diff"}
-      -m: {value: any, description: "Update message"}
-      --message: {value: any, description: "Update message"}
-      -c: {value: any, description: "Config key=value"}
-      --config: {value: any, description: "Config key=value"}
-      -p: {value: any, description: "Max parallel operations"}
-      --parallel: {value: any, description: "Max parallel operations"}
+      --message: {aliases: [-m], value: any, description: "Update message"}
+      --config: {aliases: [-c], value: any, description: "Config key=value"}
+      --parallel: {aliases: [-p], value: any, description: "Max parallel operations"}
       --continue-on-error: {description: "Keep going after resource errors"}
       --suppress-outputs: {description: "Don't print outputs"}
       --json: {description: "JSON output"}
@@ -65,13 +48,10 @@ commands:
     description: Show what an update would change
     aliases: [pre]
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
       --diff: {description: "Show a detailed diff", show: always}
-      -t: {value: any, description: "Only this resource URN"}
-      --target: {value: any, description: "Only this resource URN"}
-      -r: {description: "Refresh state first"}
-      --refresh: {description: "Refresh state first"}
+      --target: {aliases: [-t], value: any, description: "Only this resource URN"}
+      --refresh: {aliases: [-r], description: "Refresh state first"}
       --replace: {value: any, description: "Replace this resource URN"}
       --save-plan: {value: file, description: "Save the plan to a file"}
       --json: {description: "JSON output"}
@@ -79,39 +59,31 @@ commands:
     description: Delete all resources of the stack
     aliases: [down, dn]
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
-      -y: {description: "Skip confirmation"}
-      --yes: {description: "Skip confirmation"}
-      -t: {value: any, description: "Only this resource URN"}
-      --target: {value: any, description: "Only this resource URN"}
-      -f: {description: "Skip the preview"}
-      --skip-preview: {description: "Skip the preview"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
+      --yes: {aliases: [-y], description: "Skip confirmation"}
+      --target: {aliases: [-t], value: any, description: "Only this resource URN"}
+      --skip-preview: {aliases: [-f], description: "Skip the preview"}
       --remove: {description: "Also remove the stack and its config"}
       --exclude-protected: {description: "Skip protected resources"}
   refresh:
     description: Sync state with the real cloud resources
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
-      -y: {description: "Skip confirmation"}
-      --yes: {description: "Skip confirmation"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on", show: always}
+      --yes: {aliases: [-y], description: "Skip confirmation"}
       --diff: {description: "Show a detailed diff"}
       --clear-pending-creates: {description: "Drop pending create operations"}
   stack:
     description: Manage stacks
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
       --show-urns: {description: "Show resource URNs"}
-      -i: {description: "Show resource IDs"}
-      --show-ids: {description: "Show resource IDs"}
+      --show-ids: {aliases: [-i], description: "Show resource IDs"}
     commands:
-      ls: {description: "List stacks", flags: {-a: {description: "All projects"}, --all: {description: "All projects"}, -o: {value: any, description: "Filter by organization"}, --json: {description: "JSON output"}}}
+      ls: {description: "List stacks", flags: {--all: {aliases: [-a], description: "All projects"}, -o: {value: any, description: "Filter by organization"}, --json: {description: "JSON output"}}}
       init: {description: "Create a stack", flags: {--copy-config-from: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Copy config from another stack"}, --secrets-provider: {value: any, description: "Secrets provider"}}, args: any}
-      select: {description: "Switch the current stack", flags: {-c: {description: "Create if missing"}, --create: {description: "Create if missing"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
-      rm: {description: "Remove a stack and its config", flags: {-y: {description: "Skip confirmation"}, -f: {description: "Remove even with resources"}, --force: {description: "Remove even with resources"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
-      output: {description: "Show stack outputs", flags: {--show-secrets: {description: "Reveal secret outputs"}, -j: {description: "JSON output"}, --json: {description: "JSON output"}, --shell: {description: "Print as shell variables"}}, args: any}
+      select: {description: "Switch the current stack", flags: {--create: {aliases: [-c], description: "Create if missing"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
+      rm: {description: "Remove a stack and its config", flags: {-y: {description: "Skip confirmation"}, --force: {aliases: [-f], description: "Remove even with resources"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
+      output: {description: "Show stack outputs", flags: {--show-secrets: {description: "Reveal secret outputs"}, --json: {aliases: [-j], description: "JSON output"}, --shell: {description: "Print as shell variables"}}, args: any}
       export: {description: "Export the stack state", flags: {--file: {value: file, description: "Write to a file"}, --show-secrets: {description: "Decrypt secrets"}}}
       import: {description: "Import a stack state", flags: {--file: {value: file, description: "Read from a file"}}}
       history: {description: "Show update history", aliases: [hist], flags: {--show-secrets: {description: "Reveal secrets"}, --json: {description: "JSON output"}}}
@@ -123,18 +95,16 @@ commands:
   config:
     description: Manage stack configuration
     flags:
-      -s: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
-      --stack: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
+      --stack: {aliases: [-s], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Stack to operate on"}
       --show-secrets: {description: "Reveal secret values"}
-      -j: {description: "JSON output"}
-      --json: {description: "JSON output"}
+      --json: {aliases: [-j], description: "JSON output"}
       --config-file: {value: file, description: "Use this config file"}
     commands:
       get: {description: "Get a config value", flags: {--path: {description: "Treat the key as a path"}}, args: {exec: "pulumi config --json 2>/dev/null | sed -n 's/^  \"\\([^\"]*\\)\": {/\\1/p'", cache: 10}}
       set: {description: "Set a config value", flags: {--secret: {description: "Encrypt the value", show: always}, --plaintext: {description: "Store as plaintext"}, --path: {description: "Treat the key as a path"}}, args: any}
       set-all: {description: "Set several values", flags: {--plaintext: {value: any, description: "key=value pair"}, --secret: {value: any, description: "Secret key=value pair"}, --path: {description: "Treat keys as paths"}}}
       rm: {description: "Remove a config value", flags: {--path: {description: "Treat the key as a path"}}, args: {exec: "pulumi config --json 2>/dev/null | sed -n 's/^  \"\\([^\"]*\\)\": {/\\1/p'", cache: 10}}
-      cp: {description: "Copy config to another stack", flags: {-d: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Destination stack"}, --dest: {value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Destination stack"}}}
+      cp: {description: "Copy config to another stack", flags: {--dest: {aliases: [-d], value: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}, description: "Destination stack"}}}
       refresh: {description: "Update local config from the last deployment"}
       env: {description: "Manage linked ESC environments", commands: {add: {description: "Link an environment", args: any}, rm: {description: "Unlink an environment", args: any}, ls: {description: "List linked environments"}}}
   state:
@@ -148,11 +118,11 @@ commands:
       edit: {description: "Edit the state in an editor"}
       repair: {description: "Fix invalid state"}
       upgrade: {description: "Upgrade the state format"}
-  import: {description: "Bring an existing cloud resource under management", flags: {-f: {value: {file: "*.json"}, description: "Bulk import file"}, --file: {value: {file: "*.json"}, description: "Bulk import file"}, -o: {value: file, description: "Write generated code to a file"}, --out: {value: file, description: "Write generated code to a file"}, --protect: {value: {enum: ['true', 'false']}, description: "Protect imported resources"}, -y: {description: "Skip confirmation"}}, positional: [any, any, any]}
-  logs: {description: "Show aggregated resource logs", flags: {-f: {description: "Follow"}, --follow: {description: "Follow"}, -r: {value: any, description: "Resource name filter"}, --resource: {value: any, description: "Resource name filter"}, --since: {value: any, description: "Only logs newer than, e.g. 1h"}, --json: {description: "JSON output"}}}
+  import: {description: "Bring an existing cloud resource under management", flags: {--file: {aliases: [-f], value: {file: "*.json"}, description: "Bulk import file"}, --out: {aliases: [-o], value: file, description: "Write generated code to a file"}, --protect: {value: {enum: ['true', 'false']}, description: "Protect imported resources"}, -y: {description: "Skip confirmation"}}, positional: [any, any, any]}
+  logs: {description: "Show aggregated resource logs", flags: {--follow: {aliases: [-f], description: "Follow"}, --resource: {aliases: [-r], value: any, description: "Resource name filter"}, --since: {value: any, description: "Only logs newer than, e.g. 1h"}, --json: {description: "JSON output"}}}
   login: {description: "Log in to a backend", flags: {--local: {description: "Use the local file backend"}, -c: {description: "Use cloud defaults"}, --cloud-url: {value: any, description: "Backend URL"}}, args: {enum: ['file://', 's3://', 'azblob://', 'gs://', 'https://'], nospace: true}}
   logout: {description: "Log out of the backend", flags: {--all: {description: "Log out of all backends"}, --local: {description: "Log out of the local backend"}}}
-  whoami: {description: "Show the current user", flags: {-v: {description: "Show backend and orgs"}, --verbose: {description: "Show backend and orgs"}, --json: {description: "JSON output"}}}
+  whoami: {description: "Show the current user", flags: {--verbose: {aliases: [-v], description: "Show backend and orgs"}, --json: {description: "JSON output"}}}
   cancel: {description: "Cancel a running update", flags: {-y: {description: "Skip confirmation"}}, args: {exec: "pulumi stack ls 2>/dev/null | tail -n +2 | awk '{sub(/\\*$/,\"\",$1); print $1}'", cache: 30}}
   install: {description: "Install plugins and dependencies", flags: {--reinstall: {description: "Reinstall even if present"}}}
   plugin: {description: "Manage plugins", commands: {ls: {description: "List plugins"}, install: {description: "Install a plugin", positional: [{enum: [resource, language, analyzer, converter, tool]}, any, any]}, rm: {description: "Remove plugins", args: any}}}

@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: Go programming language toolchain
 flags:
   --help: {description: "Show help", show: always}
@@ -7,8 +7,7 @@ commands:
     description: Compile packages and dependencies
     flags:
       -o: {value: any, description: "Output file or directory", show: always}
-      -v: {description: "Print the names of packages as they are compiled"}
-      --verbose: {description: "Print the names of packages as they are compiled"}
+      --verbose: {aliases: [-v], description: "Print the names of packages as they are compiled"}
       -race: {description: "Enable data race detection", show: always}
       -n: {description: "Print the commands but do not run them"}
       -x: {description: "Print the commands"}

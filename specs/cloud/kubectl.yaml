@@ -1,53 +1,41 @@
-version: '20261013'
+version: '20261015'
 description: "Control Kubernetes clusters"
 flags:
-  -n: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request", show: always}
-  --namespace: {value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request", show: always}
-  -A: {description: "List the requested objects across all namespaces", show: always}
-  --all-namespaces: {description: "List the requested objects across all namespaces", show: always}
+  --namespace: {aliases: [-n], value: {exec: "kubectl get namespaces -o name | sed 's|^namespace/||'"}, description: "Namespace scope for this request", show: always}
+  --all-namespaces: {aliases: [-A], description: "List the requested objects across all namespaces", show: always}
   --context: {value: {exec: "kubectl config get-contexts -o name"}, description: "The name of the kubeconfig context to use", show: always}
   --cluster: {value: {exec: "kubectl config get-clusters | tail -n +2"}, description: "The name of the kubeconfig cluster to use"}
   --user: {value: {exec: "kubectl config get-users | tail -n +2"}, description: "The name of the kubeconfig user to use"}
   --kubeconfig: {value: file, description: "Path to the kubeconfig file to use for CLI requests", show: always}
-  -s: {value: any, description: "The address and port of the Kubernetes API server"}
-  --server: {value: any, description: "The address and port of the Kubernetes API server"}
+  --server: {aliases: [-s], value: any, description: "The address and port of the Kubernetes API server"}
   -v: {value: any, description: "Number for the log level verbosity"}
   --request-timeout: {value: any, description: "The length of time to wait before giving up on a single server request"}
   --insecure-skip-tls-verify: {description: "Skip TLS certificate verification"}
-  -h: {description: "Help for kubectl", show: always}
-  --help: {description: "Help for kubectl", show: always}
+  --help: {aliases: [-h], description: "Help for kubectl", show: always}
 commands:
   get:
     description: Display one or many resources
     flags:
-      -o: {value: {enum: [json, yaml, wide, name, 'custom-columns=', 'jsonpath=', 'go-template=']}, description: "Output format", show: always}
-      --output: {value: {enum: [json, yaml, wide, name, 'custom-columns=', 'jsonpath=', 'go-template=']}, description: "Output format", show: always}
-      -l: {value: any, description: "Selector (label query) to filter on"}
-      --selector: {value: any, description: "Selector (label query) to filter on"}
+      --output: {aliases: [-o], value: {enum: [json, yaml, wide, name, 'custom-columns=', 'jsonpath=', 'go-template=']}, description: "Output format", show: always}
+      --selector: {aliases: [-l], value: any, description: "Selector (label query) to filter on"}
       --field-selector: {value: any, description: "Selector (field query) to filter on"}
-      -w: {description: "Watch for changes after listing"}
-      --watch: {description: "Watch for changes after listing"}
+      --watch: {aliases: [-w], description: "Watch for changes after listing"}
       --show-labels: {description: "Show all labels as the last column"}
-      -f: {value: file, description: "File identifying the resource to get", show: always}
-      --filename: {value: file, description: "File identifying the resource to get", show: always}
+      --filename: {aliases: [-f], value: file, description: "File identifying the resource to get", show: always}
     args:
       exec: kubectl api-resources --cached -o name
   describe:
     description: Show details of a specific resource or group of resources
     flags:
-      -l: {value: any, description: "Selector (label query) to filter on"}
-      --selector: {value: any, description: "Selector (label query) to filter on"}
-      -f: {value: file, description: "File identifying the resource to describe", show: always}
-      --filename: {value: file, description: "File identifying the resource to describe", show: always}
+      --selector: {aliases: [-l], value: any, description: "Selector (label query) to filter on"}
+      --filename: {aliases: [-f], value: file, description: "File identifying the resource to describe", show: always}
     args:
       exec: kubectl api-resources --cached -o name
   delete:
     description: Delete resources by file names, stdin, resources and names, or by resources and label selector
     flags:
-      -f: {value: file, description: "File containing the resource to delete", show: always}
-      --filename: {value: file, description: "File containing the resource to delete", show: always}
-      -l: {value: any, description: "Selector (label query) to filter on"}
-      --selector: {value: any, description: "Selector (label query) to filter on"}
+      --filename: {aliases: [-f], value: file, description: "File containing the resource to delete", show: always}
+      --selector: {aliases: [-l], value: any, description: "Selector (label query) to filter on"}
       --all: {description: "Delete all resources in the namespace of the specified resource types", show: always}
       --force: {description: "Immediately remove resources from API and bypass graceful deletion"}
       --grace-period: {value: any, description: "Seconds given to the resource to terminate gracefully"}
@@ -57,56 +45,44 @@ commands:
   apply:
     description: Apply a configuration to a resource by file name or stdin
     flags:
-      -f: {value: file, description: "The files that contain the configurations to apply", show: always}
-      --filename: {value: file, description: "The files that contain the configurations to apply", show: always}
-      -k: {value: dir, description: "Process a kustomization directory", show: always}
-      --kustomize: {value: dir, description: "Process a kustomization directory", show: always}
-      -R: {description: "Process the directory used in -f recursively"}
-      --recursive: {description: "Process the directory used in -f recursively"}
+      --filename: {aliases: [-f], value: file, description: "The files that contain the configurations to apply", show: always}
+      --kustomize: {aliases: [-k], value: dir, description: "Process a kustomization directory", show: always}
+      --recursive: {aliases: [-R], description: "Process the directory used in -f recursively"}
       --dry-run: {value: {enum: [none, client, server]}, description: "Only print the object that would be sent"}
       --server-side: {description: "Run apply on the server instead of the client"}
       --prune: {description: "Automatically delete resource objects that do not appear in the configs"}
   create:
     description: Create a resource from a file or from stdin
     flags:
-      -f: {value: file, description: "File that contains the configuration to create", show: always}
-      --filename: {value: file, description: "File that contains the configuration to create", show: always}
+      --filename: {aliases: [-f], value: file, description: "File that contains the configuration to create", show: always}
       --dry-run: {value: {enum: [none, client, server]}, description: "Only print the object that would be sent"}
     args:
       exec: printf '%s\n' deployment namespace secret configmap service serviceaccount job cronjob role rolebinding clusterrole clusterrolebinding ingress quota priorityclass poddisruptionbudget
   edit:
     description: Edit a resource on the server
     flags:
-      -f: {value: file, description: "File identifying the resource to edit"}
-      --filename: {value: file, description: "File identifying the resource to edit"}
+      --filename: {aliases: [-f], value: file, description: "File identifying the resource to edit"}
     args:
       exec: kubectl api-resources --cached -o name
   logs:
     description: Print the logs for a container in a pod
     flags:
-      -f: {description: "Stream the logs", show: always}
-      --follow: {description: "Stream the logs", show: always}
-      -c: {value: any, description: "Print the logs of this container", show: always}
-      --container: {value: any, description: "Print the logs of this container", show: always}
+      --follow: {aliases: [-f], description: "Stream the logs", show: always}
+      --container: {aliases: [-c], value: any, description: "Print the logs of this container", show: always}
       --all-containers: {description: "Get all containers' logs in the pod(s)", show: always}
-      -p: {description: "Print the logs for the previous instance of the container"}
-      --previous: {description: "Print the logs for the previous instance of the container"}
+      --previous: {aliases: [-p], description: "Print the logs for the previous instance of the container"}
       --tail: {value: any, description: "Lines of recent log file to display", show: always}
       --since: {value: any, description: "Only return logs newer than a relative duration like 5s, 2m, or 3h", show: always}
       --timestamps: {description: "Include timestamps on each line"}
-      -l: {value: any, description: "Selector (label query) to filter on"}
-      --selector: {value: any, description: "Selector (label query) to filter on"}
+      --selector: {aliases: [-l], value: any, description: "Selector (label query) to filter on"}
     args:
       exec: kubectl get pods -o name | sed 's|^pod/||'
   exec:
     description: Execute a command in a container
     flags:
-      -i: {description: "Pass stdin to the container"}
-      --stdin: {description: "Pass stdin to the container"}
-      -t: {description: "Stdin is a TTY"}
-      --tty: {description: "Stdin is a TTY"}
-      -c: {value: any, description: "Container name"}
-      --container: {value: any, description: "Container name"}
+      --stdin: {aliases: [-i], description: "Pass stdin to the container"}
+      --tty: {aliases: [-t], description: "Stdin is a TTY"}
+      --container: {aliases: [-c], value: any, description: "Container name"}
     args:
       exec: kubectl get pods -o name | sed 's|^pod/||'
   port-forward:
@@ -152,18 +128,15 @@ commands:
   cp:
     description: Copy files and directories to and from containers
     flags:
-      -c: {value: any, description: "Container name", show: always}
-      --container: {value: any, description: "Container name", show: always}
+      --container: {aliases: [-c], value: any, description: "Container name", show: always}
     args: file
   run:
     description: Run a particular image on the cluster
     flags:
       --image: {value: any, description: "The image for the container to run", show: always}
       --rm: {description: "Delete the pod after it exits", show: always}
-      -i: {description: "Keep stdin open on the container"}
-      --stdin: {description: "Keep stdin open on the container"}
-      -t: {description: "Allocate a TTY"}
-      --tty: {description: "Allocate a TTY"}
+      --stdin: {aliases: [-i], description: "Keep stdin open on the container"}
+      --tty: {aliases: [-t], description: "Allocate a TTY"}
       --restart: {value: {enum: [Always, OnFailure, Never]}, description: "The restart policy for this Pod", show: always}
       --env: {value: any, description: "Environment variables to set in the container", show: always}
       --port: {value: any, description: "The port that this container exposes", show: always}

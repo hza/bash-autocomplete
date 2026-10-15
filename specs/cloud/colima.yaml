@@ -1,52 +1,39 @@
-version: '20261013'
+version: '20261015'
 description: Container runtimes on macOS with minimal setup
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
-  -p: {value: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, description: "Profile name"}
-  --profile: {value: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, description: "Profile name", show: always}
-  -v: {description: "Verbose output"}
-  --verbose: {description: "Verbose output"}
+  --help: {aliases: [-h], description: "Show help"}
+  --profile: {aliases: [-p], value: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, description: "Profile name", show: always}
+  --verbose: {aliases: [-v], description: "Verbose output"}
   --very-verbose: {description: "Very verbose output"}
 commands:
   start:
     description: Start the VM (creates it on first run)
     args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}
     flags:
-      -c: {value: any, description: "Number of CPUs"}
-      --cpu: {value: any, description: "Number of CPUs", show: always}
-      -m: {value: any, description: "Memory in GiB"}
-      --memory: {value: any, description: "Memory in GiB", show: always}
-      -d: {value: any, description: "Disk size in GiB"}
-      --disk: {value: any, description: "Disk size in GiB"}
-      -r: {value: {enum: [docker, containerd, incus]}, description: "Container runtime"}
-      --runtime: {value: {enum: [docker, containerd, incus]}, description: "Container runtime", show: always}
-      -t: {value: {enum: [qemu, vz]}, description: "VM type"}
-      --vm-type: {value: {enum: [qemu, vz]}, description: "VM type"}
-      -a: {value: {enum: [aarch64, x86_64, host]}, description: "VM architecture"}
-      --arch: {value: {enum: [aarch64, x86_64, host]}, description: "VM architecture"}
+      --cpu: {aliases: [-c], value: any, description: "Number of CPUs", show: always}
+      --memory: {aliases: [-m], value: any, description: "Memory in GiB", show: always}
+      --disk: {aliases: [-d], value: any, description: "Disk size in GiB"}
+      --runtime: {aliases: [-r], value: {enum: [docker, containerd, incus]}, description: "Container runtime", show: always}
+      --vm-type: {aliases: [-t], value: {enum: [qemu, vz]}, description: "VM type"}
+      --arch: {aliases: [-a], value: {enum: [aarch64, x86_64, host]}, description: "VM architecture"}
       --vz-rosetta: {description: "Use Rosetta for amd64 emulation (vz only)"}
       --mount-type: {value: {enum: [sshfs, 9p, virtiofs]}, description: "Volume driver for mounts"}
-      -V: {value: dir, description: "Directory to mount (repeatable)", repeat: true}
-      --mount: {value: dir, description: "Directory to mount (repeatable)", repeat: true}
-      -k: {description: "Start with Kubernetes"}
-      --kubernetes: {description: "Start with Kubernetes"}
+      --mount: {aliases: [-V], value: dir, description: "Directory to mount (repeatable)", repeat: true}
+      --kubernetes: {aliases: [-k], description: "Start with Kubernetes"}
       --kubernetes-version: {value: any, description: "Kubernetes version"}
       --network-address: {description: "Assign a reachable IP address to the VM"}
       --dns: {value: any, description: "DNS servers for the VM", repeat: true}
-      -e: {description: "Edit the configuration before starting"}
-      --edit: {description: "Edit the configuration before starting"}
-      -f: {description: "Run in the foreground"}
-      --foreground: {description: "Run in the foreground"}
+      --edit: {aliases: [-e], description: "Edit the configuration before starting"}
+      --foreground: {aliases: [-f], description: "Run in the foreground"}
       --ssh-agent: {description: "Forward the SSH agent"}
-  stop: {description: "Stop the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Force stop"}, --force: {description: "Force stop"}}}
-  restart: {description: "Restart the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Force restart"}, --force: {description: "Force restart"}}}
-  status: {description: "Show the VM status", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-e: {description: "Extended status"}, --extended: {description: "Extended status"}, -j: {description: "JSON output"}, --json: {description: "JSON output"}}}
-  delete: {description: "Delete the VM and its settings", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {-f: {description: "Do not prompt for confirmation"}, --force: {description: "Do not prompt for confirmation"}, --data: {description: "Also delete container data"}}}
-  list: {description: "List profiles", aliases: [ls], flags: {-j: {description: "JSON output"}, --json: {description: "JSON output"}}}
+  stop: {description: "Stop the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {--force: {aliases: [-f], description: "Force stop"}}}
+  restart: {description: "Restart the VM", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {--force: {aliases: [-f], description: "Force restart"}}}
+  status: {description: "Show the VM status", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {--extended: {aliases: [-e], description: "Extended status"}, --json: {aliases: [-j], description: "JSON output"}}}
+  delete: {description: "Delete the VM and its settings", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}, flags: {--force: {aliases: [-f], description: "Do not prompt for confirmation"}, --data: {description: "Also delete container data"}}}
+  list: {description: "List profiles", aliases: [ls], flags: {--json: {aliases: [-j], description: "JSON output"}}}
   ssh: {description: "SSH into the VM (or run a command after --)", args: "@command"}
   ssh-config: {description: "Show the SSH connection config", args: {exec: "colima list --json 2>/dev/null | sed -n 's/.*\"name\":\"\\([^\"]*\\)\".*/\\1/p'"}}
-  prune: {description: "Prune cached downloaded assets", flags: {-a: {description: "Prune all assets"}, --all: {description: "Prune all assets"}, -f: {description: "Do not prompt"}, --force: {description: "Do not prompt"}}}
+  prune: {description: "Prune cached downloaded assets", flags: {--all: {aliases: [-a], description: "Prune all assets"}, --force: {aliases: [-f], description: "Do not prompt"}}}
   kubernetes:
     description: Manage the Kubernetes cluster
     aliases: [k8s, k3s, k]

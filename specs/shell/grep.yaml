@@ -1,70 +1,43 @@
-version: '20261013'
+version: '20261015'
 description: "Search files for lines matching a pattern"
 flags:
-  -e: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}
-  --regexp: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}
-  -f: {value: file, description: "Read patterns from a file, one per line"}
-  --file: {value: file, description: "Read patterns from a file, one per line"}
-  -i: {description: "Ignore case"}
-  --ignore-case: {description: "Ignore case"}
-  -v: {description: "Select non-matching lines"}
-  --invert-match: {description: "Select non-matching lines"}
-  -w: {description: "Match whole words only"}
-  --word-regexp: {description: "Match whole words only"}
-  -x: {description: "Match whole lines only"}
-  --line-regexp: {description: "Match whole lines only"}
-  -E: {description: "Extended regex: | + ? () {} without backslashes"}
-  --extended-regexp: {description: "Extended regex: | + ? () {} without backslashes"}
-  -F: {description: "Fixed strings, no regex (fast, no escaping)"}
-  --fixed-strings: {description: "Fixed strings, no regex (fast, no escaping)"}
-  -G: {description: "Basic regex (default)"}
-  --basic-regexp: {description: "Basic regex (default)"}
-  -r: {description: "Recurse into directories"}
-  -R: {description: "Recurse into directories"}
-  --recursive: {description: "Recurse into directories"}
-  -n: {description: "Prefix lines with line numbers"}
-  --line-number: {description: "Prefix lines with line numbers"}
-  -c: {description: "Print only a count of matching lines per file"}
-  --count: {description: "Print only a count of matching lines per file"}
-  -l: {description: "Print only names of files with matches"}
-  --files-with-matches: {description: "Print only names of files with matches"}
-  -L: {description: "Print only names of files without matches"}
-  --files-without-match: {description: "Print only names of files without matches"}
-  -o: {description: "Print only the matched parts"}
-  --only-matching: {description: "Print only the matched parts"}
-  -q: {description: "Quiet: exit status only (0 = found)"}
-  --quiet: {description: "Quiet: exit status only (0 = found)"}
-  -s: {description: "No messages about missing or unreadable files"}
-  --no-messages: {description: "No messages about missing or unreadable files"}
+  --regexp: {aliases: [-e], value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" pattern"}, description: "Pattern (repeatable; for patterns starting with -)", repeat: true}
+  --file: {aliases: [-f], value: file, description: "Read patterns from a file, one per line"}
+  --ignore-case: {aliases: [-i], description: "Ignore case"}
+  --invert-match: {aliases: [-v], description: "Select non-matching lines"}
+  --word-regexp: {aliases: [-w], description: "Match whole words only"}
+  --line-regexp: {aliases: [-x], description: "Match whole lines only"}
+  --extended-regexp: {aliases: [-E], description: "Extended regex: | + ? () {} without backslashes"}
+  --fixed-strings: {aliases: [-F], description: "Fixed strings, no regex (fast, no escaping)"}
+  --basic-regexp: {aliases: [-G], description: "Basic regex (default)"}
+  --recursive: {aliases: [-r, -R], description: "Recurse into directories"}
+  --line-number: {aliases: [-n], description: "Prefix lines with line numbers"}
+  --count: {aliases: [-c], description: "Print only a count of matching lines per file"}
+  --files-with-matches: {aliases: [-l], description: "Print only names of files with matches"}
+  --files-without-match: {aliases: [-L], description: "Print only names of files without matches"}
+  --only-matching: {aliases: [-o], description: "Print only the matched parts"}
+  --quiet: {aliases: [-q], description: "Quiet: exit status only (0 = found)"}
+  --no-messages: {aliases: [-s], description: "No messages about missing or unreadable files"}
   -H: {description: "Always print file names"}
-  -h: {description: "Never print file names"}
-  --no-filename: {description: "Never print file names"}
-  -b: {description: "Prefix lines with byte offsets"}
-  --byte-offset: {description: "Prefix lines with byte offsets"}
-  -A: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context after each match"}
-  --after-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context after each match"}
-  -B: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context before each match"}
-  --before-context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context before each match"}
-  -C: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context around each match"}
-  --context: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context around each match"}
-  -m: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Stop after this many matches per file"}
-  --max-count: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Stop after this many matches per file"}
+  --no-filename: {aliases: [-h], description: "Never print file names"}
+  --byte-offset: {aliases: [-b], description: "Prefix lines with byte offsets"}
+  --after-context: {aliases: [-A], value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context after each match"}
+  --before-context: {aliases: [-B], value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context before each match"}
+  --context: {aliases: [-C], value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" lines"}, description: "Lines of context around each match"}
+  --max-count: {aliases: [-m], value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" count"}, description: "Stop after this many matches per file"}
   --include: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "With -r: only files matching a glob (repeatable)", repeat: true}
   --exclude: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" glob"}, description: "With -r: skip files matching a glob (repeatable)", repeat: true}
   --exclude-dir: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" dir"}, description: "With -r: skip directories matching a glob (repeatable)", repeat: true}
   --include-dir: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" dir"}, description: "With -r: only directories matching a glob", repeat: true}
   --color: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" color"}, description: "Highlight matches: auto, always, never"}
   --binary-files: {value: {exec: "sh \"$AUTOCOMPLETE_SPEC_DIR/grep.sh\" binary"}, description: "How to treat binary files"}
-  -a: {description: "Treat binary files as text"}
-  --text: {description: "Treat binary files as text"}
+  --text: {aliases: [-a], description: "Treat binary files as text"}
   -I: {description: "Skip binary files"}
   -D: {value: {enum: {read: 'read devices and FIFOs', skip: 'skip them'}}, description: "Devices and FIFOs: read or skip"}
   -d: {value: {enum: {read: 'read as files', recurse: 'like -r', skip: 'skip them'}}, description: "Directories: read, recurse or skip"}
-  -z: {description: "Input lines end with NUL, not newline"}
-  --null-data: {description: "Input lines end with NUL, not newline"}
+  --null-data: {aliases: [-z], description: "Input lines end with NUL, not newline"}
   --null: {description: "NUL after file names (for xargs -0 with -l)"}
-  -Z: {description: "Search compressed files (gzip)"}
-  --decompress: {description: "Search compressed files (gzip)"}
+  --decompress: {aliases: [-Z], description: "Search compressed files (gzip)"}
   -J: {description: "Search bzip2 compressed files"}
   -O: {description: "With -r: follow symlinks given on the command line only"}
   -S: {description: "With -r: follow all symbolic links"}
@@ -73,8 +46,7 @@ flags:
   --line-buffered: {description: "Flush after every line (for tail -f pipelines)"}
   --label: {value: any, description: "File name to show for standard input"}
   --help: {description: "Show help"}
-  -V: {description: "Version information"}
-  --version: {description: "Version information"}
+  --version: {aliases: [-V], description: "Version information"}
 snippets:
   - key: t
     mark: pin

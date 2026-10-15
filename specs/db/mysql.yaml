@@ -1,45 +1,27 @@
-version: '20261013'
+version: '20261015'
 description: MySQL / MariaDB command-line client
 flags:
-  -h: {value: "@hosts", description: "Connect to host", show: always}
-  --host: {value: "@hosts", description: "Connect to host"}
-  -P: {value: any, description: "Port number for TCP/IP connection", show: always}
-  --port: {value: any, description: "Port number for TCP/IP connection"}
-  -u: {value: "@users", description: "User for login", show: always}
-  --user: {value: "@users", description: "User for login"}
+  --host: {aliases: [-h], value: "@hosts", description: "Connect to host", show: always}
+  --port: {aliases: [-P], value: any, description: "Port number for TCP/IP connection", show: always}
+  --user: {aliases: [-u], value: "@users", description: "User for login", show: always}
   -p: {description: "Prompt for password (or -pSECRET, no space)", show: always}
   --password: {description: "Prompt for password (or --password=SECRET)"}
-  -D: {value: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}, description: "Database to use", show: always}
-  --database: {value: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}, description: "Database to use"}
-  -e: {value: any, description: "Execute statement and quit", show: always}
-  --execute: {value: any, description: "Execute statement and quit"}
-  -S: {value: file, description: "Socket file for connection"}
-  --socket: {value: file, description: "Socket file for connection"}
+  --database: {aliases: [-D], value: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}, description: "Database to use", show: always}
+  --execute: {aliases: [-e], value: any, description: "Execute statement and quit", show: always}
+  --socket: {aliases: [-S], value: file, description: "Socket file for connection"}
   --protocol: {value: {enum: {tcp: TCP/IP, socket: 'Unix socket file', pipe: 'named pipe (Windows)', memory: 'shared memory (Windows)'}}, description: "Transport protocol"}
-  -B: {description: "Batch mode: tab-separated output, no history"}
-  --batch: {description: "Batch mode: tab-separated output, no history"}
-  -N: {description: "Do not write column names in results"}
-  --skip-column-names: {description: "Do not write column names in results"}
-  -s: {description: "Silent mode (less output)"}
-  --silent: {description: "Silent mode (less output)"}
-  -r: {description: "Raw output, no escaping"}
-  --raw: {description: "Raw output, no escaping"}
-  -t: {description: "Output in table format"}
-  --table: {description: "Output in table format"}
-  -E: {description: "Print rows vertically"}
-  --vertical: {description: "Print rows vertically"}
-  -H: {description: "Produce HTML output"}
-  --html: {description: "Produce HTML output"}
-  -X: {description: "Produce XML output"}
-  --xml: {description: "Produce XML output"}
-  -v: {description: "Verbose (repeat for more)", repeat: true}
-  --verbose: {description: "Verbose (repeat for more)", repeat: true}
-  -f: {description: "Continue even on SQL errors"}
-  --force: {description: "Continue even on SQL errors"}
-  -A: {description: "No automatic rehashing (faster start)"}
-  --no-auto-rehash: {description: "No automatic rehashing (faster start)"}
-  -U: {description: "Refuse UPDATE/DELETE without key in WHERE"}
-  --safe-updates: {description: "Refuse UPDATE/DELETE without key in WHERE"}
+  --batch: {aliases: [-B], description: "Batch mode: tab-separated output, no history"}
+  --skip-column-names: {aliases: [-N], description: "Do not write column names in results"}
+  --silent: {aliases: [-s], description: "Silent mode (less output)"}
+  --raw: {aliases: [-r], description: "Raw output, no escaping"}
+  --table: {aliases: [-t], description: "Output in table format"}
+  --vertical: {aliases: [-E], description: "Print rows vertically"}
+  --html: {aliases: [-H], description: "Produce HTML output"}
+  --xml: {aliases: [-X], description: "Produce XML output"}
+  --verbose: {aliases: [-v], description: "Verbose (repeat for more)", repeat: true}
+  --force: {aliases: [-f], description: "Continue even on SQL errors"}
+  --no-auto-rehash: {aliases: [-A], description: "No automatic rehashing (faster start)"}
+  --safe-updates: {aliases: [-U], description: "Refuse UPDATE/DELETE without key in WHERE"}
   --defaults-file: {value: file, description: "Read options only from this file"}
   --defaults-extra-file: {value: file, description: "Read this option file after the global ones"}
   --no-defaults: {description: "Do not read any option files"}
@@ -56,8 +38,7 @@ flags:
   --pager: {value: any, description: "Pager command for query output"}
   --prompt: {value: any, description: "Custom prompt format"}
   --comments: {description: "Keep comments in statements sent to the server"}
-  -V: {description: "Print version and exit"}
-  --version: {description: "Print version and exit"}
+  --version: {aliases: [-V], description: "Print version and exit"}
   --help: {description: "Show help and exit"}
 args: {exec: "mysql -NBe 'SHOW DATABASES' 2>/dev/null", cache: 60}
 snippets:

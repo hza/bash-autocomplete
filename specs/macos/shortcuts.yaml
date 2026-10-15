@@ -1,20 +1,17 @@
-version: '20261013'
+version: '20261015'
 description: "Run, list, view and sign Shortcuts"
 commands:
   run:
     description: "Run a shortcut"
     flags:
-      -i: {value: file, description: "Input file(s) for the shortcut", repeat: true}
-      --input-path: {value: file, description: "Input file(s) for the shortcut", show: always, repeat: true}
-      -o: {value: file, description: "Write the output to a file"}
-      --output-path: {value: file, description: "Write the output to a file", show: always}
+      --input-path: {aliases: [-i], value: file, description: "Input file(s) for the shortcut", show: always, repeat: true}
+      --output-path: {aliases: [-o], value: file, description: "Write the output to a file", show: always}
       --output-type: {value: any, description: "UTI of the output type (e.g. public.png)"}
     positional: [{exec: "shortcuts list"}]
   list:
     description: "List your shortcuts"
     flags:
-      -f: {value: {exec: "shortcuts list --folders"}, description: "List shortcuts in a folder"}
-      --folder-name: {value: {exec: "shortcuts list --folders"}, description: "List shortcuts in a folder"}
+      --folder-name: {aliases: [-f], value: {exec: "shortcuts list --folders"}, description: "List shortcuts in a folder"}
       --folders: {description: "List folders instead of shortcuts"}
       --show-identifiers: {description: "Show shortcut identifiers"}
   view:
@@ -23,12 +20,9 @@ commands:
   sign:
     description: "Sign a shortcut file"
     flags:
-      -m: {value: {enum: {people-who-know-me: "only contacts can import", anyone: "anyone can import"}}, description: "Signing mode"}
-      --mode: {value: {enum: {people-who-know-me: "only contacts can import", anyone: "anyone can import"}}, description: "Signing mode"}
-      -i: {value: {file: "*.shortcut"}, description: "Shortcut file to sign"}
-      --input: {value: {file: "*.shortcut"}, description: "Shortcut file to sign", show: always}
-      -o: {value: file, description: "Signed output file"}
-      --output: {value: file, description: "Signed output file", show: always}
+      --mode: {aliases: [-m], value: {enum: {people-who-know-me: "only contacts can import", anyone: "anyone can import"}}, description: "Signing mode"}
+      --input: {aliases: [-i], value: {file: "*.shortcut"}, description: "Shortcut file to sign", show: always}
+      --output: {aliases: [-o], value: file, description: "Signed output file", show: always}
   help:
     description: "Show help for a subcommand"
     args: "@subcommands"

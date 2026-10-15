@@ -1,73 +1,40 @@
-version: '20261013'
+version: '20261015'
 description: PostgreSQL interactive terminal
 flags:
-  -h: {value: "@hosts", description: "Database server host or socket directory", show: always}
-  --host: {value: "@hosts", description: "Database server host or socket directory"}
-  -p: {value: any, description: "Database server port", show: always}
-  --port: {value: any, description: "Database server port"}
-  -U: {value: "@users", description: "Database user name", show: always}
-  --username: {value: "@users", description: "Database user name"}
-  -d: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database name to connect to", show: always}
-  --dbname: {value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database name to connect to"}
-  -c: {value: any, description: "Run one command (SQL or meta) and exit", show: always}
-  --command: {value: any, description: "Run one command (SQL or meta) and exit"}
-  -f: {value: {file: "*.sql"}, description: "Execute commands from file, then exit", show: always}
-  --file: {value: {file: "*.sql"}, description: "Execute commands from file, then exit"}
-  -l: {description: "List available databases, then exit"}
-  --list: {description: "List available databases, then exit"}
-  -v: {value: any, description: "Set psql variable NAME=VALUE", repeat: true}
-  --set: {value: any, description: "Set psql variable NAME=VALUE", repeat: true}
-  -X: {description: "Do not read startup file (~/.psqlrc)"}
-  --no-psqlrc: {description: "Do not read startup file (~/.psqlrc)"}
-  '-1': {description: "Execute as a single transaction (with -f/-c)"}
-  --single-transaction: {description: "Execute as a single transaction (with -f/-c)"}
-  -a: {description: "Echo all input from script"}
-  --echo-all: {description: "Echo all input from script"}
-  -b: {description: "Echo failed commands"}
-  --echo-errors: {description: "Echo failed commands"}
-  -e: {description: "Echo commands sent to server"}
-  --echo-queries: {description: "Echo commands sent to server"}
-  -E: {description: "Display queries that internal commands generate"}
-  --echo-hidden: {description: "Display queries that internal commands generate"}
-  -L: {value: file, description: "Send session log to file"}
-  --log-file: {value: file, description: "Send session log to file"}
-  -n: {description: "Disable readline line editing"}
-  --no-readline: {description: "Disable readline line editing"}
-  -o: {value: file, description: "Send query results to file (or |pipe)"}
-  --output: {value: file, description: "Send query results to file (or |pipe)"}
-  -q: {description: "Run quietly (no messages, only query output)"}
-  --quiet: {description: "Run quietly (no messages, only query output)"}
-  -s: {description: "Single-step mode (confirm each query)"}
-  --single-step: {description: "Single-step mode (confirm each query)"}
-  -S: {description: "Single-line mode (end of line terminates command)"}
-  --single-line: {description: "Single-line mode (end of line terminates command)"}
-  -A: {description: "Unaligned table output mode"}
-  --no-align: {description: "Unaligned table output mode"}
+  --host: {aliases: [-h], value: "@hosts", description: "Database server host or socket directory", show: always}
+  --port: {aliases: [-p], value: any, description: "Database server port", show: always}
+  --username: {aliases: [-U], value: "@users", description: "Database user name", show: always}
+  --dbname: {aliases: [-d], value: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}, description: "Database name to connect to", show: always}
+  --command: {aliases: [-c], value: any, description: "Run one command (SQL or meta) and exit", show: always}
+  --file: {aliases: [-f], value: {file: "*.sql"}, description: "Execute commands from file, then exit", show: always}
+  --list: {aliases: [-l], description: "List available databases, then exit"}
+  --set: {aliases: [-v], value: any, description: "Set psql variable NAME=VALUE", repeat: true}
+  --no-psqlrc: {aliases: [-X], description: "Do not read startup file (~/.psqlrc)"}
+  --single-transaction: {aliases: ['-1'], description: "Execute as a single transaction (with -f/-c)"}
+  --echo-all: {aliases: [-a], description: "Echo all input from script"}
+  --echo-errors: {aliases: [-b], description: "Echo failed commands"}
+  --echo-queries: {aliases: [-e], description: "Echo commands sent to server"}
+  --echo-hidden: {aliases: [-E], description: "Display queries that internal commands generate"}
+  --log-file: {aliases: [-L], value: file, description: "Send session log to file"}
+  --no-readline: {aliases: [-n], description: "Disable readline line editing"}
+  --output: {aliases: [-o], value: file, description: "Send query results to file (or |pipe)"}
+  --quiet: {aliases: [-q], description: "Run quietly (no messages, only query output)"}
+  --single-step: {aliases: [-s], description: "Single-step mode (confirm each query)"}
+  --single-line: {aliases: [-S], description: "Single-line mode (end of line terminates command)"}
+  --no-align: {aliases: [-A], description: "Unaligned table output mode"}
   --csv: {description: "CSV table output mode"}
-  -F: {value: any, description: "Field separator for unaligned output"}
-  --field-separator: {value: any, description: "Field separator for unaligned output"}
-  -H: {description: "HTML table output mode"}
-  --html: {description: "HTML table output mode"}
-  -P: {value: any, description: "Set printing option VAR=ARG (see \\pset)", repeat: true}
-  --pset: {value: any, description: "Set printing option VAR=ARG (see \\pset)", repeat: true}
-  -R: {value: any, description: "Record separator for unaligned output"}
-  --record-separator: {value: any, description: "Record separator for unaligned output"}
-  -t: {description: "Print rows only (no headers/footers)", show: always}
-  --tuples-only: {description: "Print rows only (no headers/footers)"}
-  -T: {value: any, description: "HTML table tag attributes"}
-  --table-attr: {value: any, description: "HTML table tag attributes"}
-  -x: {description: "Expanded table output"}
-  --expanded: {description: "Expanded table output"}
-  -z: {description: "Zero byte as field separator (unaligned)"}
-  --field-separator-zero: {description: "Zero byte as field separator (unaligned)"}
-  '-0': {description: "Zero byte as record separator (unaligned)"}
-  --record-separator-zero: {description: "Zero byte as record separator (unaligned)"}
-  -w: {description: "Never prompt for password"}
-  --no-password: {description: "Never prompt for password"}
-  -W: {description: "Force password prompt"}
-  --password: {description: "Force password prompt"}
-  -V: {description: "Print version and exit"}
-  --version: {description: "Print version and exit"}
+  --field-separator: {aliases: [-F], value: any, description: "Field separator for unaligned output"}
+  --html: {aliases: [-H], description: "HTML table output mode"}
+  --pset: {aliases: [-P], value: any, description: "Set printing option VAR=ARG (see \\pset)", repeat: true}
+  --record-separator: {aliases: [-R], value: any, description: "Record separator for unaligned output"}
+  --tuples-only: {aliases: [-t], description: "Print rows only (no headers/footers)", show: always}
+  --table-attr: {aliases: [-T], value: any, description: "HTML table tag attributes"}
+  --expanded: {aliases: [-x], description: "Expanded table output"}
+  --field-separator-zero: {aliases: [-z], description: "Zero byte as field separator (unaligned)"}
+  --record-separator-zero: {aliases: ['-0'], description: "Zero byte as record separator (unaligned)"}
+  --no-password: {aliases: [-w], description: "Never prompt for password"}
+  --password: {aliases: [-W], description: "Force password prompt"}
+  --version: {aliases: [-V], description: "Print version and exit"}
   --help: {description: "Show help and exit"}
 args: {exec: "psql -lqt 2>/dev/null | cut -d'|' -f1 | sed 's/ //g' | grep .", cache: 60}
 snippets:

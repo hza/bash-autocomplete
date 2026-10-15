@@ -1,8 +1,7 @@
-version: '20261013'
+version: '20261015'
 description: Node Version Manager (shell function)
 flags:
-  -h: {description: "Show help"}
-  --help: {description: "Show help"}
+  --help: {aliases: [-h], description: "Show help"}
   --version: {description: "Show the nvm version"}
   --no-colors: {description: "Disable colored output"}
 commands:
