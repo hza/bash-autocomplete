@@ -1,0 +1,44 @@
+version: '20261015'
+description: Copy files and directories
+flags:
+  -R: {description: "Copy directories recursively"}
+  -r: {description: "Copy directories recursively (same as -R)"}
+  -a: {description: "Archive mode: same as -pPR", show: always}
+  -p: {description: "Preserve mode, owner, times, flags, ACLs, xattrs"}
+  -f: {description: "Replace existing files without prompting"}
+  -i: {description: "Prompt before overwriting", show: always}
+  -n: {description: "Never overwrite an existing file", show: always}
+  -v: {description: "Print each file as it is copied", show: always}
+  -c: {description: "Clone with clonefile(2) (APFS copy-on-write)"}
+  -X: {description: "Don't copy extended attributes or resource forks"}
+  -H: {description: "With -R: follow symlinks given on the command line"}
+  -L: {description: "With -R: follow all symlinks"}
+  -P: {description: "With -R: don't follow symlinks (default)"}
+  -x: {description: "Don't cross file system boundaries"}
+  -N: {description: "Don't copy file flags"}
+args: file
+snippets:
+  - key: r
+    mark: pin
+    command: "cp -Rv src/ dest/"
+    description: "copy a directory's contents into dest (trailing / on src)"
+  - key: a
+    mark: pin
+    command: "cp -a dir dir.bak"
+    description: "backup copy keeping times, modes and symlinks"
+  - key: b
+    mark: pin
+    command: "cp -p file{,.bak}"
+    description: "quick .bak copy next to the file"
+  - key: n
+    command: "cp -n *.txt dest/"
+    description: "copy without overwriting existing files"
+  - key: c
+    command: "cp -c big.dmg big-copy.dmg"
+    description: "instant APFS clone (no extra disk space)"
+  - key: i
+    command: "cp -iv *.conf /etc/myapp/"
+    description: "copy, asking before each overwrite"
+  - key: d
+    command: "cp -R dir dir-$(date +%F)"
+    description: "dated backup copy of a directory"

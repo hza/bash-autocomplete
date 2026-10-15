@@ -1,0 +1,39 @@
+version: '20261015'
+description: Remove files and directories
+flags:
+  -r: {description: "Remove directories and their contents", show: always}
+  -R: {description: "Same as -r"}
+  -f: {description: "Ignore missing files, never prompt", show: always}
+  -i: {description: "Prompt before every removal", show: always}
+  -I: {description: "Prompt once before removing more than 3 files or recursing"}
+  -d: {description: "Remove empty directories too"}
+  -v: {description: "Print each file as it is removed", show: always}
+  -P: {description: "Overwrite before deleting (no effect on APFS)"}
+  -W: {description: "Undelete (union file systems only)"}
+  -x: {description: "Don't cross file system boundaries when recursing"}
+args: file
+snippets:
+  - key: r
+    mark: pin
+    command: "rm -rf node_modules"
+    description: "delete a directory tree"
+  - key: i
+    mark: pin
+    command: "rm -I -r build dist"
+    description: "remove, asking once before a recursive delete"
+  - key: d
+    mark: pin
+    command: "rm -f .DS_Store */.DS_Store"
+    description: "remove .DS_Store files here and one level down"
+  - key: e
+    command: "rm -d emptydir"
+    description: "remove an empty directory"
+  - key: o
+    command: "rm -v *.orig *.rej"
+    description: "remove leftovers of a failed patch/merge"
+  - key: x
+    command: "rm -- -file-starting-with-dash"
+    description: "remove a file whose name starts with -"
+  - key: s
+    command: "rm -v *.swp *~"
+    description: "remove editor swap and backup files"

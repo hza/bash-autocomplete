@@ -40,14 +40,18 @@ void init_dirs(void) {
     if (_NSGetExecutablePath(buf, &size) != 0 || !realpath(buf, exe)) return;
 #else
     (void)size;
-    if (readlink("/proc/self/exe", exe, sizeof exe - 1) <= 0) return;
+    {
+        ssize_t len = readlink("/proc/self/exe", exe, sizeof exe - 1);
+        if (len <= 0) return;
+        exe[len] = 0;
+    }
 #endif
     if (!(slash = strrchr(exe, '/'))) return;
     *slash = 0;
     snprintf(buf, sizeof buf, "%s/specs", exe);
     add_dir(buf);
     snprintf(buf, sizeof buf, "%s/../share/autocomplete", exe);
-    add_dir(buf);
+    add_dir(realpath(buf, exe) ? exe : buf); /* no `..` in printed paths */
 }
 
 static const char *g_exts[] = {".yaml", ".yml", 0};

@@ -1,4 +1,4 @@
-version: '20261014'
+version: '20261015'
 description: "Bash completion engine"
 commands:
   bash:
@@ -11,6 +11,11 @@ commands:
       --paths: {description: "Also show the spec file each command uses"}
       --tsv: {description: "NAME<TAB>DESCRIPTION lines, for scripts"}
       --user: {description: "Only specs in ~/.config/autocomplete (generated, aliases, your own)"}
+  manage:
+    description: "Your specs in ~/.config/autocomplete (same as list --user)"
+    flags:
+      --paths: {description: "Also show the spec file each command uses"}
+      --tsv: {description: "NAME<TAB>DESCRIPTION lines, for scripts"}
   check:
     description: "Validate a spec and print it as JSON"
     args: file
@@ -28,9 +33,14 @@ commands:
   edit:
     description: "Open your copy of a spec in $VISUAL/$EDITOR (copies the shipped one first)"
     args: {exec: "autocomplete list --tsv"}
-  updates:
-    description: "Your edited specs with a newer shipped version; NAME: diff yours against it"
-    args: {exec: "autocomplete updates | awk '/, shipped /{print $1}'"}
+  rm:
+    description: "Delete your spec or alias in ~/.config/autocomplete (the shipped one takes over)"
+    flags:
+      -f: {description: "Don't ask y/n before each file"}
+    args: {exec: "autocomplete manage --tsv"}
+  diff:
+    description: "diff -u your copies against the shipped specs (default: all that differ)"
+    args: {exec: "autocomplete manage | awk '/\\[override/ && !/unchanged/ {print $1}'"}
   emoji:
     description: "List snippet mark names; NAME -> emoji, emoji -> NAME"
     args: {exec: "autocomplete emoji | awk '{print $2 \"\\t\" $1}'"}
@@ -49,7 +59,7 @@ snippets:
     command: "autocomplete list"
     description: "commands with a spec"
   - key: u
-    command: "autocomplete list --user"
+    command: "autocomplete manage"
     description: "your own / generated specs"
   - key: e
     mark: pin
@@ -75,8 +85,8 @@ snippets:
     command: "autocomplete cache"
     description: "rebuild the cache of big specs"
   - key: o
-    command: "autocomplete updates"
-    description: "edited specs with a newer shipped version"
+    command: "autocomplete diff"
+    description: "your changes to shipped specs"
   - key: v
     command: "autocomplete check ~/.config/autocomplete/mytool.yaml"
     description: "validate a spec"

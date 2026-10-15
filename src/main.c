@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include "complete.h"
 #include "manparse.h"
@@ -94,6 +95,34 @@ no:
     return 0;
 }
 
+static int same_file(const char *a, const char *b);
+
+/* `list` tag for a spec in ~/.config/autocomplete: "  [alias -> CMD]", or
+ * override (shadows a shipped spec; ", unchanged" if byte-identical) / added,
+ * plus "generated: SRC" and "update: NEW > OLD" */
+static void user_tag(const char *name, const char *path, const ynode *n, char *out, size_t size) {
+    char bpath[PATH_MAX], target[PATH_MAX], *bv, *uv, *t;
+    const ynode *g = n ? yaml_get(n, "generated") : NULL;
+    ssize_t len = readlink(path, target, sizeof target - 1);
+    size_t o;
+    if (len >= 0) {
+        target[len] = 0;
+        t = strrchr(target, '/');
+        t = t ? t + 1 : target;
+        snprintf(out, size, "  [alias -> %.*s]", (int)strcspn(t, "."), t);
+        return;
+    }
+    if (!find_bundled(name, bpath, sizeof bpath)) o = snprintf(out, size, "  [added");
+    else o = snprintf(out, size, "  [override%s", same_file(path, bpath) ? ", unchanged" : "");
+    if (g && g->type == Y_STR && o < size) o += snprintf(out + o, size - o, ", generated: %s", g->str);
+    if (outdated(name, path, bpath, sizeof bpath, &bv, &uv)) {
+        if (o < size) o += snprintf(out + o, size - o, ", update: %s > %s", bv, *uv ? uv : "none");
+        free(bv);
+        free(uv);
+    }
+    if (o < size) snprintf(out + o, size - o, "]");
+}
+
 /* `autocomplete list`: sorted "name  description" lines; with --paths
  * " [path]" (" -> target" for symlinks, i.e. aliases) */
 static void print_list(void) {
@@ -105,19 +134,15 @@ static void print_list(void) {
     for (i = 0; i < g_nlist; i++) {
         ynode *n = load_spec(g_list[i]);
         const char *d = n ? spec_desc(n) : NULL;
-        char bpath[PATH_MAX], *bv, *uv, user[PATH_MAX], upd[128] = "";
+        char user[PATH_MAX], upd[PATH_MAX + 128] = "";
         if (g_list_tsv) {
             printf("%s\t%s\n", g_list[i], d ? d : "");
             if (n) yaml_free(n);
             continue;
         }
         snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
-        if (find_spec(g_list[i], path, sizeof path) && !strncmp(path, user, strlen(user)) &&
-            outdated(g_list[i], path, bpath, sizeof bpath, &bv, &uv)) {
-            snprintf(upd, sizeof upd, "  (update: %s > %s)", bv, *uv ? uv : "none");
-            free(bv);
-            free(uv);
-        }
+        if (find_spec(g_list[i], path, sizeof path) && !strncmp(path, user, strlen(user)))
+            user_tag(g_list[i], path, n, upd, sizeof upd);
         if (g_list_paths && find_spec(g_list[i], path, sizeof path)) {
             ssize_t len = readlink(path, target, sizeof target - 1);
             printf("%-*s  %s%s[%s", w, g_list[i], d ? d : "", d ? "  " : "", path);
@@ -467,42 +492,86 @@ static int edit_cmd(const char *name) {
     return rc;
 }
 
-/* `autocomplete updates [NAME]`: your copies in ~/.config/autocomplete
- * (aliases skipped) whose shipped spec has a newer version; with NAME,
- * diff -u yours against the shipped one. Exit 1 if any update. */
-static int updates_cmd(const char *name) {
-    char user[PATH_MAX], path[PATH_MAX], bpath[PATH_MAX], *bv, *uv;
-    struct stat st;
-    int i, w = 0, found = 0;
-    if (name) {
-        if (!valid_name(name)) return fprintf(stderr, "%s: not a command name\n", name), 1;
-        if (!find_spec(name, path, sizeof path) || !outdated(name, path, bpath, sizeof bpath, &bv, &uv))
-            return fprintf(stderr, "%s: no update for your copy\n", name), 1;
-        fflush(stdout);
-        execlp("diff", "diff", "-u", path, bpath, (char *)NULL);
-        return perror("diff"), 1;
+/* diff -u yours shipped; returns diff's exit status (1 = differ) */
+static int run_diff(const char *yours, const char *shipped) {
+    int status;
+    pid_t pid;
+    fflush(stdout);
+    if ((pid = fork()) < 0) return perror("fork"), 2;
+    if (!pid) {
+        execlp("diff", "diff", "-u", yours, shipped, (char *)NULL);
+        perror("diff");
+        _exit(2);
     }
+    if (waitpid(pid, &status, 0) < 0 || !WIFEXITED(status)) return 2;
+    return WEXITSTATUS(status);
+}
+
+/* `autocomplete rm [-f] NAME...`: delete your spec (or alias) in ~/.config/autocomplete
+ * and its compiled cache, asking y/n first unless -f; the shipped spec, if any,
+ * takes over. */
+static int rm_cmd(int argc, char **argv) {
+    char user[PATH_MAX], path[PATH_MAX], bin[PATH_MAX], ans[16];
+    int i, rc = 0, force = argc && !strcmp(argv[0], "-f");
+    argc -= force;
+    argv += force;
+    if (!argc) return fprintf(stderr, "usage: autocomplete rm [-f] NAME...\n"), 2;
     snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
-    g_list_user = 1;
-    each_spec(list_spec);
-    qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
-    for (i = 0; i < g_nlist; i++)
-        if ((int)strlen(g_list[i]) > w) w = (int)strlen(g_list[i]);
-    for (i = 0; i < g_nlist; i++) {
-        if (!find_spec(g_list[i], path, sizeof path) || lstat(path, &st) || S_ISLNK(st.st_mode)) continue;
-        if (find_bundled(g_list[i], bpath, sizeof bpath) && same_file(path, bpath)) {
-            printf("%-*s  same as shipped, not needed: rm %s\n", w, g_list[i], path);
-            found |= 1;
+    for (i = 0; i < argc; i++) {
+        const char *name = argv[i];
+        if (!valid_name(name) || !find_spec(name, path, sizeof path) || strncmp(path, user, strlen(user))) {
+            fprintf(stderr, "%s: no spec of yours in %s\n", name, user);
+            rc = 1;
             continue;
         }
-        if (!outdated(g_list[i], path, bpath, sizeof bpath, &bv, &uv)) continue;
-        printf("%-*s  yours %s, shipped %s\n", w, g_list[i], *uv ? uv : "(no version)", bv);
-        found |= 2;
-        free(bv);
-        free(uv);
+        if (!force) {
+            fprintf(stderr, "remove %s? [y/n] ", path);
+            if (!fgets(ans, sizeof ans, stdin) || (*ans != 'y' && *ans != 'Y')) continue;
+        }
+        if (unlink(path)) {
+            perror(path);
+            rc = 1;
+            continue;
+        }
+        if (cache_dir("", bin, sizeof bin) && strlen(bin) + strlen(name) + 8 < sizeof bin) {
+            strcat(strcat(strcat(bin, "/"), name), ".cache");
+            unlink(bin);
+        }
+        printf("removed %s", path);
+        if (find_spec(name, path, sizeof path)) printf(" (now using %s)", path);
+        putchar('\n');
     }
-    if (found & 2) printf("see changes: autocomplete updates NAME\n");
-    return found != 0;
+    return rc;
+}
+
+/* `autocomplete diff [NAME...]`: diff -u of your copies in ~/.config/autocomplete
+ * against the shipped specs (default: every override; aliases and identical
+ * copies skipped). Exit 1 if any differ, like diff. */
+static int diff_cmd(int argc, char **argv) {
+    char user[PATH_MAX], path[PATH_MAX], bpath[PATH_MAX];
+    struct stat st;
+    int i, rc = 0, r;
+    snprintf(user, sizeof user, "%s/.config/autocomplete/", getenv("HOME") ? getenv("HOME") : "");
+    if (argc) {
+        for (i = 0; i < argc; i++) add_name(argv[i]);
+    } else {
+        g_list_user = 1;
+        each_spec(list_spec);
+        qsort(g_list, g_nlist, sizeof *g_list, cmp_str);
+    }
+    for (i = 0; i < g_nlist; i++) {
+        const char *name = g_list[i];
+        int missing = !valid_name(name) || !find_spec(name, path, sizeof path) ||
+                      strncmp(path, user, strlen(user)) || lstat(path, &st) || S_ISLNK(st.st_mode);
+        if (missing || !find_bundled(name, bpath, sizeof bpath)) {
+            if (argc) fprintf(stderr, "%s: %s\n", name, missing ? "no copy of yours" : "no shipped spec");
+            if (argc) rc = 2;
+            continue;
+        }
+        if (same_file(path, bpath)) continue;
+        if ((r = run_diff(path, bpath)) > rc) rc = r;
+    }
+    return rc;
 }
 
 /* spec names and names with a completion already (`complete -p` lines on
@@ -762,9 +831,12 @@ int main(int argc, char **argv) {
     if (argc >= 2 && argc <= 3 && !strcmp(argv[1], "emoji")) return emoji_cmd(argv[2]);
     if (argc >= 3 && !strcmp(argv[1], "add")) return add_cmds(argc - 2, argv + 2);
     if (argc == 3 && !strcmp(argv[1], "edit")) return edit_cmd(argv[2]);
-    if (argc <= 3 && argc >= 2 && !strcmp(argv[1], "updates")) return updates_cmd(argv[2]);
-    if (argc >= 2 && !strcmp(argv[1], "list")) {
+    if (argc >= 2 && !strcmp(argv[1], "rm")) return rm_cmd(argc - 2, argv + 2);
+    if (argc >= 2 && !strcmp(argv[1], "diff")) return diff_cmd(argc - 2, argv + 2);
+    /* `manage` = `list --user` */
+    if (argc >= 2 && (!strcmp(argv[1], "list") || !strcmp(argv[1], "manage"))) {
         int i;
+        if (!strcmp(argv[1], "manage")) g_list_user = 1;
         for (i = 2; i < argc; i++) {
             if (!strcmp(argv[i], "--paths")) g_list_paths = 1;
             else if (!strcmp(argv[i], "--user")) g_list_user = 1;
@@ -783,13 +855,15 @@ int main(int argc, char **argv) {
             "       autocomplete list [--user] [--paths|--tsv]  list specs with descriptions (--user: only\n"
             "                                  ~/.config/autocomplete; --paths: with the spec file;\n"
             "                                  --tsv: NAME<TAB>DESCRIPTION lines for scripts)\n"
+            "       autocomplete manage [--paths|--tsv]  same as list --user\n"
             "       autocomplete check FILE        validate a spec, print it as JSON\n"
             "       autocomplete cache [NAME...]   precompile big specs (> 100 KB) into the cache\n"
             "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"
             "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
             "       autocomplete edit NAME         open ~/.config/autocomplete/NAME.yaml in $VISUAL/$EDITOR\n"
             "                                  (copies the shipped spec there first)\n"
-            "       autocomplete updates [NAME]    your edited specs with a newer shipped version\n"
+            "       autocomplete rm [-f] NAME...   delete your spec/alias, asking y/n unless -f\n"
+            "       autocomplete diff [NAME...]    diff -u your copies against the shipped specs\n"
             "                                  (NAME: diff -u yours shipped)\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"
             "       autocomplete alias --rm NAME...    remove those aliases\n"

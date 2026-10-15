@@ -1,0 +1,77 @@
+version: '20261015'
+description: List directory contents
+flags:
+  -l: {description: "Long format", show: always}
+  -a: {description: "Include entries starting with .", show: always}
+  -A: {description: "Like -a but without . and ..", show: always}
+  -h: {description: "Human-readable sizes (with -l)", show: always}
+  -t: {description: "Sort by modification time, newest first", show: always}
+  -S: {description: "Sort by size, largest first", show: always}
+  -r: {description: "Reverse the sort order", show: always}
+  -R: {description: "List subdirectories recursively"}
+  -d: {description: "List directories themselves, not their contents"}
+  '-1': {description: "One entry per line"}
+  -F: {description: "Append / * @ = | type indicators"}
+  -G: {description: "Colorized output"}
+  -i: {description: "Show inode numbers"}
+  -s: {description: "Show allocated blocks"}
+  -u: {description: "Use last access time (with -t/-l)"}
+  -U: {description: "Use creation time (with -t/-l)"}
+  -c: {description: "Use status change time (with -t/-l)"}
+  -T: {description: "Full date and time (with -l)"}
+  -n: {description: "Numeric user and group IDs"}
+  -o: {description: "Long format without group"}
+  -g: {description: "Long format without owner"}
+  -e: {description: "Show ACLs (with -l)"}
+  -O: {description: "Show file flags (with -l)"}
+  -@: {description: "Show extended attribute keys (with -l)"}
+  -L: {description: "Follow symlinks"}
+  -P: {description: "Don't follow symlinks"}
+  -H: {description: "Follow symlinks given on the command line"}
+  -f: {description: "Unsorted output"}
+  -m: {description: "Comma-separated list"}
+  -x: {description: "Multi-column, sorted across"}
+  -C: {description: "Multi-column, sorted down"}
+  -k: {description: "Sizes in kilobytes"}
+  -p: {description: "Append / to directories"}
+  -q: {description: "Print non-printable chars as ?"}
+  -w: {description: "Print non-printable chars raw"}
+  -v: {description: "Force raw printing of non-printable chars"}
+  -B: {description: "Print non-printable chars as octal escapes"}
+  -b: {description: "Like -B but C escape codes where possible"}
+  -W: {description: "Show whiteouts"}
+  -%: {description: "Distinguish dataless files"}
+  -,: {description: "Thousands separators in sizes (with -l)"}
+args: file
+snippets:
+  - key: l
+    mark: pin
+    command: "ls -lah"
+    description: "everything, long format, readable sizes"
+  - key: t
+    mark: pin
+    command: "ls -lt | head"
+    description: "most recently changed files"
+  - key: s
+    mark: pin
+    command: "ls -lhS | head"
+    description: "largest files first"
+  - key: d
+    mark: pin
+    command: "ls -d */"
+    description: "only directories"
+  - key: h
+    command: "ls -d .*"
+    description: "only hidden entries"
+  - key: o
+    command: "ls -ltr"
+    description: "oldest first (newest at the bottom)"
+  - key: x
+    command: "ls -l@e"
+    description: "with xattrs and ACLs"
+  - key: c
+    command: "ls -1 | wc -l"
+    description: "count entries"
+  - key: r
+    command: "ls -lTU"
+    description: "creation times, full date"

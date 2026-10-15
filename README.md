@@ -227,15 +227,17 @@ from your profile. Your own specs in `~/.config/autocomplete` are left untouched
 |---|---|
 | `autocomplete bash` | Print the bash init script (use with `eval`). |
 | `autocomplete bash --man` | Same, plus every command in `$PATH` that has a man page and no completion yet: its flags are read from the man page on the first TAB and cached (see [Cache](docs/cache.md#man-page-specs)). |
-| `autocomplete list` | List commands that have a spec, one per line with its description. |
+| `autocomplete list` | List commands that have a spec, one per line with its description. Your own specs in `~/.config/autocomplete` get a tag: `[override]` (replaces a shipped spec; `, unchanged` if identical to it, so you can delete it), `[added]` (no shipped spec), `[alias -> CMD]`, plus `generated: man\|help\|cobra` and `update: NEW > OLD` when the shipped spec is newer. |
 | `autocomplete list --paths` | Same, with the spec file each command uses (handy to see which copy wins, or where a bundled spec lives). |
 | `autocomplete list --user` | Only your own specs in `~/.config/autocomplete` (generated with `add`, aliases, hand-written); combines with `--paths`. |
+| `autocomplete manage` | Same as `list --user` (takes `--paths`/`--tsv`). |
 | `autocomplete list --tsv` | `NAME<TAB>DESCRIPTION` lines (no padding), for scripts and `exec` completers. |
 | `autocomplete check FILE` | Validate a spec and print how it was understood (as JSON). |
 | `autocomplete cache [NAME...]` | Precompile specs over 100 KB into the cache (all if no names). |
 | `autocomplete add [--force] [--from cobra\|man\|help] CMD...` | Write `~/.config/autocomplete/CMD.yaml` from the first source that works: cobra bridge, man page, `CMD --help`. |
 | `autocomplete edit NAME` | Open `~/.config/autocomplete/NAME.yaml` in `$VISUAL` (else `$EDITOR`, else `vi`), copying the shipped spec there first. Warns when the shipped spec has a newer `version`; validates the file after the editor exits; if you saved no changes, the copy is removed (the shipped spec stays in use). |
-| `autocomplete updates [NAME]` | List your specs in `~/.config/autocomplete` whose shipped spec has a newer `version`, and copies identical to the shipped spec (not needed; delete them) (exit 1 if any). With NAME, show `diff -u` of your copy against the shipped one, so you can merge what you want. |
+| `autocomplete rm [-f] NAME...` | Delete your spec or alias in `~/.config/autocomplete` (and its cache), asking `[y/n]` for each unless `-f`; the shipped spec, if any, is used again. |
+| `autocomplete diff [NAME...]` | `diff -u` of your copies in `~/.config/autocomplete` against the shipped specs, so you can merge what you want (default: every override that differs; see `[override, update: …]` in `list`). Exit 1 if any differ. |
 | `autocomplete alias [--force] CMD NAME...` | Complete `NAME` (e.g. a shell alias) like `CMD` by symlinking `~/.config/autocomplete/NAME.yaml` to its spec. |
 | `autocomplete alias --rm NAME...` | Remove aliases made by `autocomplete alias` (only symlinks are removed). |
 | `autocomplete alias --list` | List aliases as `NAME -> CMD`. |

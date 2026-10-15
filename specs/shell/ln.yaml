@@ -1,0 +1,36 @@
+version: '20261015'
+description: Make hard or symbolic links
+flags:
+  -s: {description: "Make a symbolic link", show: always}
+  -f: {description: "Replace an existing target file", show: always}
+  -i: {description: "Prompt before replacing an existing target"}
+  -n: {description: "Don't follow a target that is a symlink to a dir (same as -h)", show: always}
+  -h: {description: "Don't follow a target that is a symlink to a dir"}
+  -v: {description: "Print each link as it is made"}
+  -F: {description: "Replace an existing target directory (with -f or -i)"}
+  -L: {description: "Hard-link to the target of a symlink source"}
+  -P: {description: "Hard-link to the symlink itself (default)"}
+  -w: {description: "Warn if the symlink source doesn't exist"}
+args: file
+snippets:
+  - key: s
+    mark: pin
+    command: "ln -s /path/to/target linkname"
+    description: "symlink (target first, then the link)"
+  - key: f
+    mark: pin
+    command: "ln -sfn /path/to/new-version current"
+    description: "repoint an existing symlink (also to a dir)"
+  - key: b
+    mark: pin
+    command: "ln -s \"$PWD/script.sh\" ~/bin/script"
+    description: "put a script on PATH via ~/bin"
+  - key: r
+    command: "ln -s ../shared/config.yml config.yml"
+    description: "relative symlink (resolved from the link's dir)"
+  - key: h
+    command: "ln file hardlink"
+    description: "hard link (same inode, same file system)"
+  - key: d
+    command: "ln -s ~/dotfiles/.vimrc ~/.vimrc"
+    description: "link a dotfile from a dotfiles repo"

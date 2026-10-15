@@ -1,0 +1,34 @@
+version: '20261015'
+description: Move or rename files and directories
+flags:
+  -f: {description: "Overwrite without prompting"}
+  -i: {description: "Prompt before overwriting", show: always}
+  -n: {description: "Never overwrite an existing file", show: always}
+  -v: {description: "Print each file as it is moved", show: always}
+  -h: {description: "If the target is a symlink to a dir, replace the link itself"}
+args: file
+snippets:
+  - key: b
+    mark: pin
+    command: "mv file{,.bak}"
+    description: "rename to .bak"
+  - key: u
+    mark: pin
+    command: "mv file{.bak,}"
+    description: "restore from .bak"
+  - key: n
+    mark: pin
+    command: "mv -n *.jpg dest/"
+    description: "move without overwriting existing files"
+  - key: e
+    command: "for f in *.jpeg; do mv -n \"$f\" \"${f%.jpeg}.jpg\"; done"
+    description: "change the extension of many files"
+  - key: l
+    command: "for f in *; do mv -n \"$f\" \"$(echo \"$f\" | tr 'A-Z ' 'a-z_')\"; done"
+    description: "lowercase names, spaces to underscores"
+  - key: d
+    command: "mv -v ~/Downloads/*.pdf ~/Documents/"
+    description: "tidy downloads into a folder"
+  - key: t
+    command: "mv file ~/.Trash/"
+    description: "move to the Trash instead of deleting"
