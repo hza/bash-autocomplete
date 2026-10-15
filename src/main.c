@@ -822,7 +822,7 @@ int main(int argc, char **argv) {
             "       autocomplete add [--force] [--from cobra|man|help] CMD...  write\n"
             "                                  ~/.config/autocomplete/CMD.yaml from the first source that works\n"
             "       autocomplete edit NAME         open ~/.config/autocomplete/NAME.yaml in $VISUAL/$EDITOR\n"
-            "                                  (copies the shipped spec there first)\n"
+            "                                  (copies the shipped spec first if not exists)\n"
             "       autocomplete rm [-f] NAME...   delete your spec/alias, asking y/n unless -f\n"
             "       autocomplete diff [NAME...]    diff -u your copies against the shipped specs\n"
             "       autocomplete alias [--force] CMD NAME...  complete NAME like CMD (symlinks its spec)\n"

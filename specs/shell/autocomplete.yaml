@@ -2,7 +2,7 @@ version: '20261015'
 description: "Bash completion engine"
 commands:
   bash:
-    description: "Print the bash init script (use with eval)"
+    description: 'Print the bash init script: use with eval "$(autocomplete bash)"'
     flags:
       --man: {description: "Also complete every command with a man page, from the man page"}
   list:
@@ -28,7 +28,7 @@ commands:
         value: {enum: {cobra: 'cobra (Go) program completion', man: 'the man page', help: 'CMD --help output'}}
     args: {exec: "compgen -c | sort -u"}
   edit:
-    description: "Open your copy of a spec in $VISUAL/$EDITOR (copies the shipped one first)"
+    description: "Edit your copy of a spec in $VISUAL/$EDITOR (copies the shipped one first if not exists)"
     args: {exec: "autocomplete list --tsv"}
   rm:
     description: "Delete your spec or alias in ~/.config/autocomplete (the shipped one takes over)"
