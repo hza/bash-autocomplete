@@ -1,0 +1,240 @@
+version: '20261015'
+description: 'a command-line fuzzy finder'
+flags:
+  -x:
+    description: 'Extended-search mode'
+  --extended:
+    description: 'Extended-search mode'
+  -e:
+    description: 'Enable exact-match'
+  --exact:
+    description: 'Enable exact-match'
+  -i:
+    description: 'Case-insensitive match (default: smart-case match)'
+  --ignore-case:
+    description: 'Case-insensitive match (default: smart-case match)'
+  --literal:
+    description: 'Do not normalize latin script letters for matching'
+  --scheme:
+    value: any
+    description: 'Choose scoring scheme tailored for different types of input'
+  --algo:
+    value: any
+    description: 'Fuzzy matching algorithm (default: v2)'
+  -n:
+    value: any
+    description: 'Comma-separated list of field index expressions for limiting search scope'
+  --nth:
+    value: any
+    description: 'Comma-separated list of field index expressions for limiting search scope'
+  --with-nth:
+    value: any
+    description: 'Transform the presentation of each line using field index expressions'
+  -d:
+    value: any
+    description: 'Field delimiter regex for --nth and --with-nth (default: AWK-style)'
+  --delimiter:
+    value: any
+    description: 'Field delimiter regex for --nth and --with-nth (default: AWK-style)'
+  --disabled:
+    description: 'Do not perform search'
+  --track:
+    description: 'Make fzf track the current selection when the result list is updated'
+  --tac:
+    description: 'Reverse the order of the input'
+  --tiebreak:
+    value: any
+    description: 'Comma-separated list of sort criteria to apply when the scores are tied'
+  -m:
+    description: 'Enable multi-select with tab/shift-tab'
+  --multi:
+    description: 'Enable multi-select with tab/shift-tab'
+  --no-mouse:
+    description: 'Disable mouse'
+  --bind:
+    value: any
+    description: 'Comma-separated list of custom key bindings'
+  --cycle:
+    description: 'Enable cyclic scroll'
+  --keep-right:
+    description: 'Keep the right end of the line visible when it''s too long'
+  --scroll-off:
+    value: any
+    description: 'Number of screen lines to keep above or below when scrolling to the top or to the bottom (default: 0)'
+  --no-hscroll:
+    description: 'Disable horizontal scroll'
+  --hscroll-off:
+    value: any
+    description: 'Number of screen columns to keep to the right of the highlighted substring (default: 10)'
+  --filepath-word:
+    description: 'Make word-wise movements and actions respect path separators'
+  --jump-labels:
+    value: any
+    description: 'Label characters for jump mode'
+  --height:
+    value: any
+    description: 'Display fzf window below the cursor with the given height instead of using the full screen'
+  --min-height:
+    value: any
+    description: 'Minimum height when --height is given in percent (default: 10)'
+  --layout:
+    value: any
+    description: 'Choose the layout (default: default)'
+  --reverse:
+    description: 'A synonym for --layout=reverse'
+  --border:
+    value: any
+    description: 'Draw border around the finder'
+  --border-label:
+    value: any
+    description: 'Label to print on the horizontal border line'
+  --border-label-pos:
+    value: any
+    description: 'Position of the border label on the border line'
+  --no-unicode:
+    description: 'Use ASCII characters instead of Unicode drawing characters to draw borders, the spinner and the horizontal separator'
+  --ambidouble:
+    description: 'Set this option if your terminal displays ambiguous width characters (e.g'
+  --margin:
+    value: any
+    description: 'Comma-separated expression for margins around the finder'
+  --padding:
+    value: any
+    description: 'Comma-separated expression for padding inside the border'
+  --info:
+    value: any
+    description: 'Determines the display style of the finder info'
+  --no-info:
+    description: 'A synonym for --info=hidden'
+  --separator:
+    value: any
+    description: 'The given string will be repeated to form the horizontal separator on the info line (default: ''<?>'' or ''-'' depending on --no-unicode)'
+  --no-separator:
+    description: 'Do not display horizontal separator on the info line'
+  --scrollbar:
+    value: any
+    description: 'Use the given character to render scrollbar'
+  --no-scrollbar:
+    description: 'Do not display scrollbar'
+  --prompt:
+    value: any
+    description: 'Input prompt (default: ''> '')'
+  --pointer:
+    value: any
+    description: 'Pointer to the current line (default: ''>'')'
+  --marker:
+    value: any
+    description: 'Multi-select marker (default: ''>'')'
+  --header:
+    value: any
+    description: 'The given string will be printed as the sticky header'
+  --header-lines:
+    value: any
+    description: 'The first N lines of the input are treated as the sticky header'
+  --header-first:
+    description: 'Print header before the prompt line'
+  --ellipsis:
+    value: any
+    description: 'Ellipsis to show when line is truncated (default: ''..'')'
+  --tabstop:
+    value: any
+    description: 'Number of spaces for a tab character (default: 8)'
+  --color:
+    value: any
+    description: 'Color configuration'
+  --highlight-line:
+    description: 'Highlight the whole current line'
+  --no-bold:
+    description: 'Do not use bold text'
+  --black:
+    description: 'Use black background'
+  --history:
+    value: file
+    description: 'Load search history from the specified file and update the file on completion'
+  --history-size:
+    value: any
+    description: 'Maximum number of entries in the history file (default: 1000)'
+  --preview:
+    value: any
+    description: 'Execute the given command for the current line and display the result on the preview window'
+  --preview-label:
+    value: any
+    description: 'Label to print on the horizontal border line of the preview window'
+  --preview-label-pos:
+    value: any
+    description: 'Position of the border label on the border line of the preview window'
+  -q:
+    value: any
+    description: 'Start the finder with the given query'
+  --query:
+    value: any
+    description: 'Start the finder with the given query'
+  '-1':
+    description: 'If there is only one match for the initial query (--query), do not start interactive finder and automatically select the only match'
+  --select-1:
+    description: 'If there is only one match for the initial query (--query), do not start interactive finder and automatically select the only match'
+  '-0':
+    description: 'If there is no match for the initial query (--query), do not start interactive finder and exit immediately'
+  --exit-0:
+    description: 'If there is no match for the initial query (--query), do not start interactive finder and exit immediately'
+  -f:
+    value: any
+    description: 'Filter mode'
+  --filter:
+    value: any
+    description: 'Filter mode'
+  --print-query:
+    description: 'Print query as the first line'
+  --expect:
+    value: any
+    description: 'Comma-separated list of keys that can be used to complete fzf in addition to the default enter key'
+  --read0:
+    description: 'Read input delimited by ASCII NUL characters instead of newline characters'
+  --print0:
+    description: 'Print output delimited by ASCII NUL characters instead of newline characters'
+  --no-clear:
+    description: 'Do not clear finder interface on exit'
+  --with-shell:
+    value: any
+    description: 'Shell command and flags to start child processes with'
+  --version:
+    description: 'Display version information and exit'
+  --walker:
+    value: dir
+    description: 'Determines the behavior of the built-in directory walker that is used when $FZF_DEFAULT_COMMAND is not set'
+  --walker-root:
+    value: dir
+    description: 'The root directory from which to start the built-in directory walker'
+  --walker-skip:
+    value: dir
+    description: 'Comma-separated list of directory names to skip during the directory walk'
+  --zsh:
+    description: 'Print script to set up Zsh shell integration'
+snippets:
+  - key: t
+    mark: pin
+    command: "fzf --preview=\"bat --theme={} --color=always Makefile\" < <(bat --list-themes)"
+    description: "pick a bat theme with a live preview of a file"
+  - key: p
+    mark: pin
+    command: "fzf --preview=\"bat --color=always --style=numbers {}\""
+    description: "pick a file with a syntax-highlighted preview"
+  - key: o
+    mark: pin
+    command: "fzf --bind \"enter:become(code {})\""
+    description: "pick a file and open it in VS Code (fzf exits)"
+  - key: m
+    command: "fzf -m --preview=\"bat --color=always {}\""
+    description: "multi-select with TAB, selected paths printed one per line"
+  - key: d
+    command: "fzf --walker=dir,follow,hidden"
+    description: "pick a directory (incl. hidden) instead of a file"
+  - key: r
+    command: "fzf --height=40% --layout=reverse --border"
+    description: "compact list under the prompt instead of full screen"
+  - key: f
+    command: "fzf -f main"
+    description: "non-interactive: print matches of the query and exit (for scripts)"
+  - key: q
+    command: "fzf -q \"'exact ^prefix .c$ !test\""
+    description: "query syntax: 'exact, ^starts, ends$, !not; space = AND, | = OR"

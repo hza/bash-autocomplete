@@ -1,4 +1,4 @@
-version: '20261013'
+version: '20261015'
 description: The Missing Package Manager for macOS
 flags:
   -v: {description: "Be verbose", show: always}
@@ -9,6 +9,10 @@ flags:
   --quiet: {description: "Make some output more quiet", show: always}
   -h: {description: "Show help", show: always}
   --help: {description: "Show help", show: always}
+  --prefix:
+    description: "Print the Homebrew prefix, or with a formula its install path (opt symlink)"
+    value:
+      exec: "brew list --formula 2>/dev/null"
 commands:
   install:
     description: Install a formula or cask
@@ -342,3 +346,6 @@ snippets:
   - key: b
     command: "brew bundle dump --file=~/Brewfile --force"
     description: "save everything installed to a Brewfile (restore: brew bundle --file=~/Brewfile)"
+  - key: p
+    command: "brew --prefix mc"
+    description: "install path of a formula (opt symlink, stable across upgrades; mc -> midnight-commander)"

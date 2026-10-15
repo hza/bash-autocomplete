@@ -1,0 +1,178 @@
+version: '20261015'
+description: 'a cat(1) clone with syntax highlighting and Git integration'
+flags:
+  -A:
+    description: 'Show non-printable characters like space, tab or newline'
+  --show-all:
+    description: 'Show non-printable characters like space, tab or newline'
+  --nonprintable-notation:
+    value: any
+    description: 'Specify how to display non-printable characters when using --show-all'
+  -p:
+    description: 'Only show plain style, no decorations'
+  --plain:
+    description: 'Only show plain style, no decorations'
+  -l:
+    value: any
+    description: 'Explicitly set the language for syntax highlighting'
+  --language:
+    value: any
+    description: 'Explicitly set the language for syntax highlighting'
+  -H:
+    value: any
+    description: 'Highlight the specified line ranges with a different background color'
+  --highlight-line:
+    value: any
+    description: 'Highlight the specified line ranges with a different background color'
+  --file-name:
+    value: any
+    description: 'Specify the name to display for a file'
+  -d:
+    description: 'Only show lines that have been added/removed/modified with respect to the Git index'
+  --diff:
+    description: 'Only show lines that have been added/removed/modified with respect to the Git index'
+  --diff-context:
+    value: any
+    description: 'Include N lines of context around added/removed/modified lines when using ''--diff'''
+  --tabs:
+    value: any
+    description: 'Set the tab width to T spaces'
+  --wrap:
+    value: any
+    description: 'Specify the text-wrapping mode (*auto*, never, character)'
+  -S:
+    description: 'Truncate all lines longer than screen width'
+  --chop-long-lines:
+    description: 'Truncate all lines longer than screen width'
+  --terminal-width:
+    value: any
+    description: 'Explicitly set the width of the terminal instead of determining it automatically'
+  -n:
+    description: 'Only show line numbers, no other decorations'
+  --number:
+    description: 'Only show line numbers, no other decorations'
+  --color:
+    value: any
+    description: 'Specify when to use colored output'
+  --italic-text:
+    value: any
+    description: 'Specify when to use ANSI sequences for italic text in the output'
+  --decorations:
+    value: any
+    description: 'Specify when to use the decorations that have been specified via ''--style'''
+  -f:
+    description: 'Alias for ''--decorations=always --color=always'''
+  --force-colorization:
+    description: 'Alias for ''--decorations=always --color=always'''
+  --paging:
+    value: any
+    description: 'Specify when to use the pager'
+  --pager:
+    value: any
+    description: 'Determine which pager is used'
+  -m:
+    value: any
+    description: 'Map a glob pattern to an existing syntax name'
+  --map-syntax:
+    value: any
+    description: 'Map a glob pattern to an existing syntax name'
+  --ignored-suffix:
+    value: any
+    description: 'Ignore extension'
+  --theme:
+    value: any
+    description: 'Set the theme for syntax highlighting'
+  --theme-dark:
+    value: any
+    description: 'Sets the theme name for syntax highlighting used when the terminal uses a dark background'
+  --theme-light:
+    value: any
+    description: 'Sets the theme name for syntax highlighting used when the terminal uses a dark background'
+  --list-themes:
+    description: 'Display a list of supported themes for syntax highlighting'
+  -s:
+    description: 'Squeeze consecutive empty lines into a single empty line'
+  --squeeze-blank:
+    description: 'Squeeze consecutive empty lines into a single empty line'
+  --squeeze-limit:
+    value: any
+    description: 'Set the maximum number of consecutive empty lines to be printed'
+  --style:
+    value: any
+    description: 'Configure which elements (line numbers, file headers, grid borders, Git modifications, ..) to display in addition to the file contents'
+  -r:
+    value: any
+    description: 'Only print the specified range of lines for each file'
+  --line-range:
+    value: any
+    description: 'Only print the specified range of lines for each file'
+  -L:
+    description: 'Display a list of supported languages for syntax highlighting'
+  --list-languages:
+    description: 'Display a list of supported languages for syntax highlighting'
+  -u:
+    description: 'This option exists for POSIX-compliance reasons (''u'' is for ''unbuffered'')'
+  --unbuffered:
+    description: 'This option exists for POSIX-compliance reasons (''u'' is for ''unbuffered'')'
+  --no-custom-assets:
+    description: 'Do not load custom assets'
+  --config-dir:
+    description: 'Show bat''s configuration directory'
+  --cache-dir:
+    description: 'Show bat''s cache directory'
+  --diagnostic:
+    description: 'Show diagnostic information for bug reports'
+  --acknowledgements:
+    description: 'Show acknowledgements'
+  --set-terminal-title:
+    description: 'Sets terminal title to filenames when using a pager'
+  -h:
+    description: 'Print this help message'
+  --help:
+    description: 'Print this help message'
+  -V:
+    description: 'Show version information'
+  --version:
+    description: 'Show version information'
+  --config-file:
+    description: 'Show path to the configuration file'
+  --generate-config-file:
+    description: 'Generates a default configuration file'
+  --no-config:
+    description: 'Do not use the configuration file'
+  --lessopen:
+    description: 'Enable the $LESSOPEN preprocessor'
+  --no-lessopen:
+    description: 'Disable the $LESSOPEN preprocessor if enabled (overrides --lessopen)'
+args: file
+snippets:
+  - key: t
+    mark: pin
+    command: "bat --list-themes | fzf --preview=\"bat --theme={} --color=always Makefile\""
+    description: "pick a theme with a live preview of a file"
+  - key: d
+    mark: pin
+    command: "bat --diff src/main.c"
+    description: "only the lines changed vs the git index, with context"
+  - key: r
+    mark: pin
+    command: "bat -r 10:40 src/main.c"
+    description: "print a line range (also :40, 10:, 10:+5)"
+  - key: h
+    command: "bat -H 25 src/main.c"
+    description: "highlight one line (e.g. a compiler error)"
+  - key: p
+    command: "bat -pp Makefile"
+    description: "plain cat: no decorations, no pager (still colored)"
+  - key: a
+    command: "bat -A Makefile"
+    description: "show tabs, spaces, line endings and other non-printables"
+  - key: l
+    command: "bat -l log /var/log/system.log"
+    description: "force a syntax (list: bat --list-languages)"
+  - key: s
+    command: "bat --style=numbers,changes src/*.c"
+    description: "line numbers and git change markers, no header/grid"
+  - key: c
+    command: "bat cache --build"
+    description: "rebuild the cache after adding themes/syntaxes to $(bat --config-dir)"
